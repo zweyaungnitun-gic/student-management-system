@@ -17,8 +17,8 @@ public class DashboardController {
 
     @GetMapping({"/", "/dashboard", "/entity"})
     public String getDashboard(Model model) {
-        EmployeeStats stats = employeeService.getEmployeeStats();
-        model.addAttribute("employeeStats", stats);
+        model.addAttribute("pageTitle", "Admin Dashboard");
+        model.addAttribute("pageSubtitle", "Welcome back");
         return "layouts/admin-dashboard";
     }
 }

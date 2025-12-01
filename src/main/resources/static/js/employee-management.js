@@ -1,5 +1,5 @@
 (() => {
-  const API_URL = "/api/employees";
+  const API_URL = "/employees/api";
 
   const tableBody = document.querySelector("#employeeTableBody");
   const cacheChip = document.querySelector("#cacheStatusChip");
