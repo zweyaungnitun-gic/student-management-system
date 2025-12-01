@@ -1,0 +1,154 @@
+<section class="employee-management glass-panel p-4 p-md-5" th:fragment="employeeManagement">
+  <div class="d-flex flex-column flex-md-row justify-content-between gap-3 align-items-start align-items-md-center mb-4">
+    <div>
+      <p class="section-title mb-1">Employee Management</p>
+      <h2 class="mb-0">People Operations</h2>
+      <p class="text-muted mb-0">Track hiring, status, and Redis cache freshness.</p>
+    </div>
+
+    <div class="d-flex gap-2">
+      <div
+        class="cache-chip"
+        id="cacheStatusChip"
+        th:classappend="${employeeStats != null and employeeStats.source == 'redis'} ? ' cache-chip--cache' : ' cache-chip--db'"
+      >
+        <span class="dot"></span>
+        <span
+          th:text="${employeeStats != null and employeeStats.source == 'redis'} ? 'Served from Redis cache' : 'Fresh from database'"
+          >Loading cache info...</span
+        >
+      </div>
+      <button
+        class="btn btn-primary d-flex align-items-center gap-2"
+        data-bs-toggle="modal"
+        data-bs-target="#employeeModal"
+        type="button"
+      >
+        <i class="bi bi-person-plus"></i>
+        Add Employee
+      </button>
+    </div>
+  </div>
+
+  <div class="employee-stats-grid mb-4" id="employeeStatsPanel">
+    <article class="mini-card">
+      <p class="text-muted mb-1">Total employees</p>
+      <h3
+        class="mb-0"
+        id="totalEmployees"
+        th:text="${employeeStats != null} ? ${employeeStats.totalEmployees} : '--'"
+      >
+        --
+      </h3>
+    </article>
+    <article class="mini-card">
+      <p class="text-muted mb-1">Active employees</p>
+      <h3
+        class="mb-0"
+        id="activeEmployees"
+        th:text="${employeeStats != null} ? ${employeeStats.activeEmployees} : '--'"
+      >
+        --
+      </h3>
+    </article>
+    <article class="mini-card">
+      <p class="text-muted mb-1">Snapshot time</p>
+      <h3
+        class="mb-0"
+        id="snapshotTime"
+        th:text="${employeeStats != null} ? ${#temporals.format(employeeStats.snapshotTime, 'MMM dd, yyyy HH:mm')} : '--'"
+      >
+        --
+      </h3>
+    </article>
+  </div>
+
+  <div class="table-responsive" id="employeeTableWrapper">
+    <table class="table data-table align-middle" id="employeeTable">
+      <thead>
+        <tr>
+          <th scope="col">Name</th>
+          <th scope="col">Department</th>
+          <th scope="col">Title</th>
+          <th scope="col">Status</th>
+          <th scope="col">Salary</th>
+          <th scope="col" class="text-end">Actions</th>
+        </tr>
+      </thead>
+      <tbody id="employeeTableBody">
+        <tr>
+          <td colspan="6" class="text-center text-muted py-5">
+            Loading employees from Redis snapshot...
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<div
+  class="modal fade"
+  id="employeeModal"
+  tabindex="-1"
+  aria-labelledby="employeeModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="employeeModalLabel">Add employee</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form id="employeeForm">
+        <div class="modal-body">
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label">First name</label>
+              <input type="text" name="firstName" class="form-control" required />
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Last name</label>
+              <input type="text" name="lastName" class="form-control" required />
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Email</label>
+              <input type="email" name="email" class="form-control" required />
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Department</label>
+              <input type="text" name="department" class="form-control" required />
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Job title</label>
+              <input type="text" name="jobTitle" class="form-control" required />
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Status</label>
+              <select name="status" class="form-select" required>
+                <option value="ACTIVE">Active</option>
+                <option value="ON_LEAVE">On leave</option>
+                <option value="INACTIVE">Inactive</option>
+              </select>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Salary (USD)</label>
+              <input type="number" name="salary" class="form-control" min="0" step="500" required />
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Hire date</label>
+              <input type="date" name="hireDate" class="form-control" />
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer d-flex justify-content-between">
+          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-primary">
+            <span class="default-label">Save employee</span>
+            <span class="loading-label d-none">Saving...</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+

@@ -1,0 +1,31 @@
+<header class="container-xxl mb-5" th:fragment="dashboardHero">
+  <div class="hero row g-4 align-items-center">
+    <div class="col-auto">
+      <div class="brand-badge">
+        <img th:src="@{/images/gic-logo.png}" alt="GIC Logo" />
+      </div>
+    </div>
+    <div class="col">
+      <div class="d-flex flex-wrap gap-2 align-items-center mb-2">
+        <span class="xs-pill">Admin Portal</span>
+        <span class="status-pill">
+          <i class="bi bi-check2-circle"></i>
+          Secure
+        </span>
+      </div>
+      <h1>
+        入社前適正試験 AI 管理画面
+      </h1>
+      <p class="mb-0">
+        最新の試験状況とタスクを一目で確認し、スムーズに運用できます。
+      </p>
+    </div>
+    <div class="col-12 col-md-4 text-center hero-visual">
+      <img
+        th:src="${heroImage} ?: @{/images/sessiontimeout.svg}"
+        alt="Dashboard Illustration"
+      />
+    </div>
+  </div>
+</header>
+

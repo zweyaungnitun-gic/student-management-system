@@ -1,0 +1,33 @@
+<section class="mb-5" th:fragment="metricCards">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <p class="section-title mb-0">Cards</p>
+    <span class="badge badge-muted">Status / Metric / CTA</span>
+  </div>
+  <div class="component-grid">
+    <div class="app-card bg-white" th:each="card : ${metricCards}">
+      <p class="text-muted text-uppercase fw-semibold mb-2 small" th:text="${card.label}">
+        Exam slots
+      </p>
+      <h2 class="fw-bold" th:classappend="${card.statusClass}"
+          th:text="${card.value}">42</h2>
+      <p class="mb-0 text-muted" th:text="${card.subtext}">Allocated for December</p>
+      <div class="d-flex gap-2 flex-wrap" th:if="${card.badges}">
+        <span class="badge" th:each="badge : ${card.badges}"
+              th:text="${badge.text}"
+              th:class="'badge ' + (badge.className ?: 'bg-danger-subtle text-danger')">
+          +4%
+        </span>
+      </div>
+    </div>
+    <div class="app-card bg-white" th:if="${metricCards == null}">
+      <p class="text-muted text-uppercase fw-semibold mb-2 small">Alerts</p>
+      <h2 class="fw-bold text-danger">03</h2>
+      <div class="d-flex gap-2 flex-wrap">
+        <span class="badge bg-danger-subtle text-danger">Timeout</span>
+        <span class="badge bg-warning-subtle text-warning">Network</span>
+        <span class="badge bg-info-subtle text-info">Sync</span>
+      </div>
+    </div>
+  </div>
+</section>
+

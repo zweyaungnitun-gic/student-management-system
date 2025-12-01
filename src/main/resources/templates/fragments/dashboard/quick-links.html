@@ -1,0 +1,31 @@
+<section class="app-card mb-4" th:fragment="quickLinks">
+  <p class="section-title mb-0">Quick Links</p>
+  <div class="d-flex flex-column gap-3 mt-3">
+    <a class="text-decoration-none text-reset" th:each="link : ${quickLinks}"
+       th:href="${link.href}" th:if="${quickLinks}">
+      <div class="quick-link">
+        <span class="icon">
+          <i class="bi" th:classappend="' ' + (link.icon ?: 'bi-list-check')"></i>
+        </span>
+        <div>
+          <p class="mb-1 fw-semibold text-uppercase text-muted small" th:text="${link.label}">
+            Section
+          </p>
+          <h5 class="mb-0" th:text="${link.title}">Link title</h5>
+        </div>
+      </div>
+    </a>
+    <div class="quick-link" th:if="${quickLinks == null}">
+      <span class="icon">
+        <i class="bi bi-list-check"></i>
+      </span>
+      <div>
+        <p class="mb-1 fw-semibold text-uppercase text-muted small">
+          Question Config
+        </p>
+        <h5 class="mb-0">生成設定一覧を開く</h5>
+      </div>
+    </div>
+  </div>
+</section>
+

@@ -1,0 +1,56 @@
+<section class="app-card bg-white h-100" th:fragment="examTable">
+  <div class="d-flex flex-column flex-md-row gap-3 align-items-md-center justify-content-between mb-3">
+    <div class="d-flex gap-2">
+      <button class="btn btn-sm btn-outline-primary rounded-pill" type="button">All</button>
+      <button class="btn btn-sm btn-outline-secondary rounded-pill" type="button">Draft</button>
+      <button class="btn btn-sm btn-outline-secondary rounded-pill" type="button">
+        Published
+      </button>
+    </div>
+    <div class="input-group w-auto">
+      <span class="input-group-text bg-transparent border-end-0">
+        <i class="bi bi-search"></i>
+      </span>
+      <input
+        type="search"
+        class="form-control border-start-0"
+        placeholder="キーワード検索"
+        th:value="${filters.keyword}"
+      />
+    </div>
+  </div>
+  <div class="table-responsive">
+    <table class="table align-middle mb-0">
+      <thead>
+        <tr>
+          <th>Exam</th>
+          <th>Category</th>
+          <th>Date</th>
+          <th>Status</th>
+          <th class="text-end">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr th:each="exam : ${examTable}">
+          <td th:text="${exam.title}">AI 基礎理解テスト</td>
+          <td th:text="${exam.category}">Engineer</td>
+          <td th:text="${exam.date}">2025-12-03</td>
+          <td>
+            <span class="badge" th:text="${exam.statusText}" th:class="'badge ' + exam.statusClass">
+              Ready
+            </span>
+          </td>
+          <td class="text-end">
+            <button class="btn btn-sm btn-outline-secondary" type="button">
+              <i class="bi" th:classappend="' ' + (exam.actionIcon ?: 'bi-eye')"></i>
+            </button>
+          </td>
+        </tr>
+        <tr th:if="${#lists.isEmpty(examTable)}">
+          <td colspan="5" class="text-center text-muted">No exams found.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+

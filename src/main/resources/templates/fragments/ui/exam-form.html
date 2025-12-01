@@ -1,0 +1,52 @@
+<section class="app-card bg-white h-100" th:fragment="examForm">
+  <form class="row g-3">
+    <div class="col-12">
+      <label class="form-label text-muted small text-uppercase" for="examTitle">
+        Exam title
+      </label>
+      <input
+        id="examTitle"
+        type="text"
+        class="form-control compact-field"
+        placeholder="冬季採用 一次試験"
+        th:value="${form.examTitle}"
+      />
+    </div>
+    <div class="col-12">
+      <label class="form-label text-muted small text-uppercase" for="jobCategory">
+        Job category
+      </label>
+      <select id="jobCategory" class="form-select compact-field">
+        <option th:each="cat : ${form.categories}" th:value="${cat}" th:text="${cat}">エンジニア</option>
+        <option th:if="${form.categories == null}">エンジニア</option>
+      </select>
+    </div>
+    <div class="col-12 col-md-6">
+      <label class="form-label text-muted small text-uppercase" for="fromTime">From</label>
+      <input id="fromTime" type="time" class="form-control compact-field" th:value="${form.from ?: '09:00'}" />
+    </div>
+    <div class="col-12 col-md-6">
+      <label class="form-label text-muted small text-uppercase" for="toTime">To</label>
+      <input id="toTime" type="time" class="form-control compact-field" th:value="${form.to ?: '10:30'}" />
+    </div>
+    <div class="col-12">
+      <label class="form-label text-muted small text-uppercase" for="notes">Notes</label>
+      <textarea
+        id="notes"
+        class="form-control compact-field"
+        rows="3"
+        placeholder="出題範囲、注意事項など"
+        th:text="${form.notes}"
+      ></textarea>
+    </div>
+    <div class="col-12 d-flex gap-2">
+      <button type="submit" class="btn btn-primary flex-grow-1">
+        <i class="bi bi-save me-1"></i>Save draft
+      </button>
+      <button type="button" class="btn btn-outline-primary">
+        <i class="bi bi-send"></i>
+      </button>
+    </div>
+  </form>
+</section>
+

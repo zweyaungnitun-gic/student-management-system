@@ -1,0 +1,43 @@
+<section class="mb-5" th:fragment="activityTimeline">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <p class="section-title mb-0">Activity Timeline</p>
+    <span class="badge badge-muted">Stepper / Timeline</span>
+  </div>
+  <div class="app-card bg-white">
+    <div class="row g-3">
+      <div class="col-12 col-md-6">
+        <h5 class="mb-3">Exam creation</h5>
+        <div class="d-flex align-items-start gap-3 mb-3" th:each="step : ${creationSteps}">
+          <span class="status-pill">
+            <i class="bi" th:classappend="' ' + (step.icon ?: 'bi-1-circle')"></i>
+            <span th:text="${step.label}">Draft</span>
+          </span>
+          <p class="mb-0 text-muted" th:text="${step.description}">
+            情報入力・対象者設定
+          </p>
+        </div>
+        <div class="d-flex align-items-start gap-3 mb-3" th:if="${creationSteps == null}">
+          <span class="status-pill"><i class="bi bi-1-circle"></i>Draft</span>
+          <p class="mb-0 text-muted">情報入力・対象者設定</p>
+        </div>
+      </div>
+      <div class="col-12 col-md-6">
+        <h5 class="mb-3">Question lifecycle</h5>
+        <ul class="list-group list-group-flush">
+          <li
+            class="list-group-item d-flex justify-content-between align-items-center"
+            th:each="item : ${questionLifecycle}"
+          >
+            <span th:text="${item.label}">新規作成</span>
+            <span class="badge" th:text="${item.badgeText}" th:class="'badge ' + item.badgeClass">AI + Manual</span>
+          </li>
+          <li class="list-group-item d-flex justify-content-between align-items-center" th:if="${questionLifecycle == null}">
+            新規作成
+            <span class="badge bg-primary-subtle text-primary">AI + Manual</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+

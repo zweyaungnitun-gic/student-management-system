@@ -1,0 +1,37 @@
+<section class="app-card mb-4" th:fragment="upcomingExams">
+  <div class="d-flex flex-wrap justify-content-between align-items-center mb-3">
+    <div>
+      <p class="section-title mb-1">Upcoming Exams</p>
+      <h3 class="mb-0">直近 5 件の試験スケジュール</h3>
+    </div>
+    <button class="btn btn-light btn-sm rounded-pill px-3" type="button">
+      <i class="bi bi-arrow-repeat me-1"></i>Refresh
+    </button>
+  </div>
+  <div class="table-responsive">
+    <table class="table table-borderless data-table mb-0">
+      <thead>
+        <tr>
+          <th scope="col">日付</th>
+          <th scope="col">時間</th>
+          <th scope="col">職種</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr th:if="${#lists.isEmpty(upcomingExams)}">
+          <td colspan="3" class="text-center text-muted">予定されている試験はありません。</td>
+        </tr>
+        <tr th:each="exam : ${upcomingExams}">
+          <td th:text="${exam.date} ?: '2025-12-03'">2025-12-03</td>
+          <td>
+            <span th:text="${exam.from} ?: '09:00'">09:00</span>
+            –
+            <span th:text="${exam.to} ?: '10:30'">10:30</span>
+          </td>
+          <td th:text="${exam.jobType} ?: '-'">エンジニア</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+

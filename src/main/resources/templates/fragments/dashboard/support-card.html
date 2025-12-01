@@ -1,0 +1,19 @@
+<section class="app-card" th:fragment="supportCard">
+  <p class="section-title mb-2">Support</p>
+  <h4>技術サポートに連絡</h4>
+  <p class="mb-4 text-muted">
+    ご不明点は以下のメールアドレスまでお問い合わせください。
+  </p>
+  <div class="glass-panel p-3 mb-3">
+    <p class="mb-1 text-muted">Support desk</p>
+    <a th:href="'mailto:' + (${supportEmail} ?: 'giconlinetestsystemsupport@gicjp.com')"
+       class="fw-semibold"
+       th:text="${supportEmail} ?: 'giconlinetestsystemsupport@gicjp.com'">
+      giconlinetestsystemsupport@gicjp.com
+    </a>
+  </div>
+  <p class="footer-note mb-0" th:text="${supportHours} ?: '応答時間: 平日 09:00 – 18:00 JST'">
+    応答時間: 平日 09:00 – 18:00 JST
+  </p>
+</section>
+

@@ -1,0 +1,17 @@
+<header class="container-xxl mb-5" th:fragment="uiKitHeader">
+  <div class="row g-4 align-items-center">
+    <div class="col-sm-7">
+      <p class="section-title mb-1">UI Kit</p>
+      <h1 class="mb-1" th:text="${uiTitle} ?: 'Bootstrap based atoms &amp; molecules'">
+        Bootstrap based atoms &amp; molecules
+      </h1>
+      <p class="text-muted">
+        主要な UI パターンを HTML / CSS / Bootstrap で再現し、デザインレビューや共有に活用できます。
+      </p>
+    </div>
+    <div class="col-sm-5 text-center hero-visual">
+      <img th:src="${uiHeroImage} ?: @{/images/mailphoto.png}" alt="UI Kit Illustration" class="img-fluid" />
+    </div>
+  </div>
+</header>
+
