@@ -1,139 +1,130 @@
 <!doctype html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 
-  <head th:fragment="head(pageTitle)">
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title th:text="${pageTitle} ?: 'GIC Online Test | Admin Dashboard'">GIC Online Test | Admin Dashboard</title>
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
-    />
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
-    />
-    <link rel="stylesheet" th:href="@{/css/dashboard.css}" />
-  </head>
+<!-- head fragment accepts only pageTitle (keep simple & compatible) -->
+<head th:fragment="head(pageTitle)">
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title th:text="${pageTitle} ?: 'GIC Online Test | Admin Dashboard'">GIC Online Test | Admin Dashboard</title>
 
-  <body>
-    <th:block th:fragment="sidebar">
-      <aside class="dashboard-sidebar glass-panel">
-        <div class="sidebar-brand gap-3">
-          <div class="brand-badge bg-white shadow-sm">
-            <img th:src="@{/images/gic-logo.png}" alt="GIC logo" />
-          </div>
-          <div>
-            <p class="text-uppercase fw-semibold mb-0 small text-muted">
-              Admin Center
-            </p>
-            <h5 class="mb-0">GIC Online Tests</h5>
-          </div>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"/>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"/>
+  <link rel="stylesheet" th:href="@{/css/dashboard.css}"/>
+
+  <!-- If you want per-page CSS, set model attribute `pageCss` to a fragment expression or include inline CSS in the page -->
+  <!-- NEW -->
+</head>
+
+<body>
+  <!-- Sidebar fragment -->
+  <th:block th:fragment="sidebar(currentPage)">
+    <aside class="dashboard-sidebar glass-panel">
+      <div class="sidebar-brand gap-3">
+        <div class="brand-badge bg-white shadow-sm">
+          <img th:src="@{/images/gic-logo.png}" alt="GIC logo"/>
         </div>
-
-        <div class="sidebar-user">
-          <div class="d-flex align-items-center gap-3">
-            <img
-              class="user-avatar"
-              th:src="@{/images/profile.png}"
-              alt="Admin avatar"
-            />
-            <div>
-              <p class="mb-0 fw-semibold">Alexis Carter</p>
-              <small class="text-muted">Exam Administrator</small>
-            </div>
-          </div>
-          <div class="badge badge-muted fw-medium mt-3 w-100 text-center">
-            Verified Account
-          </div>
-        </div>
-
         <div>
-          <p class="sidebar-label">Overview</p>
-          <nav class="sidebar-nav">
-            <a class="sidebar-link" th:classappend="${#strings.equals(currentPage, 'dashboard')} ? 'active'" th:href="@{/dashboard}">
-              <i class="bi bi-grid-1x2-fill"></i>
-              <span>Dashboard</span>
-            </a>
-            <a class="sidebar-link" th:classappend="${#strings.equals(currentPage, 'employees')} ? 'active'" th:href="@{/employees}">
-              <i class="bi bi-people"></i>
-              <span>Employees</span>
-            </a>
-            <a class="sidebar-link" th:classappend="${#strings.equals(currentPage, 'schedule')} ? 'active'" href="#">
-              <i class="bi bi-calendar2-event"></i>
-              <span>Exam Schedule</span>
-            </a>
-            <a class="sidebar-link" th:classappend="${#strings.equals(currentPage, 'reports')} ? 'active'" href="#">
-              <i class="bi bi-bar-chart"></i>
-              <span>Reports</span>
-            </a>
-          </nav>
+          <p class="text-uppercase fw-semibold mb-0 small text-muted">Admin Center</p>
+          <h5 class="mb-0">GIC Online Tests</h5>
         </div>
+      </div>
 
-        <div>
-          <p class="sidebar-label">Management</p>
-          <nav class="sidebar-nav">
-            <a class="sidebar-link" th:classappend="${#strings.equals(currentPage, 'settings')} ? 'active'" href="#">
-              <i class="bi bi-gear"></i>
-              <span>Settings</span>
-            </a>
-            <a class="sidebar-link" th:classappend="${#strings.equals(currentPage, 'support')} ? 'active'" href="#">
-              <i class="bi bi-life-preserver"></i>
-              <span>Support</span>
-            </a>
-          </nav>
-        </div>
-
-        <div class="sidebar-mini-card">
-          <p class="text-muted small mb-1">Next live exam</p>
-          <h5 class="mb-2">Physics 101 Final</h5>
-          <div class="d-flex align-items-center justify-content-between">
-            <span class="fw-semibold">08:30 AM</span>
-            <span class="status-pill">
-              <span class="dot"></span>
-              Prep Mode
-            </span>
-          </div>
-        </div>
-      </aside>
-    </th:block>
-
-    <th:block th:fragment="topbar">
-      <header class="dashboard-topbar">
+      <div class="sidebar-user">
         <div class="d-flex align-items-center gap-3">
-          <button
-            class="btn btn-light btn-icon d-lg-none"
-            type="button"
-            aria-label="Toggle sidebar"
-            data-sidebar-toggle
-          >
-            <i class="bi bi-list fs-4"></i>
-          </button>
+          <img class="user-avatar" th:src="@{/images/profile.png}" alt="Admin avatar"/>
           <div>
-            <p class="text-uppercase text-muted small fw-semibold mb-1">
-              <span th:text="${pageSubtitle} ?: 'Welcome back'">Welcome back</span>
-            </p>
-            <h4 class="mb-0" th:text="${pageTitle} ?: 'Admin Dashboard'">Admin Dashboard</h4>
+            <p class="mb-0 fw-semibold" th:text="${userName} ?: 'Admin'">Admin</p>
+            <small class="text-muted">Exam Administrator</small>
           </div>
+        </div>
+        <div class="badge badge-muted fw-medium mt-3 w-100 text-center">Verified Account</div>
+      </div>
+
+      <nav class="sidebar-nav mt-3">
+        <a class="sidebar-link" th:classappend="${currentPage} == 'dashboard' ? ' active' : ''" th:href="@{/}">
+          <i class="bi bi-grid-1x2-fill"></i><span>Dashboard</span>
+        </a>
+        <a class="sidebar-link" th:classappend="${currentPage} == 'employees' ? ' active' : ''" th:href="@{/employees}">
+          <i class="bi bi-people"></i><span>Employees</span>
+        </a>
+        <a class="sidebar-link" th:classappend="${currentPage} == 'students' ? ' active' : ''" th:href="@{/students}">
+          <i class="bi bi-person-badge"></i><span>Students</span>
+        </a>
+        <a class="sidebar-link" th:classappend="${currentPage} == 'reports' ? ' active' : ''" th:href="@{/reports}">
+          <i class="bi bi-bar-chart"></i><span>Reports</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-mini-card mt-auto p-3">
+        <p class="text-muted small mb-1">Next live exam</p>
+        <h6 class="mb-1" th:text="${nextExamName} ?: 'No upcoming exam'">Physics 101 Final</h6>
+        <div class="d-flex justify-content-between small">
+          <span th:text="${nextExamTime} ?: '—'">08:30 AM</span>
+          <span class="status-pill"><span class="dot"></span>Prep Mode</span>
+        </div>
+      </div>
+    </aside>
+  </th:block>
+
+  <!-- Topbar fragment (simplified signature) -->
+  <th:block th:fragment="topbar(pageTitle, pageSubtitle, showAddButton)">
+    <header class="dashboard-topbar d-flex justify-content-between align-items-center px-3 py-2">
+      <div class="d-flex align-items-center gap-3">
+        <button class="btn btn-light btn-icon d-lg-none" type="button" data-sidebar-toggle aria-label="Toggle sidebar">
+          <i class="bi bi-list fs-4"></i>
+        </button>
+        <div>
+          <p class="text-uppercase text-muted small fw-semibold mb-1" 
+            th:text="${pageSubtitle != null ? pageSubtitle : 'Welcome back'}">
+            Welcome back
+          </p>
+          <h4 class="mb-0" th:text="${pageTitle} != null ? pageTitle : 'Admin Dashboard'">Admin Dashboard</h4>
+        </div>
+      </div>
+
+      <div class="topbar-actions d-flex align-items-center gap-2">
+        <div class="topbar-search d-none d-md-flex align-items-center">
+          <i class="bi bi-search"></i>
+          <input type="search" class="form-control border-0 bg-transparent shadow-none p-0" placeholder="Search..."/>
         </div>
 
-        <div class="topbar-actions">
-          <div class="topbar-search d-none d-md-flex">
-            <i class="bi bi-search"></i>
-            <input
-              type="search"
-              class="form-control border-0 bg-transparent shadow-none p-0"
-              placeholder="Search..."
-            />
-          </div>
-          <th:block th:fragment="topbar-actions">
-            <button class="btn btn-primary d-flex align-items-center gap-2">
-              <i class="bi bi-plus-lg"></i>
-              <span class="d-none d-sm-inline">New</span>
-            </button>
-          </th:block>
-        </div>
-      </header>
-    </th:block>
-  </body>
+        <!-- showAddButton controls the button visibility;
+             if you want a target or custom label, provide model attributes addButtonTarget and addButtonLabel -->
+        <button class="btn btn-primary d-flex align-items-center gap-2"
+                th:if="${showAddButton}"
+                th:attr="data-bs-toggle='modal', data-bs-target=${addButtonTarget}">
+          <i class="bi bi-plus-lg"></i>
+          <span th:text="${addButtonLabel} != null ? addButtonLabel : 'Add'">Add</span>
+        </button>
+      </div>
+    </header>
+  </th:block>
+
+  <!-- Footer fragment -->
+  <th:block th:fragment="footer">
+    <footer class="text-center py-3 small text-muted">
+      © <span th:text="${T(java.time.Year).now().value}">2025</span> GIC Online Tests
+    </footer>
+  </th:block>
+
+  <!-- small inline script to toggle sidebar, kept in layout -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script th:inline="javascript">
+    /* Layout-level DOM behavior */
+    document.addEventListener("DOMContentLoaded", function () {
+      const layout = document.querySelector(".dashboard-layout");
+      const toggles = document.querySelectorAll("[data-sidebar-toggle]");
+      toggles.forEach(function (btn) {
+        btn.addEventListener("click", function (e) {
+          e.preventDefault();
+          layout?.classList.toggle("sidebar-open");
+        });
+      });
+    });
+  </script>
+
+  <!-- placeholder: page-specific JS fragment can be passed and inserted by pages -->
+  <th:block th:if="${pageJs != null}" th:replace="${pageJs}"></th:block>
+
+</body>
 </html>

@@ -4,6 +4,7 @@ import com.gicm.student_management_system.dto.EmployeeListResponse;
 import com.gicm.student_management_system.dto.EmployeeRequest;
 import com.gicm.student_management_system.dto.EmployeeResponse;
 import com.gicm.student_management_system.dto.EmployeeStats;
+import com.gicm.student_management_system.entity.Employee;
 import com.gicm.student_management_system.service.EmployeeService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -46,7 +47,13 @@ public class EmployeeController {
     public EmployeeListResponse listEmployeesApi() {
         return employeeService.getEmployeeSnapshot();
     }
-
+    @GetMapping("/create")
+    public String createEmployeeForm(Model model) {
+        model.addAttribute("employee", new Employee()); // your DTO/command object
+        model.addAttribute("currentPage", "employees");
+        model.addAttribute("pageTitle", "Add Employee");
+        return "employees/employee-create";
+    }
     @GetMapping("/api/{id}")
     @ResponseBody
     public EmployeeResponse getEmployee(@PathVariable Long id) {

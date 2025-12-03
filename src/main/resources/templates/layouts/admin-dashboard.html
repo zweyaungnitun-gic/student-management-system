@@ -136,30 +136,19 @@
         </header>
 
         <div class="page-wrapper py-4 py-md-5 px-3 px-md-5">
-          <div th:replace="fragments/dashboard/hero :: dashboardHero"></div>
+          <div th:replace="~{fragments/dashboard/hero :: hero}"></div>
 
           <main class="container-xxl flex-grow-1">
             <div class="row g-4 align-items-stretch">
-              <section class="col-12 col-lg-7">
-                <div
-                  th:replace="fragments/dashboard/upcoming-exams :: upcomingExams"
-                ></div>
-              </section>
-
-              <aside class="col-12 col-lg-5">
-                <div th:replace="fragments/dashboard/quick-links :: quickLinks"></div>
-                <div th:replace="fragments/dashboard/support-card :: supportCard"></div>
-              </aside>
-
               <section class="col-12">
                 <div
-                  th:replace="fragments/dashboard/employee-management :: employeeManagement"
+                  th:replace="fragments/dashboard/employee-management :: employee-management"
                 ></div>
               </section>
             </div>
           </main>
 
-          <div th:replace="fragments/dashboard/footer :: dashboardFooter"></div>
+          <div th:replace="~{fragments/dashboard/footer :: footer}"></div>
         </div>
       </div>
     </div>
