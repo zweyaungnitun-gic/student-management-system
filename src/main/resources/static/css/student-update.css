@@ -95,12 +95,13 @@ body {
 
 .fixed-tabs-container {
     position: fixed;
-    top: 85px;
+    top: 82px;
     left: 0;
     right: 0;
     z-index: 999;
     background: white;
-    border-bottom: 1px solid #dee2e6;
+    /* border-bottom: 1px solid #dee2e6; */
+    box-shadow: 0 4px 6px -6px rgba(0,0,0,0.1);
 }
 
 .fixed-footer-container {
@@ -166,6 +167,7 @@ body {
     overflow-x: auto;
     white-space: nowrap;
     background: white;
+    border-bottom: 1px solid #dee2e6;
 }
 
 .nav-tabs::-webkit-scrollbar {
@@ -186,7 +188,7 @@ body {
     font-weight: 500;
     border: none;
     border-top: 3px solid transparent;
-    padding: 12px 20px;
+    padding: 12px 40px;
     margin-bottom: 0;
     display: flex;
     align-items: center;
@@ -217,7 +219,7 @@ body {
     background-color: #f8f9fa;
 }
 
-.nav-tabs .nav-link.active {
+/* .nav-tabs .nav-link.active {
     color: #6c8ae4;
     border-top: 3px solid #6c8ae4;
     background: white;
@@ -227,6 +229,17 @@ body {
     border-bottom: 1px solid white;
     position: relative;
     top: 1px;
+    z-index: 2;
+} */
+
+.nav-tabs .nav-link.active {
+    color: #6c8ae4;
+    border-color: #dee2e6 #dee2e6 #fff; 
+    border-top: 3px solid #6c8ae4;
+    background: white;
+    font-weight: 600;
+    position: relative;
+    top: 1px; 
     z-index: 2;
 }
 
