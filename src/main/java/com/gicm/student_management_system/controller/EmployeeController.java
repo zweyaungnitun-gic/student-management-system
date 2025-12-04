@@ -47,6 +47,7 @@ public class EmployeeController {
     public EmployeeListResponse listEmployeesApi() {
         return employeeService.getEmployeeSnapshot();
     }
+
     @GetMapping("/create")
     public String createEmployeeForm(Model model) {
         model.addAttribute("employee", new Employee()); // your DTO/command object
@@ -54,6 +55,7 @@ public class EmployeeController {
         model.addAttribute("pageTitle", "Add Employee");
         return "employees/employee-create";
     }
+
     @GetMapping("/api/{id}")
     @ResponseBody
     public EmployeeResponse getEmployee(@PathVariable Long id) {
@@ -79,6 +81,9 @@ public class EmployeeController {
         employeeService.deleteEmployee(id);
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping("/update")
+    public String showUpdateEmployeePage(Model model) {
+        return "employees/update";
+    }
 }
-
-
