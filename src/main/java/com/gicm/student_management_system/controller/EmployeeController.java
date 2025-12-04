@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
@@ -85,5 +86,16 @@ public class EmployeeController {
     @GetMapping("/update")
     public String showUpdateEmployeePage(Model model) {
         return "employees/update";
+    }
+
+    @GetMapping("/details")
+    public String showEmployeeDetails(
+        @RequestParam(required =false, defaultValue = "personal")String tab,
+        @RequestParam(required = false)String subTab,
+        Model model) {
+        model.addAttribute("currentTab", tab);
+        model.addAttribute("currentSubTab", subTab);
+        return "employees/details";  
+    // templates/employees/details.html
     }
 }
