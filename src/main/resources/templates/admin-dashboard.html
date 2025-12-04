@@ -21,16 +21,12 @@
       width: 100vw;
     }
 
-    /* Add this to your existing <style> section */
+
     .table tbody td a.action-icon {
       display: inline-flex;
-      /* makes icon+text inline-flex */
       align-items: center;
-      /* vertically center icon and text */
       margin-right: 8px;
-      /* spacing between buttons */
       white-space: nowrap;
-      /* prevent line break */
     }
 
 
@@ -110,6 +106,17 @@
       border-bottom: 2px solid #dee2e6;
     }
 
+    .table thead tr:nth-of-type(3) th {
+      text-align: center;
+      vertical-align: middle;
+    }
+
+    .table tbody td {
+      text-align: center;
+      vertical-align: middle;
+    }
+
+
     .table thead tr:last-child th:nth-child(1) {
       width: 3%;
     }
@@ -136,7 +143,6 @@
       width: 10%;
     }
 
-    /* 希望職種 (Desired Job Type) */
     .table thead tr:last-child th:nth-child(7) {
       width: 10%;
     }
@@ -166,7 +172,7 @@
     .table thead tr:last-child th:nth-child(7),
     .table thead tr:last-child th:nth-child(8),
     .table thead tr:last-child th:nth-child(10) {
-      width: auto;
+      width: 50px;
 
     }
 
@@ -284,7 +290,7 @@
                   </select>
                   <span style="font-size: 16px;">生徒ステータス</span>
                 </div>
-                <a id="downloadBtn" href="#" class="btn btn-success btn-sm px-4 fw-bold text-nowrap">ダウンロード</a>
+                <a id="downloadBtn" href="#" class="btn btn-success btn-sm px-4 fw-bold text-nowrap">↓ダウンロード</a>
                 <button type="submit" style="display: none;"></button>
               </form>
             </th>
@@ -293,15 +299,15 @@
 
           <tr>
 
-            <th scope="col" style="width: 5%;">生徒ID</th>
-            <th scope="col" style="width: 8%;">名前</th>
-            <th scope="col" style="width: 5%;">性別</th>
-            <th scope="col" style="width: 10%;">電話番号</th>
-            <th scope="col" style="width: 10%;">希望職種</th>
-            <th scope="col" style="width: 8%;">ステータス</th>
-            <th scope="col" style="width: 12%;">支払予定日</th>
-            <th scope="col" style="width: 12%;">支払実績日</th>
-            <th scope="col" style="width: 27%;">動作機能</th>
+            <th scope="col" style="width: 50px;">生徒ID</th>
+            <th scope="col" style="width: 100px;">名前</th>
+            <th scope="col" style="width: 80px;">性別</th>
+            <th scope="col" style="width: 100px;">電話番号</th>
+            <th scope="col" style="width: 100px;">希望職種</th>
+            <th scope="col" style="width: 80px;">ステータス</th>
+            <th scope="col" style="width: 100px;">支払予定日</th>
+            <th scope="col" style="width: 100px;">支払実績日</th>
+            <th scope="col" style="width: 120px;">動作機能</th>
           </tr>
         </thead>
 
