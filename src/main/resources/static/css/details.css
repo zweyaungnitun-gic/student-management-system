@@ -105,7 +105,7 @@ body {
 .nav-tabs .nav-link {
     font-weight: 500;
     color: #495057;
-    padding: 12px 45px;
+    padding: 12px 47px;
     border: none !important;
     background: none !important;
     display: flex;
@@ -132,58 +132,46 @@ body {
 ============================= */
 .card {
     border-radius: 10px;
+    min-height: 500px;
 }
 
 
 
 /* =============================
-   CLASS SIDEBAR LAYOUT (N5/N4)
+   VERTICAL TABS (Pills for N5/N4)
 ============================= */
-.class-layout-container {
-    display: flex;
-    gap: 30px;
-    min-height: 400px;
+/* Container for the vertical menu side */
+.vertical-tab-menu {
+    border-right: 1px solid #dee2e6;
+    padding-right: 15px;
 }
 
-.class-sidebar {
-    width: 250px;
-    flex-shrink: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-}
-
-/* Sidebar Buttons */
-.sidebar-nav-btn {
-    display: block;
-    background-color: #d7e3ec;
-    color: #1a1a1a;
-    text-decoration: none;
-    padding: 12px 0;
-    text-align: center;
+/* The vertical links */
+.nav-pills .nav-link {
+    color: #1a65ac;
     font-weight: 600;
-    font-size: 1rem;
+    text-align: left; /* Essential for vertical look */
+    padding: 12px 15px;
+    margin-bottom: 5px;
+    border-radius: 0 6px 6px 0;
     transition: all 0.2s ease;
-    border-radius: 6px;
-    border: 1px solid #c8d7e2;
+    background-color: transparent; /* Light grey background for inactive */
 }
 
-.sidebar-nav-btn:hover {
-    background-color: #c9d8e4;
-    color: #1a1a1a;
-    transform: translateX(2px);
+.nav-pills .nav-link:hover {
+    background-color: #e6f0fa;
+    color: #1a65ac;
 }
 
-/* Active Sidebar Item */
-.sidebar-nav-btn.active {
-    background-color: #1a65ac !important;
-    color: white !important;
-    font-weight: 700 !important;
-    border: 1px solid #1a65ac !important;
-    box-shadow: inset 5px 0 0 0 #ffffff;
+/* Active State - Matches your blue theme */
+.nav-pills .nav-link.active {
+    background-color: #ffffff !important;
+    color: #1a65ac !important;
+    font-weight: 700;
+    box-shadow: -5px 0 0 0 #1a65ac, 0 2px 5px rgba(0,0,0,0.05); 
+    border-radius: 0 6px 6px 0;
+    transform: translateX(3px);
 }
-
-
 
 /* =============================
    RIGHT CONTENT AREA
@@ -207,4 +195,68 @@ body {
 ============================= */
 .text-primary {
     color: #1a65ac !important;
+}
+
+/* =============================
+   PERSONAL INFO FORM STYLES
+============================= */
+.info-group {
+    display: flex;
+    margin-bottom: 10px; /* Space between rows */
+    align-items: stretch; /* Ensures label and value are same height */
+}
+
+.info-label {
+    width: 180px; /* Fixed width for the label column */
+    border: 1px solid #1a65ac; /* Theme blue border */
+    color: #333;
+    padding: 8px 12px;
+    background-color: #fff; /* White background */
+    margin-right: 10px; /* Gap between label and value */
+    font-size: 0.9rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    border-radius: 4px;
+    flex-shrink: 0; /* Prevents label from shrinking */
+}
+
+.info-value {
+    flex-grow: 1; /* Takes up remaining space */
+    border: 1px solid #ced4da; /* Standard input border color */
+    padding: 8px 12px;
+    background-color: #fff;
+    border-radius: 4px;
+    font-size: 0.95rem;
+    color: #495057;
+    min-height: 42px; /* Minimum height for consistency */
+    display: flex;
+    align-items: center;
+}
+
+.memo-area {
+    border: 1px solid #1a65ac; /* Blue border for the container */
+    padding: 15px;
+    border-radius: 6px;
+    background-color: #fff;
+    min-height: 100px;
+    width: 100%;
+}
+
+/* =============================
+   CONTACT TAB SPECIFIC
+============================= */
+/* Styles for tall rows like Address */
+.info-group.tall-row .info-label,
+.info-group.tall-row .info-value {
+    min-height: 200px;       /* Sets the height for the big boxes */
+    align-items: flex-start; /* Pushes text to the top */
+    padding-top: 15px;       /* Adds space at the top */
+}
+
+/* Ensure the wrapper for split fields (like phone numbers) fills space */
+.split-value-container {
+    flex-grow: 1;
+    display: flex;
+    gap: 15px; /* Space between the two phone number boxes */
 }
