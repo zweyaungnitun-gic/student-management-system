@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ja">
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -32,6 +32,7 @@
                                 <label for="englishName" class="col-12 col-md-4 col-form-label text-md-start fw-bold mb-2 mb-md-0">なまえ(英語)</label>
                                 <div class="col-12 col-md-8">
                                     <input type="text" class="form-control" id="englishName" 
+                                           th:value="${studentData?.englishName}"
                                            placeholder="Enter English name" required>
                                 </div>
                             </div>
@@ -40,6 +41,7 @@
                                 <label for="katakanaName" class="col-12 col-md-4 col-form-label text-md-start fw-bold mb-2 mb-md-0">なまえ(カタカな)</label>
                                 <div class="col-12 col-md-8">
                                     <input type="text" class="form-control" id="katakanaName" 
+                                           th:value="${studentData?.katakanaName}"
                                            placeholder="Enter Katakana name" required>
                                 </div>
                             </div>
@@ -47,7 +49,9 @@
                             <div class="row align-items-center mb-3">
                                 <label for="dob" class="col-12 col-md-4 col-form-label text-md-start fw-bold mb-2 mb-md-0">生年月日</label>
                                 <div class="col-12 col-md-8">
-                                    <input type="date" class="form-control" id="dob" required>
+                                    <input type="date" class="form-control" id="dob" 
+                                           th:value="${studentData?.dob}"
+                                           required>
                                 </div>
                             </div>
 
@@ -56,11 +60,13 @@
                                 <div class="col-12 col-md-8">
                                     <div class="border rounded p-2 bg-white">
                                         <div class="form-check form-check-inline">
-                                            <input class="form-check-input" type="radio" name="gender" id="genderMale" value="Male" required>
+                                            <input class="form-check-input" type="radio" name="gender" id="genderMale" value="Male" 
+                                                   th:checked="${studentData?.gender == 'Male'}" required>
                                             <label class="form-check-label" for="genderMale">男性</label>
                                         </div>
                                         <div class="form-check form-check-inline">
-                                            <input class="form-check-input" type="radio" name="gender" id="genderFemale" value="Female">
+                                            <input class="form-check-input" type="radio" name="gender" id="genderFemale" value="Female"
+                                                   th:checked="${studentData?.gender == 'Female'}">
                                             <label class="form-check-label" for="genderFemale">女性</label>
                                         </div>
                                     </div>
@@ -71,6 +77,7 @@
                                 <label for="currentAddress" class="col-12 col-md-4 col-form-label text-md-start fw-bold mb-2 mb-md-0">現在場所</label>
                                 <div class="col-12 col-md-8">
                                     <textarea class="form-control" id="currentAddress" rows="3"
+                                              th:text="${studentData?.currentAddress}"
                                               placeholder="Enter current address" required></textarea>
                                 </div>
                             </div>
@@ -79,6 +86,7 @@
                                 <label for="hometownAddress" class="col-12 col-md-4 col-form-label text-md-start fw-bold mb-2 mb-md-0">出身地住所</label>
                                 <div class="col-12 col-md-8">
                                     <textarea class="form-control" id="hometownAddress" rows="3"
+                                              th:text="${studentData?.hometownAddress}"
                                               placeholder="Enter hometown address" required></textarea>
                                 </div>
                             </div>
@@ -87,6 +95,7 @@
                                 <label for="phoneNumber" class="col-12 col-md-4 col-form-label text-md-start fw-bold mb-2 mb-md-0">電話番号</label>
                                 <div class="col-12 col-md-8">
                                     <input type="text" class="form-control" id="phoneNumber" 
+                                           th:value="${studentData?.phoneNumber}"
                                            placeholder="Enter phone number" required>
                                 </div>
                             </div>
@@ -95,6 +104,7 @@
                                 <label for="guardianPhoneNumber" class="col-12 col-md-4 col-form-label text-md-start fw-bold mb-2 mb-md-0">保護者電話番号</label>
                                 <div class="col-12 col-md-8">
                                     <input type="text" class="form-control" id="guardianPhoneNumber" 
+                                           th:value="${studentData?.guardianPhoneNumber}"
                                            placeholder="Enter guardian phone number" required>
                                 </div>
                             </div>
