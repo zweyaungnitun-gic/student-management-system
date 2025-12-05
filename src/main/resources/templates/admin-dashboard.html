@@ -14,7 +14,7 @@
 
   <style>
     body {
-      background-color: #f8f9fa;
+      background-color: white;
       padding: 0;
       margin: 0;
       min-height: 100vh;
@@ -36,14 +36,14 @@
 
     .table-responsive {
       background-color: white;
-      border-radius: 6px;
+      border-radius: 0;
       box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.05);
       width: 100%;
     }
 
     .table {
       margin-bottom: 0;
-      border-radius: 6px;
+      border-radius: 0;
       overflow: hidden;
       width: 100%;
       table-layout: auto;
@@ -54,7 +54,7 @@
       background: #0F6CBD;
       color: white;
       padding: 1rem 1.5rem;
-      border-radius: 6px 6px 0 0;
+      border-radius: 0 0 0 0;
       border-bottom: 1px solid #0a58a0;
     }
 
@@ -247,6 +247,12 @@
       border-color: #1877F2 !important;
       box-shadow: 0 0 0 0.25rem rgba(24, 119, 242, 0.25) !important;
     }
+
+    #pagination {
+      background-color: white !important;
+      padding: 0;
+      border-top: none;
+    }
   </style>
 </head>
 
@@ -351,6 +357,8 @@
 
       </table>
     </div>
+    <div id="pagination" class="d-flex justify-content-center mt-3"></div>
+
   </section>
 
 
@@ -388,6 +396,46 @@
     });
   </script>
 
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const rows = Array.from(document.querySelectorAll("#studentTableBody tr")).filter(
+        r => !r.querySelector("td[colspan]")
+      );
+
+      const rowsPerPage = 10;
+      let currentPage = 1;
+
+      function displayPage(page) {
+        currentPage = page;
+
+        const start = (page - 1) * rowsPerPage;
+        const end = start + rowsPerPage;
+
+        rows.forEach((row, index) => {
+          row.style.display = index >= start && index < end ? "" : "none";
+        });
+
+        renderPagination();
+      }
+
+      function renderPagination() {
+        const pageCount = Math.ceil(rows.length / rowsPerPage);
+        const paginationDiv = document.getElementById("pagination");
+
+        paginationDiv.innerHTML = "";
+
+        for (let i = 1; i <= pageCount; i++) {
+          const btn = document.createElement("button");
+          btn.textContent = i;
+          btn.className = `btn btn-sm mx-1 ${i === currentPage ? "btn-primary" : "btn-outline-primary"}`;
+          btn.addEventListener("click", () => displayPage(i));
+          paginationDiv.appendChild(btn);
+        }
+      }
+
+      displayPage(1);
+    });
+  </script>
 
 </body>
 
