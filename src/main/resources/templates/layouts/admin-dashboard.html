@@ -1,5 +1,6 @@
 <!doctype html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
   <head>
     <meta charset="utf-8" />
@@ -67,6 +68,14 @@
             <a class="sidebar-link" href="#">
               <i class="bi bi-bar-chart"></i>
               <span>Reports</span>
+            </a>
+            <a class="sidebar-link" th:href="@{/users}" sec:authorize="hasRole('ADMIN')">
+              <i class="bi bi-people-fill"></i>
+              <span>Users</span>
+            </a>
+            <a class="sidebar-link" th:href="@{/logout}">
+              <i class="bi bi-box-arrow-right"></i>
+              <span>Logout</span>
             </a>
           </nav>
         </div>
