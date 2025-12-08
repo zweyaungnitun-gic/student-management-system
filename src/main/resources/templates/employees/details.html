@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+
 <head>
     <title>Employee Details</title>
 
@@ -8,14 +9,14 @@
 
     <link rel="stylesheet" th:href="@{/css/details.css}">
 </head>
-<body>
 
+<body>
     <div class="fixed-header-container">
         <div class="header-bar">
             <div class="header-content">
                 <div class="header-left">
                     <a th:href="@{/dashboard}" class="back-button">
-                        <i class="bi bi-arrow-left"></i> 
+                        <i class="bi bi-arrow-left"></i>
                         <span>戻る</span>
                     </a>
                 </div>
@@ -35,49 +36,43 @@
     <div class="container mt-2">
         <ul class="nav nav-tabs" id="detailTabs">
             <li class="nav-item">
-                <a class="nav-link"
-                   th:classappend="${currentTab == 'personal'} ? ' active'"
-                   th:href="@{/employees/details(tab='personal')}">
+                <a class="nav-link" th:classappend="${currentTab == 'personal'} ? ' active'"
+                    th:href="@{/employees/details(tab='personal')}">
                     個人情報
                 </a>
             </li>
 
             <li class="nav-item">
-                <a class="nav-link"
-                   th:classappend="${currentTab == 'contact'} ? ' active'"
-                   th:href="@{/employees/details(tab='contact')}">
+                <a class="nav-link" th:classappend="${currentTab == 'contact'} ? ' active'"
+                    th:href="@{/employees/details(tab='contact')}">
                     連絡先情報
                 </a>
             </li>
 
             <li class="nav-item">
-                <a class="nav-link"
-                   th:classappend="${currentTab == 'academic'} ? ' active'"
-                   th:href="@{/employees/details(tab='academic')}">
+                <a class="nav-link" th:classappend="${currentTab == 'academic'} ? ' active'"
+                    th:href="@{/employees/details(tab='academic')}">
                     Academic情報
                 </a>
             </li>
 
             <li class="nav-item">
-                <a class="nav-link"
-                   th:classappend="${currentTab == 'n5'} ? ' active'"
-                   th:href="@{/employees/details(tab='n5')}">
+                <a class="nav-link" th:classappend="${currentTab == 'n5'} ? ' active'"
+                    th:href="@{/employees/details(tab='n5')}">
                     N5クラス情報
                 </a>
             </li>
 
             <li class="nav-item">
-                <a class="nav-link"
-                   th:classappend="${currentTab == 'n4'} ? ' active'"
-                   th:href="@{/employees/details(tab='n4')}">
+                <a class="nav-link" th:classappend="${currentTab == 'n4'} ? ' active'"
+                    th:href="@{/employees/details(tab='n4')}">
                     N4クラス情報
                 </a>
             </li>
 
             <li class="nav-item">
-                <a class="nav-link"
-                   th:classappend="${currentTab == 'interview'} ? ' active'"
-                   th:href="@{/employees/details(tab='interview')}">
+                <a class="nav-link" th:classappend="${currentTab == 'interview'} ? ' active'"
+                    th:href="@{/employees/details(tab='interview')}">
                     面接結果情報
                 </a>
             </li>
@@ -88,129 +83,132 @@
         <div class="card shadow-sm">
 
             <div th:if="${currentTab == 'personal'}" class="p-4">
-    
-    <div class="row">
-        
-        <div class="col-lg-6">
-            
-            <div class="info-group">
-                <div class="info-label">生徒名前(英語)</div>
-                <div class="info-value"> </div>
+
+                <div class="row">
+
+                    <div class="col-lg-6">
+
+                        <div class="info-group">
+                            <div class="info-label">生徒名前(英語)</div>
+                            <div class="info-value"> </div>
+                        </div>
+
+                        <div class="info-group">
+                            <div class="info-label">生徒名前(日本語)</div>
+                            <div class="info-value"> </div>
+                        </div>
+
+                        <div class="info-group">
+                            <div class="info-label">生 年 月 日</div>
+                            <div class="info-value"> </div>
+                        </div>
+
+                        <div class="info-group">
+                            <div class="info-label">性 別</div>
+                            <div class="info-value"> </div>
+                        </div>
+
+                        <div class="info-group">
+                            <div class="info-label">宗 教</div>
+                            <div class="info-value"> </div>
+                        </div>
+
+                        <div class="info-group">
+                            <div class="info-label">その他宗教</div>
+                            <div class="info-value"></div>
+                        </div>
+
+                        <div class="info-group">
+                            <div class="info-label">国民 ID 番号</div>
+                            <div class="info-value"> </div>
+                        </div>
+
+                        <div class="info-group">
+                            <div class="info-label">パスポート番号</div>
+                            <div class="info-value"></div>
+                        </div>
+
+                        <div class="info-group">
+                            <div class="info-label">父親名</div>
+                            <div class="info-value"> </div>
+                        </div>
+
+                        <div class="info-group">
+                            <div class="info-label">現在のJLPT合格ラベル</div>
+                            <div class="info-value"> </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-6">
+
+                        <div class="info-group">
+                            <div class="info-label">生徒ID</div>
+                            <div class="info-value"> </div>
+                        </div>
+
+                        <div class="info-group">
+                            <div class="info-label">合格した日本語ラベル</div>
+                            <div class="info-value"> </div>
+                        </div>
+
+                        <div class="info-group">
+                            <div class="info-label">希望職種</div>
+                            <div class="info-value"> </div>
+                        </div>
+
+                        <div class="info-group">
+                            <div class="info-label">その他希望職種</div>
+                            <div class="info-value"></div>
+                        </div>
+
+                        <div class="info-group">
+                            <div class="info-label">タバコ</div>
+                            <div class="info-value"> </div>
+                        </div>
+
+                        <div class="info-group">
+                            <div class="info-label">お酒</div>
+                            <div class="info-value"> </div>
+                        </div>
+
+                        <div class="info-group">
+                            <div class="info-label">入れ墨</div>
+                            <div class="info-value"> </div>
+                        </div>
+
+                        <div class="info-group">
+                            <div class="info-label">寮があれば入りたい</div>
+                            <div class="info-value"> </div>
+                        </div>
+
+                        <div class="info-group">
+                            <div class="info-label">日本渡航経験</div>
+                            <div class="info-value"> </div>
+                        </div>
+
+                        <div class="info-group">
+                            <div class="info-label">COE申請経験</div>
+                            <div class="info-value"> </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="row mt-3">
+                    <div class="col-12">
+                        <div class="mb-2 fw-bold">その他メモ（自由形式）</div>
+                        <textarea class="form-control memo-area" rows="4"></textarea>
+                    </div>
+                </div>
+
             </div>
-
-            <div class="info-group">
-                <div class="info-label">生徒名前(日本語)</div>
-                <div class="info-value"> </div>
-            </div>
-
-            <div class="info-group">
-                <div class="info-label">生 年 月 日</div>
-                <div class="info-value"> </div>
-            </div>
-
-            <div class="info-group">
-                <div class="info-label">性 別</div>
-                <div class="info-value"> </div>
-            </div>
-
-            <div class="info-group">
-                <div class="info-label">宗 教</div>
-                <div class="info-value"> </div>
-            </div>
-
-            <div class="info-group">
-                <div class="info-label">その他宗教</div>
-                <div class="info-value"></div> </div>
-
-            <div class="info-group">
-                <div class="info-label">国民 ID 番号</div>
-                <div class="info-value"> </div>
-            </div>
-
-            <div class="info-group">
-                <div class="info-label">パスポート番号</div>
-                <div class="info-value"></div> </div>
-
-            <div class="info-group">
-                <div class="info-label">父親名</div>
-                <div class="info-value"> </div>
-            </div>
-
-            <div class="info-group">
-                <div class="info-label">現在のJLPT合格ラベル</div>
-                <div class="info-value"> </div>
-            </div>
-        </div>
-
-        <div class="col-lg-6">
-            
-            <div class="info-group">
-                <div class="info-label">生徒ID</div>
-                <div class="info-value"> </div>
-            </div>
-
-            <div class="info-group">
-                <div class="info-label">合格した日本語ラベル</div>
-                <div class="info-value"> </div>
-            </div>
-
-            <div class="info-group">
-                <div class="info-label">希望職種</div>
-                <div class="info-value"> </div>
-            </div>
-
-            <div class="info-group">
-                <div class="info-label">その他希望職種</div>
-                <div class="info-value"></div> </div>
-
-            <div class="info-group">
-                <div class="info-label">タバコ</div>
-                <div class="info-value"> </div>
-            </div>
-
-            <div class="info-group">
-                <div class="info-label">お酒</div>
-                <div class="info-value"> </div>
-            </div>
-
-            <div class="info-group">
-                <div class="info-label">入れ墨</div>
-                <div class="info-value"> </div>
-            </div>
-
-            <div class="info-group">
-                <div class="info-label">寮があれば入りたい</div>
-                <div class="info-value"> </div>
-            </div>
-
-            <div class="info-group">
-                <div class="info-label">日本渡航経験</div>
-                <div class="info-value"> </div>
-            </div>
-
-            <div class="info-group">
-                <div class="info-label">COE申請経験</div>
-                <div class="info-value"> </div>
-            </div>
-
-        </div>
-    </div>
-
-            <div class="row mt-3">
-                <div class="col-12">
-                <div class="mb-2 fw-bold">その他メモ（自由形式）</div>
-                <textarea class="form-control memo-area" rows="4"></textarea>
-            </div>
-         </div>
-
-    </div>
 
             <div th:if="${currentTab == 'contact'}" class="p-4">
                 <div class="info-group">
                     <div class="info-label">電話番号</div>
-                        <div class="split-value-container">
-                            <div class="info-value w-50">09123456</div>
-                            <div class="info-value w-50">0125879</div>
+                    <div class="split-value-container">
+                        <div class="info-value w-50">09123456</div>
+                        <div class="info-value w-50">0125879</div>
                     </div>
                 </div>
 
@@ -223,30 +221,31 @@
                     <div class="info-label">出身地住所</div>
                     <div class="info-value">Yangon</div>
                 </div>
-        </div>
+            </div>
 
             <div th:if="${currentTab == 'academic'}" class="p-4">
                 <div class="row">
                     <div class="col-lg-6">
-            
-                    <div class="info-group">
-                        <div class="info-label">生徒の授業ステータス</div>
-                        <div class="info-value">在校</div>
-                    </div>
 
-                    <div class="info-group">
-                        <div class="info-label">学校登録日</div>
-                        <div class="info-value">12/3/2025</div>
-                    </div>
+                        <div class="info-group">
+                            <div class="info-label">生徒の授業ステータス</div>
+                            <div class="info-value">在校</div>
+                        </div>
 
-                    <div class="info-group">
-                        <div class="info-label">授業料支払予定日</div>
-                        <div class="info-value">12/10/2025</div>
-                    </div>
+                        <div class="info-group">
+                            <div class="info-label">学校登録日</div>
+                            <div class="info-value">12/3/2025</div>
+                        </div>
 
-                    <div class="info-group">
-                        <div class="info-label">授業料支払実績日</div>
-                        <div class="info-value"></div> </div>
+                        <div class="info-group">
+                            <div class="info-label">授業料支払予定日</div>
+                            <div class="info-value">12/10/2025</div>
+                        </div>
+
+                        <div class="info-group">
+                            <div class="info-label">授業料支払実績日</div>
+                            <div class="info-value"></div>
+                        </div>
 
                     </div>
                 </div>
@@ -257,26 +256,23 @@
                     <div class="col-md-3 vertical-tab-menu">
                         <div class="nav flex-column nav-pills" role="tablist" aria-orientation="vertical">
                             <a class="nav-link"
-                               th:classappend="${currentSubTab == 'general' or currentSubTab == null} ? 'active'"
-                               th:href="@{/employees/details(tab='n5', subTab='general')}">
+                                th:classappend="${currentSubTab == 'general' or currentSubTab == null} ? 'active'"
+                                th:href="@{/employees/details(tab='n5', subTab='general')}">
                                 N5クラス
                             </a>
 
-                            <a class="nav-link"
-                               th:classappend="${currentSubTab == 'class1'} ? 'active'"
-                               th:href="@{/employees/details(tab='n5', subTab='class1')}">
+                            <a class="nav-link" th:classappend="${currentSubTab == 'class1'} ? 'active'"
+                                th:href="@{/employees/details(tab='n5', subTab='class1')}">
                                 N5会話クラス①
                             </a>
 
-                            <a class="nav-link"
-                               th:classappend="${currentSubTab == 'class2'} ? 'active'"
-                               th:href="@{/employees/details(tab='n5', subTab='class2')}">
+                            <a class="nav-link" th:classappend="${currentSubTab == 'class2'} ? 'active'"
+                                th:href="@{/employees/details(tab='n5', subTab='class2')}">
                                 N5会話クラス②
                             </a>
 
-                            <a class="nav-link"
-                               th:classappend="${currentSubTab == 'class3'} ? 'active'"
-                               th:href="@{/employees/details(tab='n5', subTab='class3')}">
+                            <a class="nav-link" th:classappend="${currentSubTab == 'class3'} ? 'active'"
+                                th:href="@{/employees/details(tab='n5', subTab='class3')}">
                                 N5会話クラス③
                             </a>
                         </div>
@@ -292,11 +288,12 @@
 
                         <div th:if="${currentSubTab == 'general' or currentSubTab == null}">
                             <h5>N5クラス (General)</h5>
-                            <p class="text-muted mb-4">General information, curriculum overview, or combined stats for all N5 classes.</p>
-                            
+                            <p class="text-muted mb-4">General information, curriculum overview, or combined stats for
+                                all N5 classes.</p>
+
                             <div class="row">
                                 <div class="col-lg-6">
-                                    
+
                                     <div class="info-group">
                                         <div class="info-label">授業ステータス</div>
                                         <div class="info-value">完了 (Completed)</div>
@@ -316,7 +313,7 @@
                                         <div class="info-label">日本語テスト結果①</div>
                                         <div class="info-value">90/100</div>
                                     </div>
-                                    
+
                                     <div class="info-group">
                                         <div class="info-label">日本語テスト結果②</div>
                                         <div class="info-value">85/100</div>
@@ -328,12 +325,12 @@
                                         <div class="info-label">授業ステータス</div>
                                         <div class="info-value"></div>
                                     </div>
-                                    
+
                                     <div class="info-group" style="visibility: hidden;">
                                         <div class="info-label">担当教師</div>
                                         <div class="info-value"></div>
                                     </div>
-                                    
+
                                     <div class="info-group" style="visibility: hidden;">
                                         <div class="info-label">出席率</div>
                                         <div class="info-value"></div>
@@ -343,13 +340,13 @@
                                         <div class="info-label">日本語テスト結果③</div>
                                         <div class="info-value">92/100</div>
                                     </div>
-                                    
+
                                     <div class="info-group">
                                         <div class="info-label">日本語テスト結果④</div>
                                         <div class="info-value">88/100</div>
                                     </div>
                                 </div>
-                                
+
                                 <div class="col-12 mt-3">
                                     <div class="mb-2 fw-bold">教師所感</div>
                                     <div class="info-value tall-row">非常に熱心で、課題も期限内に提出しています。会話力も上達しており、今後が期待できます。</div>
@@ -360,95 +357,95 @@
                         <div th:if="${currentSubTab == 'class1'}">
                             <div class="row font-inter">
                                 <div class="col-12">
-                                <div class="info-group">
-                                    <div class="info-label">授業ステータス</div>
-                                    <div class="info-value"></div>
-                                </div>
+                                    <div class="info-group">
+                                        <div class="info-label">授業ステータス</div>
+                                        <div class="info-value"></div>
+                                    </div>
 
-                                <div class="info-group">
-                                    <div class="info-label">担当教師</div>
-                                    <div class="info-value"></div>
-                                </div>
+                                    <div class="info-group">
+                                        <div class="info-label">担当教師</div>
+                                        <div class="info-value"></div>
+                                    </div>
 
-                                <div class="info-group">
-                                    <div class="info-label">出席率</div>
-                                    <div class="info-value"></div>
-                                </div>
+                                    <div class="info-group">
+                                        <div class="info-label">出席率</div>
+                                        <div class="info-value"></div>
+                                    </div>
 
-                                <div class="info-group mb-4">
-                                    <div class="info-label">日本語テスト結果</div>
-                                    <div class="info-value"></div>
-                                </div>
+                                    <div class="info-group mb-4">
+                                        <div class="info-label">日本語テスト結果</div>
+                                        <div class="info-value"></div>
+                                    </div>
 
-                                <div class="info-group tall-row">
-                                    <div class="info-label">教師所感</div>
-                                    <div class="info-value"></div>
+                                    <div class="info-group tall-row">
+                                        <div class="info-label">教師所感</div>
+                                        <div class="info-value"></div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
 
                         <div th:if="${currentSubTab == 'class2'}">
                             <div class="row font-inter">
                                 <div class="col-12">
-                                <div class="info-group">
-                                    <div class="info-label">授業ステータス</div>
-                                    <div class="info-value"></div>
-                                </div>
+                                    <div class="info-group">
+                                        <div class="info-label">授業ステータス</div>
+                                        <div class="info-value"></div>
+                                    </div>
 
-                                <div class="info-group">
-                                    <div class="info-label">担当教師</div>
-                                    <div class="info-value"></div>
-                                </div>
+                                    <div class="info-group">
+                                        <div class="info-label">担当教師</div>
+                                        <div class="info-value"></div>
+                                    </div>
 
-                                <div class="info-group">
-                                    <div class="info-label">出席率</div>
-                                    <div class="info-value"></div>
-                                </div>
+                                    <div class="info-group">
+                                        <div class="info-label">出席率</div>
+                                        <div class="info-value"></div>
+                                    </div>
 
-                                <div class="info-group mb-4">
-                                    <div class="info-label">日本語テスト結果</div>
-                                    <div class="info-value"></div>
-                                </div>
+                                    <div class="info-group mb-4">
+                                        <div class="info-label">日本語テスト結果</div>
+                                        <div class="info-value"></div>
+                                    </div>
 
-                                <div class="info-group tall-row">
-                                    <div class="info-label">教師所感</div>
-                                    <div class="info-value"></div>
+                                    <div class="info-group tall-row">
+                                        <div class="info-label">教師所感</div>
+                                        <div class="info-value"></div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
 
                         <div th:if="${currentSubTab == 'class3'}">
                             <div class="row font-inter">
                                 <div class="col-12">
-                                <div class="info-group">
-                                    <div class="info-label">授業ステータス</div>
-                                    <div class="info-value"></div>
-                                </div>
+                                    <div class="info-group">
+                                        <div class="info-label">授業ステータス</div>
+                                        <div class="info-value"></div>
+                                    </div>
 
-                                <div class="info-group">
-                                    <div class="info-label">担当教師</div>
-                                    <div class="info-value"></div>
-                                </div>
+                                    <div class="info-group">
+                                        <div class="info-label">担当教師</div>
+                                        <div class="info-value"></div>
+                                    </div>
 
-                                <div class="info-group">
-                                    <div class="info-label">出席率</div>
-                                    <div class="info-value"></div>
-                                </div>
+                                    <div class="info-group">
+                                        <div class="info-label">出席率</div>
+                                        <div class="info-value"></div>
+                                    </div>
 
-                                <div class="info-group mb-4">
-                                    <div class="info-label">日本語テスト結果</div>
-                                    <div class="info-value"></div>
-                                </div>
+                                    <div class="info-group mb-4">
+                                        <div class="info-label">日本語テスト結果</div>
+                                        <div class="info-value"></div>
+                                    </div>
 
-                                <div class="info-group tall-row">
-                                    <div class="info-label">教師所感</div>
-                                    <div class="info-value"></div>
+                                    <div class="info-group tall-row">
+                                        <div class="info-label">教師所感</div>
+                                        <div class="info-value"></div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
                     </div>
                 </div>
             </div>
@@ -457,26 +454,23 @@
                     <div class="col-md-3 vertical-tab-menu">
                         <div class="nav flex-column nav-pills" role="tablist" aria-orientation="vertical">
                             <a class="nav-link"
-                               th:classappend="${currentSubTab == 'general' or currentSubTab == null} ? 'active'"
-                               th:href="@{/employees/details(tab='n4', subTab='general')}">
+                                th:classappend="${currentSubTab == 'general' or currentSubTab == null} ? 'active'"
+                                th:href="@{/employees/details(tab='n4', subTab='general')}">
                                 N4クラス
                             </a>
 
-                            <a class="nav-link"
-                               th:classappend="${currentSubTab == 'class1'} ? 'active'"
-                               th:href="@{/employees/details(tab='n4', subTab='class1')}">
+                            <a class="nav-link" th:classappend="${currentSubTab == 'class1'} ? 'active'"
+                                th:href="@{/employees/details(tab='n4', subTab='class1')}">
                                 N4会話クラス①
                             </a>
 
-                            <a class="nav-link"
-                               th:classappend="${currentSubTab == 'class2'} ? 'active'"
-                               th:href="@{/employees/details(tab='n4', subTab='class2')}">
+                            <a class="nav-link" th:classappend="${currentSubTab == 'class2'} ? 'active'"
+                                th:href="@{/employees/details(tab='n4', subTab='class2')}">
                                 N4会話クラス②
                             </a>
 
-                            <a class="nav-link"
-                               th:classappend="${currentSubTab == 'class3'} ? 'active'"
-                               th:href="@{/employees/details(tab='n4', subTab='class3')}">
+                            <a class="nav-link" th:classappend="${currentSubTab == 'class3'} ? 'active'"
+                                th:href="@{/employees/details(tab='n4', subTab='class3')}">
                                 N4会話クラス③
                             </a>
                         </div>
@@ -489,14 +483,14 @@
                             <span th:if="${currentSubTab == 'class2'}">N4会話クラス②情報詳細</span>
                             <span th:if="${currentSubTab == 'class3'}">N4会話クラス③情報詳細</span>
                         </h4>
-                        
+
                         <div th:if="${currentSubTab == 'general' or currentSubTab == null}">
                             <h5>N4クラス (General)</h5>
                             <p class="text-muted mb-4">General information for all N4 classes.</p>
 
                             <div class="row">
                                 <div class="col-lg-6">
-                                    
+
                                     <div class="info-group">
                                         <div class="info-label">授業ステータス</div>
                                         <div class="info-value">進行中 (In Progress)</div>
@@ -516,7 +510,7 @@
                                         <div class="info-label">日本語テスト結果①</div>
                                         <div class="info-value">88/100</div>
                                     </div>
-                                    
+
                                     <div class="info-group">
                                         <div class="info-label">日本語テスト結果②</div>
                                         <div class="info-value">79/100</div>
@@ -528,12 +522,12 @@
                                         <div class="info-label">授業ステータス</div>
                                         <div class="info-value"></div>
                                     </div>
-                                    
+
                                     <div class="info-group" style="visibility: hidden;">
                                         <div class="info-label">担当教師</div>
                                         <div class="info-value"></div>
                                     </div>
-                                    
+
                                     <div class="info-group" style="visibility: hidden;">
                                         <div class="info-label">出席率</div>
                                         <div class="info-value"></div>
@@ -543,16 +537,17 @@
                                         <div class="info-label">日本語テスト結果③</div>
                                         <div class="info-value">85/100</div>
                                     </div>
-                                    
+
                                     <div class="info-group">
                                         <div class="info-label">日本語テスト結果④</div>
                                         <div class="info-value">81/100</div>
                                     </div>
                                 </div>
-                                
+
                                 <div class="col-12 mt-3">
                                     <div class="mb-2 fw-bold">教師所感</div>
-                                    <div class="info-value tall-row">N5で学んだ基礎を活かし、積極的に学習に取り組んでいます。漢字の習得にやや苦戦していますが、努力を続けています。</div>
+                                    <div class="info-value tall-row">
+                                        N5で学んだ基礎を活かし、積極的に学習に取り組んでいます。漢字の習得にやや苦戦していますが、努力を続けています。</div>
                                 </div>
                             </div>
                         </div>
@@ -560,112 +555,112 @@
                         <div th:if="${currentSubTab == 'class1'}">
                             <div class="row font-inter">
                                 <div class="col-12">
-                                <div class="info-group">
-                                    <div class="info-label">授業ステータス</div>
-                                    <div class="info-value"></div>
-                                </div>
+                                    <div class="info-group">
+                                        <div class="info-label">授業ステータス</div>
+                                        <div class="info-value"></div>
+                                    </div>
 
-                                <div class="info-group">
-                                    <div class="info-label">担当教師</div>
-                                    <div class="info-value"></div>
-                                </div>
+                                    <div class="info-group">
+                                        <div class="info-label">担当教師</div>
+                                        <div class="info-value"></div>
+                                    </div>
 
-                                <div class="info-group">
-                                    <div class="info-label">出席率</div>
-                                    <div class="info-value"></div>
-                                </div>
+                                    <div class="info-group">
+                                        <div class="info-label">出席率</div>
+                                        <div class="info-value"></div>
+                                    </div>
 
-                                <div class="info-group mb-4">
-                                    <div class="info-label">日本語テスト結果</div>
-                                    <div class="info-value"></div>
-                                </div>
+                                    <div class="info-group mb-4">
+                                        <div class="info-label">日本語テスト結果</div>
+                                        <div class="info-value"></div>
+                                    </div>
 
-                                <div class="info-group tall-row">
-                                    <div class="info-label">教師所感</div>
-                                    <div class="info-value"></div>
+                                    <div class="info-group tall-row">
+                                        <div class="info-label">教師所感</div>
+                                        <div class="info-value"></div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
 
                         <div th:if="${currentSubTab == 'class2'}">
                             <div class="row font-inter">
                                 <div class="col-12">
-                                <div class="info-group">
-                                    <div class="info-label">授業ステータス</div>
-                                    <div class="info-value"></div>
-                                </div>
+                                    <div class="info-group">
+                                        <div class="info-label">授業ステータス</div>
+                                        <div class="info-value"></div>
+                                    </div>
 
-                                <div class="info-group">
-                                    <div class="info-label">担当教師</div>
-                                    <div class="info-value"></div>
-                                </div>
+                                    <div class="info-group">
+                                        <div class="info-label">担当教師</div>
+                                        <div class="info-value"></div>
+                                    </div>
 
-                                <div class="info-group">
-                                    <div class="info-label">出席率</div>
-                                    <div class="info-value"></div>
-                                </div>
+                                    <div class="info-group">
+                                        <div class="info-label">出席率</div>
+                                        <div class="info-value"></div>
+                                    </div>
 
-                                <div class="info-group mb-4">
-                                    <div class="info-label">日本語テスト結果</div>
-                                    <div class="info-value"></div>
-                                </div>
+                                    <div class="info-group mb-4">
+                                        <div class="info-label">日本語テスト結果</div>
+                                        <div class="info-value"></div>
+                                    </div>
 
-                                <div class="info-group tall-row">
-                                    <div class="info-label">教師所感</div>
-                                    <div class="info-value"></div>
+                                    <div class="info-group tall-row">
+                                        <div class="info-label">教師所感</div>
+                                        <div class="info-value"></div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
 
                         <div th:if="${currentSubTab == 'class3'}">
                             <div class="row font-inter">
                                 <div class="col-12">
-                                <div class="info-group">
-                                    <div class="info-label">授業ステータス</div>
-                                    <div class="info-value"></div>
-                                </div>
+                                    <div class="info-group">
+                                        <div class="info-label">授業ステータス</div>
+                                        <div class="info-value"></div>
+                                    </div>
 
-                                <div class="info-group">
-                                    <div class="info-label">担当教師</div>
-                                    <div class="info-value"></div>
-                                </div>
+                                    <div class="info-group">
+                                        <div class="info-label">担当教師</div>
+                                        <div class="info-value"></div>
+                                    </div>
 
-                                <div class="info-group">
-                                    <div class="info-label">出席率</div>
-                                    <div class="info-value"></div>
-                                </div>
+                                    <div class="info-group">
+                                        <div class="info-label">出席率</div>
+                                        <div class="info-value"></div>
+                                    </div>
 
-                                <div class="info-group mb-4">
-                                    <div class="info-label">日本語テスト結果</div>
-                                    <div class="info-value"></div>
-                                </div>
+                                    <div class="info-group mb-4">
+                                        <div class="info-label">日本語テスト結果</div>
+                                        <div class="info-value"></div>
+                                    </div>
 
-                                <div class="info-group tall-row">
-                                    <div class="info-label">教師所感</div>
-                                    <div class="info-value"></div>
+                                    <div class="info-group tall-row">
+                                        <div class="info-label">教師所感</div>
+                                        <div class="info-value"></div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
                     </div>
                 </div>
             </div>
             <div th:if="${currentTab == 'interview'}" class="p-4">
                 <h4 class="text-primary border-bottom pb-2 mb-4">面接結果情報</h4>
-                
+
                 <div class="mb-4">
                     <div class="mb-2 fw-bold border-bottom pb-1">一回目面接結果メモ</div>
                     <textarea class="form-control" rows="6" readonly style="border-color: #ced4da;">
-                    
+
                     </textarea>
                 </div>
 
                 <div class="mb-4">
                     <div class="mb-2 fw-bold border-bottom pb-1">二回目面接結果メモ</div>
                     <textarea class="form-control" rows="6" readonly style="border-color: #ced4da;">
-                        
+
                     </textarea>
                 </div>
 
@@ -680,8 +675,7 @@
 
             <div th:unless="${currentTab == 'personal' or currentTab == 'contact' 
                 or currentTab == 'academic' or currentTab == 'n5' or currentTab == 'n4' 
-                or currentTab == 'interview'}"
-                 class="p-4">
+                or currentTab == 'interview'}" class="p-4">
                 <h4 class="text-muted">Select a tab to view details.</h4>
             </div>
 
@@ -690,4 +684,5 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
+
 </html>

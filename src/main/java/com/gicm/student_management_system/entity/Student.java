@@ -109,4 +109,7 @@ public class Student {
     private String status;
     // 在籍状況（在校・卒業・途中退校）
 
+    @OneToOne(mappedBy = "student", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private N5Class N5Class;
+
 }

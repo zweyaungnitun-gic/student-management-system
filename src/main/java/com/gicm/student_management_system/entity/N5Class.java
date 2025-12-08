@@ -1,0 +1,90 @@
+package com.gicm.student_management_system.entity;
+
+import jakarta.persistence.*;
+import lombok.*;
+
+@Entity
+@Table(name = "n5_class")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class N5Class {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "student_id", referencedColumnName = "id")
+    private Student student;
+
+    private String n5ClassTeacher;
+    // 担当教師
+
+    private String n5ClassAttendance;
+    // 出席率
+    
+    // The 4 Test Result Boxes
+    private String n5ClassTestResult1;
+    // 日本語テスト結果 1
+
+    private String n5ClassTestResult2;
+    // 日本語テスト結果 2
+
+    private String n5ClassTestResult3;
+    // 日本語テスト結果 3
+
+    private String n5ClassTestResult4;
+    // 日本語テスト結果 4
+
+    @Column(length = 2000)
+    private String n5ClassFeedback;
+    // 教師所感
+
+    // ==========================================
+    
+    private String n5Class1Teacher;
+    // クラス① 担当教師
+
+    private String n5Class1AttendanceRate;
+    // クラス① 出席率
+
+    private String n5Class1TestResult;
+    // クラス① 日本語テスト結果
+
+    @Column(length = 2000)
+    private String n5Class1TeacherFeedback;
+    // クラス① 教師所感
+
+    // ==========================================
+
+    private String n5Class2Teacher;
+    // クラス② 担当教師
+
+    private String n5Class2AttendanceRate;
+    // クラス② 出席率
+
+    private String n5Class2TestResult;
+    // クラス② 日本語テスト結果
+
+    @Column(length = 2000)
+    private String n5Class2TeacherFeedback;
+    // クラス② 教師所感
+    
+    // ==========================================
+
+    private String n5Class3Teacher;
+    // クラス③ 担当教師
+
+    private String n5Class3AttendanceRate;
+    // クラス③ 出席率
+
+    private String n5Class3TestResult;
+    // クラス③ 日本語テスト結果
+
+    @Column(length = 2000)
+    private String n5Class3TeacherFeedback;
+    // クラス③ 教師所感
+}
