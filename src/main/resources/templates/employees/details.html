@@ -283,31 +283,175 @@
                     </div>
 
                     <div class="col-md-9 ps-md-4">
-                        <h4 class="text-primary border-bottom pb-2 mb-3">N5クラス情報</h4>
+                        <h4 class="text-primary border-bottom pb-2 mb-3">
+                            <span th:if="${currentSubTab == 'general' or currentSubTab == null}">N5クラス情報</span>
+                            <span th:if="${currentSubTab == 'class1'}">N5会話クラス①情報詳細</span>
+                            <span th:if="${currentSubTab == 'class2'}">N5会話クラス②情報詳細</span>
+                            <span th:if="${currentSubTab == 'class3'}">N5会話クラス③情報詳細</span>
+                        </h4>
 
                         <div th:if="${currentSubTab == 'general' or currentSubTab == null}">
                             <h5>N5クラス (General)</h5>
-                            <p>General information, curriculum overview, or combined stats for all N5 classes.</p>
+                            <p class="text-muted mb-4">General information, curriculum overview, or combined stats for all N5 classes.</p>
+                            
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    
+                                    <div class="info-group">
+                                        <div class="info-label">授業ステータス</div>
+                                        <div class="info-value">完了 (Completed)</div>
+                                    </div>
+
+                                    <div class="info-group">
+                                        <div class="info-label">担当教師</div>
+                                        <div class="info-value">田中 先生</div>
+                                    </div>
+
+                                    <div class="info-group">
+                                        <div class="info-label">出席率</div>
+                                        <div class="info-value">95.0%</div>
+                                    </div>
+
+                                    <div class="info-group">
+                                        <div class="info-label">日本語テスト結果①</div>
+                                        <div class="info-value">90/100</div>
+                                    </div>
+                                    
+                                    <div class="info-group">
+                                        <div class="info-label">日本語テスト結果②</div>
+                                        <div class="info-value">85/100</div>
+                                    </div>
+                                </div>
+
+                                <div class="col-lg-6">
+                                    <div class="info-group" style="visibility: hidden;">
+                                        <div class="info-label">授業ステータス</div>
+                                        <div class="info-value"></div>
+                                    </div>
+                                    
+                                    <div class="info-group" style="visibility: hidden;">
+                                        <div class="info-label">担当教師</div>
+                                        <div class="info-value"></div>
+                                    </div>
+                                    
+                                    <div class="info-group" style="visibility: hidden;">
+                                        <div class="info-label">出席率</div>
+                                        <div class="info-value"></div>
+                                    </div>
+
+                                    <div class="info-group">
+                                        <div class="info-label">日本語テスト結果③</div>
+                                        <div class="info-value">92/100</div>
+                                    </div>
+                                    
+                                    <div class="info-group">
+                                        <div class="info-label">日本語テスト結果④</div>
+                                        <div class="info-value">88/100</div>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-12 mt-3">
+                                    <div class="mb-2 fw-bold">教師所感</div>
+                                    <div class="info-value tall-row">非常に熱心で、課題も期限内に提出しています。会話力も上達しており、今後が期待できます。</div>
+                                </div>
+                            </div>
                         </div>
 
                         <div th:if="${currentSubTab == 'class1'}">
-                            <h5>N5会話クラス① Details</h5>
-                            <p>Specific details for Class 1.</p>
+                            <div class="row font-inter">
+                                <div class="col-12">
+                                <div class="info-group">
+                                    <div class="info-label">授業ステータス</div>
+                                    <div class="info-value"></div>
+                                </div>
+
+                                <div class="info-group">
+                                    <div class="info-label">担当教師</div>
+                                    <div class="info-value"></div>
+                                </div>
+
+                                <div class="info-group">
+                                    <div class="info-label">出席率</div>
+                                    <div class="info-value"></div>
+                                </div>
+
+                                <div class="info-group mb-4">
+                                    <div class="info-label">日本語テスト結果</div>
+                                    <div class="info-value"></div>
+                                </div>
+
+                                <div class="info-group tall-row">
+                                    <div class="info-label">教師所感</div>
+                                    <div class="info-value"></div>
+                                </div>
+                            </div>
                         </div>
+                    </div>
 
                         <div th:if="${currentSubTab == 'class2'}">
-                            <h5>N5会話クラス② Details</h5>
-                            <p>Specific details for Class 2.</p>
+                            <div class="row font-inter">
+                                <div class="col-12">
+                                <div class="info-group">
+                                    <div class="info-label">授業ステータス</div>
+                                    <div class="info-value"></div>
+                                </div>
+
+                                <div class="info-group">
+                                    <div class="info-label">担当教師</div>
+                                    <div class="info-value"></div>
+                                </div>
+
+                                <div class="info-group">
+                                    <div class="info-label">出席率</div>
+                                    <div class="info-value"></div>
+                                </div>
+
+                                <div class="info-group mb-4">
+                                    <div class="info-label">日本語テスト結果</div>
+                                    <div class="info-value"></div>
+                                </div>
+
+                                <div class="info-group tall-row">
+                                    <div class="info-label">教師所感</div>
+                                    <div class="info-value"></div>
+                                </div>
+                            </div>
                         </div>
+                    </div>
 
                         <div th:if="${currentSubTab == 'class3'}">
-                            <h5>N5会話クラス③ Details</h5>
-                            <p>Specific details for Class 3.</p>
+                            <div class="row font-inter">
+                                <div class="col-12">
+                                <div class="info-group">
+                                    <div class="info-label">授業ステータス</div>
+                                    <div class="info-value"></div>
+                                </div>
+
+                                <div class="info-group">
+                                    <div class="info-label">担当教師</div>
+                                    <div class="info-value"></div>
+                                </div>
+
+                                <div class="info-group">
+                                    <div class="info-label">出席率</div>
+                                    <div class="info-value"></div>
+                                </div>
+
+                                <div class="info-group mb-4">
+                                    <div class="info-label">日本語テスト結果</div>
+                                    <div class="info-value"></div>
+                                </div>
+
+                                <div class="info-group tall-row">
+                                    <div class="info-label">教師所感</div>
+                                    <div class="info-value"></div>
+                                </div>
+                            </div>
                         </div>
+                    </div>
                     </div>
                 </div>
             </div>
-
             <div th:if="${currentTab == 'n4'}" class="p-4">
                 <div class="row">
                     <div class="col-md-3 vertical-tab-menu">
@@ -339,31 +483,175 @@
                     </div>
 
                     <div class="col-md-9 ps-md-4">
-                        <h4 class="text-primary border-bottom pb-2 mb-3">N4クラス情報</h4>
-
+                        <h4 class="text-primary border-bottom pb-2 mb-3">
+                            <span th:if="${currentSubTab == 'general' or currentSubTab == null}">N4クラス情報</span>
+                            <span th:if="${currentSubTab == 'class1'}">N4会話クラス①情報詳細</span>
+                            <span th:if="${currentSubTab == 'class2'}">N4会話クラス②情報詳細</span>
+                            <span th:if="${currentSubTab == 'class3'}">N4会話クラス③情報詳細</span>
+                        </h4>
+                        
                         <div th:if="${currentSubTab == 'general' or currentSubTab == null}">
                             <h5>N4クラス (General)</h5>
-                            <p>General information for all N4 classes.</p>
+                            <p class="text-muted mb-4">General information for all N4 classes.</p>
+
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    
+                                    <div class="info-group">
+                                        <div class="info-label">授業ステータス</div>
+                                        <div class="info-value">進行中 (In Progress)</div>
+                                    </div>
+
+                                    <div class="info-group">
+                                        <div class="info-label">担当教師</div>
+                                        <div class="info-value">佐藤 先生</div>
+                                    </div>
+
+                                    <div class="info-group">
+                                        <div class="info-label">出席率</div>
+                                        <div class="info-value">92.5%</div>
+                                    </div>
+
+                                    <div class="info-group">
+                                        <div class="info-label">日本語テスト結果①</div>
+                                        <div class="info-value">88/100</div>
+                                    </div>
+                                    
+                                    <div class="info-group">
+                                        <div class="info-label">日本語テスト結果②</div>
+                                        <div class="info-value">79/100</div>
+                                    </div>
+                                </div>
+
+                                <div class="col-lg-6">
+                                    <div class="info-group" style="visibility: hidden;">
+                                        <div class="info-label">授業ステータス</div>
+                                        <div class="info-value"></div>
+                                    </div>
+                                    
+                                    <div class="info-group" style="visibility: hidden;">
+                                        <div class="info-label">担当教師</div>
+                                        <div class="info-value"></div>
+                                    </div>
+                                    
+                                    <div class="info-group" style="visibility: hidden;">
+                                        <div class="info-label">出席率</div>
+                                        <div class="info-value"></div>
+                                    </div>
+
+                                    <div class="info-group">
+                                        <div class="info-label">日本語テスト結果③</div>
+                                        <div class="info-value">85/100</div>
+                                    </div>
+                                    
+                                    <div class="info-group">
+                                        <div class="info-label">日本語テスト結果④</div>
+                                        <div class="info-value">81/100</div>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-12 mt-3">
+                                    <div class="mb-2 fw-bold">教師所感</div>
+                                    <div class="info-value tall-row">N5で学んだ基礎を活かし、積極的に学習に取り組んでいます。漢字の習得にやや苦戦していますが、努力を続けています。</div>
+                                </div>
+                            </div>
                         </div>
 
                         <div th:if="${currentSubTab == 'class1'}">
-                            <h5>N4会話クラス① Details</h5>
-                            <p>Details for N4 Class 1.</p>
+                            <div class="row font-inter">
+                                <div class="col-12">
+                                <div class="info-group">
+                                    <div class="info-label">授業ステータス</div>
+                                    <div class="info-value"></div>
+                                </div>
+
+                                <div class="info-group">
+                                    <div class="info-label">担当教師</div>
+                                    <div class="info-value"></div>
+                                </div>
+
+                                <div class="info-group">
+                                    <div class="info-label">出席率</div>
+                                    <div class="info-value"></div>
+                                </div>
+
+                                <div class="info-group mb-4">
+                                    <div class="info-label">日本語テスト結果</div>
+                                    <div class="info-value"></div>
+                                </div>
+
+                                <div class="info-group tall-row">
+                                    <div class="info-label">教師所感</div>
+                                    <div class="info-value"></div>
+                                </div>
+                            </div>
                         </div>
+                    </div>
 
                         <div th:if="${currentSubTab == 'class2'}">
-                            <h5>N4会話クラス② Details</h5>
-                            <p>Details for N4 Class 2.</p>
+                            <div class="row font-inter">
+                                <div class="col-12">
+                                <div class="info-group">
+                                    <div class="info-label">授業ステータス</div>
+                                    <div class="info-value"></div>
+                                </div>
+
+                                <div class="info-group">
+                                    <div class="info-label">担当教師</div>
+                                    <div class="info-value"></div>
+                                </div>
+
+                                <div class="info-group">
+                                    <div class="info-label">出席率</div>
+                                    <div class="info-value"></div>
+                                </div>
+
+                                <div class="info-group mb-4">
+                                    <div class="info-label">日本語テスト結果</div>
+                                    <div class="info-value"></div>
+                                </div>
+
+                                <div class="info-group tall-row">
+                                    <div class="info-label">教師所感</div>
+                                    <div class="info-value"></div>
+                                </div>
+                            </div>
                         </div>
+                    </div>
 
                         <div th:if="${currentSubTab == 'class3'}">
-                            <h5>N4会話クラス③ Details</h5>
-                            <p>Details for N4 Class 3.</p>
+                            <div class="row font-inter">
+                                <div class="col-12">
+                                <div class="info-group">
+                                    <div class="info-label">授業ステータス</div>
+                                    <div class="info-value"></div>
+                                </div>
+
+                                <div class="info-group">
+                                    <div class="info-label">担当教師</div>
+                                    <div class="info-value"></div>
+                                </div>
+
+                                <div class="info-group">
+                                    <div class="info-label">出席率</div>
+                                    <div class="info-value"></div>
+                                </div>
+
+                                <div class="info-group mb-4">
+                                    <div class="info-label">日本語テスト結果</div>
+                                    <div class="info-value"></div>
+                                </div>
+
+                                <div class="info-group tall-row">
+                                    <div class="info-label">教師所感</div>
+                                    <div class="info-value"></div>
+                                </div>
+                            </div>
                         </div>
+                    </div>
                     </div>
                 </div>
             </div>
-
             <div th:if="${currentTab == 'interview'}" class="p-4">
                 <h4 class="text-primary border-bottom pb-2 mb-4">面接結果情報</h4>
                 

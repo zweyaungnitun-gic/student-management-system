@@ -22,7 +22,6 @@ body {
 }
 
 .header-bar {
-    /* Gradient color from your code snippet */
     background: linear-gradient(135deg, #4b6cb7 0%, #182848 100%);
     color: white;
     padding: 15px 25px;
@@ -88,7 +87,7 @@ body {
 /* Student ID Badge Styles */
 .student-id-badge {
     background-color: white;
-    color: #1a65ac; /* Using your existing primary color */
+    color: #1a65ac; 
     padding: 5px 10px;
     border-radius: 5px;
     font-weight: 700;
@@ -150,7 +149,7 @@ body {
 .nav-pills .nav-link {
     color: #1a65ac;
     font-weight: 600;
-    text-align: left; /* Essential for vertical look */
+    text-align: left; 
     padding: 12px 15px;
     margin-bottom: 5px;
     border-radius: 0 6px 6px 0;
@@ -163,7 +162,7 @@ body {
     color: #1a65ac;
 }
 
-/* Active State - Matches your blue theme */
+/* Active State - Matches blue theme */
 .nav-pills .nav-link.active {
     background-color: #ffffff !important;
     color: #1a65ac !important;
@@ -218,7 +217,7 @@ body {
     display: flex;
     align-items: center;
     border-radius: 4px;
-    flex-shrink: 0; /* Prevents label from shrinking */
+    flex-shrink: 0; 
 }
 
 .info-value {
