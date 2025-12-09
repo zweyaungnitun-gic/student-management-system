@@ -25,7 +25,7 @@
       <div class="header-right">
         <div class="student-id-badge">
           <i class="fas fa-id-badge"></i>
-          <span th:text="${student.idNumber != null ? student.idNumber : 'Std. ID'}">Std. ID</span>
+          <span th:text="${student.studentId != null ? student.studentId : ('STU' + student.id)}">Std. ID</span>
         </div>
       </div>
     </div>
@@ -46,6 +46,10 @@
   <div class="scrollable-content">
     <form id="studentUpdateForm" th:action="@{/students/update}" th:object="${student}" method="post">
       <input type="hidden" th:field="*{id}"/>
+      <input type="hidden" th:if="${student.n5Class != null}" th:field="*{n5Class.id}"/>
+      <input type="hidden" th:if="${student.n4Class != null}" th:field="*{n4Class.id}"/>
+      <input type="hidden" th:if="${student.interviewNotes != null}" th:field="*{interviewNotes.id}"/>
+      
       <div class="tab-content" id="studentTabContent">
 
         <!-- Tab-1 -->
@@ -54,22 +58,22 @@
             <div class="row g-3">
               <div class="col-md-6">
                 <label class="form-label">生徒ID</label>
-                <input type="text" class="form-control" th:field="*{idNumber}" readonly style="background-color: #e9ecef;"/>
+                <input type="text" class="form-control" th:field="*{studentId}" placeholder="STU001" />
               </div>
               <div class="col-md-6"></div>
 
               <div class="col-md-6">
                 <label class="form-label">なまえ（英語）</label>
-                <input type="text" class="form-control" th:field="*{studentName}"/>
+                <input type="text" class="form-control" th:field="*{studentName}" required />
               </div>
               <div class="col-md-6">
                 <label class="form-label">なまえ（カタカナ）</label>
-                <input type="text" class="form-control" th:field="*{nameInJapanese}"/>
+                <input type="text" class="form-control" th:field="*{nameInJapanese}" />
               </div>
 
               <div class="col-md-6">
                 <label class="form-label">生年月日</label>
-                <input type="date" class="form-control" th:field="*{dateOfBirth}"/>
+                <input type="date" class="form-control" th:field="*{dateOfBirth}" />
               </div>
               <div class="col-md-6">
                 <label class="form-label">性別</label>
@@ -82,30 +86,30 @@
 
               <div class="col-md-6">
                 <label class="form-label">父親名（ちちおや めい）</label>
-                <input type="text" class="form-control" th:field="*{fatherName}"/>
+                <input type="text" class="form-control" th:field="*{fatherName}" />
               </div>
 
               <div class="col-md-6">
                 <label class="form-label">連絡先(TEL, Viber)</label>
-                <input type="text" class="form-control" th:field="*{contactViber}"/>
+                <input type="text" class="form-control" th:field="*{contactViber}" />
               </div>
 
               <div class="col-md-6">
                 <label class="form-label">国民 ID 番号</label>
-                <input type="text" class="form-control" th:field="*{nationalID}"/>
+                <input type="text" class="form-control" th:field="*{nationalID}" />
               </div>
               <div class="col-md-6">
                 <label class="form-label">パスポート番号</label>
-                <input type="text" class="form-control" th:field="*{passportNumber}"/>
+                <input type="text" class="form-control" th:field="*{passportNumber}" />
               </div>
 
               <div class="col-md-6">
                 <label class="form-label">電話番号</label>
-                <input type="tel" class="form-control" th:field="*{phoneNumber}"/>
+                <input type="tel" class="form-control" th:field="*{phoneNumber}" />
               </div>
               <div class="col-md-6">
                 <label class="form-label">保護者電話番号</label>
-                <input type="tel" class="form-control" th:field="*{secondaryPhone}"/>
+                <input type="tel" class="form-control" th:field="*{secondaryPhone}" />
               </div>
 
               <div class="col-12">
@@ -127,7 +131,7 @@
             <div class="row g-3">
               <div class="col-md-6">
                 <label class="form-label">希望職種</label>
-                <select class="form-select" th:field="*{status.desiredJobType}" id="desiredJobType">
+                <select class="form-select" th:field="*{desiredJobType}" id="desiredJobType">
                   <option value="">選択してください</option>
                   <option value="kaigo">介護</option>
                   <option value="inshoku">飲食</option>
@@ -137,12 +141,12 @@
               </div>
               <div class="col-md-6">
                 <label class="form-label">その他希望職種</label>
-                <input type="text" class="form-control" th:field="*{status.otherDesiredJobType}" id="otherDesiredJobType"/>
+                <input type="text" class="form-control" th:field="*{otherDesiredJobType}" id="otherDesiredJobType"/>
               </div>
 
               <div class="col-md-6">
                 <label class="form-label">宗教</label>
-                <select class="form-select" th:field="*{status.religion}" id="religion">
+                <select class="form-select" th:field="*{religion}" id="religion">
                   <option value="">選択</option>
                   <option value="buddhism">仏教</option>
                   <option value="islam">イスラム教</option>
@@ -152,12 +156,12 @@
               </div>
               <div class="col-md-6">
                 <label class="form-label">その他宗教</label>
-                <input type="text" class="form-control" th:field="*{status.otherReligion}" id="otherReligionInput"/>
+                <input type="text" class="form-control" th:field="*{otherReligion}" id="otherReligionInput"/>
               </div>
 
               <div class="col-md-6">
                 <label class="form-label">現在のJLPT合格レベル</label>
-                <select class="form-select" th:field="*{status.currentJapanLevel}">
+                <select class="form-select" th:field="*{currentJapanLevel}">
                   <option value="">選択してください</option>
                   <option value="none">なし</option>
                   <option value="N5">N5</option>
@@ -170,74 +174,94 @@
 
               <div class="col-md-6">
                 <label class="form-label">生徒の授業ステータス</label>
-                <input type="text" class="form-control" th:field="*{status.status}"/>
+                <input type="text" class="form-control" th:field="*{attendingClassRelatedStatus}" placeholder="在校・卒業・途中退校"/>
+              </div>
+
+              <div class="col-md-6">
+                <label class="form-label">在籍状況</label>
+                <select class="form-select" th:field="*{status}">
+                  <option value="">選択してください</option>
+                  <option value="在校">在校</option>
+                  <option value="卒業">卒業</option>
+                  <option value="途中退校">途中退校</option>
+                </select>
+              </div>
+
+              <div class="col-md-6">
+                <label class="form-label">合格した最高のJLPTレベル</label>
+                <input type="text" class="form-control" th:field="*{passedHighestJLPTLevel}" />
               </div>
 
               <div class="col-md-4">
                 <label class="form-label">日本渡航経験</label>
-                <select class="form-select" th:field="*{status.japanTravelExperience}">
+                <select class="form-select" th:field="*{japanTravelExperience}">
                   <option value="">選択</option>
-                  <option value="true">ある</option>
-                  <option value="false">ない</option>
+                  <option value="ある">ある</option>
+                  <option value="ない">ない</option>
                 </select>
               </div>
               <div class="col-md-4">
                 <label class="form-label">COE申請経験</label>
-                <select class="form-select" th:field="*{status.coeApplicationExperience}">
+                <select class="form-select" th:field="*{coeApplicationExperience}">
                   <option value="">選択</option>
-                  <option value="true">ある</option>
-                  <option value="false">ない</option>
+                  <option value="ある">ある</option>
+                  <option value="ない">ない</option>
                 </select>
               </div>
               <div class="col-md-4">
                 <label class="form-label">寮があれば入りたい</label>
-                <select class="form-select" th:field="*{status.hostelPreference}">
+                <select class="form-select" th:field="*{hostelPreference}">
                   <option value="">選択</option>
-                  <option value="true">はい</option>
-                  <option value="false">いいえ</option>
+                  <option value="はい">はい</option>
+                  <option value="いいえ">いいえ</option>
                 </select>
               </div>
 
               <div class="col-md-4">
                 <label class="form-label">お酒</label>
-                <select class="form-select" th:field="*{status.isAlcoholDrink}">
+                <select class="form-select" th:field="*{isAlcoholDrink}">
                   <option value="">選択</option>
-                  <option value="true">飲む</option>
-                  <option value="false">飲まない</option>
+                  <option th:value="true">飲む</option>
+                  <option th:value="false">飲まない</option>
                 </select>
               </div>
               <div class="col-md-4">
                 <label class="form-label">タバコ</label>
-                <select class="form-select" th:field="*{status.isSmoking}">
+                <select class="form-select" th:field="*{isSmoking}">
                   <option value="">選択</option>
-                  <option value="true">吸う</option>
-                  <option value="false">吸わない</option>
+                  <option th:value="true">吸う</option>
+                  <option th:value="false">吸わない</option>
                 </select>
               </div>
               <div class="col-md-4">
                 <label class="form-label">入れ墨(Tattoo)</label>
-                <select class="form-select" th:field="*{status.haveTatto}">
+                <select class="form-select" th:field="*{haveTatto}">
                   <option value="">選択</option>
-                  <option value="true">ある</option>
-                  <option value="false">ない</option>
+                  <option th:value="true">ある</option>
+                  <option th:value="false">ない</option>
                 </select>
               </div>
 
               <div class="col-md-3">
                 <label class="form-label">学校登録日</label>
-                <input type="date" class="form-control" th:field="*{status.schoolRegDate}"/>
+                <input type="date" class="form-control" th:field="*{enrolledDate}"/>
               </div>
               <div class="col-md-3">
                 <label class="form-label">授業料支払予定日</label>
-                <input type="date" class="form-control" th:field="*{status.tuitionPlanDate}"/>
+                <input type="date" class="form-control" th:field="*{schedulePaymentTutionDate}"/>
               </div>
               <div class="col-md-3">
                 <label class="form-label">学費入金予定日</label>
-                <input type="date" class="form-control" th:field="*{status.feePlanDate}"/>
+                <input type="date" class="form-control" th:field="*{schedulePaymentTutionDate}" readonly style="background-color: #e9ecef;"/>
               </div>
               <div class="col-md-3">
                 <label class="form-label">学費入金実績日</label>
-                <input type="date" class="form-control" th:field="*{status.feeActualDate}"/>
+                <input type="date" class="form-control" th:field="*{actualTutionPaymentDate}"/>
+              </div>
+
+              <div class="col-12">
+                <label class="form-label">メモ／備考</label>
+                <textarea class="form-control" th:field="*{memoNotes}" rows="4" placeholder="自由形式のメモ"></textarea>
               </div>
             </div>
           </div>
@@ -248,40 +272,36 @@
           <div class="form-section">
             <div class="sub-section-header main-class-header"><i class="fas fa-chalkboard me-2"></i>N5クラス情報明細</div>
             <div class="row g-3">
-
-                <div class="col-md-4">
-                <label class="form-label">所属クラス</label>
-                <input type="text" class="form-control" th:field="*{japaneseClasses[0].className}"/>
-              </div>
               <div class="col-md-4">
                 <label class="form-label">担当教師</label>
-                <input type="text" class="form-control" th:field="*{japaneseClasses[0].teacher}"/>
+                <input type="text" class="form-control" th:field="*{n5Class.n5ClassTeacher}" />
               </div>
               <div class="col-md-4">
                 <label class="form-label">出席率</label>
-                <input type="text" class="form-control" th:field="*{japaneseClasses[0].attendance}"/>
+                <input type="text" class="form-control" th:field="*{n5Class.n5ClassAttendance}" placeholder="例: 95%" />
               </div>
+              <div class="col-md-4"></div>
 
               <div class="col-md-3">
-                <label class="form-label">テスト結果1</label>
-                <input type="text" class="form-control" th:field="*{japaneseClasses[0].test1}"/>
+                <label class="form-label">日本語テスト結果 1</label>
+                <input type="text" class="form-control" th:field="*{n5Class.n5ClassTestResult1}" />
               </div>
               <div class="col-md-3">
-                <label class="form-label">テスト結果2</label>
-                <input type="text" class="form-control" th:field="*{japaneseClasses[0].test2}"/>
+                <label class="form-label">日本語テスト結果 2</label>
+                <input type="text" class="form-control" th:field="*{n5Class.n5ClassTestResult2}" />
               </div>
               <div class="col-md-3">
-                <label class="form-label">テスト結果3</label>
-                <input type="text" class="form-control" th:field="*{japaneseClasses[0].test3}"/>
+                <label class="form-label">日本語テスト結果 3</label>
+                <input type="text" class="form-control" th:field="*{n5Class.n5ClassTestResult3}" />
               </div>
               <div class="col-md-3">
-                <label class="form-label">テスト結果4</label>
-                <input type="text" class="form-control" th:field="*{japaneseClasses[0].test4}"/>
+                <label class="form-label">日本語テスト結果 4</label>
+                <input type="text" class="form-control" th:field="*{n5Class.n5ClassTestResult4}" />
               </div>
 
               <div class="col-12">
                 <label class="form-label">教師所感</label>
-                <textarea class="form-control" th:field="*{japaneseClasses[0].teacherNote}" rows="3"></textarea>
+                <textarea class="form-control" th:field="*{n5Class.n5ClassFeedback}" rows="3"></textarea>
               </div>
             </div>
 
@@ -289,23 +309,23 @@
             <div class="row g-3">
               <div class="col-md-3">
                 <label class="form-label">クラス名</label>
-                <input type="text" class="form-control" th:field="*{conversationClasses[0].className}"/>
+                <input type="text" class="form-control" th:field="*{n5Class.n5Class1Teacher}" placeholder="N5会話クラス①" readonly style="background-color: #e9ecef;"/>
               </div>
               <div class="col-md-3">
                 <label class="form-label">担当教師</label>
-                <input type="text" class="form-control" th:field="*{conversationClasses[0].teacher}"/>
+                <input type="text" class="form-control" th:field="*{n5Class.n5Class1Teacher}" />
               </div>
               <div class="col-md-3">
                 <label class="form-label">出席率</label>
-                <input type="text" class="form-control" th:field="*{conversationClasses[0].attendance}"/>
+                <input type="text" class="form-control" th:field="*{n5Class.n5Class1AttendanceRate}" />
               </div>
               <div class="col-md-3">
                 <label class="form-label">テスト結果</label>
-                <input type="text" class="form-control" th:field="*{conversationClasses[0].testResult}"/>
+                <input type="text" class="form-control" th:field="*{n5Class.n5Class1TestResult}" />
               </div>
               <div class="col-12">
                 <label class="form-label">教師所感</label>
-                <textarea class="form-control" th:field="*{conversationClasses[0].teacherNote}" rows="2"></textarea>
+                <textarea class="form-control" th:field="*{n5Class.n5Class1TeacherFeedback}" rows="2"></textarea>
               </div>
             </div>
 
@@ -313,23 +333,23 @@
             <div class="row g-3">
               <div class="col-md-3">
                 <label class="form-label">クラス名</label>
-                <input type="text" class="form-control" th:field="*{conversationClasses[1].className}"/>
+                <input type="text" class="form-control" value="N5会話クラス②" readonly style="background-color: #e9ecef;"/>
               </div>
               <div class="col-md-3">
                 <label class="form-label">担当教師</label>
-                <input type="text" class="form-control" th:field="*{conversationClasses[1].teacher}"/>
+                <input type="text" class="form-control" th:field="*{n5Class.n5Class2Teacher}" />
               </div>
               <div class="col-md-3">
                 <label class="form-label">出席率</label>
-                <input type="text" class="form-control" th:field="*{conversationClasses[1].attendance}"/>
+                <input type="text" class="form-control" th:field="*{n5Class.n5Class2AttendanceRate}" />
               </div>
               <div class="col-md-3">
                 <label class="form-label">テスト結果</label>
-                <input type="text" class="form-control" th:field="*{conversationClasses[1].testResult}"/>
+                <input type="text" class="form-control" th:field="*{n5Class.n5Class2TestResult}" />
               </div>
               <div class="col-12">
                 <label class="form-label">教師所感</label>
-                <textarea class="form-control" th:field="*{conversationClasses[1].teacherNote}" rows="2"></textarea>
+                <textarea class="form-control" th:field="*{n5Class.n5Class2TeacherFeedback}" rows="2"></textarea>
               </div>
             </div>
 
@@ -337,68 +357,63 @@
             <div class="row g-3">
               <div class="col-md-3">
                 <label class="form-label">クラス名</label>
-                <input type="text" class="form-control" th:field="*{conversationClasses[2].className}"/>
+                <input type="text" class="form-control" value="N5会話クラス③" readonly style="background-color: #e9ecef;"/>
               </div>
               <div class="col-md-3">
                 <label class="form-label">担当教師</label>
-                <input type="text" class="form-control" th:field="*{conversationClasses[2].teacher}"/>
+                <input type="text" class="form-control" th:field="*{n5Class.n5Class3Teacher}" />
               </div>
               <div class="col-md-3">
                 <label class="form-label">出席率</label>
-                <input type="text" class="form-control" th:field="*{conversationClasses[2].attendance}"/>
+                <input type="text" class="form-control" th:field="*{n5Class.n5Class3AttendanceRate}" />
               </div>
               <div class="col-md-3">
                 <label class="form-label">テスト結果</label>
-                <input type="text" class="form-control" th:field="*{conversationClasses[2].testResult}"/>
+                <input type="text" class="form-control" th:field="*{n5Class.n5Class3TestResult}" />
               </div>
               <div class="col-12">
                 <label class="form-label">教師所感</label>
-                <textarea class="form-control" th:field="*{conversationClasses[2].teacherNote}" rows="2"></textarea>
+                <textarea class="form-control" th:field="*{n5Class.n5Class3TeacherFeedback}" rows="2"></textarea>
               </div>
             </div>
-
           </div>
         </div>
 
         <!-- Tab-4 -->
         <div class="tab-pane fade" id="n4" role="tabpanel">
           <div class="form-section">
-
             <div class="sub-section-header main-class-header"><i class="fas fa-chalkboard me-2"></i>N4クラス情報明細</div>
             <div class="row g-3">
               <div class="col-md-4">
-                <label class="form-label">所属クラス</label>
-                <input type="text" class="form-control" th:field="*{japaneseClasses[1].className}"/>
-              </div>
-              <div class="col-md-4">
                 <label class="form-label">担当教師</label>
-                <input type="text" class="form-control" th:field="*{japaneseClasses[1].teacher}"/>
+                <input type="text" class="form-control" th:field="*{n4Class.n4ClassTeacher}" />
               </div>
               <div class="col-md-4">
                 <label class="form-label">出席率</label>
-                <input type="text" class="form-control" th:field="*{japaneseClasses[1].attendance}"/>
+                <input type="text" class="form-control" th:field="*{n4Class.n4ClassAttendance}" placeholder="例: 95%" />
               </div>
+              <div class="col-md-4"></div>
 
               <div class="col-md-3">
-                <label class="form-label">テスト結果1</label>
-                <input type="text" class="form-control" th:field="*{japaneseClasses[1].test1}"/>
+                <label class="form-label">日本語テスト結果 1</label>
+                <input type="text" class="form-control" th:field="*{n4Class.n4ClassTestResult1}" />
               </div>
               <div class="col-md-3">
-                <label class="form-label">テスト結果2</label>
-                <input type="text" class="form-control" th:field="*{japaneseClasses[1].test2}"/>
+                <label class="form-label">日本語テスト結果 2</label>
+                <input type="text" class="form-control" th:field="*{n4Class.n4ClassTestResult2}" />
               </div>
               <div class="col-md-3">
-                <label class="form-label">テスト結果3</label>
-                <input type="text" class="form-control" th:field="*{japaneseClasses[1].test3}"/>
+                <label class="form-label">日本語テスト結果 3</label>
+                <input type="text" class="form-control" th:field="*{n4Class.n4ClassTestResult3}" />
               </div>
               <div class="col-md-3">
-                <label class="form-label">テスト結果4</label>
-                <input type="text" class="form-control" th:field="*{japaneseClasses[1].test4}"/>
+                <label class="form-label">日本語テスト結果 4</label>
+                <input type="text" class="form-control" th:field="*{n4Class.n4ClassTestResult4}" />
               </div>
 
               <div class="col-12">
                 <label class="form-label">教師所感</label>
-                <textarea class="form-control" th:field="*{japaneseClasses[1].teacherNote}" rows="3"></textarea>
+                <textarea class="form-control" th:field="*{n4Class.n4ClassFeedback}" rows="3"></textarea>
               </div>
             </div>
 
@@ -406,23 +421,23 @@
             <div class="row g-3">
               <div class="col-md-3">
                 <label class="form-label">クラス名</label>
-                <input type="text" class="form-control" th:field="*{conversationClasses[3].className}"/>
+                <input type="text" class="form-control" value="N4会話クラス①" readonly style="background-color: #e9ecef;"/>
               </div>
               <div class="col-md-3">
                 <label class="form-label">担当教師</label>
-                <input type="text" class="form-control" th:field="*{conversationClasses[3].teacher}"/>
+                <input type="text" class="form-control" th:field="*{n4Class.n4Class1Teacher}" />
               </div>
               <div class="col-md-3">
                 <label class="form-label">出席率</label>
-                <input type="text" class="form-control" th:field="*{conversationClasses[3].attendance}"/>
+                <input type="text" class="form-control" th:field="*{n4Class.n4Class1AttendanceRate}" />
               </div>
               <div class="col-md-3">
                 <label class="form-label">テスト結果</label>
-                <input type="text" class="form-control" th:field="*{conversationClasses[3].testResult}"/>
+                <input type="text" class="form-control" th:field="*{n4Class.n4Class1TestResult}" />
               </div>
               <div class="col-12">
                 <label class="form-label">教師所感</label>
-                <textarea class="form-control" th:field="*{conversationClasses[3].teacherNote}" rows="2"></textarea>
+                <textarea class="form-control" th:field="*{n4Class.n4Class1TeacherFeedback}" rows="2"></textarea>
               </div>
             </div>
 
@@ -430,23 +445,23 @@
             <div class="row g-3">
               <div class="col-md-3">
                 <label class="form-label">クラス名</label>
-                <input type="text" class="form-control" th:field="*{conversationClasses[4].className}"/>
+                <input type="text" class="form-control" value="N4会話クラス②" readonly style="background-color: #e9ecef;"/>
               </div>
               <div class="col-md-3">
                 <label class="form-label">担当教師</label>
-                <input type="text" class="form-control" th:field="*{conversationClasses[4].teacher}"/>
+                <input type="text" class="form-control" th:field="*{n4Class.n4Class2Teacher}" />
               </div>
               <div class="col-md-3">
                 <label class="form-label">出席率</label>
-                <input type="text" class="form-control" th:field="*{conversationClasses[4].attendance}"/>
+                <input type="text" class="form-control" th:field="*{n4Class.n4Class2AttendanceRate}" />
               </div>
               <div class="col-md-3">
                 <label class="form-label">テスト結果</label>
-                <input type="text" class="form-control" th:field="*{conversationClasses[4].testResult}"/>
+                <input type="text" class="form-control" th:field="*{n4Class.n4Class2TestResult}" />
               </div>
               <div class="col-12">
                 <label class="form-label">教師所感</label>
-                <textarea class="form-control" th:field="*{conversationClasses[4].teacherNote}" rows="2"></textarea>
+                <textarea class="form-control" th:field="*{n4Class.n4Class2TeacherFeedback}" rows="2"></textarea>
               </div>
             </div>
 
@@ -454,26 +469,25 @@
             <div class="row g-3">
               <div class="col-md-3">
                 <label class="form-label">クラス名</label>
-                <input type="text" class="form-control" th:field="*{conversationClasses[5].className}"/>
+                <input type="text" class="form-control" value="N4会話クラス③" readonly style="background-color: #e9ecef;"/>
               </div>
               <div class="col-md-3">
                 <label class="form-label">担当教師</label>
-                <input type="text" class="form-control" th:field="*{conversationClasses[5].teacher}"/>
+                <input type="text" class="form-control" th:field="*{n4Class.n4Class3Teacher}" />
               </div>
               <div class="col-md-3">
                 <label class="form-label">出席率</label>
-                <input type="text" class="form-control" th:field="*{conversationClasses[5].attendance}"/>
+                <input type="text" class="form-control" th:field="*{n4Class.n4Class3AttendanceRate}" />
               </div>
               <div class="col-md-3">
                 <label class="form-label">テスト結果</label>
-                <input type="text" class="form-control" th:field="*{conversationClasses[5].testResult}"/>
+                <input type="text" class="form-control" th:field="*{n4Class.n4Class3TestResult}" />
               </div>
               <div class="col-12">
                 <label class="form-label">教師所感</label>
-                <textarea class="form-control" th:field="*{conversationClasses[5].teacherNote}" rows="2"></textarea>
+                <textarea class="form-control" th:field="*{n4Class.n4Class3TeacherFeedback}" rows="2"></textarea>
               </div>
             </div>
-
           </div>
         </div>
 
@@ -483,24 +497,23 @@
             <div class="row g-3">
               <div class="col-12">
                 <label class="form-label">一回目面接メモ</label>
-                <textarea class="form-control" th:field="*{interview.interview1}" rows="4"></textarea>
+                <textarea class="form-control" th:field="*{interviewNotes.interview1}" rows="4" placeholder="面接内容、評価、備考など"></textarea>
               </div>
 
               <div class="col-12">
                 <label class="form-label">二回目面接メモ</label>
-                <textarea class="form-control" th:field="*{interview.interview2}" rows="4"></textarea>
+                <textarea class="form-control" th:field="*{interviewNotes.interview2}" rows="4" placeholder="面接内容、評価、備考など"></textarea>
               </div>
 
               <div class="col-12">
                 <label class="form-label">三回目面接メモ</label>
-                <textarea class="form-control" th:field="*{interview.interview3}" rows="4"></textarea>
+                <textarea class="form-control" th:field="*{interviewNotes.interview3}" rows="4" placeholder="面接内容、評価、備考など"></textarea>
               </div>
 
               <div class="col-12">
                 <label class="form-label">その他メモ（自由形式）</label>
-                <textarea class="form-control" th:field="*{interview.otherMemo}" rows="6"></textarea>
+                <textarea class="form-control" th:field="*{interviewNotes.otherMemo}" rows="6" placeholder="その他の備考、連絡事項など"></textarea>
               </div>
-
             </div>
           </div>
         </div>
@@ -525,6 +538,62 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script src="/js/student-update.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    document.getElementById('cancelBtn').addEventListener('click', function() {
+      window.location.href = '/students';
+    });
+    
+    const desiredJobType = document.getElementById('desiredJobType');
+    const otherDesiredJobType = document.getElementById('otherDesiredJobType');
+    
+    if (desiredJobType && otherDesiredJobType) {
+      function toggleOtherJobType() {
+        if (desiredJobType.value === 'other') {
+          otherDesiredJobType.style.display = 'block';
+          otherDesiredJobType.closest('.col-md-6').style.display = 'block';
+        } else {
+          otherDesiredJobType.style.display = 'none';
+          otherDesiredJobType.closest('.col-md-6').style.display = 'none';
+        }
+      }
+      
+      desiredJobType.addEventListener('change', toggleOtherJobType);
+      toggleOtherJobType(); 
+    }
+    
+    const religion = document.getElementById('religion');
+    const otherReligionInput = document.getElementById('otherReligionInput');
+    
+    if (religion && otherReligionInput) {
+      function toggleOtherReligion() {
+        if (religion.value === 'other') {
+          otherReligionInput.style.display = 'block';
+          otherReligionInput.closest('.col-md-6').style.display = 'block';
+        } else {
+          otherReligionInput.style.display = 'none';
+          otherReligionInput.closest('.col-md-6').style.display = 'none';
+        }
+      }
+      
+      religion.addEventListener('change', toggleOtherReligion);
+      toggleOtherReligion(); 
+    }
+    
+    // Form submission handler
+    const form = document.getElementById('studentUpdateForm');
+    if (form) {
+      form.addEventListener('submit', function(e) {
+        // Add client-side validation if needed
+        const studentName = form.querySelector('[name="studentName"]');
+        if (studentName && !studentName.value.trim()) {
+          e.preventDefault();
+          alert('生徒名（英語）は必須です。');
+          studentName.focus();
+        }
+      });
+    }
+  });
+</script>
 </body>
 </html>
