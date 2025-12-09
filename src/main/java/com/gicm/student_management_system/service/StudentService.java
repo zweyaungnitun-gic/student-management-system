@@ -1,8 +1,10 @@
 package com.gicm.student_management_system.service;
 
 import com.gicm.student_management_system.dto.StudentDTO;
+import com.gicm.student_management_system.entity.Student;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface StudentService {
 
@@ -17,4 +19,11 @@ public interface StudentService {
     StudentDTO updateStudent(Long id, StudentDTO studentDTO);
 
     void deleteStudent(Long id);
+
+    List<Student> findAll();
+
+    Optional<Student> findById(Long id);
+
+    Student save(Student student);
+
 }
