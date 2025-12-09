@@ -16,7 +16,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 import com.gicm.student_management_system.security.CustomAuthSuccessHandler;
 import com.gicm.student_management_system.security.CustomUserDetailsService;
-import com.gicm.student_management_system.security.JwtAuthenticationFilter;
+import com.gicm.student_management_system.security.SessionJwtAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -27,7 +27,7 @@ public class SecurityConfig {
     private CustomUserDetailsService customUserDetailsService;
 
     @Autowired
-    private JwtAuthenticationFilter jwtAuthenticationFilter;
+    private SessionJwtAuthenticationFilter sessionJwtAuthenticationFilter;
 
     @Autowired
     private CustomAuthSuccessHandler customAuthSuccessHandler;
@@ -47,12 +47,10 @@ public class SecurityConfig {
         http
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(authz -> authz
-                .requestMatchers("/", "/login", "/access-denied", "/auth/**", "/css/**", "/js/**", "/images/**").permitAll()
+                .requestMatchers("/", "/login", "/access-denied", "/css/**", "/js/**", "/images/**").permitAll()
                 .requestMatchers("/admin/**").hasRole("ADMIN")
                 .requestMatchers("/users/**").hasRole("ADMIN")
                 .requestMatchers("/guest/**").hasRole("GUEST")
-                .requestMatchers("/api/admin/**").hasRole("ADMIN")
-                .requestMatchers("/api/guest/**").hasAnyRole("GUEST", "ADMIN")
                 .anyRequest().authenticated()
             )
             .exceptionHandling(exception -> exception
@@ -68,6 +66,8 @@ public class SecurityConfig {
             .logout(logout -> logout
                 .logoutUrl("/logout")
                 .logoutSuccessUrl("/login?logout=true")
+                .invalidateHttpSession(true)
+                .deleteCookies("JSESSIONID")
                 .permitAll()
             )
             .sessionManagement(session -> session
@@ -77,8 +77,8 @@ public class SecurityConfig {
             )
             .userDetailsService(customUserDetailsService);
 
-       
-        http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+        // Add Session JWT filter for form-based authentication with JWT stored in Redis session
+        http.addFilterAfter(sessionJwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }

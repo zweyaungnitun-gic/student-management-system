@@ -1,5 +1,4 @@
 package com.gicm.student_management_system.entity;
-import java.time.LocalDate;
 import java.time.OffsetDateTime;
 
 import jakarta.persistence.Column;
