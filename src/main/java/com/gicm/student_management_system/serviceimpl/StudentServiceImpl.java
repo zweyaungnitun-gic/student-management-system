@@ -6,9 +6,11 @@ import com.gicm.student_management_system.repository.StudentRepository;
 import com.gicm.student_management_system.service.StudentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -16,30 +18,31 @@ public class StudentServiceImpl implements StudentService {
 
     private final StudentRepository studentRepository;
 
-    private StudentDTO convertToDTO(Student student) {
+    private StudentDTO convertToDTO(Student s) {
+        if (s == null)
+            return null;
         return StudentDTO.builder()
-                .id(student.getId())
-                .studentName(student.getStudentName())
-                .gender(student.getGender())
-                .phoneNumber(student.getPhoneNumber())
-                .desiredJobType(student.getDesiredJobType())
-                .status(student.getStatus())
-                .paymentDueDate(student.getSchedulePaymentTutionDate())
-                .paymentDate(student.getActualTutionPaymentDate())
+                .id(s.getId())
+                .studentName(s.getStudentName())
+                .gender(s.getGender())
+                .phoneNumber(s.getPhoneNumber())
+                .desiredJobType(s.getDesiredJobType())
+                .status(s.getStatus())
+                .paymentDueDate(s.getSchedulePaymentTutionDate())
+                .paymentDate(s.getActualTutionPaymentDate())
                 .build();
     }
 
-    private Student convertToEntity(StudentDTO dto) {
-        return Student.builder()
-                .id(dto.getId())
-                .studentName(dto.getStudentName())
-                .gender(dto.getGender())
-                .phoneNumber(dto.getPhoneNumber())
-                .desiredJobType(dto.getDesiredJobType())
-                .status(dto.getStatus())
-                .schedulePaymentTutionDate(dto.getPaymentDueDate())
-                .actualTutionPaymentDate(dto.getPaymentDate())
-                .build();
+    private Student convertToEntity(StudentDTO dto, Student existing) {
+        Student s = existing == null ? new Student() : existing;
+        s.setStudentName(dto.getStudentName());
+        s.setGender(dto.getGender());
+        s.setPhoneNumber(dto.getPhoneNumber());
+        s.setDesiredJobType(dto.getDesiredJobType());
+        s.setStatus(dto.getStatus());
+        s.setSchedulePaymentTutionDate(dto.getPaymentDueDate());
+        s.setActualTutionPaymentDate(dto.getPaymentDate());
+        return s;
     }
 
     @Override
@@ -52,15 +55,19 @@ public class StudentServiceImpl implements StudentService {
     @Override
     public List<StudentDTO> getStudentsByFilter(String nameSearch, String status) {
         List<Student> students;
-        if (!nameSearch.isEmpty() && !status.isEmpty()) {
+        boolean hasName = nameSearch != null && !nameSearch.isBlank();
+        boolean hasStatus = status != null && !status.isBlank();
+
+        if (hasName && hasStatus) {
             students = studentRepository.findByStudentNameContainingAndStatus(nameSearch, status);
-        } else if (!nameSearch.isEmpty()) {
+        } else if (hasName) {
             students = studentRepository.findByStudentNameContaining(nameSearch);
-        } else if (!status.isEmpty()) {
+        } else if (hasStatus) {
             students = studentRepository.findByStatus(status);
         } else {
             students = studentRepository.findAll();
         }
+
         return students.stream().map(this::convertToDTO).collect(Collectors.toList());
     }
 
@@ -72,29 +79,55 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
-    public StudentDTO createStudent(StudentDTO studentDTO) {
-        Student saved = studentRepository.save(convertToEntity(studentDTO));
+    @Transactional
+    public StudentDTO createStudent(StudentDTO dto) {
+        Student toSave = convertToEntity(dto, null);
+        Student saved = studentRepository.save(toSave);
         return convertToDTO(saved);
     }
 
     @Override
-    public StudentDTO updateStudent(Long id, StudentDTO studentDTO) {
-        return studentRepository.findById(id)
-                .map(existing -> {
-                    existing.setStudentName(studentDTO.getStudentName());
-                    existing.setGender(studentDTO.getGender());
-                    existing.setPhoneNumber(studentDTO.getPhoneNumber());
-                    existing.setDesiredJobType(studentDTO.getDesiredJobType());
-                    existing.setStatus(studentDTO.getStatus());
-                    existing.setSchedulePaymentTutionDate(studentDTO.getPaymentDueDate());
-                    existing.setActualTutionPaymentDate(studentDTO.getPaymentDate());
-                    Student updated = studentRepository.save(existing);
-                    return convertToDTO(updated);
-                }).orElse(null);
+    @Transactional
+    public StudentDTO updateStudent(Long id, StudentDTO dto) {
+        Optional<Student> opt = studentRepository.findById(id);
+        if (opt.isEmpty())
+            return null;
+        Student updated = convertToEntity(dto, opt.get());
+        Student saved = studentRepository.save(updated);
+        return convertToDTO(saved);
     }
 
     @Override
+    @Transactional
     public void deleteStudent(Long id) {
         studentRepository.deleteById(id);
+    }
+
+    public List<Student> findAllEntities() {
+        return studentRepository.findAll();
+    }
+
+    public Optional<Student> findByIdEntity(Long id) {
+        return studentRepository.findById(id);
+    }
+
+    @Transactional
+    public Student saveEntity(Student student) {
+        return studentRepository.save(student);
+    }
+
+    @Override
+    public List<Student> findAll() {
+        return studentRepository.findAll();
+    }
+
+    @Override
+    public Optional<Student> findById(Long id) {
+        return studentRepository.findById(id);
+    }
+
+    @Override
+    public Student save(Student student) {
+        return studentRepository.save(student);
     }
 }
