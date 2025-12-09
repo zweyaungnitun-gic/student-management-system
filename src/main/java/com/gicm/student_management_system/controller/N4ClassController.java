@@ -1,6 +1,6 @@
 package com.gicm.student_management_system.controller;
 
-import com.gicm.student_management_system.entity.N4Class;
+import com.gicm.student_management_system.dto.N4ClassDTO;
 import com.gicm.student_management_system.entity.Student;
 import com.gicm.student_management_system.service.N4ClassService;
 import com.gicm.student_management_system.repository.StudentRepository;
@@ -22,23 +22,19 @@ public class N4ClassController {
         Student student = studentRepository.findById(studentId)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid student Id:" + studentId));
 
-        N4Class n4Class = n4ClassService.getOrCreateN4Class(studentId);
+        N4ClassDTO n4ClassDTO = n4ClassService.getOrCreateN4ClassDTO(studentId); 
 
         model.addAttribute("student", student);
-        model.addAttribute("n4Class", n4Class);
+        model.addAttribute("n4Class", n4ClassDTO);
 
         return "n4-class-form";
     }
 
     @PostMapping("/{id}/n4-class")
     public String saveN5ClassForm(@PathVariable("id") Long studentId,
-            @ModelAttribute("n4Class") N4Class n4Class) {
+            @ModelAttribute("n4Class") N4ClassDTO n4ClassDTO) {
 
-        Student student = studentRepository.findById(studentId)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid student Id:" + studentId));
-        n4Class.setStudent(student);
-
-        n4ClassService.saveN4Class(n4Class);
+        n4ClassService.saveN4ClassDTO(studentId, n4ClassDTO);
 
         return "redirect:/students";
     }
