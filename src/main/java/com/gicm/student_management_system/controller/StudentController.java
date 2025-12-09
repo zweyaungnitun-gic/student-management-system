@@ -37,7 +37,7 @@ public class StudentController {
         return "admin-dashboard";
     }
 
-    @GetMapping("/update/{id}")
+    @GetMapping("/student-update/{id}")
     public String showUpdateForm(@PathVariable Long id, Model model) {
 
         Student student = studentService.findById(id)
@@ -66,7 +66,7 @@ public class StudentController {
 
         model.addAttribute("student", student);
         model.addAttribute("isNew", false);
-        return "students/update";
+        return "students/student-update";
 
     }
 

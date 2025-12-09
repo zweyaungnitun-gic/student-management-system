@@ -7,7 +7,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
     
-    // Toggle "Other" fields
     const desiredJob = document.getElementById('desiredJob');
     const otherJobInput = document.getElementById('otherJobInput');
     const religion = document.getElementById('religion');
@@ -27,7 +26,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-    // Form validation
     const form = document.getElementById('studentUpdateForm');
     if (form) {
         form.addEventListener('submit', function(e) {
@@ -82,3 +80,37 @@ document.addEventListener('DOMContentLoaded', function() {
         checkFixedElements();
     });
 });
+
+
+window.goToTab = function(tabId) {
+  const tab = document.getElementById(tabId);
+  if (tab) {
+    const bsTab = new bootstrap.Tab(tab);
+    bsTab.show();
+  }
+};
+
+window.saveAndContinue = function(nextTabId) {
+  const form = document.getElementById('studentUpdateForm');
+  let isValid = true;
+  
+  if (nextTabId === 'status-tab') {
+    const studentName = form.querySelector('[name="studentName"]');
+    if (studentName && !studentName.value.trim()) {
+      alert('生徒名（英語）は必須です。');
+      studentName.focus();
+      isValid = false;
+    }
+  }
+  
+  if (isValid) {
+    console.log('Saving data and moving to next tab:', nextTabId);
+    goToTab(nextTabId);
+  }
+};
+
+window.cancelUpdate = function() {
+  if (confirm('変更内容が保存されません。よろしいですか？')) {
+    window.history.back();
+  }
+};

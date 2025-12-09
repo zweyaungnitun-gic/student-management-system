@@ -104,7 +104,7 @@ body {
     padding-top: 10px; 
 }
 
-.fixed-footer-container {
+/* .fixed-footer-container {
     position: fixed;
     bottom: 0;
     left: 0;
@@ -114,13 +114,20 @@ body {
     border-top: 1px solid #dee2e6;
     box-shadow: 0 -2px 15px rgba(0,0,0,0.1);
     padding: 15px 0;
-}
+} */
 
-.main-content-container {
+/* .main-content-container {
     margin-top: 150px; 
     margin-bottom: 80px;
     padding: 20px 0;
     min-height: calc(100vh - 220px);
+} */
+
+.main-content-container {
+    margin-top: 150px; 
+    margin-bottom: 20px; 
+    padding: 20px 0;
+    min-height: calc(100vh - 150px); 
 }
 
 .scrollable-content {
@@ -340,6 +347,30 @@ body {
         margin: 0;
         font-size: 1.1rem;
     }
+}
+
+.btn-secondary {
+    background-color: #ffcccc !important;
+    border-color: #ff9999 !important;
+    color: #cc0000 !important;
+}
+
+.btn-secondary:hover {
+    background-color: #ffb3b3 !important;
+    border-color: #ff6666 !important;
+    color: #990000 !important;
+}
+
+.btn-secondary[onclick*="goToTab"] {
+    background-color: #6c757d !important;
+    border-color: #6c757d !important;
+    color: white !important;
+}
+
+.btn-secondary[onclick*="goToTab"]:hover {
+    background-color: #5a6268 !important;
+    border-color: #545b62 !important;
+    color: white !important;
 }
 
 .debug-border {
