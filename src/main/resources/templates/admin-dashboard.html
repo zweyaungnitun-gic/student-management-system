@@ -199,7 +199,7 @@
       transition: color 0.2s;
     }
 
-    .action-icon.edit {
+    .action-icon.update {
       color: #0d6efd;
     }
 
@@ -211,7 +211,7 @@
       color: #dc3545;
     }
 
-    .action-icon.edit:hover {
+    .action-icon.update:hover {
       color: #0a58ca;
     }
 
@@ -332,7 +332,7 @@
             <td th:text="${student.paymentDueDate}"></td>
             <td th:text="${student.paymentDate}"></td>
             <td>
-              <a th:href="@{'/students/edit/' + ${student.id}}" class="action-icon edit" title="編集">
+              <a th:href="@{'/students/update/' + ${student.id}}" class="action-icon update" title="編集">
                 <i class="bi bi-pencil-square"></i>
               </a>
               <a th:href="@{'/students/detail/' + ${student.id}}" class="action-icon detail" title="明細">
