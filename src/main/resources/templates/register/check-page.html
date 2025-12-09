@@ -23,83 +23,111 @@
                     </h2>
                 </div>
 
-                <!-- First Page Data -->
-                <h4 class="text-secondary mt-4 mb-3">基本情報 (第1ページ)</h4>
-                <div class="table-responsive">
-                    <table class="table table-bordered table-hover">
+                <div class="table-responsive mx-4 mx-md-5 overflow-hidden rounded-3 bg-white p-2">
+                    <table class="table table-bordered table-hover mb-0">
                         <tbody>
+                            <!-- Basic / Personal -->
                             <tr>
-                                <th class="bg-light" style="width: 30%;">なまえ(英語)</th>
-                                <td th:text="${studentData.englishName}">John Doe</td>
+                                <th class="bg-light ps-4 pe-3" style="width: 30%;">なまえ(英語)</th>
+                                <td class="ps-4 pe-3" th:text="${studentData.englishName ?: '—'}">John Doe</td>
                             </tr>
                             <tr>
-                                <th class="bg-light">なまえ(カタカな)</th>
-                                <td th:text="${studentData.katakanaName}">ジョン・ドウ</td>
+                                <th class="bg-light ps-4 pe-3">なまえ(カタカナ)</th>
+                                <td class="ps-4 pe-3" th:text="${studentData.katakanaName ?: '—'}">ジョン・ドウ</td>
                             </tr>
                             <tr>
-                                <th class="bg-light">生年月日</th>
-                                <td th:text="${studentData.dob}">2000-01-01</td>
+                                <th class="bg-light ps-4 pe-3">生年月日</th>
+                                <td class="ps-4 pe-3" th:text="${studentData.dob ?: '—'}">2000-01-01</td>
                             </tr>
                             <tr>
-                                <th class="bg-light">性別</th>
-                                <td th:text="${studentData.gender}">Male</td>
+                                <th class="bg-light ps-4 pe-3">性別</th>
+                                <td class="ps-4 pe-3" th:text="${studentData.gender ?: '—'}">Male</td>
                             </tr>
-                            <tr>
-                                <th class="bg-light">現在場所</th>
-                                <td th:text="${studentData.currentAddress}">123 Tokyo Street</td>
-                            </tr>
-                            <tr>
-                                <th class="bg-light">出身地住所</th>
-                                <td th:text="${studentData.hometownAddress}">456 Osaka Street</td>
-                            </tr>
-                            <tr>
-                                <th class="bg-light">電話番号</th>
-                                <td th:text="${studentData.phoneNumber}">090-1234-5678</td>
-                            </tr>
-                            <tr>
-                                <th class="bg-light">保護者電話番号</th>
-                                <td th:text="${studentData.guardianPhoneNumber}">090-8765-4321</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
 
-                <!-- Second Page Data -->
-                <h4 class="text-secondary mt-5 mb-3">追加情報 (第2ページ)</h4>
-                <div class="table-responsive">
-                    <table class="table table-bordered table-hover">
-                        <tbody>
+                            <!-- Contact / Address -->
                             <tr>
-                                <th class="bg-light" style="width: 30%;">父親名</th>
-                                <td th:text="${studentData.fatherName}">Michael Doe</td>
+                                <th class="bg-light ps-4 pe-3">現在場所</th>
+                                <td class="ps-4 pe-3" th:text="${studentData.currentAddress ?: '—'}">123 Tokyo Street</td>
                             </tr>
                             <tr>
-                                <th class="bg-light">パスポート番号</th>
-                                <td th:text="${studentData.passportNumber}">AB1234567</td>
+                                <th class="bg-light ps-4 pe-3">出身地住所</th>
+                                <td class="ps-4 pe-3" th:text="${studentData.hometownAddress ?: '—'}">456 Osaka Street</td>
                             </tr>
                             <tr>
-                                <th class="bg-light">国民 ID 番号</th>
-                                <td th:text="${studentData.nationalIdNumber}">JP-123456789</td>
+                                <th class="bg-light ps-4 pe-3">電話番号</th>
+                                <td class="ps-4 pe-3" th:text="${studentData.phoneNumber ?: '—'}">090-1234-5678</td>
                             </tr>
                             <tr>
-                                <th class="bg-light">現在のJLPT合格レベル</th>
-                                <td th:text="${studentData.jlptLevel}">N4</td>
+                                <th class="bg-light ps-4 pe-3">保護者電話番号</th>
+                                <td class="ps-4 pe-3" th:text="${studentData.guardianPhoneNumber ?: '—'}">090-8765-4321</td>
+                            </tr>
+
+                            <!-- Family / Documents -->
+                            <tr>
+                                <th class="bg-light ps-4 pe-3">父親名</th>
+                                <td class="ps-4 pe-3" th:text="${studentData.fatherName ?: '—'}">Michael Doe</td>
                             </tr>
                             <tr>
-                                <th class="bg-light">希望職種</th>
-                                <td th:text="${studentData.desiredOccupation}">介護</td>
+                                <th class="bg-light ps-4 pe-3">パスポート番号</th>
+                                <td class="ps-4 pe-3" th:text="${studentData.passportNumber ?: '—'}">AB1234567</td>
                             </tr>
                             <tr>
-                                <th class="bg-light">その他職種</th>
-                                <td th:text="${studentData.otherOccupation ?: '—'}">—</td>
+                                <th class="bg-light ps-4 pe-3">国民 ID 番号</th>
+                                <td class="ps-4 pe-3" th:text="${studentData.nationalIdNumber ?: '—'}">JP-123456789</td>
+                            </tr>
+
+                            <!-- Skills / Career -->
+                            <tr>
+                                <th class="bg-light ps-4 pe-3">現在のJLPT合格レベル</th>
+                                <td class="ps-4 pe-3" th:text="${studentData.jlptLevel ?: '—'}">N4</td>
                             </tr>
                             <tr>
-                                <th class="bg-light">日本渡航経験</th>
-                                <td th:text="${studentData.japanTravelExperience}">ない</td>
+                                <th class="bg-light ps-4 pe-3">希望職種</th>
+                                <td class="ps-4 pe-3" th:text="${studentData.desiredOccupation ?: '—'}">介護</td>
                             </tr>
                             <tr>
-                                <th class="bg-light">COE申請経験</th>
-                                <td th:text="${studentData.coeApplicationExperience}">ない</td>
+                                <th class="bg-light ps-4 pe-3">その他職種</th>
+                                <td class="ps-4 pe-3" th:text="${studentData.otherOccupation ?: '—'}">—</td>
+                            </tr>
+
+                            <!-- Experience -->
+                            <tr>
+                                <th class="bg-light ps-4 pe-3">日本渡航経験</th>
+                                <td class="ps-4 pe-3" th:text="${studentData.japanTravelExperience ?: '—'}">ない</td>
+                            </tr>
+                            <tr>
+                                <th class="bg-light ps-4 pe-3">COE申請経験</th>
+                                <td class="ps-4 pe-3" th:text="${studentData.coeApplicationExperience ?: '—'}">ない</td>
+                            </tr>
+
+                            <!-- Additional Questions (third page fields) -->
+                            <tr>
+                                <th class="bg-light ps-4 pe-3">宗教</th>
+                                <td class="ps-4 pe-3" th:text="${studentData.religion == 'その他' ? (studentData.otherReligion ?: 'その他') : (studentData.religion ?: '—')}">仏教</td>
+                            </tr>
+                            <tr>
+                                <th class="bg-light ps-4 pe-3">喫煙</th>
+                                <td class="ps-4 pe-3" th:text="${studentData.smoking ?: '—'}">吸わない</td>
+                            </tr>
+                            <tr>
+                                <th class="bg-light ps-4 pe-3">飲酒</th>
+                                <td class="ps-4 pe-3" th:text="${studentData.alcohol ?: '—'}">飲む</td>
+                            </tr>
+                            <tr>
+                                <th class="bg-light ps-4 pe-3">刺青（タトゥー）</th>
+                                <td class="ps-4 pe-3" th:text="${studentData.tattoo ?: '—'}">ない</td>
+                            </tr>
+                            <tr>
+                                <th class="bg-light ps-4 pe-3">学費支払予定日</th>
+                                <td class="ps-4 pe-3" th:text="${studentData.tuitionPaymentDate ?: '—'}">2025-01-01</td>
+                            </tr>
+                            <tr>
+                                <th class="bg-light ps-4 pe-3">寮希望</th>
+                                <td class="ps-4 pe-3" th:text="${studentData.wantDorm ?: '—'}">はい</td>
+                            </tr>
+                            <tr>
+                                <th class="bg-light ps-4 pe-3">その他メモ</th>
+                                <td class="ps-4 pe-3" th:text="${studentData.otherMemo ?: '—'}">—</td>
                             </tr>
                         </tbody>
                     </table>
@@ -107,11 +135,11 @@
 
                 <!-- Buttons -->
                 <div class="text-center pt-4 d-flex justify-content-center gap-3">
-                    <button type="button" class="btn btn-secondary btn-lg rounded-pill px-5" 
-                            onclick="window.location.href='/register/second-page'">
+                    <button type="button" class="btn btn-secondary btn-lg rounded py-1 px-3" 
+                            onclick="window.location.href='/register'">
                         編集
                     </button>
-                    <button type="button" class="btn btn-success btn-lg rounded-pill px-5" 
+                    <button type="button" class="btn btn-success btn-lg rounded py-1 px-3" 
                             onclick="submitFinalData()">
                         登録完了
                     </button>
@@ -142,6 +170,8 @@
                 if (data === 'success') {
                     alert('登録が完了しました！');
                     window.location.href = '/register/success';
+                } else {
+                    alert('登録に失敗しました');
                 }
             })
             .catch(error => {

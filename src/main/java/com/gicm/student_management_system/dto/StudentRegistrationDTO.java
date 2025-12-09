@@ -25,6 +25,16 @@ public class StudentRegistrationDTO implements Serializable {
     private String japanTravelExperience;
     private String coeApplicationExperience;
 
+    // Additional fields
+    private String religion;
+    private String otherReligion;
+    private String smoking;
+    private String alcohol;
+    private String tattoo;
+    private String tuitionPaymentDate; // keep as String for simplicity with <input type="date">
+    private String wantDorm;
+    private String otherMemo;
+
     // Default constructor
     public StudentRegistrationDTO() {}
 
@@ -77,4 +87,61 @@ public class StudentRegistrationDTO implements Serializable {
     
     public String getCoeApplicationExperience() { return coeApplicationExperience; }
     public void setCoeApplicationExperience(String coeApplicationExperience) { this.coeApplicationExperience = coeApplicationExperience; }
+
+    // Getters and Setters for additional fields
+    public String getReligion() {
+        return religion;
+    }
+    public void setReligion(String religion) {
+        this.religion = religion;
+    }
+
+    public String getOtherReligion() {
+        return otherReligion;
+    }
+    public void setOtherReligion(String otherReligion) {
+        this.otherReligion = otherReligion;
+    }
+
+    public String getSmoking() {
+        return smoking;
+    }
+    public void setSmoking(String smoking) {
+        this.smoking = smoking;
+    }
+
+    public String getAlcohol() {
+        return alcohol;
+    }
+    public void setAlcohol(String alcohol) {
+        this.alcohol = alcohol;
+    }
+
+    public String getTattoo() {
+        return tattoo;
+    }
+    public void setTattoo(String tattoo) {
+        this.tattoo = tattoo;
+    }
+
+    public String getTuitionPaymentDate() {
+        return tuitionPaymentDate;
+    }
+    public void setTuitionPaymentDate(String tuitionPaymentDate) {
+        this.tuitionPaymentDate = tuitionPaymentDate;
+    }
+
+    public String getWantDorm() {
+        return wantDorm;
+    }
+    public void setWantDorm(String wantDorm) {
+        this.wantDorm = wantDorm;
+    }
+
+    public String getOtherMemo() {
+        return otherMemo;
+    }
+    public void setOtherMemo(String otherMemo) {
+        this.otherMemo = otherMemo;
+    }
 }

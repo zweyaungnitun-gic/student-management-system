@@ -26,6 +26,28 @@ public class RegistrationController {
         return "register/register";
     }
 
+    @GetMapping("/second-page")
+    public String secondPage(HttpSession session, Model model) {
+        StudentRegistrationDTO studentData = (StudentRegistrationDTO) session.getAttribute("studentData");
+        
+        if (studentData != null) {
+            model.addAttribute("studentData", studentData);
+        }
+
+        return "register/second-page";
+    }
+
+    @GetMapping("/third-page")
+    public String thirdPage(HttpSession session, Model model) {
+        StudentRegistrationDTO studentData = (StudentRegistrationDTO) session.getAttribute("studentData");
+        
+        if (studentData != null) {
+            model.addAttribute("studentData", studentData);
+        }
+
+        return "register/third-page";
+    }
+
     @GetMapping("/check-page")
     public String checkPage(HttpSession session, Model model) {
         StudentRegistrationDTO studentData = (StudentRegistrationDTO) session.getAttribute("studentData");
@@ -36,19 +58,6 @@ public class RegistrationController {
         }
         
         return "redirect:/register";
-    }
-
-    @GetMapping("/second-page")
-    public String secondPage(HttpSession session, Model model) {
-        // Retrieve existing data from Redis
-        StudentRegistrationDTO studentData = (StudentRegistrationDTO) session.getAttribute("studentData");
-        
-        if (studentData != null) {
-            // Pass data to view for pre-filling
-            model.addAttribute("studentData", studentData);
-        }
-        
-        return "register/second-page";
     }
 
     // POST Mappings
@@ -105,6 +114,32 @@ public class RegistrationController {
         // Store combined data back to Redis
         session.setAttribute("studentData", existingData);
         
+        return "success";
+    }
+
+    // POST Mapping for step 3
+    @PostMapping("/save-step3")
+    @ResponseBody
+    public String saveStep3(@RequestBody StudentRegistrationDTO thirdPageData, HttpSession session) {
+        StudentRegistrationDTO existingData = (StudentRegistrationDTO) session.getAttribute("studentData");
+
+        if (existingData == null) {
+            return "error";
+        }
+
+        // Merge third-page fields
+        existingData.setReligion(thirdPageData.getReligion());
+        existingData.setOtherReligion(thirdPageData.getOtherReligion());
+        existingData.setSmoking(thirdPageData.getSmoking());
+        existingData.setAlcohol(thirdPageData.getAlcohol());
+        existingData.setTattoo(thirdPageData.getTattoo());
+        existingData.setTuitionPaymentDate(thirdPageData.getTuitionPaymentDate());
+        existingData.setWantDorm(thirdPageData.getWantDorm());
+        existingData.setOtherMemo(thirdPageData.getOtherMemo());
+
+        // Persist back to session/Redis
+        session.setAttribute("studentData", existingData);
+
         return "success";
     }
 }
