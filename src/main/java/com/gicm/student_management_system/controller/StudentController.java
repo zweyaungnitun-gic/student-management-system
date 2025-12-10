@@ -1,6 +1,8 @@
 package com.gicm.student_management_system.controller;
 
 import com.gicm.student_management_system.dto.StudentDTO;
+import com.gicm.student_management_system.dto.N4ClassDTO; 
+import com.gicm.student_management_system.dto.N5ClassDTO;
 import com.gicm.student_management_system.entity.InterviewNotes;
 import com.gicm.student_management_system.entity.N4Class;
 import com.gicm.student_management_system.entity.N5Class;
@@ -55,12 +57,22 @@ public class StudentController {
             @RequestParam(required = false) String subTab,
             Model model) {
 
-        // 1. Fetch the specific student by ID
-        Student student = studentService.findById(id)
-                .orElseThrow(() -> new RuntimeException("Student not found: " + id));
+        // Fetch the specific student by ID
+        //Student student = studentService.findById(id)
+                //.orElseThrow(() -> new RuntimeException("Student not found: " + id));
 
-        // 2. Add attributes to model so details.html can display them
-        model.addAttribute("student", student);
+        //Fetch Student DTO via Studentservice
+        StudentDTO studentDTO = studentService.getStudentById(id);
+
+        //Fetch N5 and N4 DTOs using the services
+        N5ClassDTO n5Class = n5ClassService.getOrCreateN5ClassDTO(id);
+        N4ClassDTO n4Class = n4ClassService.getOrCreateN4ClassDTO(id);
+
+        // Add attributes to model so details.html can display them
+        model.addAttribute("student", studentDTO);
+        model.addAttribute("n5Class", n5Class);
+        model.addAttribute("n4Class", n4Class);
+
         model.addAttribute("currentTab", tab);
         model.addAttribute("currentSubTab", subTab);
 
