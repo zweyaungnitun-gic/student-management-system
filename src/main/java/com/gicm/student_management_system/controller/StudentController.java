@@ -220,6 +220,7 @@ public class StudentController {
             existingN5Class.setN5Class3TestResult(n5Class.getN5Class3TestResult());
             existingN5Class.setN5Class3TeacherFeedback(n5Class.getN5Class3TeacherFeedback());
 
+            studentService.save(student);
             redirectAttributes.addFlashAttribute("success", "N5クラス情報が正常に更新されました");
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", "更新に失敗しました: " + e.getMessage());
@@ -264,6 +265,7 @@ public class StudentController {
             existingN4Class.setN4Class3TestResult(n4Class.getN4Class3TestResult());
             existingN4Class.setN4Class3TeacherFeedback(n4Class.getN4Class3TeacherFeedback());
 
+            studentService.save(student);
             redirectAttributes.addFlashAttribute("success", "N4クラス情報が正常に更新されました");
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", "更新に失敗しました: " + e.getMessage());
@@ -293,6 +295,7 @@ public class StudentController {
             existingInterviewNotes.setInterview3(interviewNotes.getInterview3());
             existingInterviewNotes.setOtherMemo(interviewNotes.getOtherMemo());
 
+            studentService.save(student);
             redirectAttributes.addFlashAttribute("success", "面談情報が正常に更新されました");
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", "更新に失敗しました: " + e.getMessage());
