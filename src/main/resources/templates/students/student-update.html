@@ -34,26 +34,41 @@
 
 <div class="fixed-tabs-container">
   <ul class="nav nav-tabs" id="studentTab" role="tablist">
-    <li class="nav-item"><button class="nav-link active" id="basic-tab" data-bs-toggle="tab" data-bs-target="#basic" type="button"><i class="fas fa-id-card"></i><span>基本情報</span></button></li>
-    <li class="nav-item"><button class="nav-link" id="status-tab" data-bs-toggle="tab" data-bs-target="#status" type="button"><i class="fas fa-tasks"></i><span>ステータス・属性</span></button></li>
-    <li class="nav-item"><button class="nav-link" id="n5-tab" data-bs-toggle="tab" data-bs-target="#n5" type="button"><i class="fas fa-book-open"></i><span>N5クラス情報</span></button></li>
-    <li class="nav-item"><button class="nav-link" id="n4-tab" data-bs-toggle="tab" data-bs-target="#n4" type="button"><i class="fas fa-book-reader"></i><span>N4クラス情報</span></button></li>
-    <li class="nav-item"><button class="nav-link" id="interview-tab" data-bs-toggle="tab" data-bs-target="#interview" type="button"><i class="fas fa-comments"></i><span>面談・その他</span></button></li>
+    <li class="nav-item">
+      <button class="nav-link active" id="basic-tab" data-bs-toggle="tab" data-bs-target="#basic" type="button">
+        <i class="fas fa-id-card"></i><span>基本情報</span>
+      </button>
+    </li>
+    <li class="nav-item">
+      <button class="nav-link" id="status-tab" data-bs-toggle="tab" data-bs-target="#status" type="button">
+        <i class="fas fa-tasks"></i><span>ステータス・属性</span>
+      </button>
+    </li>
+    <li class="nav-item">
+      <button class="nav-link" id="n5-tab" data-bs-toggle="tab" data-bs-target="#n5" type="button">
+        <i class="fas fa-book-open"></i><span>N5クラス情報</span>
+      </button>
+    </li>
+    <li class="nav-item">
+      <button class="nav-link" id="n4-tab" data-bs-toggle="tab" data-bs-target="#n4" type="button">
+        <i class="fas fa-book-reader"></i><span>N4クラス情報</span>
+      </button>
+    </li>
+    <li class="nav-item">
+      <button class="nav-link" id="interview-tab" data-bs-toggle="tab" data-bs-target="#interview" type="button">
+        <i class="fas fa-comments"></i><span>面談・その他</span>
+      </button>
+    </li>
   </ul>
 </div>
 
 <div class="main-content-container">
   <div class="scrollable-content">
-    <form id="studentUpdateForm" th:action="@{/students/student-update}" th:object="${student}" method="post">
-      <input type="hidden" th:field="*{id}"/>
-      <input type="hidden" th:if="${student.n5Class != null}" th:field="*{n5Class.id}"/>
-      <input type="hidden" th:if="${student.n4Class != null}" th:field="*{n4Class.id}"/>
-      <input type="hidden" th:if="${student.interviewNotes != null}" th:field="*{interviewNotes.id}"/>
+    <div class="tab-content" id="studentTabContent">
       
-      <div class="tab-content" id="studentTabContent">
-
-        <!-- Tab-1 -->
-        <div class="tab-pane fade show active" id="basic" role="tabpanel">
+      <!-- Tab-1 -->
+      <div class="tab-pane fade show active" id="basic" role="tabpanel" aria-labelledby="basic-tab">
+        <form th:action="@{/students/update-basic/{id}(id=${student.id})}" th:object="${student}" method="post" id="basicForm">
           <div class="form-section">
             <div class="row g-3">
               <div class="col-md-6">
@@ -127,17 +142,19 @@
                   <button type="button" class="btn btn-secondary" onclick="cancelUpdate()">
                     <i class="fas fa-times me-2"></i>キャンセル
                   </button>
-                  <button type="button" class="btn btn-primary px-4" onclick="saveAndContinue('status-tab')">
-                    <i class="fas fa-save me-2"></i>保存して次へ
+                  <button type="submit" class="btn btn-primary px-4">
+                    <i class="fas fa-save me-2"></i>更新
                   </button>
                 </div>
               </div>
             </div>
           </div>
-        </div>
+        </form>
+      </div>
 
-        <!-- Tab-2 -->
-        <div class="tab-pane fade" id="status" role="tabpanel">
+      <!-- Tab-2 -->
+      <div class="tab-pane fade" id="status" role="tabpanel" aria-labelledby="status-tab">
+        <form th:action="@{/students/update-status/{id}(id=${student.id})}" th:object="${student}" method="post" id="statusForm">
           <div class="form-section">
             <div class="row g-3">
               <div class="col-md-6">
@@ -277,56 +294,56 @@
               
               <div class="col-12 mt-4 pt-3 border-top">
                 <div class="d-flex justify-content-center gap-3">
-                  <button type="button" class="btn btn-secondary" onclick="goToTab('basic-tab')">
-                    <i class="fas fa-arrow-left me-2"></i>前へ
-                  </button>
                   <button type="button" class="btn btn-secondary" onclick="cancelUpdate()">
                     <i class="fas fa-times me-2"></i>キャンセル
                   </button>
-                  <button type="button" class="btn btn-primary px-4" onclick="saveAndContinue('n5-tab')">
-                    <i class="fas fa-save me-2"></i>保存して次へ
+                  <button type="submit" class="btn btn-primary px-4">
+                    <i class="fas fa-save me-2"></i>更新
                   </button>
                 </div>
               </div>
             </div>
           </div>
-        </div>
+        </form>
+      </div>
 
-        <!-- Tab-3 -->
-        <div class="tab-pane fade" id="n5" role="tabpanel">
+      <!-- Tab-3 -->
+      <div class="tab-pane fade" id="n5" role="tabpanel" aria-labelledby="n5-tab">
+        <form th:action="@{/students/update-n5/{id}(id=${student.id})}" th:object="${student.n5Class}" method="post" id="n5Form">
+          <input type="hidden" th:if="${student.n5Class != null}" th:field="*{id}"/>
           <div class="form-section">
             <div class="sub-section-header main-class-header"><i class="fas fa-chalkboard me-2"></i>N5クラス情報明細</div>
             <div class="row g-3">
               <div class="col-md-4">
                 <label class="form-label">担当教師</label>
-                <input type="text" class="form-control" th:field="*{n5Class.n5ClassTeacher}" />
+                <input type="text" class="form-control" th:field="*{n5ClassTeacher}" />
               </div>
               <div class="col-md-4">
                 <label class="form-label">出席率</label>
-                <input type="text" class="form-control" th:field="*{n5Class.n5ClassAttendance}" placeholder="例: 95%" />
+                <input type="text" class="form-control" th:field="*{n5ClassAttendance}" placeholder="例: 95%" />
               </div>
               <div class="col-md-4"></div>
 
               <div class="col-md-3">
                 <label class="form-label">日本語テスト結果 1</label>
-                <input type="text" class="form-control" th:field="*{n5Class.n5ClassTestResult1}" />
+                <input type="text" class="form-control" th:field="*{n5ClassTestResult1}" />
               </div>
               <div class="col-md-3">
                 <label class="form-label">日本語テスト結果 2</label>
-                <input type="text" class="form-control" th:field="*{n5Class.n5ClassTestResult2}" />
+                <input type="text" class="form-control" th:field="*{n5ClassTestResult2}" />
               </div>
               <div class="col-md-3">
                 <label class="form-label">日本語テスト結果 3</label>
-                <input type="text" class="form-control" th:field="*{n5Class.n5ClassTestResult3}" />
+                <input type="text" class="form-control" th:field="*{n5ClassTestResult3}" />
               </div>
               <div class="col-md-3">
                 <label class="form-label">日本語テスト結果 4</label>
-                <input type="text" class="form-control" th:field="*{n5Class.n5ClassTestResult4}" />
+                <input type="text" class="form-control" th:field="*{n5ClassTestResult4}" />
               </div>
 
               <div class="col-12">
                 <label class="form-label">教師所感</label>
-                <textarea class="form-control" th:field="*{n5Class.n5ClassFeedback}" rows="3"></textarea>
+                <textarea class="form-control" th:field="*{n5ClassFeedback}" rows="3"></textarea>
               </div>
             </div>
 
@@ -334,23 +351,23 @@
             <div class="row g-3">
               <div class="col-md-3">
                 <label class="form-label">クラス名</label>
-                <input type="text" class="form-control" th:field="*{n5Class.n5Class1Teacher}" placeholder="N5会話クラス①" readonly style="background-color: #e9ecef;"/>
+                <input type="text" class="form-control" value="N5会話クラス①" readonly style="background-color: #e9ecef;"/>
               </div>
               <div class="col-md-3">
                 <label class="form-label">担当教師</label>
-                <input type="text" class="form-control" th:field="*{n5Class.n5Class1Teacher}" />
+                <input type="text" class="form-control" th:field="*{n5Class1Teacher}" />
               </div>
               <div class="col-md-3">
                 <label class="form-label">出席率</label>
-                <input type="text" class="form-control" th:field="*{n5Class.n5Class1AttendanceRate}" />
+                <input type="text" class="form-control" th:field="*{n5Class1AttendanceRate}" />
               </div>
               <div class="col-md-3">
                 <label class="form-label">テスト結果</label>
-                <input type="text" class="form-control" th:field="*{n5Class.n5Class1TestResult}" />
+                <input type="text" class="form-control" th:field="*{n5Class1TestResult}" />
               </div>
               <div class="col-12">
                 <label class="form-label">教師所感</label>
-                <textarea class="form-control" th:field="*{n5Class.n5Class1TeacherFeedback}" rows="2"></textarea>
+                <textarea class="form-control" th:field="*{n5Class1TeacherFeedback}" rows="2"></textarea>
               </div>
             </div>
 
@@ -362,19 +379,19 @@
               </div>
               <div class="col-md-3">
                 <label class="form-label">担当教師</label>
-                <input type="text" class="form-control" th:field="*{n5Class.n5Class2Teacher}" />
+                <input type="text" class="form-control" th:field="*{n5Class2Teacher}" />
               </div>
               <div class="col-md-3">
                 <label class="form-label">出席率</label>
-                <input type="text" class="form-control" th:field="*{n5Class.n5Class2AttendanceRate}" />
+                <input type="text" class="form-control" th:field="*{n5Class2AttendanceRate}" />
               </div>
               <div class="col-md-3">
                 <label class="form-label">テスト結果</label>
-                <input type="text" class="form-control" th:field="*{n5Class.n5Class2TestResult}" />
+                <input type="text" class="form-control" th:field="*{n5Class2TestResult}" />
               </div>
               <div class="col-12">
                 <label class="form-label">教師所感</label>
-                <textarea class="form-control" th:field="*{n5Class.n5Class2TeacherFeedback}" rows="2"></textarea>
+                <textarea class="form-control" th:field="*{n5Class2TeacherFeedback}" rows="2"></textarea>
               </div>
             </div>
 
@@ -386,75 +403,75 @@
               </div>
               <div class="col-md-3">
                 <label class="form-label">担当教師</label>
-                <input type="text" class="form-control" th:field="*{n5Class.n5Class3Teacher}" />
+                <input type="text" class="form-control" th:field="*{n5Class3Teacher}" />
               </div>
               <div class="col-md-3">
                 <label class="form-label">出席率</label>
-                <input type="text" class="form-control" th:field="*{n5Class.n5Class3AttendanceRate}" />
+                <input type="text" class="form-control" th:field="*{n5Class3AttendanceRate}" />
               </div>
               <div class="col-md-3">
                 <label class="form-label">テスト結果</label>
-                <input type="text" class="form-control" th:field="*{n5Class.n5Class3TestResult}" />
+                <input type="text" class="form-control" th:field="*{n5Class3TestResult}" />
               </div>
               <div class="col-12">
                 <label class="form-label">教師所感</label>
-                <textarea class="form-control" th:field="*{n5Class.n5Class3TeacherFeedback}" rows="2"></textarea>
+                <textarea class="form-control" th:field="*{n5Class3TeacherFeedback}" rows="2"></textarea>
               </div>
             </div>
             
             <div class="row mt-4 pt-3 border-top">
               <div class="col-12">
                 <div class="d-flex justify-content-center gap-3">
-                  <button type="button" class="btn btn-secondary" onclick="goToTab('status-tab')">
-                    <i class="fas fa-arrow-left me-2"></i>前へ
-                  </button>
                   <button type="button" class="btn btn-secondary" onclick="cancelUpdate()">
                     <i class="fas fa-times me-2"></i>キャンセル
                   </button>
-                  <button type="button" class="btn btn-primary px-4" onclick="saveAndContinue('n4-tab')">
-                    <i class="fas fa-save me-2"></i>保存して次へ
+                  <button type="submit" class="btn btn-primary px-4">
+                    <i class="fas fa-save me-2"></i>更新
                   </button>
                 </div>
               </div>
             </div>
           </div>
-        </div>
+        </form>
+      </div>
 
-        <!-- Tab-4 -->
-        <div class="tab-pane fade" id="n4" role="tabpanel">
+      <!-- Tab-4  -->
+      <div class="tab-pane fade" id="n4" role="tabpanel" aria-labelledby="n4-tab">
+        <form th:action="@{/students/update-n4/{id}(id=${student.id})}" th:object="${student.n4Class}" method="post" id="n4Form">
+          <input type="hidden" th:if="${student.n4Class != null}" th:field="*{id}"/>
           <div class="form-section">
             <div class="sub-section-header main-class-header"><i class="fas fa-chalkboard me-2"></i>N4クラス情報明細</div>
             <div class="row g-3">
               <div class="col-md-4">
                 <label class="form-label">担当教師</label>
-                <input type="text" class="form-control" th:field="*{n4Class.n4ClassTeacher}" />
+                <input type="text" class="form-control" th:field="*{n4ClassTeacher}" />
               </div>
               <div class="col-md-4">
                 <label class="form-label">出席率</label>
-                <input type="text" class="form-control" th:field="*{n4Class.n4ClassAttendance}" placeholder="例: 95%" />
+                <input type="text" class="form-control" th:field="*{n4ClassAttendance}" placeholder="例: 95%" />
               </div>
               <div class="col-md-4"></div>
 
               <div class="col-md-3">
                 <label class="form-label">日本語テスト結果 1</label>
-                <input type="text" class="form-control" th:field="*{n4Class.n4ClassTestResult1}" />
+                <input type="text" class="form-control" th:field="*{n4ClassTestResult1}" />
               </div>
               <div class="col-md-3">
                 <label class="form-label">日本語テスト結果 2</label>
-                <input type="text" class="form-control" th:field="*{n4Class.n4ClassTestResult2}" />
+                <input type="text" class="form-control" th:field="*{n4ClassTestResult2}" />
               </div>
               <div class="col-md-3">
                 <label class="form-label">日本語テスト結果 3</label>
-                <input type="text" class="form-control" th:field="*{n4Class.n4ClassTestResult3}" />
+                <input type="text" class="form-control" th:field="*{n4ClassTestResult3}" />
               </div>
               <div class="col-md-3">
                 <label class="form-label">日本語テスト結果 4</label>
-                <input type="text" class="form-control" th:field="*{n4Class.n4ClassTestResult4}" />
+                <input type="text" class="form-control" th:field="*{n4ClassTestResult4}" />
               </div>
 
               <div class="col-12">
                 <label class="form-label">教師所感</label>
-                <textarea class="form-control" th:field="*{n4Class.n4ClassFeedback}" rows="3"></textarea>
+                <textarea class="form-control" th:field="*{n4ClassFeedback}" rows="3"></textarea>
               </div>
             </div>
 
@@ -466,19 +483,19 @@
               </div>
               <div class="col-md-3">
                 <label class="form-label">担当教師</label>
-                <input type="text" class="form-control" th:field="*{n4Class.n4Class1Teacher}" />
+                <input type="text" class="form-control" th:field="*{n4Class1Teacher}" />
               </div>
               <div class="col-md-3">
                 <label class="form-label">出席率</label>
-                <input type="text" class="form-control" th:field="*{n4Class.n4Class1AttendanceRate}" />
+                <input type="text" class="form-control" th:field="*{n4Class1AttendanceRate}" />
               </div>
               <div class="col-md-3">
                 <label class="form-label">テスト結果</label>
-                <input type="text" class="form-control" th:field="*{n4Class.n4Class1TestResult}" />
+                <input type="text" class="form-control" th:field="*{n4Class1TestResult}" />
               </div>
               <div class="col-12">
                 <label class="form-label">教師所感</label>
-                <textarea class="form-control" th:field="*{n4Class.n4Class1TeacherFeedback}" rows="2"></textarea>
+                <textarea class="form-control" th:field="*{n4Class1TeacherFeedback}" rows="2"></textarea>
               </div>
             </div>
 
@@ -490,19 +507,19 @@
               </div>
               <div class="col-md-3">
                 <label class="form-label">担当教師</label>
-                <input type="text" class="form-control" th:field="*{n4Class.n4Class2Teacher}" />
+                <input type="text" class="form-control" th:field="*{n4Class2Teacher}" />
               </div>
               <div class="col-md-3">
                 <label class="form-label">出席率</label>
-                <input type="text" class="form-control" th:field="*{n4Class.n4Class2AttendanceRate}" />
+                <input type="text" class="form-control" th:field="*{n4Class2AttendanceRate}" />
               </div>
               <div class="col-md-3">
                 <label class="form-label">テスト結果</label>
-                <input type="text" class="form-control" th:field="*{n4Class.n4Class2TestResult}" />
+                <input type="text" class="form-control" th:field="*{n4Class2TestResult}" />
               </div>
               <div class="col-12">
                 <label class="form-label">教師所感</label>
-                <textarea class="form-control" th:field="*{n4Class.n4Class2TeacherFeedback}" rows="2"></textarea>
+                <textarea class="form-control" th:field="*{n4Class2TeacherFeedback}" rows="2"></textarea>
               </div>
             </div>
 
@@ -514,115 +531,107 @@
               </div>
               <div class="col-md-3">
                 <label class="form-label">担当教師</label>
-                <input type="text" class="form-control" th:field="*{n4Class.n4Class3Teacher}" />
+                <input type="text" class="form-control" th:field="*{n4Class3Teacher}" />
               </div>
               <div class="col-md-3">
                 <label class="form-label">出席率</label>
-                <input type="text" class="form-control" th:field="*{n4Class.n4Class3AttendanceRate}" />
+                <input type="text" class="form-control" th:field="*{n4Class3AttendanceRate}" />
               </div>
               <div class="col-md-3">
                 <label class="form-label">テスト結果</label>
-                <input type="text" class="form-control" th:field="*{n4Class.n4Class3TestResult}" />
+                <input type="text" class="form-control" th:field="*{n4Class3TestResult}" />
               </div>
               <div class="col-12">
                 <label class="form-label">教師所感</label>
-                <textarea class="form-control" th:field="*{n4Class.n4Class3TeacherFeedback}" rows="2"></textarea>
+                <textarea class="form-control" th:field="*{n4Class3TeacherFeedback}" rows="2"></textarea>
               </div>
             </div>
             
             <div class="row mt-4 pt-3 border-top">
               <div class="col-12">
                 <div class="d-flex justify-content-center gap-3">
-                  <button type="button" class="btn btn-secondary" onclick="goToTab('n5-tab')">
-                    <i class="fas fa-arrow-left me-2"></i>前へ
-                  </button>
                   <button type="button" class="btn btn-secondary" onclick="cancelUpdate()">
                     <i class="fas fa-times me-2"></i>キャンセル
                   </button>
-                  <button type="button" class="btn btn-primary px-4" onclick="saveAndContinue('interview-tab')">
-                    <i class="fas fa-save me-2"></i>保存して次へ
+                  <button type="submit" class="btn btn-primary px-4">
+                    <i class="fas fa-save me-2"></i>更新
                   </button>
                 </div>
               </div>
             </div>
           </div>
-        </div>
+        </form>
+      </div>
 
-        <!-- Tab-5-->
-        <div class="tab-pane fade" id="interview" role="tabpanel">
+      <!-- Tab-5 -->
+      <div class="tab-pane fade" id="interview" role="tabpanel" aria-labelledby="interview-tab">
+        <form th:action="@{/students/update-interview/{id}(id=${student.id})}" th:object="${student.interviewNotes}" method="post" id="interviewForm">
+          <input type="hidden" th:if="${student.interviewNotes != null}" th:field="*{id}"/>
           <div class="form-section">
             <div class="row g-3">
               <div class="col-12">
                 <label class="form-label">一回目面接メモ</label>
-                <textarea class="form-control" th:field="*{interviewNotes.interview1}" rows="4" placeholder="面接内容、評価、備考など"></textarea>
+                <textarea class="form-control" th:field="*{interview1}" rows="4" placeholder="面接内容、評価、備考など"></textarea>
               </div>
 
               <div class="col-12">
                 <label class="form-label">二回目面接メモ</label>
-                <textarea class="form-control" th:field="*{interviewNotes.interview2}" rows="4" placeholder="面接内容、評価、備考など"></textarea>
+                <textarea class="form-control" th:field="*{interview2}" rows="4" placeholder="面接内容、評価、備考など"></textarea>
               </div>
 
               <div class="col-12">
                 <label class="form-label">三回目面接メモ</label>
-                <textarea class="form-control" th:field="*{interviewNotes.interview3}" rows="4" placeholder="面接内容、評価、備考など"></textarea>
+                <textarea class="form-control" th:field="*{interview3}" rows="4" placeholder="面接内容、評価、備考など"></textarea>
               </div>
 
               <div class="col-12">
                 <label class="form-label">その他メモ（自由形式）</label>
-                <textarea class="form-control" th:field="*{interviewNotes.otherMemo}" rows="6" placeholder="その他の備考、連絡事項など"></textarea>
+                <textarea class="form-control" th:field="*{otherMemo}" rows="6" placeholder="その他の備考、連絡事項など"></textarea>
               </div>
               
               <div class="col-12 mt-4 pt-3 border-top">
                 <div class="d-flex justify-content-center gap-3">
-                  <button type="button" class="btn btn-secondary" onclick="goToTab('n4-tab')">
-                    <i class="fas fa-arrow-left me-2"></i>前へ
-                  </button>
                   <button type="button" class="btn btn-secondary" onclick="cancelUpdate()">
                     <i class="fas fa-times me-2"></i>キャンセル
                   </button>
-                  <button type="submit" class="btn btn-success px-4">
-                    <i class="fas fa-check-circle me-2"></i>完了して保存
+                  <button type="submit" class="btn btn-primary px-4">
+                    <i class="fas fa-save me-2"></i>更新
                   </button>
                 </div>
               </div>
             </div>
           </div>
-        </div>
+        </form>
       </div>
-    </form>
+      
+    </div>
   </div>
+</div>
+
+<!-- Flash Messages -->
+<div th:if="${success}" class="alert alert-success alert-dismissible fade show position-fixed top-0 start-50 translate-middle-x mt-5" style="z-index: 1100; min-width: 300px;" role="alert">
+  <i class="fas fa-check-circle me-2"></i>
+  <span th:text="${success}"></span>
+  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+
+<div th:if="${error}" class="alert alert-danger alert-dismissible fade show position-fixed top-0 start-50 translate-middle-x mt-5" style="z-index: 1100; min-width: 300px;" role="alert">
+  <i class="fas fa-exclamation-circle me-2"></i>
+  <span th:text="${error}"></span>
+  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
   document.addEventListener('DOMContentLoaded', function() {
-    
-    window.goToTab = function(tabId) {
-      const tab = document.getElementById(tabId);
-      if (tab) {
-        const bsTab = new bootstrap.Tab(tab);
-        bsTab.show();
-      }
-    };
-    
-    window.saveAndContinue = function(nextTabId) {
-      const form = document.getElementById('studentUpdateForm');
-      let isValid = true;
-      
-      if (nextTabId === 'status-tab') {
-        const studentName = form.querySelector('[name="studentName"]');
-        if (studentName && !studentName.value.trim()) {
-          alert('生徒名（英語）は必須です。');
-          studentName.focus();
-          isValid = false;
-        }
-      }
-      
-      if (isValid) {
-        console.log('Saving data and moving to next tab:', nextTabId);
-        goToTab(nextTabId);
-      }
-    };
+    // Auto-hide alerts after 5 seconds
+    const alerts = document.querySelectorAll('.alert');
+    alerts.forEach(function(alert) {
+      setTimeout(function() {
+        const bsAlert = new bootstrap.Alert(alert);
+        bsAlert.close();
+      }, 5000);
+    });
     
     window.cancelUpdate = function() {
       if (confirm('変更内容が保存されません。よろしいですか？')) {
@@ -630,22 +639,24 @@
       }
     };
     
+    // Conditional field handling for "その他" options
     const desiredJobType = document.getElementById('desiredJobType');
     const otherDesiredJobType = document.getElementById('otherDesiredJobType');
     
     if (desiredJobType && otherDesiredJobType) {
       function toggleOtherJobType() {
         if (desiredJobType.value === 'other') {
-          otherDesiredJobType.style.display = 'block';
+          otherDesiredJobType.disabled = false;
           otherDesiredJobType.closest('.col-md-6').style.display = 'block';
         } else {
-          otherDesiredJobType.style.display = 'none';
-          otherDesiredJobType.closest('.col-md-6').style.display = 'none';
+          otherDesiredJobType.disabled = true;
+          otherDesiredJobType.value = '';
+          otherDesiredJobType.closest('.col-md-6').style.display = 'block';
         }
       }
       
       desiredJobType.addEventListener('change', toggleOtherJobType);
-      toggleOtherJobType(); 
+      toggleOtherJobType();
     }
     
     const religion = document.getElementById('religion');
@@ -654,30 +665,94 @@
     if (religion && otherReligionInput) {
       function toggleOtherReligion() {
         if (religion.value === 'other') {
-          otherReligionInput.style.display = 'block';
+          otherReligionInput.disabled = false;
           otherReligionInput.closest('.col-md-6').style.display = 'block';
         } else {
-          otherReligionInput.style.display = 'none';
-          otherReligionInput.closest('.col-md-6').style.display = 'none';
+          otherReligionInput.disabled = true;
+          otherReligionInput.value = '';
+          otherReligionInput.closest('.col-md-6').style.display = 'block';
         }
       }
       
       religion.addEventListener('change', toggleOtherReligion);
-      toggleOtherReligion(); 
+      toggleOtherReligion();
     }
     
-    const form = document.getElementById('studentUpdateForm');
-    if (form) {
-      form.addEventListener('submit', function(e) {
-        const studentName = form.querySelector('[name="studentName"]');
+    const basicForm = document.getElementById('basicForm');
+    if (basicForm) {
+      basicForm.addEventListener('submit', function(e) {
+        const studentName = basicForm.querySelector('[name="studentName"]');
         if (studentName && !studentName.value.trim()) {
           e.preventDefault();
           alert('生徒名（英語）は必須です。');
-          goToTab('basic-tab');
           studentName.focus();
+          return false;
+        }
+        
+        if (!confirm('基本情報を更新しますか？')) {
+          e.preventDefault();
+          return false;
         }
       });
     }
+    
+    const statusForm = document.getElementById('statusForm');
+    if (statusForm) {
+      statusForm.addEventListener('submit', function(e) {
+        if (!confirm('ステータス情報を更新しますか？')) {
+          e.preventDefault();
+          return false;
+        }
+      });
+    }
+    
+    const n5Form = document.getElementById('n5Form');
+    if (n5Form) {
+      n5Form.addEventListener('submit', function(e) {
+        if (!confirm('N5クラス情報を更新しますか？')) {
+          e.preventDefault();
+          return false;
+        }
+      });
+    }
+    
+    const n4Form = document.getElementById('n4Form');
+    if (n4Form) {
+      n4Form.addEventListener('submit', function(e) {
+        if (!confirm('N4クラス情報を更新しますか？')) {
+          e.preventDefault();
+          return false;
+        }
+      });
+    }
+    
+    const interviewForm = document.getElementById('interviewForm');
+    if (interviewForm) {
+      interviewForm.addEventListener('submit', function(e) {
+        if (!confirm('面談情報を更新しますか？')) {
+          e.preventDefault();
+          return false;
+        }
+      });
+    }
+    
+    // Handle tab switching
+    const tabTriggers = document.querySelectorAll('#studentTab .nav-link');
+    tabTriggers.forEach(function(tab) {
+      tab.addEventListener('click', function(e) {
+        const target = this.getAttribute('data-bs-target');
+        if (target) {
+          document.querySelector('.main-content-container').scrollTop = 0;
+        }
+      });
+    });
+    
+    const tabEl = document.querySelector('#studentTab');
+    if (tabEl) {
+      const tab = new bootstrap.Tab(tabEl.querySelector('.nav-link.active'));
+    }
+    
+    window.scrollTo(0, 0);
   });
 </script>
 </body>
