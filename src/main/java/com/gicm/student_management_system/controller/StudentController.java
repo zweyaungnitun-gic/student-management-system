@@ -34,7 +34,13 @@ public class StudentController {
         model.addAttribute("nameSearch", nameSearch);
         model.addAttribute("statusFilter", status);
 
-        return "admin-dashboard";
+        return "students/student-list.html";
+    }
+
+    @GetMapping("/delete/{id}")
+    public String deleteStudent(@PathVariable Long id) {
+        studentService.deleteStudent(id);
+        return "redirect:/students"; // Redirect back to the student list
     }
 
     // NEW METHOD FOR DETAILS
