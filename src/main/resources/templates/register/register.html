@@ -24,106 +24,115 @@
                     </h2>
                 </div>
 
-                <form>
+                <form novalidate>
                     <div class="row justify-content-center">
                         <div class="col-12 col-lg-10 col-xl-9">
                             
-                            <div class="row align-items-center mb-3">
-                                <label for="englishName" class="col-12 col-md-4 col-form-label text-md-start fw-bold mb-2 mb-md-0">
+                            <div class="row mb-3">
+                                <label for="englishName" class="col-md-4 col-form-label fw-bold">
                                     なまえ(英語)<span class="text-danger ms-1">*</span>
                                 </label>
-                                <div class="col-12 col-md-8">
+                                <div class="col-md-8">
                                     <input maxlength="20" type="text" class="form-control" id="englishName" 
                                            th:value="${studentData?.englishName}"
                                            placeholder="英語表記の名前を入力してください" required>
+                                    <div class="invalid-feedback">英語名は必須です</div>
                                 </div>
                             </div>
 
-                            <div class="row align-items-center mb-3">
-                                <label for="katakanaName" class="col-12 col-md-4 col-form-label text-md-start fw-bold mb-2 mb-md-0">
+                            <div class="row mb-3">
+                                <label for="katakanaName" class="col-md-4 col-form-label fw-bold">
                                     なまえ(カタカナ)<span class="text-danger ms-1">*</span>
                                 </label>
-                                <div class="col-12 col-md-8">
+                                <div class="col-md-8">
                                     <input maxlength="20" type="text" class="form-control" id="katakanaName" 
                                            th:value="${studentData?.katakanaName}"
                                            placeholder="カタカナ表記の名前を入力してください" required>
+                                    <div class="invalid-feedback">カタカナ名は必須です</div>
                                 </div>
                             </div>
 
-                            <div class="row align-items-center mb-3">
-                                <label for="dob" class="col-12 col-md-4 col-form-label text-md-start fw-bold mb-2 mb-md-0">
+                            <div class="row mb-3">
+                                <label for="dob" class="col-md-4 col-form-label fw-bold">
                                     生年月日<span class="text-danger ms-1">*</span>
                                 </label>
-                                <div class="col-12 col-md-8">
+                                <div class="col-md-8">
                                     <input type="date" class="form-control" id="dob" 
                                            th:value="${studentData?.dob}"
                                            required>
+                                    <div class="invalid-feedback">生年月日は必須です</div>
                                 </div>
-                            </div>  
-                            <div class="row align-items-center mb-3">
-                                <label class="col-12 col-md-4 col-form-label text-md-start fw-bold mb-2 mb-md-0">
+                            </div>
+                            
+                            <div class="row mb-3">
+                                <label class="col-md-4 col-form-label fw-bold">
                                     性別<span class="text-danger ms-1">*</span>
                                 </label>
-                                <div class="col-12 col-md-8 d-flex justify-content-start">
+                                <div class="col-md-8">
                                     <div class="btn-group" role="group" aria-label="Gender selection">
                                         <input type="radio" class="btn-check" name="gender" id="genderMale" value="Male"
-                                               th:checked="${studentData?.gender == 'Male'}">
+                                               th:checked="${studentData?.gender == 'Male'}" required>
                                         <label class="btn btn-outline-secondary d-flex align-items-center gap-2 me-2 rounded py-1 px-3" for="genderMale">
                                             <i class="bi bi-circle"></i>
                                             男性
                                         </label>
 
                                         <input type="radio" class="btn-check" name="gender" id="genderFemale" value="Female"
-                                               th:checked="${studentData?.gender == 'Female'}">
+                                               th:checked="${studentData?.gender == 'Female'}" required>
                                         <label class="btn btn-outline-secondary d-flex align-items-center gap-2 rounded py-1 px-3" for="genderFemale">
                                             <i class="bi bi-circle"></i>
                                             女性
                                         </label>
-                                    </div>    
+                                    </div>
+                                    <div class="invalid-feedback" id="genderError" style="display: none">性別を選択してください</div>
                                 </div>
                             </div>
 
                             <div class="row mb-3">
-                                <label for="currentAddress" class="col-12 col-md-4 col-form-label text-md-start fw-bold mb-2 mb-md-0">
+                                <label for="currentAddress" class="col-md-4 col-form-label fw-bold">
                                     現在所<span class="text-danger ms-1">*</span>
                                 </label>
-                                <div class="col-12 col-md-8">
+                                <div class="col-md-8">
                                     <textarea class="form-control" id="currentAddress" rows="3"
                                               th:text="${studentData?.currentAddress}"
                                               placeholder="現在の住所を入力してください" required></textarea>
+                                    <div class="invalid-feedback">現在所は必須です</div>
                                 </div>
                             </div>
 
                             <div class="row mb-3">
-                                <label for="hometownAddress" class="col-12 col-md-4 col-form-label text-md-start fw-bold mb-2 mb-md-0">
+                                <label for="hometownAddress" class="col-md-4 col-form-label fw-bold">
                                     出身地住所<span class="text-danger ms-1">*</span>
                                 </label>
-                                <div class="col-12 col-md-8">
+                                <div class="col-md-8">
                                     <textarea class="form-control" id="hometownAddress" rows="3"
                                               th:text="${studentData?.hometownAddress}"
                                               placeholder="出身地の住所を入力してください" required></textarea>
+                                    <div class="invalid-feedback">出身地住所は必須です</div>
                                 </div>
                             </div>
 
-                            <div class="row align-items-center mb-3">
-                                <label for="phoneNumber" class="col-12 col-md-4 col-form-label text-md-start fw-bold mb-2 mb-md-0">
+                            <div class="row mb-3">
+                                <label for="phoneNumber" class="col-md-4 col-form-label fw-bold">
                                     電話番号<span class="text-danger ms-1">*</span>
                                 </label>
-                                <div class="col-12 col-md-8">
+                                <div class="col-md-8">
                                     <input type="text" class="form-control" id="phoneNumber" 
                                            th:value="${studentData?.phoneNumber}"
-                                           placeholder="電話番号（例：09xxxxxxxxx または +959xxxxxxxxx）を入力してください" required>
+                                           placeholder="電話番号を入力してください" required>
+                                    <div class="invalid-feedback">電話番号は必須です</div>
                                 </div>
                             </div>
 
-                            <div class="row align-items-center mb-4">
-                                <label for="guardianPhoneNumber" class="col-12 col-md-4 col-form-label text-md-start fw-bold mb-2 mb-md-0">
+                            <div class="row mb-4">
+                                <label for="guardianPhoneNumber" class="col-md-4 col-form-label fw-bold">
                                     保護者電話番号<span class="text-danger ms-1">*</span>
                                 </label>
-                                <div class="col-12 col-md-8">
+                                <div class="col-md-8">
                                     <input type="text" class="form-control" id="guardianPhoneNumber" 
                                            th:value="${studentData?.guardianPhoneNumber}"
                                            placeholder="保護者の電話番号を入力してください" required>
+                                    <div class="invalid-feedback">保護者電話番号は必須です</div>
                                 </div>
                             </div>
 
@@ -145,16 +154,46 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="/js/radio-icons.js"></script>
+    <script src="/js/register/radio-icons.js"></script>
+    <script src="/js/register/displayValidationErrors.js"></script>
     <script>
+        // Define required fields for this page
+        const requiredFields = [
+            { id: 'englishName', message: '英語名は必須です', type: 'text' },
+            { id: 'katakanaName', message: 'カタカナ名は必須です', type: 'text' },
+            { id: 'dob', message: '生年月日は必須です', type: 'date' },
+            { id: 'currentAddress', message: '現在所は必須です', type: 'textarea' },
+            { id: 'hometownAddress', message: '出身地住所は必須です', type: 'textarea' },
+            { id: 'phoneNumber', message: '電話番号は必須です', type: 'text' },
+            { id: 'guardianPhoneNumber', message: '保護者電話番号は必須です', type: 'text' },
+            { name: 'gender', message: '性別を選択してください', type: 'radio' }
+        ];
+
+        // Setup error clearing listeners
+        setupErrorClearListeners(
+            ['englishName', 'katakanaName', 'dob', 'currentAddress', 'hometownAddress', 'phoneNumber', 'guardianPhoneNumber'],
+            ['gender']
+        );
+
+        // Form submission
         document.querySelector('form').addEventListener('submit', function(event) {
             event.preventDefault();
 
+            clearAllErrors();
+
+            // Client-side validation
+            const clientErrors = validateRequiredFields(requiredFields);
+            if (Object.keys(clientErrors).length > 0) {
+                displayValidationErrors(clientErrors);
+                return;
+            }
+
+            const genderSelected = document.querySelector('input[name="gender"]:checked');
             const payload = {
                 englishName: document.getElementById('englishName').value.trim(),
                 katakanaName: document.getElementById('katakanaName').value.trim(),
                 dob: document.getElementById('dob').value,
-                gender: (document.querySelector('input[name="gender"]:checked') || {}).value || '',
+                gender: genderSelected.value,
                 currentAddress: document.getElementById('currentAddress').value.trim(),
                 hometownAddress: document.getElementById('hometownAddress').value.trim(),
                 phoneNumber: document.getElementById('phoneNumber').value.trim(),
@@ -170,13 +209,33 @@
                 body: JSON.stringify(payload)
             })
             .then(async response => {
-                if (response.ok) {
+                console.log('Response status:', response.status);
+                console.log('Response ok:', response.ok);
+                
+                let data;
+                try {
+                    data = await response.json();
+                    console.log('Response data:', data);
+                } catch (e) {
+                    console.error('Failed to parse JSON:', e);
+                    alert('サーバーからの応答を解析できませんでした');
+                    return;
+                }
+                
+                if (response.ok && data && data.status === 'success') {
+                    console.log('Success! Redirecting to second page...');
                     window.location.href = '/register/second-page';
                     return;
                 }
-                const text = await response.text();
-                console.error('Server error:', response.status, text);
-                alert('保存中に問題が発生しました。');
+                
+                // Handle validation errors from backend
+                if (response.status === 400 && data && data.errors) {
+                    console.log('Validation errors:', data.errors);
+                    displayValidationErrors(data.errors);
+                } else {
+                    console.error('Unexpected response:', response.status, data);
+                    alert('保存中に問題が発生しました。');
+                }
             })
             .catch(error => {
                 console.error('Network error:', error);

@@ -1,25 +1,35 @@
 package com.gicm.student_management_system.controller;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import com.gicm.student_management_system.dto.StudentRegistrationDTO;
+import com.gicm.student_management_system.dto.validation.FirstPageValidation;
+import com.gicm.student_management_system.dto.validation.SecondPageValidation;
+import com.gicm.student_management_system.dto.validation.ThirdPageValidation;
 
 import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/register")
+// REMOVED @Validated - this was causing the issue
 public class RegistrationController {
 
-    // GET Mappings
     @GetMapping
     public String showRegistrationForm(HttpSession session, Model model) {
-        // Retrieve existing data from Redis
         StudentRegistrationDTO studentData = (StudentRegistrationDTO) session.getAttribute("studentData");
         
         if (studentData != null) {
-            // Pass data to view for pre-filling
             model.addAttribute("studentData", studentData);
         }
         
@@ -60,16 +70,32 @@ public class RegistrationController {
         return "redirect:/register";
     }
 
-    // POST Mappings
     @PostMapping("/save-step1")
     @ResponseBody
-    public String saveStep1(@RequestBody StudentRegistrationDTO firstPageData, HttpSession session) {
-        // Retrieve existing data from Redis (if user went back from second page)
+    public ResponseEntity<?> saveStep1(
+            @Validated(FirstPageValidation.class) @RequestBody StudentRegistrationDTO firstPageData,
+            BindingResult bindingResult,
+            HttpSession session) {
+        
+        // Check for validation errors
+        if (bindingResult.hasErrors()) {
+            Map<String, String> errors = new HashMap<>();
+            bindingResult.getFieldErrors().forEach(error -> 
+                errors.put(error.getField(), error.getDefaultMessage())
+            );
+            
+            Map<String, Object> response = new HashMap<>();
+            response.put("status", "error");
+            response.put("errors", errors);
+            
+            return ResponseEntity.badRequest().body(response);
+        }
+        
+        // Validation passed - proceed with saving
         StudentRegistrationDTO existingData = (StudentRegistrationDTO) session.getAttribute("studentData");
         
         if (existingData != null) {
-            // User came back from second page - preserve second page data
-            // Only update first page fields
+            // Update first page fields only
             existingData.setEnglishName(firstPageData.getEnglishName());
             existingData.setKatakanaName(firstPageData.getKatakanaName());
             existingData.setDob(firstPageData.getDob());
@@ -79,29 +105,44 @@ public class RegistrationController {
             existingData.setPhoneNumber(firstPageData.getPhoneNumber());
             existingData.setGuardianPhoneNumber(firstPageData.getGuardianPhoneNumber());
             
-            // Keep existing second page data (fatherName, passportNumber, etc.)
-            // Don't overwrite them!
-            
             session.setAttribute("studentData", existingData);
         } else {
-            // First time - no existing data
             session.setAttribute("studentData", firstPageData);
         }
         
-        return "success";
+        Map<String, String> response = new HashMap<>();
+        response.put("status", "success");
+        
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping("/save-step2")
     @ResponseBody
-    public String saveStep2(@RequestBody StudentRegistrationDTO secondPageData, HttpSession session) {
-        // Retrieve existing data from Redis
-        StudentRegistrationDTO existingData = (StudentRegistrationDTO) session.getAttribute("studentData");
-        
-        if (existingData == null) {
-            return "error";
+    public ResponseEntity<?> saveStep2(
+            @Validated(SecondPageValidation.class) @RequestBody StudentRegistrationDTO secondPageData,
+            BindingResult bindingResult,
+            HttpSession session) {
+
+        if (bindingResult.hasErrors()) {
+            Map<String, String> errors = new HashMap<>();
+            bindingResult.getFieldErrors().forEach(error ->
+                errors.put(error.getField(), error.getDefaultMessage())
+            );
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("status", "error");
+            response.put("errors", errors);
+            return ResponseEntity.badRequest().body(response);
         }
-        
-        // Merge second page data into existing data
+
+        StudentRegistrationDTO existingData = (StudentRegistrationDTO) session.getAttribute("studentData");
+
+        if (existingData == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(Map.of("status", "error", "message", "セッションが無効です"));
+        }
+
+        // Merge second page data
         existingData.setFatherName(secondPageData.getFatherName());
         existingData.setPassportNumber(secondPageData.getPassportNumber());
         existingData.setNationalIdNumber(secondPageData.getNationalIdNumber());
@@ -110,21 +151,37 @@ public class RegistrationController {
         existingData.setOtherOccupation(secondPageData.getOtherOccupation());
         existingData.setJapanTravelExperience(secondPageData.getJapanTravelExperience());
         existingData.setCoeApplicationExperience(secondPageData.getCoeApplicationExperience());
-        
-        // Store combined data back to Redis
+
         session.setAttribute("studentData", existingData);
-        
-        return "success";
+
+        return ResponseEntity.ok(Map.of("status", "success"));
     }
 
-    // POST Mapping for step 3
     @PostMapping("/save-step3")
     @ResponseBody
-    public String saveStep3(@RequestBody StudentRegistrationDTO thirdPageData, HttpSession session) {
+    public ResponseEntity<?> saveStep3(
+            @Validated(ThirdPageValidation.class) @RequestBody StudentRegistrationDTO thirdPageData,
+            BindingResult bindingResult,
+            HttpSession session) {
+        
+        if (bindingResult.hasErrors()) {
+            Map<String, String> errors = new HashMap<>();
+            bindingResult.getFieldErrors().forEach(error -> 
+                errors.put(error.getField(), error.getDefaultMessage())
+            );
+            
+            Map<String, Object> response = new HashMap<>();
+            response.put("status", "error");
+            response.put("errors", errors);
+            
+            return ResponseEntity.badRequest().body(response);
+        }
+        
         StudentRegistrationDTO existingData = (StudentRegistrationDTO) session.getAttribute("studentData");
 
         if (existingData == null) {
-            return "error";
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(Map.of("status", "error", "message", "セッションが無効です"));
         }
 
         // Merge third-page fields
@@ -137,9 +194,8 @@ public class RegistrationController {
         existingData.setWantDorm(thirdPageData.getWantDorm());
         existingData.setOtherMemo(thirdPageData.getOtherMemo());
 
-        // Persist back to session/Redis
         session.setAttribute("studentData", existingData);
 
-        return "success";
+        return ResponseEntity.ok(Map.of("status", "success"));
     }
 }
