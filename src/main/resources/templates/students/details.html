@@ -84,173 +84,176 @@
         <div class="card shadow-sm">
 
             <div th:if="${currentTab == 'personal'}" class="p-4">
-    <div class="row">
-        <div class="col-lg-6">
-            <div class="info-group">
-                <div class="info-label">生徒名前(英語)</div>
-                <div class="info-value" th:text="${student.studentName}"></div>
-            </div>
+                <div class="row">
+                    <div class="col-lg-6">
+                        <div class="info-group">
+                            <div class="info-label">生徒名前(英語)</div>
+                            <div class="info-value" th:text="${student.studentName}"></div>
+                        </div>
 
-            <div class="info-group">
-                <div class="info-label">生徒名前(日本語)</div>
-                <div class="info-value" th:text="${student.nameInJapanese}"></div>
-            </div>
+                        <div class="info-group">
+                            <div class="info-label">生徒名前(日本語)</div>
+                            <div class="info-value" th:text="${student.nameInJapanese}"></div>
+                        </div>
 
-            <div class="info-group">
-                <div class="info-label">生 年 月 日</div>
-                <div class="info-value" th:text="${student.dateOfBirth}"></div>
-            </div>
+                        <div class="info-group">
+                            <div class="info-label">生 年 月 日</div>
+                            <div class="info-value" th:text="${student.dateOfBirth}"></div>
+                        </div>
 
-            <div class="info-group">
-                <div class="info-label">性 別</div>
-                <div class="info-value" th:text="${student.gender}"></div>
-            </div>
+                        <div class="info-group">
+                            <div class="info-label">性 別</div>
+                            <div class="info-value" th:text="${student.gender}"></div>
+                        </div>
 
-            <div class="info-group">
-                <div class="info-label">宗 教</div>
-                <div class="info-value" th:text="${student.religion}"></div>
-            </div>
+                        <div class="info-group">
+                            <div class="info-label">宗 教</div>
+                            <div class="info-value" th:text="${student.religion}"></div>
+                        </div>
 
-            <div class="info-group">
-                <div class="info-label">その他宗教</div>
-                <div class="info-value" th:text="${student.otherReligion}"></div>
-            </div>
+                        <div class="info-group">
+                            <div class="info-label">その他宗教</div>
+                            <div class="info-value" th:text="${student.otherReligion}"></div>
+                        </div>
 
-            <div class="info-group">
-                <div class="info-label">国民 ID 番号</div>
-                <div class="info-value" th:text="${student.nationalID}"></div>
-            </div>
+                        <div class="info-group">
+                            <div class="info-label">国民 ID 番号</div>
+                            <div class="info-value" th:text="${student.nationalID}"></div>
+                        </div>
 
-            <div class="info-group">
-                <div class="info-label">パスポート番号</div>
-                <div class="info-value" th:text="${student.passportNumber}"></div>
-            </div>
+                        <div class="info-group">
+                            <div class="info-label">パスポート番号</div>
+                            <div class="info-value" th:text="${student.passportNumber}"></div>
+                        </div>
 
-            <div class="info-group">
-                <div class="info-label">父親名</div>
-                <div class="info-value" th:text="${student.fatherName}"></div>
-            </div>
+                        <div class="info-group">
+                            <div class="info-label">父親名</div>
+                            <div class="info-value" th:text="${student.fatherName}"></div>
+                        </div>
 
-            <div class="info-group">
-                <div class="info-label">現在のJLPT合格ラベル</div>
-                <div class="info-value" th:text="${student.currentJapanLevel}"></div>
-            </div>
-        </div>
+                        <div class="info-group">
+                            <div class="info-label">現在のJLPT合格ラベル</div>
+                            <div class="info-value" th:text="${student.currentJapanLevel}"></div>
+                        </div>
+                    </div>
 
-        <div class="col-lg-6">
-            <div class="info-group">
-                <div class="info-label">生徒ID</div>
-                <div class="info-value" th:text="${student.id}"></div>
-            </div>
+                    <div class="col-lg-6">
+                        <div class="info-group">
+                            <div class="info-label">生徒ID</div>
+                            <div class="info-value" th:text="${student.id}"></div>
+                        </div>
 
-            <div class="info-group">
-                <div class="info-label">合格した日本語ラベル</div>
-                <div class="info-value" th:text="${student.passedHighestJLPTLevel}"></div>
-            </div>
+                        <div class="info-group">
+                            <div class="info-label">合格した日本語ラベル</div>
+                            <div class="info-value" th:text="${student.passedHighestJLPTLevel}"></div>
+                        </div>
 
-            <div class="info-group">
-                <div class="info-label">希望職種</div>
-                <div class="info-value" th:text="${student.desiredJobType}"></div>
-            </div>
+                        <div class="info-group">
+                            <div class="info-label">希望職種</div>
+                            <div class="info-value" th:text="${student.desiredJobType}"></div>
+                        </div>
 
-            <div class="info-group">
-                <div class="info-label">その他希望職種</div>
-                <div class="info-value" th:text="${student.otherDesiredJobType}"></div>
-            </div>
+                        <div class="info-group">
+                            <div class="info-label">その他希望職種</div>
+                            <div class="info-value" th:text="${student.otherDesiredJobType}"></div>
+                        </div>
 
-            <div class="info-group">
-                <div class="info-label">タバコ</div>
-                <div class="info-value" th:text="${student.isSmoking}"></div>
-            </div>
+                        <div class="info-group">
+                            <div class="info-label">タバコ</div>
+                            <div class="info-value"
+                                th:text="${student.isSmoking != null && student.isSmoking ? 'Yes' : 'No'}"></div>
+                        </div>
+                        <div class="info-group">
+                            <div class="info-label">お酒</div>
+                            <div class="info-value"
+                                th:text="${student.isAlcoholDrink != null && student.isAlcoholDrink ? 'Yes' : 'No'}">
+                            </div>
+                        </div>
 
-            <div class="info-group">
-                <div class="info-label">お酒</div>
-                <div class="info-value" th:text="${student.isAlcoholDrink}"></div>
-            </div>
+                        <div class="info-group">
+                            <div class="info-label">入れ墨</div>
+                            <div class="info-value" th:text="${student.haveTatto}"></div>
+                        </div>
 
-            <div class="info-group">
-                <div class="info-label">入れ墨</div>
-                <div class="info-value" th:text="${student.haveTatto}"></div>
-            </div>
+                        <div class="info-group">
+                            <div class="info-label">寮があれば入りたい</div>
+                            <div class="info-value" th:text="${student.hostelPreference}"></div>
+                        </div>
 
-            <div class="info-group">
-                <div class="info-label">寮があれば入りたい</div>
-                <div class="info-value" th:text="${student.hostelPreference}"></div>
-            </div>
+                        <div class="info-group">
+                            <div class="info-label">日本渡航経験</div>
+                            <div class="info-value" th:text="${student.japanTravelExperience}"></div>
+                        </div>
 
-            <div class="info-group">
-                <div class="info-label">日本渡航経験</div>
-                <div class="info-value" th:text="${student.japanTravelExperience}"></div>
-            </div>
+                        <div class="info-group">
+                            <div class="info-label">COE申請経験</div>
+                            <div class="info-value" th:text="${student.coeApplicationExperience}"></div>
+                        </div>
+                    </div>
+                </div>
 
-            <div class="info-group">
-                <div class="info-label">COE申請経験</div>
-                <div class="info-value" th:text="${student.coeApplicationExperience}"></div>
+                <div class="row mt-3">
+                    <div class="col-12">
+                        <div class="mb-2 fw-bold">その他メモ（自由形式）</div>
+                        <textarea class="form-control memo-area" rows="4" th:text="${student.memoNotes}"
+                            readonly></textarea>
+                    </div>
+                </div>
             </div>
-        </div>
-    </div>
-
-    <div class="row mt-3">
-        <div class="col-12">
-            <div class="mb-2 fw-bold">その他メモ（自由形式）</div>
-            <textarea class="form-control memo-area" rows="4" th:text="${student.memoNotes}" readonly></textarea>
-        </div>
-    </div>
-</div>
 
             <div th:if="${currentTab == 'contact'}" class="p-4">
-    <h4 class="text-primary border-bottom pb-2 mb-4">連絡先情報</h4>
-    <div class="info-group">
-        <div class="info-label">電話番号</div>
-        <div class="split-value-container">
-            <div class="info-value w-50" th:text="${student.phoneNumber}"></div>
-            <div class="info-value w-50" th:text="${student.secondaryPhone}"></div>
-        </div>
-    </div>
+                <h4 class="text-primary border-bottom pb-2 mb-4">連絡先情報</h4>
+                <div class="info-group">
+                    <div class="info-label">電話番号</div>
+                    <div class="split-value-container">
+                        <div class="info-value w-50" th:text="${student.phoneNumber}"></div>
+                        <div class="info-value w-50" th:text="${student.secondaryPhone}"></div>
+                    </div>
+                </div>
 
-    <div class="info-group">
-        <div class="info-label">Viber連絡先</div>
-        <div class="info-value" th:text="${student.contactViber}"></div>
-    </div>
+                <div class="info-group">
+                    <div class="info-label">Viber連絡先</div>
+                    <div class="info-value" th:text="${student.contactViber}"></div>
+                </div>
 
-    <div class="info-group tall-row">
-        <div class="info-label">現在場所</div>
-        <div class="info-value" th:text="${student.currentLivingAddress}"></div>
-    </div>
+                <div class="info-group tall-row">
+                    <div class="info-label">現在場所</div>
+                    <div class="info-value" th:text="${student.currentLivingAddress}"></div>
+                </div>
 
-    <div class="info-group tall-row">
-        <div class="info-label">出身地住所</div>
-        <div class="info-value" th:text="${student.homeTownAddress}"></div>
-    </div>
-</div>
+                <div class="info-group tall-row">
+                    <div class="info-label">出身地住所</div>
+                    <div class="info-value" th:text="${student.homeTownAddress}"></div>
+                </div>
+            </div>
 
             <div th:if="${currentTab == 'academic'}" class="p-4">
-    <h4 class="text-primary border-bottom pb-2 mb-4">Academic情報</h4>
-    <div class="row">
-        <div class="col-lg-6">
-            <div class="info-group">
-                <div class="info-label">生徒の授業ステータス</div>
-                <div class="info-value" th:text="${student.status ?: 'N/A'}"></div>
-            </div>
+                <h4 class="text-primary border-bottom pb-2 mb-4">Academic情報</h4>
+                <div class="row">
+                    <div class="col-lg-6">
+                        <div class="info-group">
+                            <div class="info-label">生徒の授業ステータス</div>
+                            <div class="info-value" th:text="${student.status ?: 'N/A'}"></div>
+                        </div>
 
-            <div class="info-group">
-                <div class="info-label">学校登録日</div>
-                <div class="info-value" th:text="${student.enrolledDate ?: 'N/A'}"></div>
-            </div>
+                        <div class="info-group">
+                            <div class="info-label">学校登録日</div>
+                            <div class="info-value" th:text="${student.enrolledDate ?: 'N/A'}"></div>
+                        </div>
 
-            <div class="info-group">
-                <div class="info-label">授業料支払予定日</div>
-                <div class="info-value" th:text="${student.schedulePaymentTutionDate ?: '未定'}"></div>
-            </div>
+                        <div class="info-group">
+                            <div class="info-label">授業料支払予定日</div>
+                            <div class="info-value" th:text="${student.schedulePaymentTutionDate ?: '未定'}"></div>
+                        </div>
 
-            <div class="info-group">
-                <div class="info-label">授業料支払実績日</div>
-                <div class="info-value" th:text="${student.actualTutionPaymentDate ?: 'N/A'}"></div>
+                        <div class="info-group">
+                            <div class="info-label">授業料支払実績日</div>
+                            <div class="info-value" th:text="${student.actualTutionPaymentDate ?: 'N/A'}"></div>
+                        </div>
+
+                    </div>
+                </div>
             </div>
-            
-            </div>
-        </div>
-</div>
 
             <div th:if="${currentTab == 'n5'}">
                 <div class="row">
@@ -541,24 +544,39 @@
             <div th:if="${currentTab == 'interview'}" class="p-4">
                 <h4 class="text-primary border-bottom pb-2 mb-4">面接結果情報</h4>
 
-                <div class="card p-3 shadow-sm">
+                <div th:if="${student.interviewNotes != null}" th:object="${student.interviewNotes}"
+                    class="card p-3 shadow-sm">
+
                     <div class="mb-4">
                         <div class="mb-2 fw-bold border-bottom pb-1">一回目面接結果メモ</div>
-                        <textarea class="form-control" rows="6" readonly style="border-color: #ced4da;"></textarea>
+                        <textarea class="form-control" rows="6" readonly th:text="*{interview1}"
+                            style="border-color: #ced4da;"></textarea>
                     </div>
 
                     <div class="mb-4">
                         <div class="mb-2 fw-bold border-bottom pb-1">二回目面接結果メモ</div>
-                        <textarea class="form-control" rows="6" readonly style="border-color: #ced4da;"></textarea>
+                        <textarea class="form-control" rows="6" readonly th:text="*{interview2}"
+                            style="border-color: #ced4da;"></textarea>
                     </div>
 
                     <div class="mb-4">
                         <div class="mb-2 fw-bold border-bottom pb-1">三回目面接結果メモ</div>
-                        <textarea class="form-control" rows="6" readonly style="border-color: #ced4da;"></textarea>
+                        <textarea class="form-control" rows="6" readonly th:text="*{interview3}"
+                            style="border-color: #ced4da;"></textarea>
                     </div>
+
+                    <div class="mb-4">
+                        <div class="mb-2 fw-bold border-bottom pb-1">その他メモ</div>
+                        <textarea class="form-control" rows="6" readonly th:text="*{otherMemo}"
+                            style="border-color: #ced4da;"></textarea>
+                    </div>
+
+                </div>
+
+                <div th:unless="${student.interviewNotes != null}" class="alert alert-info mt-3" role="alert">
+                    <i class="bi bi-info-circle-fill"></i> 面接結果情報はまだ登録されていません。
                 </div>
             </div>
-
             <div th:unless="${currentTab == 'personal' or currentTab == 'contact' 
                 or currentTab == 'academic' or currentTab == 'n5' or currentTab == 'n4' 
                 or currentTab == 'interview'}" class="p-4">

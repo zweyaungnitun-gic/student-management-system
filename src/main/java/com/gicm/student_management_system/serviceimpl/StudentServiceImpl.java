@@ -7,7 +7,6 @@ import com.gicm.student_management_system.service.StudentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.Optional;
@@ -18,20 +17,45 @@ public class StudentServiceImpl implements StudentService {
 
     private final StudentRepository studentRepository;
 
-    private StudentDTO convertToDTO(Student s) {
-        if (s == null)
-            return null;
-        return StudentDTO.builder()
-                .id(s.getId())
-                .studentName(s.getStudentName())
-                .gender(s.getGender())
-                .phoneNumber(s.getPhoneNumber())
-                .desiredJobType(s.getDesiredJobType())
-                .status(s.getStatus())
-                .paymentDueDate(s.getSchedulePaymentTutionDate())
-                .paymentDate(s.getActualTutionPaymentDate())
-                .build();
-    }
+    private StudentDTO convertToDTO(Student student) {
+    return StudentDTO.builder()
+        .id(student.getId())
+        .studentName(student.getStudentName())
+        .nameInJapanese(student.getNameInJapanese())
+        .dateOfBirth(student.getDateOfBirth())
+        .gender(student.getGender())
+        .religion(student.getReligion()) // Fix for religious field
+        .otherReligion(student.getOtherReligion())
+        .nationalID(student.getNationalID()) // Fix for National ID
+        .passportNumber(student.getPassportNumber())
+        .fatherName(student.getFatherName())
+        .currentJapanLevel(student.getCurrentJapanLevel())
+        .passedHighestJLPTLevel(student.getPassedHighestJLPTLevel())
+        .desiredJobType(student.getDesiredJobType())
+        .otherDesiredJobType(student.getOtherDesiredJobType())
+        .isSmoking(student.getIsSmoking()) // Correct Boolean binding
+        .isAlcoholDrink(student.getIsAlcoholDrink())
+        .haveTatto(student.getHaveTatto())
+        .hostelPreference(student.getHostelPreference())
+        .japanTravelExperience(student.getJapanTravelExperience())
+        .coeApplicationExperience(student.getCoeApplicationExperience())
+        .memoNotes(student.getMemoNotes())
+        // Contact Info
+        .phoneNumber(student.getPhoneNumber())
+        .secondaryPhone(student.getSecondaryPhone())
+        .contactViber(student.getContactViber())
+        .currentLivingAddress(student.getCurrentLivingAddress())
+        .homeTownAddress(student.getHomeTownAddress())
+        // Academic Info
+        .status(student.getStatus()) // Student Status binding
+        .enrolledDate(student.getEnrolledDate())
+        .schedulePaymentTutionDate(student.getSchedulePaymentTutionDate())
+        .actualTutionPaymentDate(student.getActualTutionPaymentDate())
+        // Populate the short-form names 
+        .paymentDueDate(student.getSchedulePaymentTutionDate()) // Map from entity
+        .paymentDate(student.getActualTutionPaymentDate())
+        .build();
+}
 
     private Student convertToEntity(StudentDTO dto, Student existing) {
         Student s = existing == null ? new Student() : existing;

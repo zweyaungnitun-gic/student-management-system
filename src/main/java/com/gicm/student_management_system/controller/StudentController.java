@@ -3,6 +3,7 @@ package com.gicm.student_management_system.controller;
 import com.gicm.student_management_system.dto.StudentDTO;
 import com.gicm.student_management_system.dto.N4ClassDTO; 
 import com.gicm.student_management_system.dto.N5ClassDTO;
+
 import com.gicm.student_management_system.entity.InterviewNotes;
 import com.gicm.student_management_system.entity.N4Class;
 import com.gicm.student_management_system.entity.N5Class;
@@ -68,6 +69,7 @@ public class StudentController {
         N5ClassDTO n5Class = n5ClassService.getOrCreateN5ClassDTO(id);
         N4ClassDTO n4Class = n4ClassService.getOrCreateN4ClassDTO(id);
 
+        // Map InterviewNotes Entity to InterviewNotesDTO for the view
         // Add attributes to model so details.html can display them
         model.addAttribute("student", studentDTO);
         model.addAttribute("n5Class", n5Class);
