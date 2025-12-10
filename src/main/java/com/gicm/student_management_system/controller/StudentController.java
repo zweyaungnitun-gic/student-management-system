@@ -37,7 +37,27 @@ public class StudentController {
         return "admin-dashboard";
     }
 
-    @GetMapping("/student-update/{id}")
+    // NEW METHOD FOR DETAILS
+    @GetMapping("/detail/{id}")
+    public String showStudentDetails(
+            @PathVariable Long id,
+            @RequestParam(required = false, defaultValue = "personal") String tab,
+            @RequestParam(required = false) String subTab,
+            Model model) {
+
+        // 1. Fetch the specific student by ID
+        Student student = studentService.findById(id)
+                .orElseThrow(() -> new RuntimeException("Student not found: " + id));
+
+        // 2. Add attributes to model so details.html can display them
+        model.addAttribute("student", student);
+        model.addAttribute("currentTab", tab);
+        model.addAttribute("currentSubTab", subTab);
+
+        return "students/details"; // Make sure details.html is in templates/students/
+    }
+
+    @GetMapping("/update/{id}")
     public String showUpdateForm(@PathVariable Long id, Model model) {
 
         Student student = studentService.findById(id)

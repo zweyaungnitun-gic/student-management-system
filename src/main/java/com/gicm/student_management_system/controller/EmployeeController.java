@@ -87,15 +87,4 @@ public class EmployeeController {
     public String showUpdateEmployeePage(Model model) {
         return "employees/update";
     }
-
-    @GetMapping("/details")
-    public String showEmployeeDetails(
-        @RequestParam(required =false, defaultValue = "personal")String tab,
-        @RequestParam(required = false)String subTab,
-        Model model) {
-        model.addAttribute("currentTab", tab);
-        model.addAttribute("currentSubTab", subTab);
-        return "employees/details";  
-    // templates/employees/details.html
-    }
 }
