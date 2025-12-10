@@ -64,6 +64,46 @@
                 width: 100%;
               }
 
+              /* Make action icons square with pagination color style */
+              .action-icon {
+                display: inline-flex;
+                /* flex for centering */
+                align-items: center;
+                /* vertical center */
+                justify-content: center;
+                /* horizontal center */
+                width: 36px;
+                /* square width */
+                height: 36px;
+                /* square height */
+                margin: 0 2px;
+                /* spacing between buttons */
+                border-radius: 0.25rem;
+                /* optional rounded corners */
+                font-size: 1rem;
+                color: white;
+                /* text/icon color */
+                text-decoration: none;
+                transition: background-color 0.2s, color 0.2s;
+              }
+
+              /* Make action icons square with background behind icon */
+              .action-icon {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                width: 36px;
+                height: 36px;
+                margin: 0 2px;
+                border-radius: 0.25rem;
+                font-size: 1rem;
+                text-decoration: none;
+                transition: background-color 0.2s;
+                color: white;
+                /* Icon color stays visible */
+              }
+
+
               .table {
                 margin-bottom: 0;
                 border-radius: 0;
@@ -101,39 +141,43 @@
                 color: black;
               }
 
-              .filter-control-group {
-                display: inline-flex;
-                /* Keep items in a row */
+              #studentFilterForm {
+                display: flex;
+                /* Arrange children in a row */
+                flex-wrap: wrap;
+                /* Wrap if needed */
                 align-items: center;
-                /* Vertically center items */
-                gap: 0.5rem;
-                /* Space between elements */
-                margin: 0 0.5rem 10px 0;
-                /* Top 0, right 0.5rem, bottom 10px, left 0 */
-                vertical-align: middle;
+                /* Vertically align everything */
+                gap: 2rem;
+                /* Space between controls */
+                margin: 0;
+                padding: 10px;
               }
 
-              /* Specifically target the first group (checkbox + label) to align left */
-              .filter-control-group:first-child {
-                justify-content: flex-start;
-                /* Align checkbox + text to left */
-                margin-left: 0 !important;
-                /* Optional left spacing */
+              .filter-control-group {
+                display: flex;
+                align-items: center;
+                gap: 0.25rem;
               }
 
+              /* Make checkbox appear after label text */
+              .filter-control-group.checkbox-group {
+                flex-direction: row-reverse;
+                /* Label first, checkbox after */
+              }
 
-
-              .filter-control-group .form-control-sm,
-              .filter-control-group .form-select-sm {
+              /* Inputs and select same height */
+              .filter-control-group input[type="text"],
+              .filter-control-group select {
                 height: calc(1.5em + 0.5rem + 2px);
-                /* Keep input/select height consistent */
               }
 
               #downloadBtn {
-                float: right;
+                margin-left: auto;
+                /* pushes it to the right */
+                margin-right: 0;
+                /* moves slightly inward */
               }
-
-
 
               .table thead tr:last-child th {
                 font-size: 0.9rem;
@@ -310,6 +354,20 @@
                 padding: 2px 4px;
               }
 
+              /* Make header checkbox larger */
+              #selectAll {
+                width: 1rem;
+                /* Adjust width */
+                height: 1rem;
+                /* Adjust height */
+                vertical-align: middle;
+                margin: 0;
+              }
+
+              .row-checkbox {
+                width: 1rem;
+                height: 1rem;
+              }
 
               .admin-title {
                 font-size: 1.8rem;
@@ -359,31 +417,27 @@
                       <tr class="filter-row">
                         <th colspan="10" class="p-3">
                           <form th:action="@{/students}" method="get" id="studentFilterForm" style="overflow: hidden;">
-                            <div class="filter-control-group">
-                              <input type="checkbox" id="selectAll" class="form-check-input me-2" />
+                            <div class="filter-control-group checkbox-group">
                               <span style="font-size: 16px;">全て選択</span>
+                              <input type="checkbox" id="selectAll" class="form-check-input" />
                             </div>
                             <div class="filter-control-group">
                               <span style="font-size: 16px;">名前で検索</span>
                               <input type="text" name="nameSearch" th:value="${nameSearch}"
-                                class="form-control form-control-sm" id="nameSearchInput" placeholder="名前検索"
-                                style="width: 160px;" />
-
+                                class="form-control form-control-sm" id="nameSearchInput" placeholder="名前検索" />
                             </div>
                             <div class="filter-control-group">
                               <span style="font-size: 16px;">生徒ステータス</span>
-                              <select name="status" id="statusFilter" multiple class="form-select form-select-sm"
-                                style="width: 180px;">
+                              <select name="status" id="statusFilter" multiple class="form-select form-select-sm">
                                 <option value="在校">在校</option>
                                 <option value="卒業">卒業</option>
                                 <option value="途中退校">途中退校</option>
                               </select>
-
-
                             </div>
                             <a id="downloadBtn"
                               th:href="@{/students/download(nameSearch=${nameSearch}, status=${statusFilter})}"
                               class="btn btn-success btn-sm px-4 fw-bold text-nowrap">↓ダウンロード</a>
+
 
                             <button type="submit" style="display: none;"></button>
                             <input type="hidden" name="status" id="hiddenStatus" />
