@@ -48,8 +48,7 @@ public class StudentRegistrationDTO implements Serializable {
     @Pattern(regexp = "^[a-zA-Z\\s]+$", message = "父親名は英字とスペースのみ入力してください", groups = SecondPageValidation.class)
     private String fatherName;
 
-    @NotBlank(message = "パスポート番号は必須です", groups = SecondPageValidation.class)
-    @Pattern(regexp = "^[A-Z]{2}[0-9]{7}$", message = "パスポート番号の形式が正しくありません（例：MA1234567）", groups = SecondPageValidation.class)
+    @Size(max = 9, message = "パスポート番号は9文字以内で入力してください", groups = SecondPageValidation.class)
     private String passportNumber;
 
     @NotBlank(message = "国民ID番号は必須です", groups = SecondPageValidation.class)
