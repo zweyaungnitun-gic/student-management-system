@@ -42,13 +42,13 @@
 
                             <div class="row mb-3">
                                 <label for="passportNumber" class="col-md-4 col-form-label fw-bold">
-                                    パスポート番号<span class="text-danger ms-1">*</span>
+                                    パスポート番号
                                 </label>
                                 <div class="col-md-8">
                                     <input type="text" class="form-control" id="passportNumber" 
                                            th:value="${studentData?.passportNumber}"
-                                           placeholder="パスポート番号を入力してください" required>
-                                    <div class="invalid-feedback">パスポート番号は必須です</div>
+                                           placeholder="パスポート番号を入力してください">
+                                    <div class="invalid-feedback">パスポート番号の形式が正しくありません</div>
                                 </div>
                             </div>
 
@@ -241,7 +241,6 @@
         // Define required fields for this page
         const requiredFields = [
             { id: 'fatherName', message: '父親名は必須です', type: 'text' },
-            { id: 'passportNumber', message: 'パスポート番号は必須です', type: 'text' },
             { id: 'nationalIdNumber', message: '国民ID番号は必須です', type: 'text' },
             { name: 'jlptLevel', message: 'JLPTレベルを選択してください', type: 'radio' },
             { name: 'desiredOccupation', message: '希望職種を選択してください', type: 'radio' },
