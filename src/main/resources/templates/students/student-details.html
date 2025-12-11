@@ -544,8 +544,7 @@
             <div th:if="${currentTab == 'interview'}" class="p-4">
                 <h4 class="text-primary border-bottom pb-2 mb-4">面接結果情報</h4>
 
-                <div th:if="${student.interviewNotes != null}" th:object="${student.interviewNotes}"
-                    class="card p-3 shadow-sm">
+                <div th:if="${interviewNotes != null}" th:object="${interviewNotes}" class="card p-3 shadow-sm">
 
                     <div class="mb-4">
                         <div class="mb-2 fw-bold border-bottom pb-1">一回目面接結果メモ</div>
@@ -573,7 +572,7 @@
 
                 </div>
 
-                <div th:unless="${student.interviewNotes != null}" class="alert alert-info mt-3" role="alert">
+                <div th:unless="${interviewNotes != null}" class="alert alert-info mt-3" role="alert">
                     <i class="bi bi-info-circle-fill"></i> 面接結果情報はまだ登録されていません。
                 </div>
             </div>
