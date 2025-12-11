@@ -1,16 +1,16 @@
 package com.gicm.student_management_system.controller;
 
-import com.gicm.student_management_system.dto.StudentDTO;
-import com.gicm.student_management_system.dto.N4ClassDTO; 
-import com.gicm.student_management_system.dto.N5ClassDTO;
-
-import com.gicm.student_management_system.entity.InterviewNotes;
+import com.gicm.student_management_system.dto.StudentDTO;import om.gicm.student_management_system.entity.InterviewNotes;
 import com.gicm.student_management_system.entity.N4Class;
 import com.gicm.student_management_system.entity.N5Class;
 import com.gicm.student_management_system.entity.Student;
-import com.gicm.student_management_system.service.StudentService;
-import com.gicm.student_management_system.service.N5ClassService;
+import import om.gicm.student_management_system.service.N5ClassService;
 import com.gicm.student_management_system.service.N4ClassService;
+
+// --- ADD THESE REPOSITORY IMPORTS ---
+import com.gicm.student_management_system.repository.N5ClassRepository;
+import com.gicm.student_management_system.repository.N4ClassRepository;
+import com.gicm.student_management_system.repository.InterviewNotesRepository;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -30,6 +30,11 @@ public class StudentController {
     private final N5ClassService n5ClassService;
     private final N4ClassService n4ClassService;
 
+    // --- INJECT REPOSITORIES HERE ---
+    private final N5ClassRepository n5ClassRepository;
+    private final N4ClassRepository n4ClassRepository;
+    private final InterviewNotesRepository interviewNotesRepository;
+
     @GetMapping
     public String getStudents(@RequestParam(value = "nameSearch", defaultValue = "") String nameSearch,
             @RequestParam(value = "status", defaultValue = "") String status,
@@ -47,10 +52,9 @@ public class StudentController {
     @GetMapping("/delete/{id}")
     public String deleteStudent(@PathVariable Long id) {
         studentService.deleteStudent(id);
-        return "redirect:/students"; // Redirect back to the student list
+        return "redirect:/students";
     }
 
-    // NEW METHOD FOR DETAILS
     @GetMapping("/detail/{id}")
     public String showStudentDetails(
             @PathVariable Long id,
@@ -58,23 +62,10 @@ public class StudentController {
             @RequestParam(required = false) String subTab,
             Model model) {
 
-        // Fetch the specific student by ID
-        //Student student = studentService.findById(id)
-                //.orElseThrow(() -> new RuntimeException("Student not found: " + id));
+        Student student = studentService.findById(id)
+                .orElseThrow(() -> new RuntimeException("Student not found: " + id));
 
-        //Fetch Student DTO via Studentservice
-        StudentDTO studentDTO = studentService.getStudentById(id);
-
-        //Fetch N5 and N4 DTOs using the services
-        N5ClassDTO n5Class = n5ClassService.getOrCreateN5ClassDTO(id);
-        N4ClassDTO n4Class = n4ClassService.getOrCreateN4ClassDTO(id);
-
-        // Map InterviewNotes Entity to InterviewNotesDTO for the view
-        // Add attributes to model so details.html can display them
-        model.addAttribute("student", studentDTO);
-        model.addAttribute("n5Class", n5Class);
-        model.addAttribute("n4Class", n4Class);
-
+        model.addAttribute("student", student);
         model.addAttribute("currentTab", tab);
         model.addAttribute("currentSubTab", subTab);
 
@@ -89,23 +80,17 @@ public class StudentController {
                 .orElseThrow(() -> new RuntimeException("生徒が見つかりません: ID " + id));
 
         if (student.getN5Class() == null) {
-            N5Class n5Class = N5Class.builder()
-                    .student(student)
-                    .build();
+            N5Class n5Class = N5Class.builder().student(student).build();
             student.setN5Class(n5Class);
         }
 
         if (student.getN4Class() == null) {
-            N4Class n4Class = N4Class.builder()
-                    .student(student)
-                    .build();
+            N4Class n4Class = N4Class.builder().student(student).build();
             student.setN4Class(n4Class);
         }
 
         if (student.getInterviewNotes() == null) {
-            InterviewNotes interviewNotes = InterviewNotes.builder()
-                    .student(student)
-                    .build();
+            InterviewNotes interviewNotes = InterviewNotes.builder().student(student).build();
             student.setInterviewNotes(interviewNotes);
         }
 
@@ -139,7 +124,7 @@ public class StudentController {
             existingStudent.setUpdatedAt(LocalDate.now());
 
             studentService.save(existingStudent);
-            redirectAttributes.addFlashAttribute("success", "基本情報が正常に更新されました");
+            redirectAttributes.addFlashAttribute("success", "基本情報が正常に更新されました。");
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", "更新に失敗しました: " + e.getMessage());
         }
@@ -178,7 +163,7 @@ public class StudentController {
             existingStudent.setUpdatedAt(LocalDate.now());
 
             studentService.save(existingStudent);
-            redirectAttributes.addFlashAttribute("success", "ステータス情報が正常に更新されました");
+            redirectAttributes.addFlashAttribute("success", "ステータス情報が正常に更新されました。");
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", "更新に失敗しました: " + e.getMessage());
         }
@@ -195,13 +180,12 @@ public class StudentController {
                     .orElseThrow(() -> new RuntimeException("Student not found: " + id));
 
             if (student.getN5Class() == null) {
-                N5Class newN5Class = N5Class.builder()
-                        .student(student)
-                        .build();
+                N5Class newN5Class = N5Class.builder().student(student).build();
                 student.setN5Class(newN5Class);
             }
 
             N5Class existingN5Class = student.getN5Class();
+
             existingN5Class.setN5ClassTeacher(n5Class.getN5ClassTeacher());
             existingN5Class.setN5ClassAttendance(n5Class.getN5ClassAttendance());
             existingN5Class.setN5ClassTestResult1(n5Class.getN5ClassTestResult1());
@@ -222,8 +206,9 @@ public class StudentController {
             existingN5Class.setN5Class3TestResult(n5Class.getN5Class3TestResult());
             existingN5Class.setN5Class3TeacherFeedback(n5Class.getN5Class3TeacherFeedback());
 
-            studentService.save(student);
-            redirectAttributes.addFlashAttribute("success", "N5クラス情報が正常に更新されました");
+            n5ClassRepository.save(existingN5Class);
+
+            redirectAttributes.addFlashAttribute("success", "N5クラス情報が正常に更新されました。");
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", "更新に失敗しました: " + e.getMessage());
         }
@@ -240,13 +225,12 @@ public class StudentController {
                     .orElseThrow(() -> new RuntimeException("Student not found: " + id));
 
             if (student.getN4Class() == null) {
-                N4Class newN4Class = N4Class.builder()
-                        .student(student)
-                        .build();
+                N4Class newN4Class = N4Class.builder().student(student).build();
                 student.setN4Class(newN4Class);
             }
 
             N4Class existingN4Class = student.getN4Class();
+
             existingN4Class.setN4ClassTeacher(n4Class.getN4ClassTeacher());
             existingN4Class.setN4ClassAttendance(n4Class.getN4ClassAttendance());
             existingN4Class.setN4ClassTestResult1(n4Class.getN4ClassTestResult1());
@@ -267,8 +251,9 @@ public class StudentController {
             existingN4Class.setN4Class3TestResult(n4Class.getN4Class3TestResult());
             existingN4Class.setN4Class3TeacherFeedback(n4Class.getN4Class3TeacherFeedback());
 
-            studentService.save(student);
-            redirectAttributes.addFlashAttribute("success", "N4クラス情報が正常に更新されました");
+            n4ClassRepository.save(existingN4Class);
+
+            redirectAttributes.addFlashAttribute("success", "N4クラス情報が正常に更新されました。");
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", "更新に失敗しました: " + e.getMessage());
         }
@@ -285,25 +270,24 @@ public class StudentController {
                     .orElseThrow(() -> new RuntimeException("Student not found: " + id));
 
             if (student.getInterviewNotes() == null) {
-                InterviewNotes newInterviewNotes = InterviewNotes.builder()
-                        .student(student)
-                        .build();
+                InterviewNotes newInterviewNotes = InterviewNotes.builder().student(student).build();
                 student.setInterviewNotes(newInterviewNotes);
             }
 
             InterviewNotes existingInterviewNotes = student.getInterviewNotes();
+
             existingInterviewNotes.setInterview1(interviewNotes.getInterview1());
             existingInterviewNotes.setInterview2(interviewNotes.getInterview2());
             existingInterviewNotes.setInterview3(interviewNotes.getInterview3());
             existingInterviewNotes.setOtherMemo(interviewNotes.getOtherMemo());
 
-            studentService.save(student);
-            redirectAttributes.addFlashAttribute("success", "面談情報が正常に更新されました");
+            interviewNotesRepository.save(existingInterviewNotes);
+
+            redirectAttributes.addFlashAttribute("success", "面談情報が正常に更新されました。");
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", "更新に失敗しました: " + e.getMessage());
         }
 
         return "redirect:/students/student-update/" + id + "?tab=interview";
     }
-    // ---------------------------------------------------------------------------------------------
 }
