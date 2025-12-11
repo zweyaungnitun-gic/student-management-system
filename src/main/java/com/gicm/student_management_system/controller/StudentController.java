@@ -1,22 +1,15 @@
 package com.gicm.student_management_system.controller;
 
-import com.gicm.student_management_system.dto.StudentDTO;
-import com.gicm.student_management_system.entity.InterviewNotes;
-import com.gicm.student_management_system.dto.StudentDTO;
-import com.gicm.student_management_system.dto.N4ClassDTO; 
+import com.gicm.student_management_system.dto.N4ClassDTO;
 import com.gicm.student_management_system.dto.N5ClassDTO;
-import com.gicm.student_management_system.dto.InterviewNotesDTO; 
-
+import com.gicm.student_management_system.dto.StudentDTO;
 import com.gicm.student_management_system.entity.InterviewNotes;
 import com.gicm.student_management_system.entity.N4Class;
 import com.gicm.student_management_system.entity.N5Class;
 import com.gicm.student_management_system.entity.Student;
 import com.gicm.student_management_system.service.N5ClassService;
 import com.gicm.student_management_system.service.N4ClassService;
-import com.gicm.student_management_system.service.InterviewNotesService; 
-import com.gicm.student_management_system.service.StudentService; 
-
-
+import com.gicm.student_management_system.service.StudentService;
 
 // --- ADD THESE REPOSITORY IMPORTS ---
 import com.gicm.student_management_system.repository.N5ClassRepository;
@@ -40,8 +33,6 @@ public class StudentController {
     private final StudentService studentService;
     private final N5ClassService n5ClassService;
     private final N4ClassService n4ClassService;
-    private final InterviewNotesService interviewNotesService; 
-
     // --- INJECT REPOSITORIES HERE ---
     private final N5ClassRepository n5ClassRepository;
     private final N4ClassRepository n4ClassRepository;
@@ -67,7 +58,7 @@ public class StudentController {
         return "redirect:/students";
     }
 
-    //METHOD FOR DETAILS
+    // METHOD FOR DETAILS
     @GetMapping("/detail/{id}")
     public String showStudentDetails(
             @PathVariable Long id,
@@ -77,28 +68,21 @@ public class StudentController {
 
         Student student = studentService.findById(id)
                 .orElseThrow(() -> new RuntimeException("Student not found: " + id));
-        // Fetch the specific student by ID
-        //Student student = studentService.findById(id)
-                //.orElseThrow(() -> new RuntimeException("Student not found: " + id));
 
-        //Fetch Student DTO via Studentservice
+        // Fetch Student DTO via Studentservice
         StudentDTO studentDTO = studentService.getStudentById(id);
 
-        //Fetch N5 and N4 DTOs using the services
+        // Fetch N5 and N4 DTOs using the services
         N5ClassDTO n5Class = n5ClassService.getOrCreateN5ClassDTO(id);
         N4ClassDTO n4Class = n4ClassService.getOrCreateN4ClassDTO(id);
-
-        //Fetch interview notes DTO using services
-        InterviewNotesDTO interviewNotes = interviewNotesService.getOrCreateInterviewNotesDTO(id);
 
         // Map InterviewNotes Entity to InterviewNotesDTO for the view
         // Add attributes to model so details.html can display them
         model.addAttribute("student", studentDTO);
         model.addAttribute("n5Class", n5Class);
         model.addAttribute("n4Class", n4Class);
-        model.addAttribute("interviewNotes", interviewNotes); 
 
-        model.addAttribute("student", student);
+        // model.addAttribute("student", student);
         model.addAttribute("currentTab", tab);
         model.addAttribute("currentSubTab", subTab);
 
