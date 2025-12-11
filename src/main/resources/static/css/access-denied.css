@@ -1,0 +1,125 @@
+body {
+    background: #F9FBFF;
+    font-family: "Inter", sans-serif;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.error-container {
+    text-align: center;
+    padding: 40px;
+}
+
+.error-card {
+    background: white;
+    border-radius: 20px;
+    padding: 20px 40px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.error-icon {
+    width: 120px;
+    height: 120px;
+    background: #FFE5E5;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px;
+    animation: shake 0.5s ease-in-out;
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-10px); }
+    75% { transform: translateX(10px); }
+}
+
+.error-icon i {
+    font-size: 60px;
+    color: #dc3545;
+}
+
+.error-code {
+    font-size: 40px;
+    font-weight: 700;
+    color: #dc3545;
+    margin-bottom: 10px;
+    line-height: 1;
+}
+
+.error-title {
+    font-size: 32px;
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 15px;
+}
+
+.error-message {
+    color: #6c757d;
+    font-size: 16px;
+    margin-bottom: 30px;
+    line-height: 1.6;
+}
+
+.btn-primary {
+    background-color: #667eea;
+    border-color: #667eea;
+    padding: 12px 30px;
+    font-size: 16px;
+    font-weight: 500;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+    background-color: #5568d3;
+    border-color: #5568d3;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+}
+
+.btn-outline-secondary {
+    padding: 12px 30px;
+    font-size: 16px;
+    font-weight: 500;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.btn-outline-secondary:hover {
+    transform: translateY(-2px);
+}
+
+.info-box {
+    background: #f8f9fa;
+    border-left: 4px solid #667eea;
+    padding: 15px 20px;
+    border-radius: 8px;
+    text-align: left;
+    margin-top: 30px;
+}
+
+.info-box h6 {
+    color: #2c3e50;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+.info-box ul {
+    margin: 0;
+    padding-left: 20px;
+    color: #6c757d;
+}
+
+.info-box ul li {
+    margin-bottom: 5px;
+}
+
+.logo {
+    margin-bottom: 30px;
+}

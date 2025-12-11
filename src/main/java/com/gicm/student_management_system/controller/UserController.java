@@ -3,7 +3,6 @@ package com.gicm.student_management_system.controller;
 import java.util.List;
 
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,39 +15,29 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.gicm.student_management_system.entity.Role;
 import com.gicm.student_management_system.entity.User;
-import com.gicm.student_management_system.repository.UserRepository;
+import com.gicm.student_management_system.service.UserService;
 
 @Controller
 @RequestMapping("/users")
 @PreAuthorize("hasRole('ADMIN')")
 public class UserController {
 
-    private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
+    private final UserService userService;
 
-    public UserController(UserRepository userRepository, PasswordEncoder passwordEncoder) {
-        this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
+    public UserController(UserService userService) {
+        this.userService = userService;
     }
 
     @GetMapping
     public String listUsers(
             @RequestParam(value = "search", required = false) String search,
             Model model) {
-        
-        List<User> users = userRepository.findAll();
-        
-        // Apply search filter for both name and email
-        if (search != null && !search.isEmpty()) {
-            users = users.stream()
-                    .filter(user -> user.getUsername().toLowerCase().contains(search.toLowerCase()) ||
-                                    user.getEmail().toLowerCase().contains(search.toLowerCase()))
-                    .toList();
-        }
-        
+
+        List<User> users = userService.searchUsers(search);
+
         model.addAttribute("users", users);
         model.addAttribute("search", search);
-        
+
         return "users/list-dashboard";
     }
 
@@ -62,76 +51,61 @@ public class UserController {
     @PostMapping("/add")
     public String addUser(@ModelAttribute User user, RedirectAttributes redirectAttributes) {
         // Check if email already exists
-        if (userRepository.existsByEmail(user.getEmail())) {
+        if (userService.existsByEmail(user.getEmail())) {
             redirectAttributes.addFlashAttribute("error", "このメールアドレスは既に使用されています");
             return "redirect:/users/add";
         }
-        
-        // Encode password
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        
-        userRepository.save(user);
-        
+
+        userService.createUser(user);
+
         redirectAttributes.addFlashAttribute("success", "ユーザーが追加されました");
         return "redirect:/users";
     }
 
-  
-
     @GetMapping("/edit/{id}")
     public String editUserForm(@PathVariable Long id, Model model, RedirectAttributes redirectAttributes) {
-        User user = userRepository.findById(id).orElse(null);
-        
+        User user = userService.getUserById(id).orElse(null);
+
         if (user == null) {
             redirectAttributes.addFlashAttribute("error", "ユーザーが見つかりません");
             return "redirect:/users";
         }
-        
+
         model.addAttribute("user", user);
         model.addAttribute("roles", Role.values());
         return "users/edit";
     }
 
     @PostMapping("/edit/{id}")
-    public String updateUser(@PathVariable Long id, 
-                           @ModelAttribute User userForm,
-                           @RequestParam(required = false) String newPassword,
-                           RedirectAttributes redirectAttributes) {
-        User user = userRepository.findById(id).orElse(null);
-        
-        if (user == null) {
+    public String updateUser(@PathVariable Long id,
+            @ModelAttribute User userForm,
+            @RequestParam(required = false) String newPassword,
+            RedirectAttributes redirectAttributes) {
+        try {
+            // Set password if provided
+            if (newPassword != null && !newPassword.trim().isEmpty()) {
+                userForm.setPassword(newPassword);
+            }
+
+            userService.updateUser(id, userForm);
+
+            redirectAttributes.addFlashAttribute("success", "ユーザー情報が更新されました");
+            return "redirect:/users";
+        } catch (RuntimeException e) {
             redirectAttributes.addFlashAttribute("error", "ユーザーが見つかりません");
             return "redirect:/users";
         }
-        
-        // Update user fields
-        user.setUsername(userForm.getUsername());
-        user.setEmail(userForm.getEmail());
-        user.setRole(userForm.getRole());
-        
-        // Update password only if a new one is provided
-        if (newPassword != null && !newPassword.trim().isEmpty()) {
-            user.setPassword(passwordEncoder.encode(newPassword));
-        }
-        
-        userRepository.save(user);
-        
-        redirectAttributes.addFlashAttribute("success", "ユーザー情報が更新されました");
-        return "redirect:/users";
     }
 
     @GetMapping("/delete/{id}")
     public String deleteUser(@PathVariable Long id, RedirectAttributes redirectAttributes) {
-        User user = userRepository.findById(id).orElse(null);
-        
-        if (user == null) {
+        try {
+            userService.deleteUser(id);
+            redirectAttributes.addFlashAttribute("success", "ユーザーが削除されました");
+            return "redirect:/users";
+        } catch (RuntimeException e) {
             redirectAttributes.addFlashAttribute("error", "ユーザーが見つかりません");
             return "redirect:/users";
         }
-        
-        userRepository.delete(user);
-        
-        redirectAttributes.addFlashAttribute("success", "ユーザーが削除されました");
-        return "redirect:/users";
     }
 }

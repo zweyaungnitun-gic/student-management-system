@@ -21,25 +21,24 @@ public class SessionConfig {
     @Bean
     public RedisSerializer<Object> springSessionDefaultRedisSerializer() {
         ObjectMapper objectMapper = new ObjectMapper();
-        
+
         // Register Java Time Module for date/time support
         objectMapper.registerModule(new JavaTimeModule());
-        
+
         // Register Spring Security Jackson modules to handle security objects
         objectMapper.registerModules(SecurityJackson2Modules.getModules(getClass().getClassLoader()));
-        
+
         // Configure type validator to allow necessary types
         PolymorphicTypeValidator typeValidator = BasicPolymorphicTypeValidator.builder()
-            .allowIfBaseType(Object.class)
-            .build();
-        
+                .allowIfBaseType(Object.class)
+                .build();
+
         // Enable default typing for polymorphic deserialization
         objectMapper.activateDefaultTyping(
-            typeValidator,
-            ObjectMapper.DefaultTyping.NON_FINAL,
-            JsonTypeInfo.As.PROPERTY
-        );
-        
+                typeValidator,
+                ObjectMapper.DefaultTyping.NON_FINAL,
+                JsonTypeInfo.As.PROPERTY);
+
         return new GenericJackson2JsonRedisSerializer(objectMapper);
     }
 
@@ -48,4 +47,3 @@ public class SessionConfig {
         return new CookieHttpSessionIdResolver();
     }
 }
-

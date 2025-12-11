@@ -1,0 +1,46 @@
+.edit-form-container {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.form-card {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
+  padding: 2rem;
+}
+
+.form-header {
+  background: #4bb0ff;
+  color: white;
+  padding: 1.5rem;
+  border-radius: 8px 8px 0 0;
+  margin: -2rem -2rem 2rem -2rem;
+}
+
+.form-label {
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 0.5rem;
+}
+
+.form-control:focus,
+.form-select:focus {
+  border-color: #0F6CBD;
+  box-shadow: 0 0 0 0.25rem rgba(15, 108, 189, 0.25);
+}
+
+.btn-primary {
+  background-color: #0F6CBD;
+  border-color: #0F6CBD;
+}
+
+.btn-primary:hover {
+  background-color: #0a58a0;
+  border-color: #0a58a0;
+}
+
+.required-field::after {
+  content: " *";
+  color: #dc3545;
+}
