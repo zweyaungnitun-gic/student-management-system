@@ -33,7 +33,7 @@
                                     なまえ(英語)<span class="text-danger ms-1">*</span>
                                 </label>
                                 <div class="col-md-8">
-                                    <input maxlength="20" type="text" class="form-control" id="englishName" 
+                                    <input maxlength="20" type="text" class="form-control" id="englishName" name="englishName"
                                            th:value="${studentData?.englishName}"
                                            placeholder="英語表記の名前を入力してください" required>
                                     <div class="invalid-feedback">英語名は必須です</div>
@@ -45,7 +45,7 @@
                                     なまえ(カタカナ)<span class="text-danger ms-1">*</span>
                                 </label>
                                 <div class="col-md-8">
-                                    <input maxlength="20" type="text" class="form-control" id="katakanaName" 
+                                    <input maxlength="20" type="text" class="form-control" id="katakanaName" name="katakanaName"
                                            th:value="${studentData?.katakanaName}"
                                            placeholder="カタカナ表記の名前を入力してください" required>
                                     <div class="invalid-feedback">カタカナ名は必須です</div>
@@ -57,7 +57,7 @@
                                     生年月日<span class="text-danger ms-1">*</span>
                                 </label>
                                 <div class="col-md-8">
-                                    <input type="date" class="form-control" id="dob" 
+                                    <input type="date" class="form-control" id="dob" name="dob"
                                            th:value="${studentData?.dob}"
                                            required>
                                     <div class="invalid-feedback">生年月日は必須です</div>
@@ -93,9 +93,8 @@
                                     現在所<span class="text-danger ms-1">*</span>
                                 </label>
                                 <div class="col-md-8">
-                                    <textarea class="form-control" id="currentAddress" rows="3"
-                                              th:text="${studentData?.currentAddress}"
-                                              placeholder="現在の住所を入力してください" required></textarea>
+                                    <textarea class="form-control" id="currentAddress" name="currentAddress" rows="3"
+                                              placeholder="現在の住所を入力してください" th:text="${studentData?.currentAddress}" required></textarea>
                                     <div class="invalid-feedback">現在所は必須です</div>
                                 </div>
                             </div>
@@ -105,9 +104,8 @@
                                     出身地住所<span class="text-danger ms-1">*</span>
                                 </label>
                                 <div class="col-md-8">
-                                    <textarea class="form-control" id="hometownAddress" rows="3"
-                                              th:text="${studentData?.hometownAddress}"
-                                              placeholder="出身地の住所を入力してください" required></textarea>
+                                    <textarea class="form-control" id="hometownAddress" name="hometownAddress" rows="3"
+                                              placeholder="出身地の住所を入力してください" th:text="${studentData?.hometownAddress}" required></textarea>
                                     <div class="invalid-feedback">出身地住所は必須です</div>
                                 </div>
                             </div>
@@ -117,7 +115,7 @@
                                     電話番号<span class="text-danger ms-1">*</span>
                                 </label>
                                 <div class="col-md-8">
-                                    <input type="text" class="form-control" id="phoneNumber" 
+                                    <input type="text" class="form-control" id="phoneNumber" name="phoneNumber"
                                            th:value="${studentData?.phoneNumber}"
                                            placeholder="電話番号を入力してください" required>
                                     <div class="invalid-feedback">電話番号は必須です</div>
@@ -129,7 +127,7 @@
                                     保護者電話番号<span class="text-danger ms-1">*</span>
                                 </label>
                                 <div class="col-md-8">
-                                    <input type="text" class="form-control" id="guardianPhoneNumber" 
+                                    <input type="text" class="form-control" id="guardianPhoneNumber" name="guardianPhoneNumber"
                                            th:value="${studentData?.guardianPhoneNumber}"
                                            placeholder="保護者の電話番号を入力してください" required>
                                     <div class="invalid-feedback">保護者電話番号は必須です</div>

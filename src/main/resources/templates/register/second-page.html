@@ -33,7 +33,7 @@
                                     父親名<span class="text-danger ms-1">*</span>
                                 </label>
                                 <div class="col-md-8">
-                                    <input type="text" class="form-control" id="fatherName" 
+                                    <input type="text" class="form-control" id="fatherName" name="fatherName"
                                            th:value="${studentData?.fatherName}"
                                            placeholder="父親の名前を入力してください" required>
                                     <div class="invalid-feedback">父親名は必須です</div>
@@ -45,7 +45,7 @@
                                     パスポート番号
                                 </label>
                                 <div class="col-md-8">
-                                    <input type="text" class="form-control" id="passportNumber" 
+                                    <input type="text" class="form-control" id="passportNumber" name="passportNumber"
                                            th:value="${studentData?.passportNumber}"
                                            placeholder="パスポート番号を入力してください">
                                     <div class="invalid-feedback">パスポート番号の形式が正しくありません</div>
@@ -57,7 +57,7 @@
                                     国民 ID 番号<span class="text-danger ms-1">*</span>
                                 </label>
                                 <div class="col-md-8">
-                                    <input type="text" class="form-control" id="nationalIdNumber" 
+                                    <input type="text" class="form-control" id="nationalIdNumber" name="nationalIdNumber"
                                            th:value="${studentData?.nationalIdNumber}"
                                            placeholder="国民ID番号を入力してください" required>
                                     <div class="invalid-feedback">国民ID番号は必須です</div>
@@ -161,9 +161,8 @@
                                     その他職種
                                 </label>
                                 <div class="col-md-8">
-                                    <textarea class="form-control" id="otherOccupation" rows="3"
-                                              th:text="${studentData?.otherOccupation}"
-                                              placeholder="その他の職種があれば入力してください"></textarea>
+                                    <textarea class="form-control" id="otherOccupation" name="otherOccupation" rows="3"
+                                              placeholder="その他の職種があれば入力してください" th:text="${studentData?.otherOccupation}"></textarea>
                                     <div class="invalid-feedback">その他職種は200文字以内で入力してください</div>
                                 </div>
                             </div>

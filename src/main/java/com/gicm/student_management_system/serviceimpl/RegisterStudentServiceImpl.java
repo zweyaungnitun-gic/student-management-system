@@ -57,7 +57,7 @@ public class RegisterStudentServiceImpl implements RegisterStudentService {
                 .otherDesiredJobType(dto.getOtherOccupation())
                 .japanTravelExperience(dto.getJapanTravelExperience())
                 .coeApplicationExperience(dto.getCoeApplicationExperience())
-                .religion(dto.getReligion().equals("その他") ? dto.getOtherReligion() : dto.getReligion())
+                .religion(dto.getReligion())
                 .otherReligion(dto.getOtherReligion())
                 .isSmoking(convertToBoolean(dto.getSmoking()))
                 .isAlcoholDrink(convertToBoolean(dto.getAlcohol()))
