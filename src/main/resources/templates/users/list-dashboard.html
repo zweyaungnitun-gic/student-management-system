@@ -34,7 +34,7 @@
     }
 
     .title-header-row th {
-      background: #0F6CBD;
+      background: #4bb0ff;
       color: white;
       padding: 1rem 1.5rem;
       border-radius: 0 0 0 0;
@@ -58,21 +58,24 @@
       color: black;
     }
 
+    #userFilterForm {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 2rem;
+      margin: 0;
+      padding: 10px;
+    }
+
     .filter-control-group {
-      display: inline-block;
-      vertical-align: middle;
-      margin-right: 100px;
-      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
     }
 
-    .filter-control-group>* {
-      vertical-align: middle;
-    }
-
-    .filter-control-group .form-control-sm,
-    .filter-control-group .form-select-sm {
+    .filter-control-group input[type="text"],
+    .filter-control-group select {
       height: calc(1.5em + 0.5rem + 2px);
-      display: inline-block;
     }
 
     .table thead tr:last-child th {
@@ -176,87 +179,8 @@
 
 <body>
   <div class="dashboard-layout">
-    <aside class="dashboard-sidebar glass-panel">
-      <div class="sidebar-brand gap-3">
-        <div class="brand-badge bg-white shadow-sm">
-          <img th:src="@{/images/gic-logo.png}" alt="GIC logo" />
-        </div>
-        <div>
-          <p class="text-uppercase fw-semibold mb-0 small text-muted">Admin Center</p>
-          <h5 class="mb-0">GIC Online Tests</h5>
-        </div>
-      </div>
-
-      <div class="sidebar-user">
-        <div class="d-flex align-items-center gap-3">
-          <img class="user-avatar" th:src="@{/images/profile.png}" alt="Admin avatar" />
-          <div>
-            <p class="mb-0 fw-semibold">Alexis Carter</p>
-            <small class="text-muted">Exam Administrator</small>
-          </div>
-        </div>
-        <div class="badge badge-muted fw-medium mt-3 w-100 text-center">
-          Verified Account
-        </div>
-      </div>
-
-      <div>
-        <p class="sidebar-label">Overview</p>
-        <nav class="sidebar-nav">
-          <a class="sidebar-link" th:href="@{/admin/dashboard}">
-            <i class="bi bi-grid-1x2-fill"></i>
-            <span>Dashboard</span>
-          </a>
-          <a class="sidebar-link" href="#">
-            <i class="bi bi-calendar2-event"></i>
-            <span>Exam Schedule</span>
-          </a>
-          <a class="sidebar-link" href="#">
-            <i class="bi bi-people"></i>
-            <span>Students</span>
-          </a>
-          <a class="sidebar-link" href="#">
-            <i class="bi bi-bar-chart"></i>
-            <span>Reports</span>
-          </a>
-          <a class="sidebar-link active" th:href="@{/users}">
-            <i class="bi bi-people-fill"></i>
-            <span>Users</span>
-            <span class="sidebar-pill">Now</span>
-          </a>
-           <a class="sidebar-link" th:href="@{/logout}">
-              <i class="bi bi-box-arrow-right"></i>
-              <span>Logout</span>
-            </a>
-        </nav>
-      </div>
-
-      <div>
-        <p class="sidebar-label">Management</p>
-        <nav class="sidebar-nav">
-          <a class="sidebar-link" href="#">
-            <i class="bi bi-gear"></i>
-            <span>Settings</span>
-          </a>
-          <a class="sidebar-link" href="#">
-            <i class="bi bi-life-preserver"></i>
-            <span>Support</span>
-          </a>
-        </nav>
-      </div>
-
-      <div class="sidebar-mini-card">
-        <p class="text-muted small mb-1">Next live exam</p>
-        <h5 class="mb-2">Physics 101 Final</h5>
-        <div class="d-flex align-items-center justify-content-between">
-          <span class="fw-semibold">08:30 AM</span>
-          <span class="status-pill">
-            <span class="dot"></span>
-            Prep Mode
-          </span>
-        </div>
-      </div>
-    </aside>
+    <!-- Sidebar -->
+    <th:block th:replace="~{layouts/admin-layout :: sidebar(currentPage='users')}"></th:block>
 
     <div class="sidebar-overlay d-lg-none" data-sidebar-toggle></div>
 
@@ -268,17 +192,13 @@
             <i class="bi bi-list fs-4"></i>
           </button>
           <div>
-            <p class="text-uppercase text-muted small fw-semibold mb-1">User Management</p>
-            <h4 class="mb-0">User List</h4>
+            <p class="text-uppercase text-muted small fw-semibold mb-1">生徒情報管理システム</p>
+            <h4 class="mb-0">ユーザー一覧</h4>
           </div>
         </div>
 
         <div class="topbar-actions">
-          <div class="topbar-search d-none d-md-flex">
-            <i class="bi bi-search"></i>
-            <input type="search" class="form-control border-0 bg-transparent shadow-none p-0"
-              placeholder="Search users..." />
-          </div>
+          
           <a th:href="@{/users/add}" class="btn btn-primary d-flex align-items-center gap-2">
             <i class="bi bi-plus-lg"></i>
             <span class="d-none d-sm-inline">Add User</span>
@@ -286,7 +206,7 @@
         </div>
       </header>
 
-      <div class="page-wrapper py-4 py-md-5 px-3 px-md-5">
+      <div class="page-wrapper py-4  px-3 px-md-5">
         <!-- Success/Error Messages -->
         <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
           <i class="bi bi-check-circle-fill me-2"></i>
@@ -305,14 +225,17 @@
             <table class="table data-table align-middle" id="userTable">
               <thead>
                 <tr class="title-header-row">
-                  <th colspan="6" class="p-3">
-                    <h4 class="fw-bold text-center">ユーザー情報管理システム</h4>
-                  </th>
+                  
                 </tr>
 
                 <tr class="filter-row">
-                  <th colspan="6" class="p-3">
-                    <form th:action="@{/users}" method="get" id="userFilterForm" style="overflow: hidden;">
+                  <th colspan="6" class="p-2">
+                    <form th:action="@{/users}" method="get" id="userFilterForm" style="display: flex; flex-wrap: wrap; align-items: center; gap: 1rem; margin: 0; padding: 5px;">
+                      <div class="filter-control-group" style="display: flex; align-items: center; gap: 0.5rem;">
+                        <span style="font-size: 16px; white-space: nowrap;">検索</span>
+                        <input type="text" name="search" th:value="${search}"
+                          class="form-control form-control-sm" id="searchInput" placeholder="名前またはメールで検索" style="min-width: 250px;" />
+                      </div>
                       <button type="submit" style="display: none;"></button>
                     </form>
                   </th>
@@ -381,22 +304,25 @@
 
   <script>
     document.addEventListener('DOMContentLoaded', function () {
-      const roleFilter = document.getElementById('roleFilter');
       const filterForm = document.getElementById('userFilterForm');
-      const nameSearchInput = document.getElementById('nameSearchInput');
+      const searchInput = document.getElementById('searchInput');
 
-      if (roleFilter) {
-        roleFilter.addEventListener('change', function () {
-          filterForm.submit();
-        });
-      }
-
-      if (nameSearchInput) {
-        nameSearchInput.addEventListener('keypress', function (e) {
+      if (searchInput) {
+        // Submit form when user presses Enter
+        searchInput.addEventListener('keypress', function (e) {
           if (e.key === 'Enter') {
             e.preventDefault();
             filterForm.submit();
           }
+        });
+
+        // Optional: Real-time search with debounce (waits 500ms after user stops typing)
+        let searchTimeout;
+        searchInput.addEventListener('input', function (e) {
+          clearTimeout(searchTimeout);
+          searchTimeout = setTimeout(function() {
+            filterForm.submit();
+          }, 500);
         });
       }
     });
@@ -404,9 +330,8 @@
 
   <script>
     document.addEventListener("DOMContentLoaded", function () {
-      const rows = Array.from(document.querySelectorAll("#userTableBody tr")).filter(
-        r => !r.querySelector("td[colspan]")
-      );
+      const rows = Array.from(document.querySelectorAll("#userTableBody tr"))
+        .filter(r => !r.querySelector("td[colspan]"));
 
       const rowsPerPage = 10;
       let currentPage = 1;
@@ -427,16 +352,53 @@
       function renderPagination() {
         const pageCount = Math.ceil(rows.length / rowsPerPage);
         const paginationDiv = document.getElementById("pagination");
-
         paginationDiv.innerHTML = "";
 
-        for (let i = 1; i <= pageCount; i++) {
+        function createBtn(text, page, disabled = false, active = false) {
           const btn = document.createElement("button");
-          btn.textContent = i;
-          btn.className = `btn btn-sm mx-1 ${i === currentPage ? "btn-primary" : "btn-outline-primary"}`;
-          btn.addEventListener("click", () => displayPage(i));
+          btn.textContent = text;
+
+          btn.className = `btn btn-sm mx-1 ${active ? "btn-primary" : "btn-outline-primary"}`;
+
+          btn.disabled = disabled;
+
+          if (!disabled) {
+            btn.addEventListener("click", () => displayPage(page));
+          }
+
           paginationDiv.appendChild(btn);
         }
+
+        // First page button
+        createBtn("<<", 1, currentPage === 1);
+
+        // Previous page button
+        createBtn("<", currentPage - 1, currentPage === 1);
+
+        // Calculate page range to display
+        let start = currentPage - 2;
+        let end = currentPage + 2;
+
+        if (start < 1) {
+          start = 1;
+          end = Math.min(5, pageCount);
+        }
+
+        if (end > pageCount) {
+          end = pageCount;
+          start = Math.max(1, pageCount - 4);
+        }
+
+        // Page number buttons
+        for (let i = start; i <= end; i++) {
+          createBtn(i, i, false, i === currentPage);
+        }
+
+        // Next page button
+        createBtn(">", currentPage + 1, currentPage === pageCount);
+
+        // Last page button
+        createBtn(">>", pageCount, currentPage === pageCount);
       }
 
       displayPage(1);

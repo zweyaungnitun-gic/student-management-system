@@ -12,22 +12,18 @@ import com.gicm.student_management_system.dto.StudentRegistrationDTO;
 import com.gicm.student_management_system.dto.validation.FirstPageValidation;
 import com.gicm.student_management_system.dto.validation.SecondPageValidation;
 import com.gicm.student_management_system.dto.validation.ThirdPageValidation;
-import com.gicm.student_management_system.entity.Student;
-import com.gicm.student_management_system.service.RegisterStudentService;
 
 import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
+
 import java.util.HashMap;
 import java.util.Map;
 
 @Controller
 @RequestMapping("/register")
+// REMOVED @Validated - this was causing the issue
 public class RegistrationController {
-
-    private final RegisterStudentService registerStudentService;
-
-    public RegistrationController(RegisterStudentService registerStudentService) {
-        this.registerStudentService = registerStudentService;
-    }
 
     @GetMapping
     public String showRegistrationForm(HttpSession session, Model model) {
@@ -81,6 +77,7 @@ public class RegistrationController {
             BindingResult bindingResult,
             HttpSession session) {
         
+        // Check for validation errors
         if (bindingResult.hasErrors()) {
             Map<String, String> errors = new HashMap<>();
             bindingResult.getFieldErrors().forEach(error -> 
@@ -94,9 +91,11 @@ public class RegistrationController {
             return ResponseEntity.badRequest().body(response);
         }
         
+        // Validation passed - proceed with saving
         StudentRegistrationDTO existingData = (StudentRegistrationDTO) session.getAttribute("studentData");
         
         if (existingData != null) {
+            // Update first page fields only
             existingData.setEnglishName(firstPageData.getEnglishName());
             existingData.setKatakanaName(firstPageData.getKatakanaName());
             existingData.setDob(firstPageData.getDob());
@@ -143,6 +142,7 @@ public class RegistrationController {
                     .body(Map.of("status", "error", "message", "セッションが無効です"));
         }
 
+        // Merge second page data
         existingData.setFatherName(secondPageData.getFatherName());
         existingData.setPassportNumber(secondPageData.getPassportNumber());
         existingData.setNationalIdNumber(secondPageData.getNationalIdNumber());
@@ -184,6 +184,7 @@ public class RegistrationController {
                 .body(Map.of("status", "error", "message", "セッションが無効です"));
         }
 
+        // Merge third-page fields
         existingData.setReligion(thirdPageData.getReligion());
         existingData.setOtherReligion(thirdPageData.getOtherReligion());
         existingData.setSmoking(thirdPageData.getSmoking());
@@ -196,53 +197,5 @@ public class RegistrationController {
         session.setAttribute("studentData", existingData);
 
         return ResponseEntity.ok(Map.of("status", "success"));
-    }
-
-    @PostMapping("/submit-final")
-    @ResponseBody
-    public ResponseEntity<String> submitFinal(HttpSession session) {
-        try {
-            StudentRegistrationDTO studentData = (StudentRegistrationDTO) session.getAttribute("studentData");
-            
-            if (studentData == null) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                        .body("error:セッションが無効です");
-            }
-
-            // Save to database
-            Student savedStudent = registerStudentService.registerStudent(studentData);
-            
-            // Store student info in session for success page
-            session.setAttribute("registeredStudentId", savedStudent.getStudentId());
-            session.setAttribute("registeredStudentName", savedStudent.getStudentName());
-            
-            // Clear registration data
-            session.removeAttribute("studentData");
-            
-            return ResponseEntity.ok("success");
-            
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body("error:" + e.getMessage());
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("error:登録中にエラーが発生しました");
-        }
-    }
-
-    @GetMapping("/success")
-    public String successPage(HttpSession session, Model model) {
-        String studentId = (String) session.getAttribute("registeredStudentId");
-        String studentName = (String) session.getAttribute("registeredStudentName");
-        
-        // Add to model for display
-        model.addAttribute("studentId", studentId);
-        model.addAttribute("studentName", studentName);
-        
-        // Clear these attributes after displaying
-        session.removeAttribute("registeredStudentId");
-        session.removeAttribute("registeredStudentName");
-        
-        return "register/success";
     }
 }

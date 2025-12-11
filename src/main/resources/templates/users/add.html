@@ -24,7 +24,7 @@
     }
 
     .form-header {
-      background: #0F6CBD;
+      background: #4bb0ff;
       color: white;
       padding: 1.5rem;
       border-radius: 8px 8px 0 0;
@@ -62,83 +62,8 @@
 
 <body>
   <div class="dashboard-layout">
-    <aside class="dashboard-sidebar glass-panel">
-      <div class="sidebar-brand gap-3">
-        <div class="brand-badge bg-white shadow-sm">
-          <img th:src="@{/images/gic-logo.png}" alt="GIC logo" />
-        </div>
-        <div>
-          <p class="text-uppercase fw-semibold mb-0 small text-muted">Admin Center</p>
-          <h5 class="mb-0">GIC Online Tests</h5>
-        </div>
-      </div>
-
-      <div class="sidebar-user">
-        <div class="d-flex align-items-center gap-3">
-          <img class="user-avatar" th:src="@{/images/profile.png}" alt="Admin avatar" />
-          <div>
-            <p class="mb-0 fw-semibold">Alexis Carter</p>
-            <small class="text-muted">Exam Administrator</small>
-          </div>
-        </div>
-        <div class="badge badge-muted fw-medium mt-3 w-100 text-center">
-          Verified Account
-        </div>
-      </div>
-
-      <div>
-        <p class="sidebar-label">Overview</p>
-        <nav class="sidebar-nav">
-          <a class="sidebar-link" th:href="@{/admin/dashboard}">
-            <i class="bi bi-grid-1x2-fill"></i>
-            <span>Dashboard</span>
-          </a>
-          <a class="sidebar-link" href="#">
-            <i class="bi bi-calendar2-event"></i>
-            <span>Exam Schedule</span>
-          </a>
-          <a class="sidebar-link" href="#">
-            <i class="bi bi-people"></i>
-            <span>Students</span>
-          </a>
-          <a class="sidebar-link" href="#">
-            <i class="bi bi-bar-chart"></i>
-            <span>Reports</span>
-          </a>
-          <a class="sidebar-link active" th:href="@{/users}" sec:authorize="hasRole('ADMIN')">
-            <i class="bi bi-people-fill"></i>
-            <span>Users</span>
-            <span class="sidebar-pill">Now</span>
-          </a>
-        </nav>
-      </div>
-
-      <div>
-        <p class="sidebar-label">Management</p>
-        <nav class="sidebar-nav">
-          <a class="sidebar-link" href="#">
-            <i class="bi bi-gear"></i>
-            <span>Settings</span>
-          </a>
-          <a class="sidebar-link" href="#">
-            <i class="bi bi-life-preserver"></i>
-            <span>Support</span>
-          </a>
-        </nav>
-      </div>
-
-      <div class="sidebar-mini-card">
-        <p class="text-muted small mb-1">Next live exam</p>
-        <h5 class="mb-2">Physics 101 Final</h5>
-        <div class="d-flex align-items-center justify-content-between">
-          <span class="fw-semibold">08:30 AM</span>
-          <span class="status-pill">
-            <span class="dot"></span>
-            Prep Mode
-          </span>
-        </div>
-      </div>
-    </aside>
+    <!-- Sidebar -->
+    <th:block th:replace="~{layouts/admin-layout :: sidebar(currentPage='users')}"></th:block>
 
     <div class="sidebar-overlay d-lg-none" data-sidebar-toggle></div>
 
@@ -189,31 +114,30 @@
             <form th:action="@{/users/add}" th:object="${user}" method="post">
               <div class="row g-3">
                 <!-- Username -->
-                <div class="col-md-6">
+                <div class="col-12">
                   <label class="form-label required-field">ユーザー名</label>
                   <input type="text" class="form-control" th:field="*{username}" 
                          placeholder="ユーザー名を入力" required>
                 </div>
 
                 <!-- Email -->
-                <div class="col-md-6">
+                <div class="col-12">
                   <label class="form-label required-field">メールアドレス</label>
                   <input type="email" class="form-control" th:field="*{email}" 
                          placeholder="email@example.com" required>
                 </div>
 
                 <!-- Role -->
-                <div class="col-md-6">
+                <div class="col-12">
                   <label class="form-label required-field">ロール</label>
                   <select class="form-select" th:field="*{role}" required>
-                    <option value="">ロールを選択</option>
                     <option value="ADMIN">管理者</option>
                     <option value="GUEST">ゲスト</option>
                   </select>
                 </div>
 
                 <!-- Password -->
-                <div class="col-md-6">
+                <div class="col-12">
                   <label class="form-label required-field">パスワード</label>
                   <input type="password" class="form-control" th:field="*{password}" 
                          placeholder="パスワードを入力" required>

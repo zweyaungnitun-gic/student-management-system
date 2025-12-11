@@ -85,6 +85,53 @@
         .password-toggle:hover {
             color: #34A9FF;
         }
+
+        .alert-custom {
+            padding: 14px 18px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+            border: 1px solid;
+            animation: slideDown 0.3s ease-out;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .alert-error {
+            background-color: #FEF2F2;
+            border-color: #FCA5A5;
+            color: #991B1B;
+        }
+
+        .alert-success {
+            background-color: #F0FDF4;
+            border-color: #86EFAC;
+            color: #166534;
+        }
+
+        .alert-icon {
+            flex-shrink: 0;
+            width: 20px;
+            height: 20px;
+        }
+
+        .alert-custom svg {
+            width: 100%;
+            height: 100%;
+        }
     </style>
 </head>
 
@@ -97,12 +144,35 @@
 
         <div class="login-card mx-auto">
             <h3 class="text-center">Log in to your account.</h3>
-             <div th:if="${param.error}" class="text-danger">
-            Invalid username and password.
-        </div>
-        <div th:if="${param.logout}">
-            You have been logged out.
-        </div>
+            
+            <!-- Error Message -->
+            <div th:if="${param.error}" class="alert-custom alert-error">
+                <div class="alert-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="12" y1="8" x2="12" y2="12"></line>
+                        <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                    </svg>
+                </div>
+                <div>
+                    <strong>
+                    <span style="font-weight: 400; font-size: 13px;">Invalid email or password. Please try again.</span> </strong>
+                </div>
+            </div>
+
+            <!-- Logout Message -->
+            <div th:if="${param.logout}" class="alert-custom alert-success">
+                <div class="alert-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                        <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                    </svg>
+                </div>
+                <div>
+                    <strong><span style="font-weight: 400; font-size: 13px;">Logged Out Successfully</span></strong>
+                </div>
+            </div>
+
             <form th:action="@{/login}" method="post">
                 <div class="mb-3">
                     <label class="form-label">Email Address <span class="text-danger">*</span></label>

@@ -33,28 +33,21 @@ public class UserController {
 
     @GetMapping
     public String listUsers(
-            @RequestParam(value = "nameSearch", required = false) String nameSearch,
-            @RequestParam(value = "roleFilter", required = false) String roleFilter,
+            @RequestParam(value = "search", required = false) String search,
             Model model) {
         
         List<User> users = userRepository.findAll();
         
-        // Apply filters if provided
-        if (nameSearch != null && !nameSearch.isEmpty()) {
+        // Apply search filter for both name and email
+        if (search != null && !search.isEmpty()) {
             users = users.stream()
-                    .filter(user -> user.getUsername().toLowerCase().contains(nameSearch.toLowerCase()))
-                    .toList();
-        }
-        
-        if (roleFilter != null && !roleFilter.isEmpty()) {
-            users = users.stream()
-                    .filter(user -> user.getRole().toString().equals(roleFilter))
+                    .filter(user -> user.getUsername().toLowerCase().contains(search.toLowerCase()) ||
+                                    user.getEmail().toLowerCase().contains(search.toLowerCase()))
                     .toList();
         }
         
         model.addAttribute("users", users);
-        model.addAttribute("nameSearch", nameSearch);
-        model.addAttribute("roleFilter", roleFilter);
+        model.addAttribute("search", search);
         
         return "users/list-dashboard";
     }

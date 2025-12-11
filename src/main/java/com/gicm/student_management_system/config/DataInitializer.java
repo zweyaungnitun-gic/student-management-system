@@ -26,16 +26,16 @@ public class DataInitializer implements CommandLineRunner {
         log.info("========================================");
 
         // Initialize Admin User
-        if (!userRepository.existsByEmail("Admin@gmail.com")) {
+        if (!userRepository.existsByEmail("admin@gmail.com")) {
             User admin = User.builder()
                     .username("Admin")
-                    .email("Admin@gmail.com")
+                    .email("admin@gmail.com")
                     .password(passwordEncoder.encode("admin123"))
                     .role(Role.ADMIN)
                     .build();
             userRepository.save(admin);
             log.info("✓ Admin user created successfully");
-            log.info("  Email: Admin@gmail.com");
+            log.info("  Email: admin@gmail.com");
             log.info("  Password: admin123");
             log.info("  Role: ADMIN");
         } else {

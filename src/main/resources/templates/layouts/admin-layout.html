@@ -36,11 +36,11 @@
             <img
               class="user-avatar"
               th:src="@{/images/profile.png}"
-              alt="Admin avatar"
+              alt="User avatar"
             />
             <div>
-              <p class="mb-0 fw-semibold">Alexis Carter</p>
-              <small class="text-muted">Exam Administrator</small>
+              <p class="mb-0 fw-semibold" th:text="${#authentication.principal.username}">Username</p>
+              <small class="text-muted" th:text="${#authentication.principal.authorities[0].authority}">Role</small>
             </div>
           </div>
           <div class="badge badge-muted fw-medium mt-3 w-100 text-center">
@@ -57,45 +57,21 @@
             </a>
             <a class="sidebar-link" th:classappend="${#strings.equals(currentPage, 'employees')} ? 'active'" th:href="@{/employees}">
               <i class="bi bi-people"></i>
-              <span>Employees</span>
+              <span>Student</span>
             </a>
-            <a class="sidebar-link" th:classappend="${#strings.equals(currentPage, 'schedule')} ? 'active'" href="#">
-              <i class="bi bi-calendar2-event"></i>
-              <span>Exam Schedule</span>
+            <a class="sidebar-link" th:classappend="${#strings.equals(currentPage, 'users')} ? 'active'" th:href="@{/users}" sec:authorize="hasRole('ADMIN')">
+              <i class="bi bi-people-fill"></i>
+              <span>Users</span>
+              <span th:if="${#strings.equals(currentPage, 'users')}" class="sidebar-pill">Now</span>
             </a>
-            <a class="sidebar-link" th:classappend="${#strings.equals(currentPage, 'reports')} ? 'active'" href="#">
-              <i class="bi bi-bar-chart"></i>
-              <span>Reports</span>
-            </a>
-            
-          </nav>
-        </div>
-
-        <div>
-          <p class="sidebar-label">Management</p>
-          <nav class="sidebar-nav">
-            <a class="sidebar-link" th:classappend="${#strings.equals(currentPage, 'settings')} ? 'active'" href="#">
-              <i class="bi bi-gear"></i>
-              <span>Settings</span>
-            </a>
-            <a class="sidebar-link" th:classappend="${#strings.equals(currentPage, 'support')} ? 'active'" href="#">
-              <i class="bi bi-life-preserver"></i>
-              <span>Support</span>
+            <a class="sidebar-link" th:href="@{/logout}">
+              <i class="bi bi-box-arrow-right"></i>
+              <span>Logout</span>
             </a>
           </nav>
         </div>
 
-        <div class="sidebar-mini-card">
-          <p class="text-muted small mb-1">Next live exam</p>
-          <h5 class="mb-2">Physics 101 Final</h5>
-          <div class="d-flex align-items-center justify-content-between">
-            <span class="fw-semibold">08:30 AM</span>
-            <span class="status-pill">
-              <span class="dot"></span>
-              Prep Mode
-            </span>
-          </div>
-        </div>
+
       </aside>
     </th:block>
 
