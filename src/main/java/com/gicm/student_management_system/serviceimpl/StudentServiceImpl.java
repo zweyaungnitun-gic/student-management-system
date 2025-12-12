@@ -154,4 +154,41 @@ public class StudentServiceImpl implements StudentService {
     public Student save(Student student) {
         return studentRepository.save(student);
     }
+
+    @Override
+    public List<Student> getStudentsByFilterFull(String nameSearch, String status) {
+        boolean hasName = nameSearch != null && !nameSearch.isBlank();
+        boolean hasStatus = status != null && !status.isBlank();
+
+        if (hasName && hasStatus) {
+            return studentRepository.findByStudentNameContainingAndStatus(nameSearch, status);
+        } else if (hasName) {
+            return studentRepository.findByStudentNameContaining(nameSearch);
+        } else if (hasStatus) {
+            return studentRepository.findByStatus(status);
+        } else {
+            return studentRepository.findAll();
+        }
+    }
+
+    @Override
+    public List<StudentDTO> getStudentsByStatuses(String nameSearch, List<String> statuses) {
+        List<Student> students;
+        boolean hasName = nameSearch != null && !nameSearch.isBlank();
+        boolean hasStatuses = statuses != null && !statuses.isEmpty();
+
+        if (hasName && hasStatuses) {
+            students = studentRepository.findByStudentNameContainingAndStatusIn(nameSearch, statuses);
+        } else if (hasName) {
+            students = studentRepository.findByStudentNameContaining(nameSearch);
+        } else if (hasStatuses) {
+            students = studentRepository.findByStatusIn(statuses);
+        } else {
+            students = studentRepository.findAll();
+        }
+
+        return students.stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
 }

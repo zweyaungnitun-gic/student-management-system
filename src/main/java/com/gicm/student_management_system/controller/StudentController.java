@@ -3,25 +3,23 @@ package com.gicm.student_management_system.controller;
 import com.gicm.student_management_system.dto.N4ClassDTO;
 import com.gicm.student_management_system.dto.N5ClassDTO;
 import com.gicm.student_management_system.dto.StudentDTO;
+import com.gicm.student_management_system.dto.StudentFullExportDTO;
 import com.gicm.student_management_system.entity.InterviewNotes;
 import com.gicm.student_management_system.entity.N4Class;
 import com.gicm.student_management_system.entity.N5Class;
 import com.gicm.student_management_system.entity.Student;
-import com.gicm.student_management_system.service.N5ClassService;
-import com.gicm.student_management_system.service.N4ClassService;
 import com.gicm.student_management_system.service.StudentService;
-
-// --- ADD THESE REPOSITORY IMPORTS ---
-import com.gicm.student_management_system.repository.N5ClassRepository;
-import com.gicm.student_management_system.repository.N4ClassRepository;
-import com.gicm.student_management_system.repository.InterviewNotesRepository;
-
+import com.gicm.student_management_system.service.StudentExportService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.ui.Model;
 import org.springframework.stereotype.Controller;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -31,6 +29,7 @@ import java.util.List;
 public class StudentController {
 
     private final StudentService studentService;
+    private final StudentExportService studentExportService;
     private final N5ClassService n5ClassService;
     private final N4ClassService n4ClassService;
     // --- INJECT REPOSITORIES HERE ---
@@ -38,17 +37,24 @@ public class StudentController {
     private final N4ClassRepository n4ClassRepository;
     private final InterviewNotesRepository interviewNotesRepository;
 
+    // ---- UI METHODS ----
     @GetMapping
     public String getStudents(@RequestParam(value = "nameSearch", defaultValue = "") String nameSearch,
             @RequestParam(value = "status", defaultValue = "") String status,
             Model model) {
 
-        List<StudentDTO> students = studentService.getStudentsByFilter(nameSearch, status);
+        // Split comma-separated statuses
+        List<String> statuses = new ArrayList<>();
+        if (!status.isBlank()) {
+            statuses = Arrays.asList(status.split(","));
+        }
+
+        // Call new service method that supports multi-status
+        List<StudentDTO> students = studentService.getStudentsByStatuses(nameSearch, statuses);
 
         model.addAttribute("students", students);
         model.addAttribute("nameSearch", nameSearch);
-        model.addAttribute("statusFilter", status);
-
+        model.addAttribute("statusFilter", status); // for input box
         return "students/student-list.html";
     }
 
@@ -60,8 +66,7 @@ public class StudentController {
 
     // METHOD FOR DETAILS
     @GetMapping("/detail/{id}")
-    public String showStudentDetails(
-            @PathVariable Long id,
+    public String showStudentDetails(@PathVariable Long id,
             @RequestParam(required = false, defaultValue = "personal") String tab,
             @RequestParam(required = false) String subTab,
             Model model) {
@@ -69,6 +74,7 @@ public class StudentController {
         Student student = studentService.findById(id)
                 .orElseThrow(() -> new RuntimeException("Student not found: " + id));
 
+        model.addAttribute("student", student);
         // Fetch Student DTO via Studentservice
         StudentDTO studentDTO = studentService.getStudentById(id);
 
@@ -307,4 +313,28 @@ public class StudentController {
 
         return "redirect:/students/student-update/" + id + "?tab=interview";
     }
+}return"students/student-update";}
+
+// ---- JSON API FOR FRONTEND CSV ----
+@RestController
+@RequestMapping("/students/export")
+@RequiredArgsConstructor
+public static class StudentExportController {
+
+    private final StudentExportService studentExportService;
+
+    @GetMapping
+    public List<StudentFullExportDTO> getStudentsExport(
+            @RequestParam(value = "ids", required = false) List<Long> ids,
+            @RequestParam(value = "nameSearch", defaultValue = "") String nameSearch,
+            @RequestParam(value = "status", defaultValue = "") String status) {
+
+        if (ids != null && !ids.isEmpty()) {
+            return studentExportService.getStudentsByIds(ids);
+        } else {
+            return studentExportService.getAllStudentsFull(nameSearch, status);
+        }
+    }
+}
+
 }

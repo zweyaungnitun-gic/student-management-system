@@ -24,6 +24,10 @@ public interface StudentService {
 
     Optional<Student> findById(Long id);
 
+    List<Student> getStudentsByFilterFull(String nameSearch, String status);
+
     Student save(Student student);
+
+    List<StudentDTO> getStudentsByStatuses(String nameSearch, List<String> statuses);
 
 }
