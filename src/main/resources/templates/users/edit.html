@@ -19,107 +19,101 @@
 
     <div class="sidebar-overlay d-lg-none" data-sidebar-toggle></div>
 
-    <div class="dashboard-main">
-      <header class="dashboard-topbar">
-        <div class="d-flex align-items-center gap-3">
-          <button class="btn btn-light btn-icon d-lg-none" type="button" aria-label="Toggle sidebar"
-            data-sidebar-toggle>
-            <i class="bi bi-list fs-4"></i>
-          </button>
-          <div>
-            <p class="text-uppercase text-muted small fw-semibold mb-1">User Management</p>
-            <h4 class="mb-0">ユーザー編集</h4>
-          </div>
-        </div>
+    <div class="dashboard-main" style="background-color: white;">
+      
 
-        <div class="topbar-actions">
-          <a th:href="@{/users}" class="btn btn-outline-secondary d-flex align-items-center gap-2">
-            <i class="bi bi-arrow-left"></i>
-            <span>戻る</span>
-          </a>
-        </div>
-      </header>
-
-      <div class="page-wrapper py-4 py-md-5 px-3 px-md-5">
-        <div class="edit-form-container">
-          <!-- Success/Error Messages -->
-          <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
-            <i class="bi bi-check-circle-fill me-2"></i>
-            <span th:text="${success}"></span>
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-          </div>
-
-          <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
-            <i class="bi bi-exclamation-triangle-fill me-2"></i>
-            <span th:text="${error}"></span>
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-          </div>
-
-          <div class="form-card">
-            <div class="form-header">
-              <h4 class="mb-0">
-                <i class="bi bi-pencil-square me-2"></i>
-                ユーザー情報を編集
-              </h4>
+      <div class="page-wrapper" style="padding: 0; height: 100%; margin: 0; width: 100%;">
+        <div class="edit-form-container" style="height: 100%; width: 100%; margin: 0; padding: 0; max-width: none;">
+          <div class="form-card" style="height: 100%; width: 100%; border-radius: 0; display: flex; flex-direction: column; margin: 0; max-width: none;">
+            <!-- Success/Error Messages -->
+            <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert" style="margin: 1rem; margin-bottom: 0;">
+              <i class="bi bi-check-circle-fill me-2"></i>
+              <span th:text="${success}"></span>
+              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
 
-            <form th:action="@{'/users/edit/' + ${user.id}}" th:object="${user}" method="post">
-              <div class="row g-3">
-                <!-- User ID (Read-only) -->
-                <div class="col-md-6">
-                  <label class="form-label">ユーザーID</label>
-                  <input type="text" class="form-control" th:value="${user.id}" disabled>
+            <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert" style="margin: 1rem; margin-bottom: 0;">
+              <i class="bi bi-exclamation-triangle-fill me-2"></i>
+              <span th:text="${error}"></span>
+              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            
+            <div class="d-flex justify-content-between align-items-center p-3 pb-0">
+              <div class="d-flex align-items-center gap-3">
+                <button class="btn btn-light btn-icon d-lg-none" type="button" aria-label="Toggle sidebar"
+                  data-sidebar-toggle>
+                  <i class="bi bi-list fs-4"></i>
+                </button>
+                <div>
+                  <p class="text-uppercase text-muted small fw-semibold mb-1">生徒情報管理システム</p>
+                  <h4 class="mb-0" style="color: #0A58A0; font-weight: 600; font-size: 1.8rem;">ユーザー編集</h4>
+                </div>
+              </div>
+              <a th:href="@{/users}" class="btn btn-outline-secondary d-flex align-items-center gap-2">
+                <i class="bi bi-arrow-left"></i>
+                <span>戻る</span>
+              </a>
+            </div>
+
+            <form th:action="@{'/users/edit/' + ${user.id}}" th:object="${user}" method="post" class="px-5" style="flex: 1; display: flex; flex-direction: column; padding-top: 5rem;">
+              <div class="container-fluid" style="max-width: 1200px;">
+                <!-- Row 1 -->
+                <div class="row mb-4">
+                  <div class="col-6 pe-4">
+                    <label class="form-label">ユーザーID</label>
+                    <input type="text" class="form-control" th:value="${user.id}" disabled>
+                  </div>
+                  <div class="col-6 ps-4">
+                    <label class="form-label">作成日</label>
+                    <input type="text" class="form-control" 
+                           th:value="${#temporals.format(user.createdAt, 'yyyy-MM-dd HH:mm')}" disabled>
+                  </div>
                 </div>
 
-                <!-- Created At (Read-only) -->
-                <div class="col-md-6">
-                  <label class="form-label">作成日</label>
-                  <input type="text" class="form-control" 
-                         th:value="${#temporals.format(user.createdAt, 'yyyy-MM-dd HH:mm')}" disabled>
+                <!-- Row 2 -->
+                <div class="row mb-4">
+                  <div class="col-6 pe-4">
+                    <label class="form-label required-field">ユーザー名</label>
+                    <input type="text" class="form-control" th:field="*{username}" 
+                           placeholder="ユーザー名を入力" required>
+                  </div>
+                  <div class="col-6 ps-4">
+                    <label class="form-label required-field">メールアドレス</label>
+                    <input type="email" class="form-control" th:field="*{email}" 
+                           placeholder="email@example.com" required>
+                  </div>
                 </div>
 
-                <!-- Username -->
-                <div class="col-md-6">
-                  <label class="form-label required-field">ユーザー名</label>
-                  <input type="text" class="form-control" th:field="*{username}" 
-                         placeholder="ユーザー名を入力" required>
-                </div>
-
-                <!-- Email -->
-                <div class="col-md-6">
-                  <label class="form-label required-field">メールアドレス</label>
-                  <input type="email" class="form-control" th:field="*{email}" 
-                         placeholder="email@example.com" required>
-                </div>
-
-                <!-- Role -->
-                <div class="col-md-6">
-                  <label class="form-label required-field">ロール</label>
-                  <select class="form-select" th:field="*{role}" required>
-                    <option value="ADMIN">管理者</option>
-                    <option value="GUEST">ゲスト</option>
-                  </select>
-                </div>
-
-                <!-- New Password (Optional) -->
-                <div class="col-md-6">
-                  <label class="form-label">新しいパスワード</label>
-                  <input type="password" class="form-control" name="newPassword" 
-                         placeholder="変更する場合のみ入力">
-                  <small class="text-muted">※ 空欄の場合は変更されません</small>
+                <!-- Row 3 -->
+                <div class="row mb-4">
+                  <div class="col-6 pe-4">
+                    <label class="form-label required-field">ロール</label>
+                    <select class="form-select" th:field="*{role}" required>
+                      <option value="ADMIN">管理者</option>
+                      <option value="GUEST">ゲスト</option>
+                    </select>
+                  </div>
+                  <div class="col-6 ps-4">
+                    <label class="form-label">新しいパスワード</label>
+                    <input type="password" class="form-control" name="newPassword" 
+                           placeholder="変更する場合のみ入力">
+                    <small class="text-muted">※ 空欄の場合は変更されません</small>
+                  </div>
                 </div>
 
                 <!-- Buttons -->
-                <div class="col-12 mt-4">
-                  <div class="d-flex gap-2 justify-content-end">
-                    <a th:href="@{/users}" class="btn btn-secondary">
-                      <i class="bi bi-x-circle me-1"></i>
-                      キャンセル
-                    </a>
-                    <button type="submit" class="btn btn-primary">
-                      <i class="bi bi-check-circle me-1"></i>
-                      更新
-                    </button>
+                <div class="row">
+                  <div class="col-12">
+                    <div class="d-flex gap-2 justify-content-center">
+                      <a th:href="@{/users}" class="btn btn-secondary">
+                        <i class="bi bi-x-circle me-1"></i>
+                        キャンセル
+                      </a>
+                      <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-check-circle me-1"></i>
+                        更新
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>

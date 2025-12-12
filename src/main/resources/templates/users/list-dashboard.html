@@ -22,44 +22,36 @@
 
     <div class="sidebar-overlay d-lg-none" data-sidebar-toggle></div>
 
-    <div class="dashboard-main">
-      <header class="dashboard-topbar">
-        <div class="d-flex align-items-center gap-3">
-          <button class="btn btn-light btn-icon d-lg-none" type="button" aria-label="Toggle sidebar"
-            data-sidebar-toggle>
-            <i class="bi bi-list fs-4"></i>
-          </button>
-          <div>
-            <p class="text-uppercase text-muted small fw-semibold mb-1">生徒情報管理システム</p>
-            <h4 class="mb-0">ユーザー一覧</h4>
+    <div class="dashboard-main" style="background-color: white;">
+      
+
+      <div class="page-wrapper" style="padding: 0; height: 100%;">
+        
+
+        <section class="user-management glass-panel" style="height: 100%; margin: 0; border-radius: 0; padding: 3rem;">
+          <div class="d-flex align-items-center gap-3 pb-0">
+            <button class="btn btn-light btn-icon d-lg-none" type="button" aria-label="Toggle sidebar"
+              data-sidebar-toggle>
+              <i class="bi bi-list fs-4"></i>
+            </button>
+            <div>
+              <p class="text-uppercase text-muted small fw-semibold mb-1">生徒情報管理システム</p>
+              <h4 class="mb-0" style="color: #0A58A0; font-weight: 600; font-size: 1.8rem;">ユーザー一覧</h4>
+            </div>
           </div>
-        </div>
-
-        <div class="topbar-actions">
-          
-          <a th:href="@{/users/add}" class="btn btn-primary d-flex align-items-center gap-2">
-            <i class="bi bi-plus-lg"></i>
-            <span class="d-none d-sm-inline">Add User</span>
-          </a>
-        </div>
-      </header>
-
-      <div class="page-wrapper py-4  px-3 px-md-5">
-        <!-- Success/Error Messages -->
-        <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+          <!-- Success/Error Messages -->
+        <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert" style="margin: 1rem; margin-bottom: 0;">
           <i class="bi bi-check-circle-fill me-2"></i>
           <span th:text="${success}"></span>
           <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
 
-        <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+        <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert" style="margin: 1rem; margin-bottom: 0;">
           <i class="bi bi-exclamation-triangle-fill me-2"></i>
           <span th:text="${error}"></span>
           <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
-
-        <section class="user-management glass-panel">
-          <div class="table-responsive" id="userTableWrapper">
+          <div class="table-responsive" id="userTableWrapper" style="box-shadow: none; padding-left: 1rem;">
             <table class="table data-table align-middle" id="userTable">
               <thead>
                 <tr class="title-header-row">
@@ -68,14 +60,20 @@
 
                 <tr class="filter-row">
                   <th colspan="6" class="p-2">
-                    <form th:action="@{/users}" method="get" id="userFilterForm" style="display: flex; flex-wrap: wrap; align-items: center; gap: 1rem; margin: 0; padding: 5px;">
-                      <div class="filter-control-group" style="display: flex; align-items: center; gap: 0.5rem;">
-                        <span style="font-size: 16px; white-space: nowrap;">検索</span>
-                        <input type="text" name="search" th:value="${search}"
-                          class="form-control form-control-sm" id="searchInput" placeholder="名前またはメールで検索" style="min-width: 250px;" />
-                      </div>
-                      <button type="submit" style="display: none;"></button>
-                    </form>
+                    <div style="display: flex; justify-content: space-between; align-items: center; gap: 1rem;">
+                      <form th:action="@{/users}" method="get" id="userFilterForm" style="display: flex; flex-wrap: wrap; align-items: center; gap: 1rem; margin: 0; padding: 5px;">
+                        <div class="filter-control-group" style="display: flex; align-items: center; gap: 0.5rem;">
+                          <span style="font-size: 16px; white-space: nowrap;">検索</span>
+                          <input type="text" name="search" th:value="${search}"
+                            class="form-control form-control-sm" id="searchInput" placeholder="名前またはメールで検索" style="min-width: 250px;" />
+                        </div>
+                        <button type="submit" style="display: none;"></button>
+                      </form>
+                      <a th:href="@{/users/add}" class="btn btn-primary btn-sm d-flex align-items-center gap-2" style="white-space: nowrap; color: white !important;">
+                        <i class="bi bi-plus-lg" style="color: white !important;"></i>
+                        <span class="d-none d-sm-inline" style="color: white !important;">Add User</span>
+                      </a>
+                    </div>
                   </th>
                 </tr>                <tr>
                   <th scope="col">ユーザーID</th>
