@@ -4,24 +4,28 @@ import com.gicm.student_management_system.dto.N4ClassDTO;
 import com.gicm.student_management_system.dto.N5ClassDTO;
 import com.gicm.student_management_system.dto.StudentDTO;
 import com.gicm.student_management_system.dto.StudentFullExportDTO;
+import com.gicm.student_management_system.dto.InterviewNotesDTO;
 import com.gicm.student_management_system.entity.InterviewNotes;
 import com.gicm.student_management_system.entity.N4Class;
 import com.gicm.student_management_system.entity.N5Class;
 import com.gicm.student_management_system.entity.Student;
-import com.gicm.student_management_system.repository.InterviewNotesRepository;
-import com.gicm.student_management_system.repository.N4ClassRepository;
-import com.gicm.student_management_system.repository.N5ClassRepository;
-import com.gicm.student_management_system.service.StudentService;
-import com.gicm.student_management_system.service.N4ClassService;
 import com.gicm.student_management_system.service.N5ClassService;
+import com.gicm.student_management_system.service.N4ClassService;
+import com.gicm.student_management_system.service.StudentService;
+import com.gicm.student_management_system.service.InterviewNotesService;
+
+// --- ADD THESE REPOSITORY IMPORTS ---
+import com.gicm.student_management_system.repository.N5ClassRepository;
+import com.gicm.student_management_system.repository.N4ClassRepository;
+import com.gicm.student_management_system.repository.InterviewNotesRepository;
+
 import com.gicm.student_management_system.service.StudentExportService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import org.springframework.ui.Model;
-import org.springframework.stereotype.Controller;
+
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -37,6 +41,7 @@ public class StudentController {
     private final StudentExportService studentExportService;
     private final N5ClassService n5ClassService;
     private final N4ClassService n4ClassService;
+    private final InterviewNotesService interviewNotesService;
     // --- INJECT REPOSITORIES HERE ---
     private final N5ClassRepository n5ClassRepository;
     private final N4ClassRepository n4ClassRepository;
@@ -87,11 +92,14 @@ public class StudentController {
         N5ClassDTO n5Class = n5ClassService.getOrCreateN5ClassDTO(id);
         N4ClassDTO n4Class = n4ClassService.getOrCreateN4ClassDTO(id);
 
+        InterviewNotesDTO interviewNotes = interviewNotesService.getOrCreateInterviewNotesDTO(id);
+
         // Map InterviewNotes Entity to InterviewNotesDTO for the view
         // Add attributes to model so details.html can display them
         model.addAttribute("student", studentDTO);
         model.addAttribute("n5Class", n5Class);
         model.addAttribute("n4Class", n4Class);
+        model.addAttribute("interviewNotes", interviewNotes);
 
         // model.addAttribute("student", student);
         model.addAttribute("currentTab", tab);
