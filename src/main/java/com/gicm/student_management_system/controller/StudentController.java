@@ -12,6 +12,8 @@ import com.gicm.student_management_system.entity.Student;
 import com.gicm.student_management_system.service.N5ClassService;
 import com.gicm.student_management_system.service.N4ClassService;
 import com.gicm.student_management_system.service.StudentService;
+
+import jakarta.validation.Valid;
 import com.gicm.student_management_system.service.InterviewNotesService;
 
 // --- ADD THESE REPOSITORY IMPORTS ---
@@ -25,7 +27,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.beans.BeanUtils;
+import org.springframework.stereotype.Controller;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -116,19 +121,31 @@ public class StudentController {
                 .orElseThrow(() -> new RuntimeException("生徒が見つかりません: ID " + id));
 
         if (student.getN5Class() == null) {
-            N5Class n5Class = N5Class.builder().student(student).build();
+            N5Class n5Class = N5Class.builder()
+                    .student(student)
+                    .build();
             student.setN5Class(n5Class);
+            studentService.save(student);
         }
 
         if (student.getN4Class() == null) {
-            N4Class n4Class = N4Class.builder().student(student).build();
+            N4Class n4Class = N4Class.builder()
+                    .student(student)
+                    .build();
             student.setN4Class(n4Class);
+            studentService.save(student);
         }
 
         if (student.getInterviewNotes() == null) {
-            InterviewNotes interviewNotes = InterviewNotes.builder().student(student).build();
+            InterviewNotes interviewNotes = InterviewNotes.builder()
+                    .student(student)
+                    .build();
             student.setInterviewNotes(interviewNotes);
+            studentService.save(student);
         }
+
+        student = studentService.findById(id)
+                .orElseThrow(() -> new RuntimeException("生徒が見つかりません: ID " + id));
 
         model.addAttribute("student", student);
         model.addAttribute("isNew", false);
@@ -137,33 +154,41 @@ public class StudentController {
     }
 
     @PostMapping("/update-basic/{id}")
-    public String updateBasicInfo(@PathVariable Long id,
-            @ModelAttribute Student student,
-            RedirectAttributes redirectAttributes) {
-        try {
-            Student existingStudent = studentService.findById(id)
-                    .orElseThrow(() -> new RuntimeException("Student not found: " + id));
+    public String updateBasicInfo(
+            @PathVariable Long id,
+            @Valid @ModelAttribute("student") Student student,
+            BindingResult bindingResult,
+            RedirectAttributes redirectAttributes,
+            Model model) {
 
-            existingStudent.setStudentName(student.getStudentName());
-            existingStudent.setNameInJapanese(student.getNameInJapanese());
-            existingStudent.setDateOfBirth(student.getDateOfBirth());
-            existingStudent.setGender(student.getGender());
-            existingStudent.setCurrentLivingAddress(student.getCurrentLivingAddress());
-            existingStudent.setHomeTownAddress(student.getHomeTownAddress());
-            existingStudent.setPhoneNumber(student.getPhoneNumber());
-            existingStudent.setSecondaryPhone(student.getSecondaryPhone());
-            existingStudent.setFatherName(student.getFatherName());
-            existingStudent.setContactViber(student.getContactViber());
-            existingStudent.setPassportNumber(student.getPassportNumber());
-            existingStudent.setNationalID(student.getNationalID());
-
-            existingStudent.setUpdatedAt(LocalDate.now());
-
-            studentService.save(existingStudent);
-            redirectAttributes.addFlashAttribute("success", "基本情報が正常に更新されました。");
-        } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("error", "更新に失敗しました: " + e.getMessage());
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("student", student);
+            model.addAttribute("validationError", true);
+            return "students/student-update.html?tab=basic";
         }
+
+        Student existingStudent = studentService.findById(id)
+                .orElseThrow(() -> new RuntimeException("Student not found: " + id));
+
+        existingStudent.setStudentName(student.getStudentName());
+        existingStudent.setNameInJapanese(student.getNameInJapanese());
+        existingStudent.setDateOfBirth(student.getDateOfBirth());
+        existingStudent.setGender(student.getGender());
+        existingStudent.setCurrentLivingAddress(student.getCurrentLivingAddress());
+        existingStudent.setHomeTownAddress(student.getHomeTownAddress());
+        existingStudent.setPhoneNumber(student.getPhoneNumber());
+        existingStudent.setSecondaryPhone(student.getSecondaryPhone());
+        existingStudent.setFatherName(student.getFatherName());
+        existingStudent.setContactViber(student.getContactViber());
+        existingStudent.setPassportNumber(student.getPassportNumber());
+        existingStudent.setNationalID(student.getNationalID());
+        existingStudent.setUpdatedAt(LocalDate.now());
+
+        studentService.save(existingStudent);
+        redirectAttributes.addFlashAttribute("success", "基本情報が正常に更新されました。");
+
+        // redirectAttributes.addFlashAttribute("error", "更新に失敗しました: " +
+        // e.getMessage());
 
         return "redirect:/students/student-update/" + id + "?tab=basic";
     }
@@ -216,33 +241,15 @@ public class StudentController {
                     .orElseThrow(() -> new RuntimeException("Student not found: " + id));
 
             if (student.getN5Class() == null) {
-                N5Class newN5Class = N5Class.builder().student(student).build();
-                student.setN5Class(newN5Class);
+                n5Class.setStudent(student);
+                student.setN5Class(n5Class);
+            } else {
+                N5Class existing = student.getN5Class();
+                BeanUtils.copyProperties(n5Class, existing, "id", "student");
+                existing.setStudent(student);
             }
 
-            N5Class existingN5Class = student.getN5Class();
-
-            existingN5Class.setN5ClassTeacher(n5Class.getN5ClassTeacher());
-            existingN5Class.setN5ClassAttendance(n5Class.getN5ClassAttendance());
-            existingN5Class.setN5ClassTestResult1(n5Class.getN5ClassTestResult1());
-            existingN5Class.setN5ClassTestResult2(n5Class.getN5ClassTestResult2());
-            existingN5Class.setN5ClassTestResult3(n5Class.getN5ClassTestResult3());
-            existingN5Class.setN5ClassTestResult4(n5Class.getN5ClassTestResult4());
-            existingN5Class.setN5ClassFeedback(n5Class.getN5ClassFeedback());
-            existingN5Class.setN5Class1Teacher(n5Class.getN5Class1Teacher());
-            existingN5Class.setN5Class1AttendanceRate(n5Class.getN5Class1AttendanceRate());
-            existingN5Class.setN5Class1TestResult(n5Class.getN5Class1TestResult());
-            existingN5Class.setN5Class1TeacherFeedback(n5Class.getN5Class1TeacherFeedback());
-            existingN5Class.setN5Class2Teacher(n5Class.getN5Class2Teacher());
-            existingN5Class.setN5Class2AttendanceRate(n5Class.getN5Class2AttendanceRate());
-            existingN5Class.setN5Class2TestResult(n5Class.getN5Class2TestResult());
-            existingN5Class.setN5Class2TeacherFeedback(n5Class.getN5Class2TeacherFeedback());
-            existingN5Class.setN5Class3Teacher(n5Class.getN5Class3Teacher());
-            existingN5Class.setN5Class3AttendanceRate(n5Class.getN5Class3AttendanceRate());
-            existingN5Class.setN5Class3TestResult(n5Class.getN5Class3TestResult());
-            existingN5Class.setN5Class3TeacherFeedback(n5Class.getN5Class3TeacherFeedback());
-
-            n5ClassRepository.save(existingN5Class);
+            studentService.save(student);
 
             redirectAttributes.addFlashAttribute("success", "N5クラス情報が正常に更新されました。");
         } catch (Exception e) {

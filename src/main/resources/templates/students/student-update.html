@@ -130,18 +130,23 @@
 
                       <div class="row g-3"></div>
                         <div class="col-md-6">
-                          <label class="form-label">なまえ（英語）</label>
-                          <input type="text" class="form-control" th:field="*{studentName}" required />
-                        </div>
+                          <label class="form-label">なまえ（英語）</label>  
+                        <input type="text" class="form-control" th:field="*{studentName}" required />
+                        <div class="text-danger" th:if="${#fields.hasErrors('studentName')}" th:errors="*{studentName}"></div>                      
+                      </div>
+                        
                         <div class="col-md-6">
                           <label class="form-label">なまえ（カタカナ）</label>
                           <input type="text" class="form-control" th:field="*{nameInJapanese}" />
+                          <div class="text-danger" th:if="${#fields.hasErrors('nameInJapanese')}" th:errors="*{nameInJapanese}"></div>
                         </div>
 
                         <div class="col-md-6">
                           <label class="form-label">生年月日</label>
                           <input type="date" class="form-control" th:field="*{dateOfBirth}" />
+                          <div class="text-danger" th:if="${#fields.hasErrors('dateOfBirth')}" th:errors="*{dateOfBirth}"></div>
                         </div>
+
                         <div class="col-md-6">
                           <label class="form-label">性別</label>
                           <select class="form-select" th:field="*{gender}">
@@ -149,44 +154,55 @@
                             <option value="Male">男性</option>
                             <option value="Female">女性</option>
                           </select>
+                          <div class="text-danger" th:if="${#fields.hasErrors('gender')}" th:errors="*{gender}"></div>
                         </div>
 
                         <div class="col-md-6">
                           <label class="form-label">父親名（ちちおや めい）</label>
                           <input type="text" class="form-control" th:field="*{fatherName}" />
+                          <div class="text-danger" th:if="${#fields.hasErrors('fatherName')}" th:errors="*{fatherName}"></div>
                         </div>
 
                         <div class="col-md-6">
                           <label class="form-label">連絡先(TEL, Viber)</label>
                           <input type="text" class="form-control" th:field="*{contactViber}" />
+                          <div class="text-danger" th:if="${#fields.hasErrors('contactViber')}" th:errors="*{contactViber}"></div>
                         </div>
 
                         <div class="col-md-6">
                           <label class="form-label">国民 ID 番号</label>
                           <input type="text" class="form-control" th:field="*{nationalID}" />
+                          <div class="text-danger" th:if="${#fields.hasErrors('nationalID')}" th:errors="*{nationalID}"></div>
                         </div>
+
                         <div class="col-md-6">
                           <label class="form-label">パスポート番号</label>
                           <input type="text" class="form-control" th:field="*{passportNumber}" />
+                          <div class="text-danger" th:if="${#fields.hasErrors('passportNumber')}" th:errors="*{passportNumber}"></div>
                         </div>
 
                         <div class="col-md-6">
                           <label class="form-label">電話番号</label>
                           <input type="tel" class="form-control" th:field="*{phoneNumber}" />
+                          <div class="text-danger" th:if="${#fields.hasErrors('phoneNumber')}" th:errors="*{phoneNumber}"></div>
                         </div>
+
                         <div class="col-md-6">
                           <label class="form-label">保護者電話番号</label>
                           <input type="tel" class="form-control" th:field="*{secondaryPhone}" />
+                          <div class="text-danger" th:if="${#fields.hasErrors('secondaryPhone')}" th:errors="*{secondaryPhone}"></div>
                         </div>
 
                         <div class="col-12">
                           <label class="form-label">現住所</label>
                           <textarea class="form-control" th:field="*{currentLivingAddress}" rows="2"></textarea>
+                          <div class="text-danger" th:if="${#fields.hasErrors('currentLivingAddress')}" th:errors="*{currentLivingAddress}"></div>
                         </div>
 
                         <div class="col-12">
                           <label class="form-label">出身地住所</label>
                           <textarea class="form-control" th:field="*{homeTownAddress}" rows="2"></textarea>
+                          <div class="text-danger" th:if="${#fields.hasErrors('homeTownAddress')}" th:errors="*{homeTownAddress}"></div>
                         </div>
                         
                         <div class="col-12 mt-4 pt-3 border-top">
@@ -213,6 +229,7 @@
                   <form th:action="@{/students/update-status/{id}(id=${student.id})}" th:object="${student}" method="post" id="statusForm">
                     <div class="form-section">
                       <div class="row g-3">
+                        
                         <div class="col-md-6">
                           <label class="form-label">希望職種</label>
                           <select class="form-select" th:field="*{desiredJobType}" id="desiredJobType">
@@ -222,10 +239,13 @@
                             <option value="shukuhaku">宿泊</option>
                             <option value="other">その他</option>
                           </select>
+                          <div class="text-danger" th:if="${#fields.hasErrors('desiredJobType')}" th:errors="*{desiredJobType}"></div>
                         </div>
+
                         <div class="col-md-6">
                           <label class="form-label">その他希望職種</label>
                           <input type="text" class="form-control" th:field="*{otherDesiredJobType}" id="otherDesiredJobType"/>
+                          <div class="text-danger" th:if="${#fields.hasErrors('otherDesiredJobType')}" th:errors="*{otherDesiredJobType}"></div>
                         </div>
 
                         <div class="col-md-6">
@@ -237,10 +257,13 @@
                             <option value="christian">キリスト教</option>
                             <option value="other">その他</option>
                           </select>
+                          <div class="text-danger" th:if="${#fields.hasErrors('religion')}" th:errors="*{religion}"></div>
                         </div>
+
                         <div class="col-md-6">
                           <label class="form-label">その他宗教</label>
                           <input type="text" class="form-control" th:field="*{otherReligion}" id="otherReligionInput"/>
+                          <div class="text-danger" th:if="${#fields.hasErrors('otherReligion')}" th:errors="*{otherReligion}"></div>
                         </div>
 
                         <div class="col-md-6">
@@ -254,11 +277,13 @@
                             <option value="N2">N2</option>
                             <option value="N1">N1</option>
                           </select>
+                          <div class="text-danger" th:if="${#fields.hasErrors('currentJapanLevel')}" th:errors="*{currentJapanLevel}"></div>
                         </div>
 
                         <div class="col-md-6">
                           <label class="form-label">生徒の授業ステータス</label>
                           <input type="text" class="form-control" th:field="*{attendingClassRelatedStatus}" placeholder="在校・卒業・途中退校"/>
+                          <div class="text-danger" th:if="${#fields.hasErrors('attendingClassRelatedStatus')}" th:errors="*{attendingClassRelatedStatus}"></div>
                         </div>
 
                         <div class="col-md-6">
@@ -269,11 +294,13 @@
                             <option value="卒業">卒業</option>
                             <option value="途中退校">途中退校</option>
                           </select>
+                          <div class="text-danger" th:if="${#fields.hasErrors('status')}" th:errors="*{status}"></div>
                         </div>
 
                         <div class="col-md-6">
                           <label class="form-label">合格した最高のJLPTレベル</label>
                           <input type="text" class="form-control" th:field="*{passedHighestJLPTLevel}" />
+                          <div class="text-danger" th:if="${#fields.hasErrors('passedHighestJLPTLevel')}" th:errors="*{passedHighestJLPTLevel}"></div>
                         </div>
                         <div></div>
 
@@ -284,7 +311,9 @@
                             <option value="ある">ある</option>
                             <option value="ない">ない</option>
                           </select>
+                          <div class="text-danger" th:if="${#fields.hasErrors('japanTravelExperience')}" th:errors="*{japanTravelExperience}"></div>
                         </div>
+
                         <div class="col-md-4">
                           <label class="form-label">COE申請経験</label>
                           <select class="form-select" th:field="*{coeApplicationExperience}">
@@ -292,7 +321,9 @@
                             <option value="ある">ある</option>
                             <option value="ない">ない</option>
                           </select>
+                          <div class="text-danger" th:if="${#fields.hasErrors('coeApplicationExperience')}" th:errors="*{coeApplicationExperience}"></div>
                         </div>
+
                         <div class="col-md-4">
                           <label class="form-label">寮があれば入りたい</label>
                           <select class="form-select" th:field="*{hostelPreference}">
@@ -300,6 +331,7 @@
                             <option value="はい">はい</option>
                             <option value="いいえ">いいえ</option>
                           </select>
+                          <div class="text-danger" th:if="${#fields.hasErrors('hostelPreference')}" th:errors="*{hostelPreference}"></div>
                         </div>
                         <div></div>
 
@@ -310,7 +342,9 @@
                             <option th:value="true">飲む</option>
                             <option th:value="false">飲まない</option>
                           </select>
+                          <div class="text-danger" th:if="${#fields.hasErrors('isAlcoholDrink')}" th:errors="*{isAlcoholDrink}"></div>
                         </div>
+
                         <div class="col-md-4">
                           <label class="form-label">タバコ</label>
                           <select class="form-select" th:field="*{isSmoking}">
@@ -318,7 +352,9 @@
                             <option th:value="true">吸う</option>
                             <option th:value="false">吸わない</option>
                           </select>
+                          <div class="text-danger" th:if="${#fields.hasErrors('isSmoking')}" th:errors="*{isSmoking}"></div>
                         </div>
+
                         <div class="col-md-4">
                           <label class="form-label">入れ墨(Tattoo)</label>
                           <select class="form-select" th:field="*{haveTatto}">
@@ -326,30 +362,39 @@
                             <option th:value="true">ある</option>
                             <option th:value="false">ない</option>
                           </select>
+                          <div class="text-danger" th:if="${#fields.hasErrors('haveTatto')}" th:errors="*{haveTatto}"></div>
                         </div>
                         <div></div>
 
                         <div class="col-md-3">
                           <label class="form-label">学校登録日</label>
                           <input type="date" class="form-control" th:field="*{enrolledDate}"/>
+                          <div class="text-danger" th:if="${#fields.hasErrors('enrolledDate')}" th:errors="*{enrolledDate}"></div>
                         </div>
+
                         <div class="col-md-3">
                           <label class="form-label">授業料支払予定日</label>
                           <input type="date" class="form-control" th:field="*{schedulePaymentTutionDate}"/>
+                          <div class="text-danger" th:if="${#fields.hasErrors('schedulePaymentTutionDate')}" th:errors="*{schedulePaymentTutionDate}"></div>
                         </div>
+
                         <div class="col-md-3">
                           <label class="form-label">学費入金予定日</label>
                           <input type="date" class="form-control" th:field="*{schedulePaymentTutionDate}" readonly style="background-color: #e9ecef;"/>
+                          <input type="date" class="form-control" th:field="*{schedulePaymentTutionDate}" readonly style="background-color: #e9ecef;"/>
                         </div>
+
                         <div class="col-md-3">
                           <label class="form-label">学費入金実績日</label>
                           <input type="date" class="form-control" th:field="*{actualTutionPaymentDate}"/>
+                          <div class="text-danger" th:if="${#fields.hasErrors('actualTutionPaymentDate')}" th:errors="*{actualTutionPaymentDate}"></div>
                         </div>
                         <div></div>
 
                         <div class="col-12">
                           <label class="form-label">メモ／備考</label>
                           <textarea class="form-control" th:field="*{memoNotes}" rows="4" placeholder="自由形式のメモ"></textarea>
+                          <div class="text-danger" th:if="${#fields.hasErrors('memoNotes')}" th:errors="*{memoNotes}"></div>
                         </div>
                         
                         <div class="col-12 mt-4 pt-3 border-top">
@@ -384,32 +429,43 @@
                       <div class="col-md-4">
                         <label class="form-label">担当教師</label>
                         <input type="text" class="form-control" th:field="*{n5ClassTeacher}" />
+                        <div class="text-danger" th:if="${#fields.hasErrors('n5ClassTeacher')}" th:errors="*{n5ClassTeacher}"></div>
                       </div>
+
                       <div class="col-md-4">
                         <label class="form-label">出席率</label>
                         <input type="text" class="form-control" th:field="*{n5ClassAttendance}" placeholder="例: 95%" />
+                        <div class="text-danger" th:if="${#fields.hasErrors('n5ClassAttendance')}" th:errors="*{n5ClassAttendance}"></div>
                       </div>
                       
                       <div class="col-md-3">
                         <label class="form-label">日本語テスト結果 1</label>
                         <input type="text" class="form-control" th:field="*{n5ClassTestResult1}" />
+                        <div class="text-danger" th:if="${#fields.hasErrors('n5ClassTestResult1')}" th:errors="*{n5ClassTestResult1}"></div>
                       </div>
+                      
                       <div class="col-md-3">
                         <label class="form-label">日本語テスト結果 2</label>
                         <input type="text" class="form-control" th:field="*{n5ClassTestResult2}" />
+                        <div class="text-danger" th:if="${#fields.hasErrors('n5ClassTestResult2')}" th:errors="*{n5ClassTestResult2}"></div>
                       </div>
+
                       <div class="col-md-3">
                         <label class="form-label">日本語テスト結果 3</label>
                         <input type="text" class="form-control" th:field="*{n5ClassTestResult3}" />
+                        <div class="text-danger" th:if="${#fields.hasErrors('n5ClassTestResult3')}" th:errors="*{n5ClassTestResult3}"></div>
                       </div>
+
                       <div class="col-md-3">
                         <label class="form-label">日本語テスト結果 4</label>
                         <input type="text" class="form-control" th:field="*{n5ClassTestResult4}" />
+                        <div class="text-danger" th:if="${#fields.hasErrors('n5ClassTestResult4')}" th:errors="*{n5ClassTestResult4}"></div>
                       </div>
                       
                       <div class="col-12">
                         <label class="form-label">教師所感</label>
                         <textarea class="form-control" th:field="*{n5ClassFeedback}" rows="3"></textarea>
+                        <div class="text-danger" th:if="${#fields.hasErrors('n5ClassFeedback')}" th:errors="*{n5ClassFeedback}"></div>
                       </div>
                     </div>
                   </div>
@@ -424,21 +480,29 @@
                         <label class="form-label">クラス名</label>
                         <input type="text" class="form-control" value="N5会話クラス①" readonly style="background-color: #e9ecef;"/>
                       </div>
+
                       <div class="col-md-3">
                         <label class="form-label">担当教師</label>
                         <input type="text" class="form-control" th:field="*{n5Class1Teacher}" />
+                        <div class="text-danger" th:if="${#fields.hasErrors('n5Class1Teacher')}" th:errors="*{n5Class1Teacher}"></div>
                       </div>
+
                       <div class="col-md-3">
                         <label class="form-label">出席率</label>
                         <input type="text" class="form-control" th:field="*{n5Class1AttendanceRate}" />
+                        <div class="text-danger" th:if="${#fields.hasErrors('n5Class1AttendanceRate')}" th:errors="*{n5Class1AttendanceRate}"></div>
                       </div>
+
                       <div class="col-md-3">
                         <label class="form-label">テスト結果</label>
                         <input type="text" class="form-control" th:field="*{n5Class1TestResult}" />
+                        <div class="text-danger" th:if="${#fields.hasErrors('n5Class1TestResult')}" th:errors="*{n5Class1TestResult}"></div>
                       </div>
+
                       <div class="col-12">
                         <label class="form-label">教師所感</label>
                         <textarea class="form-control" th:field="*{n5Class1TeacherFeedback}" rows="2"></textarea>
+                        <div class="text-danger" th:if="${#fields.hasErrors('n5Class1TeacherFeedback')}" th:errors="*{n5Class1TeacherFeedback}"></div>
                       </div>
                     </div>
                   </div>
@@ -453,21 +517,29 @@
                         <label class="form-label">クラス名</label>
                         <input type="text" class="form-control" value="N5会話クラス②" readonly style="background-color: #e9ecef;"/>
                       </div>
+
                       <div class="col-md-3">
                         <label class="form-label">担当教師</label>
                         <input type="text" class="form-control" th:field="*{n5Class2Teacher}" />
+                        <div class="text-danger" th:if="${#fields.hasErrors('n5Class2Teacher')}" th:errors="*{n5Class2Teacher}"></div>
                       </div>
+
                       <div class="col-md-3">
                         <label class="form-label">出席率</label>
                         <input type="text" class="form-control" th:field="*{n5Class2AttendanceRate}" />
+                        <div class="text-danger" th:if="${#fields.hasErrors('n5Class2AttendanceRate')}" th:errors="*{n5Class2AttendanceRate}"></div>
                       </div>
+
                       <div class="col-md-3">
                         <label class="form-label">テスト結果</label>
                         <input type="text" class="form-control" th:field="*{n5Class2TestResult}" />
+                        <div class="text-danger" th:if="${#fields.hasErrors('n5Class2TestResult')}" th:errors="*{n5Class2TestResult}"></div>
                       </div>
+
                       <div class="col-12">
                         <label class="form-label">教師所感</label>
                         <textarea class="form-control" th:field="*{n5Class2TeacherFeedback}" rows="2"></textarea>
+                        <div class="text-danger" th:if="${#fields.hasErrors('n5Class2TeacherFeedback')}" th:errors="*{n5Class2TeacherFeedback}"></div>
                       </div>
                     </div>
                   </div>
@@ -482,21 +554,29 @@
                         <label class="form-label">クラス名</label>
                         <input type="text" class="form-control" value="N5会話クラス③" readonly style="background-color: #e9ecef;"/>
                       </div>
+
                       <div class="col-md-3">
                         <label class="form-label">担当教師</label>
                         <input type="text" class="form-control" th:field="*{n5Class3Teacher}" />
+                        <div class="text-danger" th:if="${#fields.hasErrors('n5Class3Teacher')}" th:errors="*{n5Class3Teacher}"></div>
                       </div>
+
                       <div class="col-md-3">
                         <label class="form-label">出席率</label>
                         <input type="text" class="form-control" th:field="*{n5Class3AttendanceRate}" />
+                        <div class="text-danger" th:if="${#fields.hasErrors('n5Class3AttendanceRate')}" th:errors="*{n5Class3AttendanceRate}"></div>
                       </div>
+
                       <div class="col-md-3">
                         <label class="form-label">テスト結果</label>
                         <input type="text" class="form-control" th:field="*{n5Class3TestResult}" />
+                        <div class="text-danger" th:if="${#fields.hasErrors('n5Class3AttendanceRate')}" th:errors="*{n5Class3AttendanceRate}"></div>
                       </div>
+
                       <div class="col-12">
                         <label class="form-label">教師所感</label>
                         <textarea class="form-control" th:field="*{n5Class3TeacherFeedback}" rows="2"></textarea>
+                        <div class="text-danger" th:if="${#fields.hasErrors('n5Class3TeacherFeedback')}" th:errors="*{n5Class3TeacherFeedback}"></div>
                       </div>
                     </div>
                   </div>
@@ -531,32 +611,43 @@
                       <div class="col-md-4">
                         <label class="form-label">担当教師</label>
                         <input type="text" class="form-control" th:field="*{n4ClassTeacher}" />
+                        <div class="text-danger" th:if="${#fields.hasErrors('n4ClassTeacher')}" th:errors="*{n4ClassTeacher}"></div>
                       </div>
+
                       <div class="col-md-4">
                         <label class="form-label">出席率</label>
                         <input type="text" class="form-control" th:field="*{n4ClassAttendance}" placeholder="例: 95%" />
+                        <div class="text-danger" th:if="${#fields.hasErrors('n4ClassAttendance')}" th:errors="*{n4ClassAttendance}"></div>
                       </div>
                       
                       <div class="col-md-3">
                         <label class="form-label">日本語テスト結果 1</label>
                         <input type="text" class="form-control" th:field="*{n4ClassTestResult1}" />
+                        <div class="text-danger" th:if="${#fields.hasErrors('n4ClassTestResult1')}" th:errors="*{n4ClassTestResult1}"></div>
                       </div>
+
                       <div class="col-md-3">
                         <label class="form-label">日本語テスト結果 2</label>
                         <input type="text" class="form-control" th:field="*{n4ClassTestResult2}" />
+                        <div class="text-danger" th:if="${#fields.hasErrors('n4ClassTestResult2')}" th:errors="*{n4ClassTestResult2}"></div>
                       </div>
+
                       <div class="col-md-3">
                         <label class="form-label">日本語テスト結果 3</label>
                         <input type="text" class="form-control" th:field="*{n4ClassTestResult3}" />
+                        <div class="text-danger" th:if="${#fields.hasErrors('n4ClassTestResult3')}" th:errors="*{n4ClassTestResult3}"></div>
                       </div>
+
                       <div class="col-md-3">
                         <label class="form-label">日本語テスト結果 4</label>
                         <input type="text" class="form-control" th:field="*{n4ClassTestResult4}" />
+                        <div class="text-danger" th:if="${#fields.hasErrors('n4ClassTestResult4')}" th:errors="*{n4ClassTestResult4}"></div>
                       </div>
                       
                       <div class="col-12">
                         <label class="form-label">教師所感</label>
                         <textarea class="form-control" th:field="*{n4ClassFeedback}" rows="3"></textarea>
+                        <div class="text-danger" th:if="${#fields.hasErrors('n4ClassFeedback')}" th:errors="*{n4ClassFeedback}"></div>
                       </div>
                     </div>
                   </div>
@@ -570,22 +661,31 @@
                       <div class="col-md-3">
                         <label class="form-label">クラス名</label>
                         <input type="text" class="form-control" value="N4会話クラス①" readonly style="background-color: #e9ecef;"/>
+                      
                       </div>
+                      
                       <div class="col-md-3">
                         <label class="form-label">担当教師</label>
                         <input type="text" class="form-control" th:field="*{n4Class1Teacher}" />
+                        <div class="text-danger" th:if="${#fields.hasErrors('n4Class1Teacher')}" th:errors="*{n4Class1Teacher}"></div>
                       </div>
+
                       <div class="col-md-3">
                         <label class="form-label">出席率</label>
                         <input type="text" class="form-control" th:field="*{n4Class1AttendanceRate}" />
+                        <div class="text-danger" th:if="${#fields.hasErrors('n4Class1AttendanceRate')}" th:errors="*{n4Class1AttendanceRate}"></div>
                       </div>
+
                       <div class="col-md-3">
                         <label class="form-label">テスト結果</label>
                         <input type="text" class="form-control" th:field="*{n4Class1TestResult}" />
+                        <div class="text-danger" th:if="${#fields.hasErrors('n4Class1TestResult')}" th:errors="*{n4Class1TestResult}"></div>
                       </div>
+
                       <div class="col-12">
                         <label class="form-label">教師所感</label>
                         <textarea class="form-control" th:field="*{n4Class1TeacherFeedback}" rows="2"></textarea>
+                        <div class="text-danger" th:if="${#fields.hasErrors('n4Class1TeacherFeedback')}" th:errors="*{n4Class1TeacherFeedback}"></div>
                       </div>
                     </div>
                   </div>
@@ -600,21 +700,29 @@
                         <label class="form-label">クラス名</label>
                         <input type="text" class="form-control" value="N4会話クラス②" readonly style="background-color: #e9ecef;"/>
                       </div>
+
                       <div class="col-md-3">
                         <label class="form-label">担当教師</label>
                         <input type="text" class="form-control" th:field="*{n4Class2Teacher}" />
+                        <div class="text-danger" th:if="${#fields.hasErrors('n4Class2Teacher')}" th:errors="*{n4Class2Teacher}"></div>
                       </div>
+
                       <div class="col-md-3">
                         <label class="form-label">出席率</label>
                         <input type="text" class="form-control" th:field="*{n4Class2AttendanceRate}" />
+                        <div class="text-danger" th:if="${#fields.hasErrors('n4Class2AttendanceRate')}" th:errors="*{n4Class2AttendanceRate}"></div>
                       </div>
+
                       <div class="col-md-3">
                         <label class="form-label">テスト結果</label>
                         <input type="text" class="form-control" th:field="*{n4Class2TestResult}" />
+                        <div class="text-danger" th:if="${#fields.hasErrors('n4Class2TestResult')}" th:errors="*{n4Class2TestResult}"></div>
                       </div>
+
                       <div class="col-12">
                         <label class="form-label">教師所感</label>
                         <textarea class="form-control" th:field="*{n4Class2TeacherFeedback}" rows="2"></textarea>
+                        <div class="text-danger" th:if="${#fields.hasErrors('n4Class2TeacherFeedback')}" th:errors="*{n4Class2TeacherFeedback}"></div>
                       </div>
                     </div>
                   </div>
@@ -629,21 +737,29 @@
                         <label class="form-label">クラス名</label>
                         <input type="text" class="form-control" value="N4会話クラス③" readonly style="background-color: #e9ecef;"/>
                       </div>
+
                       <div class="col-md-3">
                         <label class="form-label">担当教師</label>
                         <input type="text" class="form-control" th:field="*{n4Class3Teacher}" />
+                        <div class="text-danger" th:if="${#fields.hasErrors('n4Class3Teacher')}" th:errors="*{n4Class3Teacher}"></div>
                       </div>
+
                       <div class="col-md-3">
                         <label class="form-label">出席率</label>
                         <input type="text" class="form-control" th:field="*{n4Class3AttendanceRate}" />
+                        <div class="text-danger" th:if="${#fields.hasErrors('n4Class3AttendanceRate')}" th:errors="*{n4Class3AttendanceRate}"></div>
                       </div>
+
                       <div class="col-md-3">
                         <label class="form-label">テスト結果</label>
                         <input type="text" class="form-control" th:field="*{n4Class3TestResult}" />
+                        <div class="text-danger" th:if="${#fields.hasErrors('n4Class3TestResult')}" th:errors="*{n4Class3TestResult}"></div>
                       </div>
+
                       <div class="col-12">
                         <label class="form-label">教師所感</label>
                         <textarea class="form-control" th:field="*{n4Class3TeacherFeedback}" rows="2"></textarea>
+                        <div class="text-danger" th:if="${#fields.hasErrors('n4Class3TeacherFeedback')}" th:errors="*{n4Class3TeacherFeedback}"></div>
                       </div>
                     </div>
                   </div>
@@ -680,6 +796,7 @@
                       <div class="row g-3">
                         <div class="col-12">
                           <textarea class="form-control" th:field="*{interview1}" rows="4" placeholder="面接内容、評価、備考など"></textarea>
+                          <div class="text-danger" th:if="${#fields.hasErrors('interview1')}" th:errors="*{interview1}"></div>
                         </div>
                       </div>
                     </div>
@@ -689,6 +806,7 @@
                       <div class="row g-3">
                         <div class="col-12">
                           <textarea class="form-control" th:field="*{interview2}" rows="4" placeholder="面接内容、評価、備考など"></textarea>
+                          <div class="text-danger" th:if="${#fields.hasErrors('interview2')}" th:errors="*{interview2}"></div>
                         </div>
                       </div>
                     </div>
@@ -698,6 +816,7 @@
                       <div class="row g-3">
                         <div class="col-12">
                           <textarea class="form-control" th:field="*{interview3}" rows="4" placeholder="面接内容、評価、備考など"></textarea>
+                          <div class="text-danger" th:if="${#fields.hasErrors('interview3')}" th:errors="*{interview3}"></div>
                         </div>
                       </div>
                     </div>
@@ -707,6 +826,7 @@
                       <div class="row g-3">
                         <div class="col-12">
                           <textarea class="form-control" th:field="*{otherMemo}" rows="6" placeholder="その他の備考、連絡事項など"></textarea>
+                          <div class="text-danger" th:if="${#fields.hasErrors('otherMemo')}" th:errors="*{otherMemo}"></div>
                         </div>
                       </div>
                     </div>
