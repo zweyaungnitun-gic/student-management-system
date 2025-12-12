@@ -29,7 +29,6 @@
   };
 
   const detectActivePaneOnLoad = () => {
-    // find nav-link with .active or tab-pane.active
     const activeNav = document.querySelector('.nav-link.active');
     if (activeNav && activeNav.hasAttribute('data-bs-target')) {
       currentPaneId = activeNav.getAttribute('data-bs-target').replace('#','');
@@ -71,7 +70,6 @@
     }
   };
 
-  // Badges with count - absolute positioned
   const updateUnsavedBadgeCount = (paneId) => {
     const navBtn = document.querySelector(`[data-bs-target="#${paneId}"]`);
     if (!navBtn) return;
@@ -102,12 +100,10 @@
   };
 
   const getTabDisplayName = (paneId) => {
-    // Get from predefined names
     if (tabNames[paneId]) {
       return tabNames[paneId];
     }
     
-    // Try to get from tab text
     const tabBtn = document.querySelector(`[data-bs-target="#${paneId}"]`);
     if (tabBtn) {
       const tabText = tabBtn.querySelector('span');
@@ -161,7 +157,6 @@
           detectActivePaneOnLoad();
         }
 
-        // if current pane has unsaved changes, block and show modal
         if (currentPaneId && changedMap[currentPaneId] && changedMap[currentPaneId].size > 0) {
           e.preventDefault();
           e.stopPropagation(); // Important: Stop event from bubbling
@@ -187,51 +182,60 @@
     });
   };
 
-  const setupModalHandlers = () => {
-    if (!confirmLeaveBtn) return;
-    
-    const modalStayBtn = unsavedModalEl.querySelector('[data-bs-dismiss="modal"]');
-    if (modalStayBtn) {
-      modalStayBtn.addEventListener('click', () => {
-        if (pendingPaneId) {
-          const pendingTab = document.querySelector(`[data-bs-target="#${pendingPaneId}"]`);
-          if (pendingTab) {
-            pendingTab.classList.remove('active');
-            pendingTab.setAttribute('aria-selected', 'false');
-            pendingTab.removeAttribute('aria-controls');
-          }
-          
-          // Re-activate the current tab
-          const currentTab = document.querySelector(`[data-bs-target="#${currentPaneId}"]`);
-          if (currentTab) {
-            currentTab.classList.add('active');
-            currentTab.setAttribute('aria-selected', 'true');
-            // Ensure the current tab pane is active
-            const currentPane = document.getElementById(currentPaneId);
-            if (currentPane) {
-              currentPane.classList.add('show', 'active');
-            }
-          }
+const setupModalHandlers = () => {
+  if (!confirmLeaveBtn) return;
+  
+  const modalStayBtn = unsavedModalEl.querySelector('[data-bs-dismiss="modal"]');
+  if (modalStayBtn) {
+    modalStayBtn.addEventListener('click', () => {
+      if (pendingPaneId && currentPaneId) {
+        
+        const pendingTab = document.querySelector(`[data-bs-target="#${pendingPaneId}"]`);
+        if (pendingTab) {
+          pendingTab.classList.remove('active');
+          pendingTab.setAttribute('aria-selected', 'false');
         }
-        pendingPaneId = null;
-      });
-    }
-    
-    confirmLeaveBtn.addEventListener('click', () => {
-      if (!pendingPaneId) {
-        if (unsavedModal) unsavedModal.hide();
-        return;
+        
+        const pendingPane = document.getElementById(pendingPaneId);
+        if (pendingPane) {
+          pendingPane.classList.remove('show', 'active');
+        }
+        
+        const currentTab = document.querySelector(`[data-bs-target="#${currentPaneId}"]`);
+        if (currentTab) {
+          currentTab.classList.add('active');
+          currentTab.setAttribute('aria-selected', 'true');
+          
+          allowProgrammaticSwitch = true;
+          const bsTab = new bootstrap.Tab(currentTab);
+          bsTab.show();
+          allowProgrammaticSwitch = false;
+        }
+        
+        const currentPane = document.getElementById(currentPaneId);
+        if (currentPane) {
+          currentPane.classList.add('show', 'active');
+        }
       }
-      if (currentPaneId) discardPaneChanges(currentPaneId);
-
-      allowProgrammaticSwitch = true;
-      if (unsavedModal) unsavedModal.hide();
-
-      programmaticSwitchToPane(pendingPaneId);
-
-      setTimeout(() => { allowProgrammaticSwitch = false; pendingPaneId = null; }, 100);
+      pendingPaneId = null;
     });
-  };
+  }
+  
+  confirmLeaveBtn.addEventListener('click', () => {
+    if (!pendingPaneId) {
+      if (unsavedModal) unsavedModal.hide();
+      return;
+    }
+    if (currentPaneId) discardPaneChanges(currentPaneId);
+
+    allowProgrammaticSwitch = true;
+    if (unsavedModal) unsavedModal.hide();
+
+    programmaticSwitchToPane(pendingPaneId);
+
+    setTimeout(() => { allowProgrammaticSwitch = false; pendingPaneId = null; }, 100);
+  });
+};
 
   const attachFormSubmitHooks = () => {
     document.querySelectorAll('.tab-pane form').forEach(form => {
@@ -264,7 +268,6 @@
     const anyUnsaved = Object.values(changedMap).some(s => s.size > 0);
     
     if (anyUnsaved) {
-      // Show custom confirmation dialog
       if (confirm('未保存の変更があります。変更を破棄して戻りますか？')) {
         window.location.href = '/students';
       }
