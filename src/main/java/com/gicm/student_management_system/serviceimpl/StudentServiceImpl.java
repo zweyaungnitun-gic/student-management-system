@@ -18,44 +18,44 @@ public class StudentServiceImpl implements StudentService {
     private final StudentRepository studentRepository;
 
     private StudentDTO convertToDTO(Student student) {
-    return StudentDTO.builder()
-        .id(student.getId())
-        .studentName(student.getStudentName())
-        .nameInJapanese(student.getNameInJapanese())
-        .dateOfBirth(student.getDateOfBirth())
-        .gender(student.getGender())
-        .religion(student.getReligion()) // Fix for religious field
-        .otherReligion(student.getOtherReligion())
-        .nationalID(student.getNationalID()) // Fix for National ID
-        .passportNumber(student.getPassportNumber())
-        .fatherName(student.getFatherName())
-        .currentJapanLevel(student.getCurrentJapanLevel())
-        .passedHighestJLPTLevel(student.getPassedHighestJLPTLevel())
-        .desiredJobType(student.getDesiredJobType())
-        .otherDesiredJobType(student.getOtherDesiredJobType())
-        .isSmoking(student.getIsSmoking()) // Correct Boolean binding
-        .isAlcoholDrink(student.getIsAlcoholDrink())
-        .haveTatto(student.getHaveTatto())
-        .hostelPreference(student.getHostelPreference())
-        .japanTravelExperience(student.getJapanTravelExperience())
-        .coeApplicationExperience(student.getCoeApplicationExperience())
-        .memoNotes(student.getMemoNotes())
-        // Contact Info
-        .phoneNumber(student.getPhoneNumber())
-        .secondaryPhone(student.getSecondaryPhone())
-        .contactViber(student.getContactViber())
-        .currentLivingAddress(student.getCurrentLivingAddress())
-        .homeTownAddress(student.getHomeTownAddress())
-        // Academic Info
-        .status(student.getStatus()) // Student Status binding
-        .enrolledDate(student.getEnrolledDate())
-        .schedulePaymentTutionDate(student.getSchedulePaymentTutionDate())
-        .actualTutionPaymentDate(student.getActualTutionPaymentDate())
-        // Populate the short-form names 
-        .paymentDueDate(student.getSchedulePaymentTutionDate()) // Map from entity
-        .paymentDate(student.getActualTutionPaymentDate())
-        .build();
-}
+        return StudentDTO.builder()
+                .id(student.getId())
+                .studentName(student.getStudentName())
+                .nameInJapanese(student.getNameInJapanese())
+                .dateOfBirth(student.getDateOfBirth())
+                .gender(student.getGender())
+                .religion(student.getReligion()) // Fix for religious field
+                .otherReligion(student.getOtherReligion())
+                .nationalID(student.getNationalID()) // Fix for National ID
+                .passportNumber(student.getPassportNumber())
+                .fatherName(student.getFatherName())
+                .currentJapanLevel(student.getCurrentJapanLevel())
+                .passedHighestJLPTLevel(student.getPassedHighestJLPTLevel())
+                .desiredJobType(student.getDesiredJobType())
+                .otherDesiredJobType(student.getOtherDesiredJobType())
+                .isSmoking(student.getIsSmoking()) // Correct Boolean binding
+                .isAlcoholDrink(student.getIsAlcoholDrink())
+                .haveTatto(student.getHaveTatto())
+                .hostelPreference(student.getHostelPreference())
+                .japanTravelExperience(student.getJapanTravelExperience())
+                .coeApplicationExperience(student.getCoeApplicationExperience())
+                .memoNotes(student.getMemoNotes())
+                // Contact Info
+                .phoneNumber(student.getPhoneNumber())
+                .secondaryPhone(student.getSecondaryPhone())
+                .contactViber(student.getContactViber())
+                .currentLivingAddress(student.getCurrentLivingAddress())
+                .homeTownAddress(student.getHomeTownAddress())
+                // Academic Info
+                .status(student.getStatus()) // Student Status binding
+                .enrolledDate(student.getEnrolledDate())
+                .schedulePaymentTutionDate(student.getSchedulePaymentTutionDate())
+                .actualTutionPaymentDate(student.getActualTutionPaymentDate())
+                // Populate the short-form names
+                .paymentDueDate(student.getSchedulePaymentTutionDate()) // Map from entity
+                .paymentDate(student.getActualTutionPaymentDate())
+                .build();
+    }
 
     private Student convertToEntity(StudentDTO dto, Student existing) {
         Student s = existing == null ? new Student() : existing;
@@ -171,6 +171,7 @@ public class StudentServiceImpl implements StudentService {
         }
     }
 
+    // ... in StudentServiceImpl.java
     @Override
     public List<StudentDTO> getStudentsByStatuses(String nameSearch, List<String> statuses) {
         List<Student> students;
@@ -178,17 +179,21 @@ public class StudentServiceImpl implements StudentService {
         boolean hasStatuses = statuses != null && !statuses.isEmpty();
 
         if (hasName && hasStatuses) {
+            // This line requires findByStudentNameContainingAndStatusIn in the repository
             students = studentRepository.findByStudentNameContainingAndStatusIn(nameSearch, statuses);
         } else if (hasName) {
             students = studentRepository.findByStudentNameContaining(nameSearch);
         } else if (hasStatuses) {
+            // This line requires findByStatusIn in the repository
             students = studentRepository.findByStatusIn(statuses);
         } else {
             students = studentRepository.findAll();
         }
 
+        // Correctly converts entities to DTOs
         return students.stream()
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
     }
+    // ...
 }
