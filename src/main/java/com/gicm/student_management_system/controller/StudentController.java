@@ -8,7 +8,12 @@ import com.gicm.student_management_system.entity.InterviewNotes;
 import com.gicm.student_management_system.entity.N4Class;
 import com.gicm.student_management_system.entity.N5Class;
 import com.gicm.student_management_system.entity.Student;
+import com.gicm.student_management_system.repository.InterviewNotesRepository;
+import com.gicm.student_management_system.repository.N4ClassRepository;
+import com.gicm.student_management_system.repository.N5ClassRepository;
 import com.gicm.student_management_system.service.StudentService;
+import com.gicm.student_management_system.service.N4ClassService;
+import com.gicm.student_management_system.service.N5ClassService;
 import com.gicm.student_management_system.service.StudentExportService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -313,28 +318,26 @@ public class StudentController {
 
         return "redirect:/students/student-update/" + id + "?tab=interview";
     }
-}return"students/student-update";}
 
-// ---- JSON API FOR FRONTEND CSV ----
-@RestController
-@RequestMapping("/students/export")
-@RequiredArgsConstructor
-public static class StudentExportController {
+    // ---- JSON API FOR FRONTEND CSV ----
+    @RestController
+    @RequestMapping("/students/export")
+    @RequiredArgsConstructor
+    public static class StudentExportController {
 
-    private final StudentExportService studentExportService;
+        private final StudentExportService studentExportService;
 
-    @GetMapping
-    public List<StudentFullExportDTO> getStudentsExport(
-            @RequestParam(value = "ids", required = false) List<Long> ids,
-            @RequestParam(value = "nameSearch", defaultValue = "") String nameSearch,
-            @RequestParam(value = "status", defaultValue = "") String status) {
+        @GetMapping
+        public List<StudentFullExportDTO> getStudentsExport(
+                @RequestParam(value = "ids", required = false) List<Long> ids,
+                @RequestParam(value = "nameSearch", defaultValue = "") String nameSearch,
+                @RequestParam(value = "status", defaultValue = "") String status) {
 
-        if (ids != null && !ids.isEmpty()) {
-            return studentExportService.getStudentsByIds(ids);
-        } else {
-            return studentExportService.getAllStudentsFull(nameSearch, status);
+            if (ids != null && !ids.isEmpty()) {
+                return studentExportService.getStudentsByIds(ids);
+            } else {
+                return studentExportService.getAllStudentsFull(nameSearch, status);
+            }
         }
     }
-}
-
 }
