@@ -227,7 +227,7 @@
                 background-color: #eef1f4;
               }
 
-             #studentStatusFilter {
+              #studentStatusFilter {
                 position: relative;
                 z-index: 20000;
                 /* wrapper stacking context */
@@ -632,7 +632,8 @@
                         <td th:text="${student.paymentDate}"></td>
                         <td class="action-cell">
                           <div class="d-flex flex-nowrap justify-content-center gap-0">
-                            <a th:href="@{'/students/student-update/' + ${student.id}}" class="action-icon edit" title="編集">
+                            <a th:href="@{'/students/student-update/' + ${student.id}}" class="action-icon edit"
+                              title="編集">
                               <i class="bi bi-pencil-square"></i>
                             </a>
                             <a th:href="@{'/students/detail/' + ${student.id}}" class="action-icon detail" title="明細">
@@ -806,19 +807,22 @@
                 downloadBtn.addEventListener("click", async function () {
                   try {
                     const nameSearch = document.getElementById("nameSearchInput").value;
-                    const status = Array.from(document.getElementById("statusFilter").selectedOptions)
-                      .map(o => o.value)
+                    const status = Array.from(document.querySelectorAll(".status-option"))
+                      .filter(cb => cb.checked)
+                      .map(cb => cb.value)
                       .join(",");
 
                     const selectedIds = Array.from(document.querySelectorAll(".row-checkbox"))
                       .filter(cb => cb.checked)
                       .map(cb => cb.value);
 
+                    // Build query parameters
                     const params = new URLSearchParams();
                     if (selectedIds.length > 0) params.append("ids", selectedIds.join(","));
                     if (nameSearch) params.append("nameSearch", nameSearch);
                     if (status) params.append("status", status);
 
+                    // Fetch student data from backend
                     const response = await fetch(`/students/export?${params.toString()}`);
                     const data = await response.json();
 
@@ -827,9 +831,9 @@
                       return;
                     }
 
-                    const wb = XLSX.utils.book_new();
-
+                    // Full headers
                     const headers = [
+                      // Student Info
                       "生徒ID", "名前", "名前(カタカナ)", "生年月日", "性別", "現住所", "出身地住所",
                       "連絡先(TEL,Viber)", "父親名", "パスポート番号", "国民ID番号",
                       "現在のJLPT合格レベル", "希望職種", "その他希望職種", "日本渡航経験",
@@ -839,36 +843,24 @@
 
                       // N5 Class
                       "所属クラス", "担当教師", "出席", "日本語テスト結果1", "日本語テスト結果2", "日本語テスト結果3", "日本語テスト結果4", "教師所感",
-                      "所属クラス2", "担当教師 3", "出席率4",
-                      "日本語テスト結果", "教師所感5", "所属クラス6",
-                      "担当教師 7", "出席率8", "日本語テスト結果9",
-                      "教師所感10",
+                      "所属クラス2", "担当教師 3", "出席率4", "日本語テスト結果", "教師所感5", "所属クラス6",
+                      "担当教師 7", "出席率8", "日本語テスト結果9", "教師所感10",
 
                       // N4 Class
                       "所属クラス11", "担当教師 12", "出席率13", "日本語テスト結果14", "教師所感15",
-
-
-                      "所属クラス16", "担当教師 17",
-                      "出席率18", "日本語テスト結果１19", "日本語テスト結果２20", "日本語テスト結果３21",
-                      "日本語テスト結果４22", "教師所感23",
-
-                      "所属クラス24", "担当教師 25",
-                      "出席率26", "日本語テスト結果27", "教師所感28",
-
+                      "所属クラス16", "担当教師 17", "出席率18", "日本語テスト結果１19", "日本語テスト結果２20", "日本語テスト結果３21",
+                      "日本語テスト結果４22", "教師所感23", "所属クラス24", "担当教師 25", "出席率26", "日本語テスト結果27", "教師所感28",
                       "所属クラス29", "担当教師 30", "出席率31", "日本語テスト結果32", "教師所感33",
 
-
-                      // Interview
-                      "所属クラス34", "担当教師 35", "出席率36",
-                      "日本語テスト結果37", "教師所感38",
-
+                      // Interview / JLPT
+                      "所属クラス34", "担当教師 35", "出席率36", "日本語テスト結果37", "教師所感38",
                       "合格した日本語ラベル",
 
-                      "一回目面接メモ",
-                      "二回目面接メモ",
-                      "三回目面接メモ"
+                      // Interview Notes
+                      "一回目面接メモ", "二回目面接メモ", "三回目面接メモ"
                     ];
 
+                    // Map student data to rows
                     const rows = data.map(student => [
                       student.id,
                       student.studentName,
@@ -897,6 +889,8 @@
                       student.actualTutionPaymentDate,
                       student.enrolledDate,
                       student.status,
+                      // N5 Class
+                      student.n5ClassName,
                       student.n5ClassTeacher,
                       student.n5ClassAttendance,
                       student.n5ClassTestResult1,
@@ -904,49 +898,61 @@
                       student.n5ClassTestResult3,
                       student.n5ClassTestResult4,
                       student.n5ClassFeedback,
-                      student.n5Class1Teacher,
-                      student.n5Class1AttendanceRate,
-                      student.n5Class1TestResult,
-                      student.n5Class1TeacherFeedback,
+                      student.n5Class2Name,
                       student.n5Class2Teacher,
                       student.n5Class2AttendanceRate,
                       student.n5Class2TestResult,
-                      student.n5Class2TeacherFeedback,
+                      student.n5Class2Feedback,
+                      student.n5Class3Name,
                       student.n5Class3Teacher,
                       student.n5Class3AttendanceRate,
                       student.n5Class3TestResult,
-                      student.n5Class3TeacherFeedback,
-                      student.n4ClassTeacher,
-                      student.n4ClassAttendance,
-                      student.n4ClassTestResult1,
-                      student.n4ClassTestResult2,
-                      student.n4ClassTestResult3,
-                      student.n4ClassTestResult4,
-                      student.n4ClassFeedback,
+                      student.n5Class3Feedback,
+                      // N4 Class
+                      student.n4Class1Name,
                       student.n4Class1Teacher,
                       student.n4Class1AttendanceRate,
-                      student.n4Class1TestResult,
-                      student.n4Class1TeacherFeedback,
+                      student.n4Class1TestResult1,
+                      student.n4Class1Feedback,
+                      student.n4Class2Name,
                       student.n4Class2Teacher,
                       student.n4Class2AttendanceRate,
-                      student.n4Class2TestResult,
-                      student.n4Class2TeacherFeedback,
+                      student.n4Class2TestResult1,
+                      student.n4Class2TestResult2,
+                      student.n4Class2TestResult3,
+                      student.n4Class2TestResult4,
+                      student.n4Class2Feedback,
+                      student.n4Class3Name,
                       student.n4Class3Teacher,
                       student.n4Class3AttendanceRate,
                       student.n4Class3TestResult,
-                      student.n4Class3TeacherFeedback,
-                      student.interview1,
-                      student.interview2,
-                      student.interview3,
-                      student.passedHighestJLPTLevel
+                      student.n4Class3Feedback,
+                      student.n4Class4Name,
+                      student.n4Class4Teacher,
+                      student.n4Class4AttendanceRate,
+                      student.n4Class4TestResult,
+                      student.n4Class4Feedback,
+                      // Interview / JLPT
+                      student.interviewClassName,
+                      student.interviewTeacher,
+                      student.interviewAttendanceRate,
+                      student.interviewTestResult,
+                      student.interviewFeedback,
+                      student.passedHighestJLPTLevel,
+                      // Interview Notes
+                      student.interviewNote1,
+                      student.interviewNote2,
+                      student.interviewNote3
                     ]);
 
+                    // Create workbook and worksheet
+                    const wb = XLSX.utils.book_new();
                     const ws = XLSX.utils.aoa_to_sheet([headers, ...rows]);
 
                     // Set column widths
                     ws['!cols'] = headers.map(h => ({ wch: Math.max(15, Math.min(h.length + 5, 40)) }));
 
-                    // Color headers by table section
+                    // Color headers by section
                     const colorMap = [
                       { start: 0, end: 27, bg: "FFFF99" },    // Student Info - Yellow
                       { start: 28, end: 43, bg: "99CCFF" },   // N5 Class - Light Blue
@@ -959,9 +965,7 @@
                         const cellAddress = XLSX.utils.encode_cell({ r: 0, c: c });
                         if (!ws[cellAddress]) continue;
                         ws[cellAddress].s = {
-                          fill: {
-                            fgColor: { rgb: section.bg }
-                          },
+                          fill: { fgColor: { rgb: section.bg } },
                           font: { bold: true },
                           alignment: { horizontal: "center" }
                         };
