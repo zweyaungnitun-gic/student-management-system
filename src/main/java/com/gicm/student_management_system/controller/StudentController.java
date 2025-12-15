@@ -120,21 +120,11 @@ public class StudentController {
         Student student = studentService.findById(id)
                 .orElseThrow(() -> new RuntimeException("生徒が見つかりません: ID " + id));
 
-        if (student.getN5Class() == null) {
-            N5Class n5Class = N5Class.builder()
-                    .student(student)
-                    .build();
-            student.setN5Class(n5Class);
-            studentService.save(student);
-        }
+        N5ClassDTO n5ClassDTO = n5ClassService.getOrCreateN5ClassDTO(id);
+        model.addAttribute("n5Class", n5ClassDTO);
 
-        if (student.getN4Class() == null) {
-            N4Class n4Class = N4Class.builder()
-                    .student(student)
-                    .build();
-            student.setN4Class(n4Class);
-            studentService.save(student);
-        }
+        N4ClassDTO n4ClassDTO = n4ClassService.getOrCreateN4ClassDTO(id);
+        model.addAttribute("n4Class", n4ClassDTO);
 
         if (student.getInterviewNotes() == null) {
             InterviewNotes interviewNotes = InterviewNotes.builder()
@@ -145,7 +135,7 @@ public class StudentController {
         }
 
         student = studentService.findById(id)
-                .orElseThrow(() -> new RuntimeException("生徒が見つかりません: ID " + id));
+                .orElseThrow();
 
         model.addAttribute("student", student);
         model.addAttribute("isNew", false);
@@ -234,70 +224,32 @@ public class StudentController {
 
     @PostMapping("/update-n5/{id}")
     public String updateN5ClassInfo(@PathVariable Long id,
-            @ModelAttribute N5Class n5Class,
+            @ModelAttribute("n5Class") N5ClassDTO n5ClassDTO,
             RedirectAttributes redirectAttributes) {
         try {
-            Student student = studentService.findById(id)
-                    .orElseThrow(() -> new RuntimeException("Student not found: " + id));
-
-            if (student.getN5Class() == null) {
-                n5Class.setStudent(student);
-                student.setN5Class(n5Class);
-            } else {
-                N5Class existing = student.getN5Class();
-                BeanUtils.copyProperties(n5Class, existing, "id", "student");
-                existing.setStudent(student);
-            }
-
-            studentService.save(student);
+            n5ClassService.saveN5ClassDTO(id, n5ClassDTO);  
 
             redirectAttributes.addFlashAttribute("success", "N5クラス情報が正常に更新されました。");
         } catch (Exception e) {
+            e.printStackTrace();
             redirectAttributes.addFlashAttribute("error", "更新に失敗しました: " + e.getMessage());
         }
 
         return "redirect:/students/student-update/" + id + "?tab=n5";
     }
 
+
     @PostMapping("/update-n4/{id}")
     public String updateN4ClassInfo(@PathVariable Long id,
-            @ModelAttribute N4Class n4Class,
+            @ModelAttribute("n4Class") N4ClassDTO n4ClassDTO, // Use DTO here
             RedirectAttributes redirectAttributes) {
         try {
-            Student student = studentService.findById(id)
-                    .orElseThrow(() -> new RuntimeException("Student not found: " + id));
-
-            if (student.getN4Class() == null) {
-                N4Class newN4Class = N4Class.builder().student(student).build();
-                student.setN4Class(newN4Class);
-            }
-
-            N4Class existingN4Class = student.getN4Class();
-
-            existingN4Class.setN4ClassTeacher(n4Class.getN4ClassTeacher());
-            existingN4Class.setN4ClassAttendance(n4Class.getN4ClassAttendance());
-            existingN4Class.setN4ClassTestResult1(n4Class.getN4ClassTestResult1());
-            existingN4Class.setN4ClassTestResult2(n4Class.getN4ClassTestResult2());
-            existingN4Class.setN4ClassTestResult3(n4Class.getN4ClassTestResult3());
-            existingN4Class.setN4ClassTestResult4(n4Class.getN4ClassTestResult4());
-            existingN4Class.setN4ClassFeedback(n4Class.getN4ClassFeedback());
-            existingN4Class.setN4Class1Teacher(n4Class.getN4Class1Teacher());
-            existingN4Class.setN4Class1AttendanceRate(n4Class.getN4Class1AttendanceRate());
-            existingN4Class.setN4Class1TestResult(n4Class.getN4Class1TestResult());
-            existingN4Class.setN4Class1TeacherFeedback(n4Class.getN4Class1TeacherFeedback());
-            existingN4Class.setN4Class2Teacher(n4Class.getN4Class2Teacher());
-            existingN4Class.setN4Class2AttendanceRate(n4Class.getN4Class2AttendanceRate());
-            existingN4Class.setN4Class2TestResult(n4Class.getN4Class2TestResult());
-            existingN4Class.setN4Class2TeacherFeedback(n4Class.getN4Class2TeacherFeedback());
-            existingN4Class.setN4Class3Teacher(n4Class.getN4Class3Teacher());
-            existingN4Class.setN4Class3AttendanceRate(n4Class.getN4Class3AttendanceRate());
-            existingN4Class.setN4Class3TestResult(n4Class.getN4Class3TestResult());
-            existingN4Class.setN4Class3TeacherFeedback(n4Class.getN4Class3TeacherFeedback());
-
-            n4ClassRepository.save(existingN4Class);
+            // Use Service to save DTO
+            n4ClassService.saveN4ClassDTO(id, n4ClassDTO);
 
             redirectAttributes.addFlashAttribute("success", "N4クラス情報が正常に更新されました。");
         } catch (Exception e) {
+            e.printStackTrace();
             redirectAttributes.addFlashAttribute("error", "更新に失敗しました: " + e.getMessage());
         }
 

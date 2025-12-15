@@ -429,8 +429,9 @@
           <div class="tab-pane fade" id="n5" role="tabpanel" aria-labelledby="n5-tab">
             <div class="card shadow-sm border-0">
               <div class="card-body">
-                <form th:action="@{/students/update-n5/{id}(id=${student.id})}" th:object="${student.n5Class}" method="post" id="n5Form">
-                  <input type="hidden" th:if="${student.n5Class != null}" th:field="*{id}"/>
+                <form th:action="@{/students/update-n5/{id}(id=${student.id})}" 
+                    th:object="${n5Class}" method="post" id="n5Form">
+                  <input type="hidden" th:field="*{id}"/>
                   
                   <div class="mb-4">
                     <h5 class="border-bottom pb-2 mb-3">
@@ -440,43 +441,36 @@
                       <div class="col-md-4">
                         <label class="form-label">担当教師</label>
                         <input type="text" class="form-control" th:field="*{n5ClassTeacher}" />
-                        <div class="text-danger" th:if="${#fields.hasErrors('n5ClassTeacher')}" th:errors="*{n5ClassTeacher}"></div>
                       </div>
 
                       <div class="col-md-4">
                         <label class="form-label">出席率</label>
                         <input type="text" class="form-control" th:field="*{n5ClassAttendance}" placeholder="例: 95%" />
-                        <div class="text-danger" th:if="${#fields.hasErrors('n5ClassAttendance')}" th:errors="*{n5ClassAttendance}"></div>
                       </div>
                       
                       <div class="col-md-3">
                         <label class="form-label">日本語テスト結果 1</label>
                         <input type="text" class="form-control" th:field="*{n5ClassTestResult1}" />
-                        <div class="text-danger" th:if="${#fields.hasErrors('n5ClassTestResult1')}" th:errors="*{n5ClassTestResult1}"></div>
                       </div>
                       
                       <div class="col-md-3">
                         <label class="form-label">日本語テスト結果 2</label>
                         <input type="text" class="form-control" th:field="*{n5ClassTestResult2}" />
-                        <div class="text-danger" th:if="${#fields.hasErrors('n5ClassTestResult2')}" th:errors="*{n5ClassTestResult2}"></div>
                       </div>
 
                       <div class="col-md-3">
                         <label class="form-label">日本語テスト結果 3</label>
                         <input type="text" class="form-control" th:field="*{n5ClassTestResult3}" />
-                        <div class="text-danger" th:if="${#fields.hasErrors('n5ClassTestResult3')}" th:errors="*{n5ClassTestResult3}"></div>
                       </div>
 
                       <div class="col-md-3">
                         <label class="form-label">日本語テスト結果 4</label>
                         <input type="text" class="form-control" th:field="*{n5ClassTestResult4}" />
-                        <div class="text-danger" th:if="${#fields.hasErrors('n5ClassTestResult4')}" th:errors="*{n5ClassTestResult4}"></div>
                       </div>
                       
                       <div class="col-12">
                         <label class="form-label">教師所感</label>
                         <textarea class="form-control" th:field="*{n5ClassFeedback}" rows="3"></textarea>
-                        <div class="text-danger" th:if="${#fields.hasErrors('n5ClassFeedback')}" th:errors="*{n5ClassFeedback}"></div>
                       </div>
                     </div>
                   </div>
@@ -611,7 +605,8 @@
           <div class="tab-pane fade" id="n4" role="tabpanel" aria-labelledby="n4-tab">
             <div class="card shadow-sm border-0">
               <div class="card-body">
-                <form th:action="@{/students/update-n4/{id}(id=${student.id})}" th:object="${student.n4Class}" method="post" id="n4Form">
+                <form th:action="@{/students/update-n4/{id}(id=${student.id})}" 
+                th:object="${n4Class}" method="post" id="n4Form">
                   <input type="hidden" th:if="${student.n4Class != null}" th:field="*{id}"/>
                   
                   <div class="mb-4">
@@ -622,43 +617,36 @@
                       <div class="col-md-4">
                         <label class="form-label">担当教師</label>
                         <input type="text" class="form-control" th:field="*{n4ClassTeacher}" />
-                        <div class="text-danger" th:if="${#fields.hasErrors('n4ClassTeacher')}" th:errors="*{n4ClassTeacher}"></div>
                       </div>
 
                       <div class="col-md-4">
                         <label class="form-label">出席率</label>
                         <input type="text" class="form-control" th:field="*{n4ClassAttendance}" placeholder="例: 95%" />
-                        <div class="text-danger" th:if="${#fields.hasErrors('n4ClassAttendance')}" th:errors="*{n4ClassAttendance}"></div>
                       </div>
                       
                       <div class="col-md-3">
                         <label class="form-label">日本語テスト結果 1</label>
                         <input type="text" class="form-control" th:field="*{n4ClassTestResult1}" />
-                        <div class="text-danger" th:if="${#fields.hasErrors('n4ClassTestResult1')}" th:errors="*{n4ClassTestResult1}"></div>
                       </div>
 
                       <div class="col-md-3">
                         <label class="form-label">日本語テスト結果 2</label>
                         <input type="text" class="form-control" th:field="*{n4ClassTestResult2}" />
-                        <div class="text-danger" th:if="${#fields.hasErrors('n4ClassTestResult2')}" th:errors="*{n4ClassTestResult2}"></div>
                       </div>
 
                       <div class="col-md-3">
                         <label class="form-label">日本語テスト結果 3</label>
                         <input type="text" class="form-control" th:field="*{n4ClassTestResult3}" />
-                        <div class="text-danger" th:if="${#fields.hasErrors('n4ClassTestResult3')}" th:errors="*{n4ClassTestResult3}"></div>
                       </div>
 
                       <div class="col-md-3">
                         <label class="form-label">日本語テスト結果 4</label>
                         <input type="text" class="form-control" th:field="*{n4ClassTestResult4}" />
-                        <div class="text-danger" th:if="${#fields.hasErrors('n4ClassTestResult4')}" th:errors="*{n4ClassTestResult4}"></div>
                       </div>
                       
                       <div class="col-12">
                         <label class="form-label">教師所感</label>
                         <textarea class="form-control" th:field="*{n4ClassFeedback}" rows="3"></textarea>
-                        <div class="text-danger" th:if="${#fields.hasErrors('n4ClassFeedback')}" th:errors="*{n4ClassFeedback}"></div>
                       </div>
                     </div>
                   </div>

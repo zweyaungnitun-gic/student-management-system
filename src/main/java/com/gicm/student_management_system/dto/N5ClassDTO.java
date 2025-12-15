@@ -1,5 +1,11 @@
 package com.gicm.student_management_system.dto;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data; // Changed from Getter/Setter to Data to match StudentDTO
+import lombok.NoArgsConstructor;
+
+
 import lombok.*;
 
 @Getter
