@@ -1,10 +1,7 @@
 <!doctype html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 
-<!--Student-->
-<!-- Head fragment -->
-<!-- 1292025 -->
-
+<!--Last Update-->
 <head th:replace="~{layouts/admin-layout :: head(pageTitle=${'Students | Admin Dashboard'})}"></head>
 
 <body>
@@ -137,6 +134,54 @@
                 color: black;
               }
 
+              .filter-control-group {
+                display: flex;
+                /* horizontal layout inside group */
+                flex-direction: row;
+                /* label + input in a row */
+                align-items: center;
+                /* vertically align label + input */
+                gap: 0.5rem;
+                /* small gap between label and input */
+              }
+
+              /* Make checkbox appear after label text */
+              .filter-control-group.checkbox-group {
+                flex-direction: row-reverse;
+                /* Label first, checkbox after */
+              }
+
+              /* Inputs and select same height */
+              .filter-control-group input[type="text"],
+              .filter-control-group select {
+                height: calc(1.5em + 0.5rem + 2px);
+              }
+
+
+              #nameSearchInput:hover {
+                border-color: #1877F2 !important;
+                box-shadow: 0 0 0 0.25rem rgba(24, 119, 242, 0.25) !important;
+              }
+
+
+              /* Make student name search input smaller */
+              #studentFilterForm #nameSearchInput {
+                width: 150px !important;
+                /* force width */
+                max-width: 150px !important;
+                font-size: 0.85rem;
+                padding: 0.25rem 0.5rem;
+                border: 1px solid rgb(61, 56, 56);
+              }
+
+
+              #nameSearchInput::placeholder {
+                color: black;
+                /* Replace with your desired color */
+                opacity: 1;
+                /* ensures full color, not faded */
+              }
+
               #studentFilterForm {
                 display: flex;
                 /* horizontal layout */
@@ -144,7 +189,7 @@
                 /* prevent wrapping to next line */
                 align-items: center;
                 /* vertically center everything */
-                gap: 1rem;
+                gap: 3rem;
                 /* spacing between items */
                 margin: 0;
                 padding: 10px;
@@ -156,7 +201,7 @@
                 /* horizontal */
                 align-items: center;
                 /* vertically center label and input */
-                gap: 8px;
+                gap: 0.5rem;
                 /* spacing between label and input */
                 width: auto;
                 /* optional: adjust width as needed */
@@ -174,10 +219,11 @@
               }
 
               #studentStatusFilter .multiselect-input {
-                width: 100%;
-                padding: 8px 35px 8px 12px;
-                font-size: 14px;
-                border: 1px solid rgb(248, 244, 244);
+                width: 150px;
+  font-size: 0.85rem;
+  padding: 0.25rem 0.5rem;
+                font-size: 12px;
+                border: 1px solid rgb(61, 56, 56);
                 border-radius: 6px;
                 background-color: white;
                 cursor: pointer;
@@ -195,7 +241,7 @@
                 top: 50%;
                 transform: translateY(-50%);
                 font-size: 12px;
-                color: #0F6CBD;
+                color: #0B5ED7;
                 pointer-events: none;
               }
 
@@ -246,34 +292,74 @@
                 /* above header and table */
               }
 
-              .filter-control-group {
-                display: flex;
-                /* horizontal layout inside group */
-                flex-direction: row;
-                /* label + input in a row */
-                align-items: center;
-                /* vertically align label + input */
-                gap: 0.5rem;
-                /* small gap between label and input */
+
+              #statusFilter[multiple] {
+                height: 32px !important;
+                overflow-y: auto;
               }
 
-              /* Make checkbox appear after label text */
-              .filter-control-group.checkbox-group {
-                flex-direction: row-reverse;
-                /* Label first, checkbox after */
+              #statusFilter option {
+                padding: 2px 4px;
               }
 
-              /* Inputs and select same height */
-              .filter-control-group input[type="text"],
-              .filter-control-group select {
-                height: calc(1.5em + 0.5rem + 2px);
+              /* Make header checkbox larger */
+              #selectAll {
+                width: 1rem;
+                /* Adjust width */
+                height: 1rem;
+                /* Adjust height */
+                vertical-align: middle;
+                margin: 0;
+              }
+
+              .row-checkbox {
+                width: 1rem;
+                height: 1rem;
+              }
+
+
+              #studentFilterForm #statusFilterInput {
+                width: 150px !important;
+                max-width: 150px !important;
+              }
+
+              #statusFilterInput:hover,
+              #statusFilterInput:focus {
+                border-color: #1877F2 !important;
+                box-shadow: 0 0 0 0.25rem rgba(24, 119, 242, 0.25) !important;
+                outline: none;
+                /* prevent default outline */
+              }
+
+              /* Match 生徒ステータス exactly to table header text */
+              #studentStatusFilter .filter-label {
+                color: #000 !important;
+                font-weight: 600 !important;
+                opacity: 1 !important;
+              }
+
+
+              .filter-label-text {
+                color: black;
+                /* same as input text */
+
               }
 
               #downloadBtn {
-                margin-left: auto;
+                margin-left: 6rem;
                 /* pushes it to the right */
                 margin-right: 0;
                 /* moves slightly inward */
+              }
+
+              #downloadBtn {
+                background-color: #0B5ED7;
+                border-color: #0B5ED7;
+              }
+
+              #downloadBtn:hover {
+                background-color: #0B5ED7;
+                border-color: #0B5ED7;
               }
 
               .table thead tr:last-child th {
@@ -428,95 +514,12 @@
                 background-color: transparent;
               }
 
-
-              #downloadBtn {
-                background-color: #0F6CBD;
-                border-color: #0F6CBD;
-              }
-
-              #downloadBtn:hover {
-                background-color: #0a58a0;
-                border-color: #0a58a0;
-              }
-
-              #statusFilter[multiple] {
-                height: 32px !important;
-                overflow-y: auto;
-              }
-
-              #statusFilter option {
-                padding: 2px 4px;
-              }
-
-              /* Make header checkbox larger */
-              #selectAll {
-                width: 1rem;
-                /* Adjust width */
-                height: 1rem;
-                /* Adjust height */
-                vertical-align: middle;
-                margin: 0;
-              }
-
-              .row-checkbox {
-                width: 1rem;
-                height: 1rem;
-              }
-
               .admin-title {
                 font-size: 1.8rem;
                 font-weight: 800;
                 color: #212529;
                 letter-spacing: -0.5px;
               }
-
-
-              #nameSearchInput:hover {
-                border-color: #1877F2 !important;
-                box-shadow: 0 0 0 0.25rem rgba(24, 119, 242, 0.25) !important;
-              }
-
-
-              /* Make student name search input smaller */
-              #studentFilterForm #nameSearchInput {
-                width: 150px !important;
-                /* force width */
-                max-width: 150px !important;
-                font-size: 0.85rem;
-                padding: 0.25rem 0.5rem;
-              }
-
-              #studentFilterForm #statusFilterInput {
-                width: 150px !important;
-                max-width: 150px !important;
-              }
-
-              #statusFilterInput:hover,
-              #statusFilterInput:focus {
-                border-color: #1877F2 !important;
-                box-shadow: 0 0 0 0.25rem rgba(24, 119, 242, 0.25) !important;
-                outline: none;
-                /* prevent default outline */
-              }
-
-              /* Make the label text same as 名前で検索 */
-              #studentStatusFilter .filter-label {
-                color: black;
-                /* same dark text color */
-                font-weight: 500;
-                /* keep your current weight */
-              }
-
-              .filter-label-text {
-                color: black;
-                /* same as input text */
-
-              }
-
-
-
-
-
 
               #pagination {
                 background-color: white !important;
@@ -527,144 +530,139 @@
 
             <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
-
           </head>
-
 
           <body class="p-0 m-0">
 
             <section class="student-management glass-panel">
 
 
-              <div class="mb-0">
-                <div>
-                  <p class="text-uppercase text-muted small fw-semibold mb-1 fs-4">生徒情報管理システム</p>
-
+              <div class="page-wrapper py-3 py-md-2 px-3 px-md-2">
+                <div class="page-header mb-4">
+                  <div class="d-flex align-items-center gap-3">
+                    <button class="btn btn-light btn-icon d-lg-none" type="button" aria-label="Toggle sidebar"
+                      data-sidebar-toggle>
+                      <i class="fas fa-bars fs-4"></i>
+                    </button>
+                    <div>
+                      <p class="text-uppercase text-muted small fw-semibold mb-1">生徒情報管理システム</p>
+                      <h1 class="mb-0" style="color: #0A58A0; font-weight: 600; font-size: 1.8rem;">
+                        生徒情報一覧画面
+                      </h1>
+                    </div>
+                  </div>
                 </div>
-              </div>
 
-              <div class="table-wrapper p-3"
-                style="border:1px solid transparent; border-radius:5px; background-color:transparent;">
-                <div class="table-responsive me-3">
-                  <table class="table data-table align-middle" id="studentTable">
-                    <thead>
+                <div class="table-wrapper p-1"
+                  style="border:1px solid transparent; border-radius:5px; background-color:transparent;">
+                  <div class="table-responsive me-3">
+                    <table class="table data-table align-middle" id="studentTable">
+                      <thead>
 
 
-                      <tr class="filter-row">
-                        <th colspan="10" class="p-3">
-                          <form th:action="@{/students}" method="get" id="studentFilterForm">
-                            <div class="filter-control-group checkbox-group">
-                              <span style="font-size: 16px;">全て選択</span>
-                              <input type="checkbox" id="selectAll" class="form-check-input" />
-                            </div>
-                            <div class="filter-control-group">
-                              <span style="font-size: 16px;">名前で検索</span>
-                              <input type="text" name="nameSearch" th:value="${nameSearch}"
-                                class="form-control form-control-sm" id="nameSearchInput" placeholder="名前検索" />
-                            </div>
-                            <div class="filter-control-group" id="studentStatusWrapper">
-                              <div id="studentStatusFilter">
-                                <div class="filter-control-group">
-                                  <label class="filter-label">生徒ステータス</label>
+                        <tr class="filter-row">
+                          <th colspan="10" class="p-3">
+                            <form th:action="@{/students}" method="get" id="studentFilterForm">
+                              <div class="filter-control-group checkbox-group">
+                                <span style="font-size: 16px;">全て選択</span>
+                                <input type="checkbox" id="selectAll" class="form-check-input" />
+                              </div>
+                              <div class="filter-control-group">
+                                <span style="font-size: 16px;">名前で検索</span>
+                                <input type="text" name="nameSearch" th:value="${nameSearch}"
+                                  class="form-control form-control-sm" id="nameSearchInput" placeholder="名前検索" />
+                              </div>
+                              <div class="filter-control-group" id="studentStatusWrapper">
+                                <div id="studentStatusFilter">
+                                  <div class="filter-control-group">
+                                    <label class="filter-label">生徒ステータス</label>
 
-                                  <div class="multiselect-wrapper">
-                                    <input type="text" id="statusFilterInput" class="multiselect-input" value="ステータス選択"
-                                      readonly>
+                                    <div class="multiselect-wrapper">
+                                      <input type="text" id="statusFilterInput" class="multiselect-input"
+                                        value="ステータス選択" readonly>
 
-                                    <span class="dropdown-arrow">▼</span>
+                                      <span class="dropdown-arrow">▼</span>
 
-                                    <div id="statusDropdownList" class="multiselect-dropdown">
-                                      <label><input type="checkbox" class="status-option" value="在校"> 在校</label>
-                                      <label><input type="checkbox" class="status-option" value="卒業"> 卒業</label>
-                                      <label><input type="checkbox" class="status-option" value="途中退校"> 途中退校</label>
+                                      <div id="statusDropdownList" class="multiselect-dropdown">
+                                        <label><input type="checkbox" class="status-option" value="在校"> 在校</label>
+                                        <label><input type="checkbox" class="status-option" value="卒業"> 卒業</label>
+                                        <label><input type="checkbox" class="status-option" value="途中退校"> 途中退校</label>
+                                      </div>
                                     </div>
                                   </div>
                                 </div>
-                              </div>
+
+                                <button type="button" id="downloadBtn"
+                                  class="btn btn-success btn-sm px-4 fw-bold text-nowrap">
+                                  ↓ダウンロード
+                                </button>
+
+                                <button type="submit" style="display: none;"></button>
+                                <input type="hidden" name="status" id="hiddenStatus" />
+
+                            </form>
+                          </th>
+                        </tr>
+
+                        <tr>
+                          <th scope="col" style="width: 50px;">生徒ID</th>
+                          <th scope="col" style="width: 100px;">名前</th>
+                          <th scope="col" style="width: 80px;">性別</th>
+                          <th scope="col" style="width: 100px;">電話番号</th>
+                          <th scope="col" style="width: 100px;">希望職種</th>
+                          <th scope="col" style="width: 80px;">ステータス</th>
+                          <th scope="col" style="width: 100px;">支払予定日</th>
+                          <th scope="col" style="width: 100px;">支払実績日</th>
+                          <th scope="col" style="width: 120px;">動作機能</th>
+                        </tr>
+                      </thead>
 
 
-                              <button type="button" id="downloadBtn"
-                                class="btn btn-success btn-sm px-4 fw-bold text-nowrap">
-                                ↓ダウンロード
-                              </button>
+                      <tbody id="studentTableBody" th:if="${students != null}">
+                        <tr th:each="student : ${students}">
+                          <td class="id-cell">
+                            <label class="d-flex align-items-center justify-content-center gap-1 m-0">
+                              <input class="form-check-input row-checkbox" type="checkbox" th:value="${student.id}">
+                              <span th:text="${student.id}"></span>
+                            </label>
+                          </td>
 
+                          <td th:text="${student.studentName}"></td>
+                          <td th:text="${student.gender}"></td>
+                          <td th:text="${student.phoneNumber}"></td>
+                          <td th:text="${student.desiredJobType}"></td>
+                          <td th:text="${student.status}"></td>
+                          <td th:text="${student.paymentDueDate}"></td>
+                          <td th:text="${student.paymentDate}"></td>
+                          <td class="action-cell">
+                            <div class="d-flex flex-nowrap justify-content-center gap-0">
+                              <a th:href="@{'/students/student-update/' + ${student.id}}" class="action-icon edit"
+                                title="編集">
+                                <i class="bi bi-pencil-square"></i>
+                              </a>
+                              <a th:href="@{'/students/detail/' + ${student.id}}" class="action-icon detail" title="明細">
+                                <i class="bi bi-info-circle-fill"></i> 明細
+                              </a>
+                              <a href="#"
+                                th:onclick="'if(confirm(\'本当に削除しますか？\')) window.location.href=\'/students/delete/' + ${student.id} + '\';'"
+                                class="action-icon delete" title="削除">
+                                <i class="bi bi-trash-fill"></i>
+                              </a>
+                              </a>
+                            </div>
+                          </td>
+                        </tr>
 
+                        <tr th:if="${students.size() == 0}">
+                          <td colspan="10" class="text-center text-muted py-5">
+                            生徒情報がありません。サーバーからのデータ読み込みを待機しています。
+                          </td>
+                        </tr>
+                      </tbody>
 
-
-                              <button type="submit" style="display: none;"></button>
-                              <input type="hidden" name="status" id="hiddenStatus" />
-
-                          </form>
-                        </th>
-                      </tr>
-
-
-                      <tr>
-
-                        <th scope="col" style="width: 50px;">生徒ID</th>
-                        <th scope="col" style="width: 100px;">名前</th>
-                        <th scope="col" style="width: 80px;">性別</th>
-                        <th scope="col" style="width: 100px;">電話番号</th>
-                        <th scope="col" style="width: 100px;">希望職種</th>
-                        <th scope="col" style="width: 80px;">ステータス</th>
-                        <th scope="col" style="width: 100px;">支払予定日</th>
-                        <th scope="col" style="width: 100px;">支払実績日</th>
-                        <th scope="col" style="width: 120px;">動作機能</th>
-                      </tr>
-                    </thead>
-
-
-                    <tbody id="studentTableBody" th:if="${students != null}">
-                      <tr th:each="student : ${students}">
-                        <td class="id-cell">
-                          <label class="d-flex align-items-center justify-content-center gap-1 m-0">
-                            <input class="form-check-input row-checkbox" type="checkbox" th:value="${student.id}">
-                            <span th:text="${student.id}"></span>
-                          </label>
-                        </td>
-
-                        <td th:text="${student.studentName}"></td>
-                        <td th:text="${student.gender}"></td>
-                        <td th:text="${student.phoneNumber}"></td>
-                        <td th:text="${student.desiredJobType}"></td>
-                        <td th:text="${student.status}"></td>
-                        <td th:text="${student.paymentDueDate}"></td>
-                        <td th:text="${student.paymentDate}"></td>
-                        <td class="action-cell">
-                          <div class="d-flex flex-nowrap justify-content-center gap-0">
-                            <a th:href="@{'/students/student-update/' + ${student.id}}" class="action-icon edit"
-                              title="編集">
-                              <i class="bi bi-pencil-square"></i>
-                            </a>
-                            <a th:href="@{'/students/detail/' + ${student.id}}" class="action-icon detail" title="明細">
-                              <i class="bi bi-info-circle-fill"></i> 明細
-                            </a>
-                            <a href="#"
-                              th:onclick="'if(confirm(\'本当に削除しますか？\')) window.location.href=\'/students/delete/' + ${student.id} + '\';'"
-                              class="action-icon delete" title="削除">
-                              <i class="bi bi-trash-fill"></i>
-                            </a>
-
-                            </a>
-
-                          </div>
-                        </td>
-
-                      </tr>
-
-                      <tr th:if="${students.size() == 0}">
-                        <td colspan="10" class="text-center text-muted py-5">
-                          生徒情報がありません。サーバーからのデータ読み込みを待機しています。
-                        </td>
-                      </tr>
-                    </tbody>
-
-
-
-
-                  </table>
-                </div>
-                <div id="pagination" class="d-flex justify-content-center mt-3"></div>
+                    </table>
+                  </div>
+                  <div id="pagination" class="d-flex justify-content-center mt-3"></div>
 
             </section>
 
@@ -682,8 +680,6 @@
               });
 
 
-
-
               document.addEventListener('DOMContentLoaded', function () {
 
                 new TomSelect("#statusFilter", {
@@ -693,8 +689,8 @@
                   allowEmptyOption: true,
                   placeholder: "ステータス選択",
                 });
-
               });
+
               document.addEventListener('DOMContentLoaded', function () {
 
                 const selectAll = document.getElementById('selectAll');
@@ -769,7 +765,6 @@
                     paginationDiv.appendChild(btn);
                   }
 
-
                   createBtn("<<", 1, currentPage === 1);
 
                   createBtn("<", currentPage - 1, currentPage === 1);
@@ -798,8 +793,6 @@
 
                 displayPage(1);
               });
-
-
 
               document.addEventListener("DOMContentLoaded", function () {
                 const downloadBtn = document.getElementById("downloadBtn");
@@ -950,16 +943,18 @@
                     const ws = XLSX.utils.aoa_to_sheet([headers, ...rows]);
 
                     // Set column widths
-                    ws['!cols'] = headers.map(h => ({ wch: Math.max(15, Math.min(h.length + 5, 40)) }));
+                    ws['!cols'] = headers.map(h => ({ wch: 20 }));
 
-                    // Color headers by section
+
+
+                     // Color headers by section
                     const colorMap = [
                       { start: 0, end: 27, bg: "FFFF99" },    // Student Info - Yellow
                       { start: 28, end: 43, bg: "99CCFF" },   // N5 Class - Light Blue
                       { start: 44, end: 59, bg: "99FF99" },   // N4 Class - Light Green
                       { start: 60, end: 63, bg: "FFCC99" }    // Interview & JLPT - Orange
                     ];
-
+ 
                     colorMap.forEach(section => {
                       for (let c = section.start; c <= section.end; c++) {
                         const cellAddress = XLSX.utils.encode_cell({ r: 0, c: c });
@@ -971,10 +966,10 @@
                         };
                       }
                     });
-
+ 
                     XLSX.utils.book_append_sheet(wb, ws, "Students");
                     XLSX.writeFile(wb, "students_full.xlsx");
-
+ 
                   } catch (err) {
                     console.error(err);
                     alert("XLSXのエクスポートに失敗しました！");
@@ -992,32 +987,68 @@
                 const form = document.getElementById("studentFilterForm");
                 const hiddenStatus = document.getElementById("hiddenStatus");
 
+                // Restore saved statuses and name
+                const savedStatuses = localStorage.getItem("savedStatuses");
+                const savedName = localStorage.getItem("savedName");
+
+                if (savedStatuses && savedStatuses.length > 0) {
+                  const statusArray = savedStatuses.split(",");
+                  statusCheckboxes.forEach(cb => {
+                    if (statusArray.includes(cb.value)) cb.checked = true;
+                  });
+                  statusInput.value = statusArray.join(", ");
+                  hiddenStatus.value = savedStatuses;
+                }
+
+                if (savedName) {
+                  nameInput.value = savedName;
+                }
+
+                // Function to update status input background
+                function updateStatusInputBg() {
+                  const anyChecked = Array.from(statusCheckboxes).some(cb => cb.checked);
+                  statusInput.style.backgroundColor = anyChecked ? "#E8F0FE" : "white";
+                }
+
+                // Function to update name input background
+                function updateNameInputBg() {
+                  nameInput.style.backgroundColor = nameInput.value.trim() !== "" ? "#E8F0FE" : "white";
+                }
+
+                // Call on page load
+                updateStatusInputBg();
+                updateNameInputBg();
+
+                // Update status input background on checkbox change
+                statusCheckboxes.forEach(cb => cb.addEventListener("change", () => {
+                  const selected = Array.from(statusCheckboxes)
+                    .filter(c => c.checked)
+                    .map(c => c.value);
+
+                  statusInput.value = selected.length > 0 ? selected.join(", ") : "ステータス選択";
+                  hiddenStatus.value = selected.join(",");
+
+                  localStorage.setItem("savedStatuses", selected.join(", "));
+                  updateStatusInputBg();
+                }));
+
+                // Update name input background on typing
+                nameInput.addEventListener("input", () => {
+                  localStorage.setItem("savedName", nameInput.value);
+                  updateNameInputBg();
+                });
+
                 // Toggle dropdown
                 statusInput.addEventListener("click", () => {
                   dropdown.style.display = dropdown.style.display === "block" ? "none" : "block";
                 });
 
-                // Update input value when checkbox changes
-                statusCheckboxes.forEach(cb => {
-                  cb.addEventListener("change", () => {
-                    const selected = Array.from(statusCheckboxes)
-                      .filter(c => c.checked)
-                      .map(c => c.value);
-                    statusInput.value = selected.length > 0 ? selected.join(", ") : "ステータス選択";
-                    hiddenStatus.value = selected.join(",");
-                  });
-                });
-
-                // Function to submit form
+                // Submit form
                 function submitFilterForm() {
-                  hiddenStatus.value = Array.from(statusCheckboxes)
-                    .filter(c => c.checked)
-                    .map(c => c.value)
-                    .join(",");
                   form.submit();
                 }
 
-                // Handle Enter key on both inputs
+                // Handle Enter key
                 [statusInput, nameInput].forEach(input => {
                   input.addEventListener("keydown", e => {
                     if (e.key === "Enter") {
@@ -1027,17 +1058,15 @@
                   });
                 });
 
-                // Close dropdown if clicking outside
+                // Close dropdown when clicking outside
                 document.addEventListener("click", e => {
                   if (!e.target.closest(".multiselect-wrapper")) {
                     dropdown.style.display = "none";
                   }
                 });
               });
+
             </script>
-
-
-
             </script>
 
 
