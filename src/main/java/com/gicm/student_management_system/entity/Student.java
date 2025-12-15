@@ -153,7 +153,4 @@ public class Student {
 
     @Column(name = "updated_at")
     private LocalDate updatedAt;
-    @OneToOne(mappedBy = "student", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private N5Class N5Class;
-
 }
