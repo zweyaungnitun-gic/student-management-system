@@ -2,6 +2,7 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 
 <!--Last Update-->
+
 <head th:replace="~{layouts/admin-layout :: head(pageTitle=${'Students | Admin Dashboard'})}"></head>
 
 <body>
@@ -220,8 +221,8 @@
 
               #studentStatusFilter .multiselect-input {
                 width: 150px;
-  font-size: 0.85rem;
-  padding: 0.25rem 0.5rem;
+                font-size: 0.85rem;
+                padding: 0.25rem 0.5rem;
                 font-size: 12px;
                 border: 1px solid rgb(61, 56, 56);
                 border-radius: 6px;
@@ -525,6 +526,18 @@
                 background-color: white !important;
                 padding: 0;
                 border-top: none;
+              }
+
+              /* FORCE same size as form-control-sm */
+              #statusFilterInput {
+                width: 150px !important;
+                height: 31px !important;
+                /* EXACT Bootstrap-sm height */
+                padding: 0.25rem 2rem 0.25rem 0.5rem !important;
+                font-size: 0.85rem !important;
+                line-height: 1.5 !important;
+                border-radius: 0.375rem !important;
+                box-sizing: border-box !important;
               }
             </style>
 
@@ -947,14 +960,14 @@
 
 
 
-                     // Color headers by section
+                    // Color headers by section
                     const colorMap = [
                       { start: 0, end: 27, bg: "FFFF99" },    // Student Info - Yellow
                       { start: 28, end: 43, bg: "99CCFF" },   // N5 Class - Light Blue
                       { start: 44, end: 59, bg: "99FF99" },   // N4 Class - Light Green
                       { start: 60, end: 63, bg: "FFCC99" }    // Interview & JLPT - Orange
                     ];
- 
+
                     colorMap.forEach(section => {
                       for (let c = section.start; c <= section.end; c++) {
                         const cellAddress = XLSX.utils.encode_cell({ r: 0, c: c });
@@ -966,10 +979,10 @@
                         };
                       }
                     });
- 
+
                     XLSX.utils.book_append_sheet(wb, ws, "Students");
                     XLSX.writeFile(wb, "students_full.xlsx");
- 
+
                   } catch (err) {
                     console.error(err);
                     alert("XLSXのエクスポートに失敗しました！");
