@@ -94,6 +94,11 @@ body {
     white-space: nowrap;
 }
 
+.student-id-value {
+    color: #0A58A0 !important;
+    font-weight: 700 !important;
+}
+
 .fixed-tabs-container {
     position: fixed;
     top: 85px;

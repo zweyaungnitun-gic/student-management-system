@@ -61,6 +61,41 @@ body {
     justify-content: flex-end;
 }
 
+
+/* Button hover effects - matching update page */
+.btn {
+    transition: all 0.2s ease;
+    font-weight: 500;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Specific back button styling */
+.btn-outline-secondary {
+    border: 1px solid #6c757d;
+    color: #6c757d;
+    display: inline-flex;
+    align-items: center;
+    padding: 8px 16px;
+}
+
+.btn-outline-secondary i {
+    margin-right: 8px;
+}
+
+/* Primary buttons (if any) */
+.btn-primary {
+    background: linear-gradient(135deg, #4b6cb7 0%, #182848 100%);
+    border: none;
+}
+
+.btn-primary:hover {
+    background: linear-gradient(135deg, #3a5ca9 0%, #121f3a 100%);
+}
+
 /* Back Button Styles */
 .back-button {
     background: rgba(255, 255, 255, 0.15);
@@ -69,18 +104,27 @@ body {
     padding: 8px 12px;
     border-radius: 5px;
     text-decoration: none;
-    display: inline-flex;   
+    display: inline-flex;
     align-items: center;
     gap: 8px;
     font-size: 0.9rem;
     transition: all 0.2s;
-    position: static;
 }
 
 .back-button:hover {
     background: rgba(255, 255, 255, 0.25);
     color: white;
     text-decoration: none;
+}
+
+/* Back button hover effect - matching update page */
+.btn-outline-secondary:hover {
+    background-color: #5a6268 !important;
+    border-color: #545b62 !important;
+    color: white !important;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: all 0.2s ease;
 }
 
 /* Student ID Badge Styles */
