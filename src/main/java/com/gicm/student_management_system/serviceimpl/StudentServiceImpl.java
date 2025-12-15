@@ -20,6 +20,7 @@ public class StudentServiceImpl implements StudentService {
     private StudentDTO convertToDTO(Student student) {
         return StudentDTO.builder()
                 .id(student.getId())
+                .studentId(student.getStudentId())
                 .studentName(student.getStudentName())
                 .nameInJapanese(student.getNameInJapanese())
                 .dateOfBirth(student.getDateOfBirth())

@@ -52,5 +52,6 @@
         private String status;
         private LocalDate paymentDueDate;
         private LocalDate paymentDate;
+        private String studentId;
     }
     
