@@ -60,13 +60,28 @@ public class StudentServiceImpl implements StudentService {
 
     private Student convertToEntity(StudentDTO dto, Student existing) {
         Student s = existing == null ? new Student() : existing;
-        s.setStudentName(dto.getStudentName());
-        s.setGender(dto.getGender());
-        s.setPhoneNumber(dto.getPhoneNumber());
-        s.setDesiredJobType(dto.getDesiredJobType());
-        s.setStatus(dto.getStatus());
-        s.setSchedulePaymentTutionDate(dto.getPaymentDueDate());
-        s.setActualTutionPaymentDate(dto.getPaymentDate());
+
+        if (dto.getStudentName() != null)
+            s.setStudentName(dto.getStudentName());
+
+        if (dto.getGender() != null)
+            s.setGender(dto.getGender());
+
+        if (dto.getPhoneNumber() != null)
+            s.setPhoneNumber(dto.getPhoneNumber());
+
+        if (dto.getDesiredJobType() != null)
+            s.setDesiredJobType(dto.getDesiredJobType());
+
+        if (dto.getStatus() != null)
+            s.setStatus(dto.getStatus());
+
+        if (dto.getPaymentDueDate() != null)
+            s.setSchedulePaymentTutionDate(dto.getPaymentDueDate());
+
+        if (dto.getPaymentDate() != null)
+            s.setActualTutionPaymentDate(dto.getPaymentDate());
+
         return s;
     }
 

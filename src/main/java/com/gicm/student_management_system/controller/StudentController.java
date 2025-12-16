@@ -98,6 +98,9 @@ public class StudentController {
     }
 
     // ----------------------------------------------------------------------------------------
+    // Student Update
+    // ----------------------------------------------------------------------------------------
+
     @GetMapping("/student-update/{id}")
     public String showUpdateForm(@PathVariable Long id, Model model) {
         Student student = studentService.findById(id)
