@@ -1,14 +1,16 @@
 package com.gicm.student_management_system.serviceimpl;
 
+import com.gicm.student_management_system.dto.InterviewNotesDTO;
 import com.gicm.student_management_system.entity.InterviewNotes;
 import com.gicm.student_management_system.entity.Student;
 import com.gicm.student_management_system.repository.InterviewNotesRepository;
 import com.gicm.student_management_system.repository.StudentRepository;
-import com.gicm.student_management_system.dto.InterviewNotesDTO; 
 import com.gicm.student_management_system.service.InterviewNotesService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -17,35 +19,15 @@ public class InterviewNotesServiceImpl implements InterviewNotesService {
     private final InterviewNotesRepository interviewNotesRepository;
     private final StudentRepository studentRepository;
 
-    @Override
-    @Transactional
-    public InterviewNotes getOrCreateInterviewNotes(Long studentId) {
-        InterviewNotes existing = interviewNotesRepository.findByStudentId(studentId);
-        if (existing != null) {
-            return existing;
+    // --- Converter Methods ---
+
+    private InterviewNotesDTO convertToDTO(InterviewNotes entity) {
+        if (entity == null) {
+            return InterviewNotesDTO.builder().build();
         }
-
-        Student student = studentRepository.findById(studentId)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid student Id: " + studentId));
-
-        InterviewNotes newNotes = InterviewNotes.builder()
-                .student(student)
-                .build();
-
-        return interviewNotesRepository.save(newNotes);
-    }
-
-    // Implementation for DTO
-    @Override
-    @Transactional
-    public InterviewNotesDTO getOrCreateInterviewNotesDTO(Long studentId) {
-        // Reuse the existing logic to get or create the entity
-        InterviewNotes entity = getOrCreateInterviewNotes(studentId);
-        
-        // Map Entity to DTO
         return InterviewNotesDTO.builder()
                 .id(entity.getId())
-                .studentId(entity.getStudent().getId())
+                .studentId(entity.getStudent() != null ? entity.getStudent().getId() : null)
                 .interview1(entity.getInterview1())
                 .interview2(entity.getInterview2())
                 .interview3(entity.getInterview3())
@@ -53,9 +35,44 @@ public class InterviewNotesServiceImpl implements InterviewNotesService {
                 .build();
     }
 
+    private void updateEntityFromDTO(InterviewNotes entity, InterviewNotesDTO dto) {
+        entity.setInterview1(dto.getInterview1());
+        entity.setInterview2(dto.getInterview2());
+        entity.setInterview3(dto.getInterview3());
+        entity.setOtherMemo(dto.getOtherMemo());
+    }
+
+    // --- Service Implementation ---
+
+    @Override
+    @Transactional(readOnly = true)
+    public InterviewNotesDTO getOrCreateInterviewNotesDTO(Long studentId) {
+        Optional<InterviewNotes> interviewNotesOpt = interviewNotesRepository.findByStudentId(studentId);
+
+        if (interviewNotesOpt.isPresent()) {
+            return convertToDTO(interviewNotesOpt.get());
+        } else {
+            return InterviewNotesDTO.builder()
+                    .studentId(studentId)
+                    .build();
+        }
+    }
+
     @Override
     @Transactional
-    public InterviewNotes saveInterviewNotes(InterviewNotes interviewNotes) {
-        return interviewNotesRepository.save(interviewNotes);
+    public void saveInterviewNotesDTO(Long studentId, InterviewNotesDTO interviewNotesDTO) {
+        Student student = studentRepository.findById(studentId)
+                .orElseThrow(() -> new RuntimeException("Student not found: " + studentId));
+
+        InterviewNotes interviewNotes = interviewNotesRepository.findByStudentId(studentId)
+                .orElse(InterviewNotes.builder().student(student).build());
+
+        // Update fields
+        updateEntityFromDTO(interviewNotes, interviewNotesDTO);
+
+        // Ensure relationship is set
+        interviewNotes.setStudent(student);
+
+        interviewNotesRepository.save(interviewNotes);
     }
 }

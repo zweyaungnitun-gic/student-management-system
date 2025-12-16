@@ -5,9 +5,6 @@ import com.gicm.student_management_system.dto.N5ClassDTO;
 import com.gicm.student_management_system.dto.StudentDTO;
 import com.gicm.student_management_system.dto.StudentFullExportDTO;
 import com.gicm.student_management_system.dto.InterviewNotesDTO;
-import com.gicm.student_management_system.entity.InterviewNotes;
-import com.gicm.student_management_system.entity.N4Class;
-import com.gicm.student_management_system.entity.N5Class;
 import com.gicm.student_management_system.entity.Student;
 import com.gicm.student_management_system.service.N5ClassService;
 import com.gicm.student_management_system.service.N4ClassService;
@@ -16,22 +13,13 @@ import com.gicm.student_management_system.service.StudentService;
 import jakarta.validation.Valid;
 import com.gicm.student_management_system.service.InterviewNotesService;
 
-// --- ADD THESE REPOSITORY IMPORTS ---
-import com.gicm.student_management_system.repository.N5ClassRepository;
-import com.gicm.student_management_system.repository.N4ClassRepository;
-import com.gicm.student_management_system.repository.InterviewNotesRepository;
-
 import com.gicm.student_management_system.service.StudentExportService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.beans.BeanUtils;
-import org.springframework.stereotype.Controller;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.time.LocalDate;
@@ -47,10 +35,6 @@ public class StudentController {
     private final N5ClassService n5ClassService;
     private final N4ClassService n4ClassService;
     private final InterviewNotesService interviewNotesService;
-    // --- INJECT REPOSITORIES HERE ---
-    private final N5ClassRepository n5ClassRepository;
-    private final N4ClassRepository n4ClassRepository;
-    private final InterviewNotesRepository interviewNotesRepository;
 
     // ---- UI METHODS ----
     @GetMapping
@@ -69,7 +53,7 @@ public class StudentController {
 
         model.addAttribute("students", students);
         model.addAttribute("nameSearch", nameSearch);
-        model.addAttribute("statusFilter", status); // for input box
+        model.addAttribute("statusFilter", status);
         return "students/student-list.html";
     }
 
@@ -116,7 +100,6 @@ public class StudentController {
     // ----------------------------------------------------------------------------------------
     @GetMapping("/student-update/{id}")
     public String showUpdateForm(@PathVariable Long id, Model model) {
-
         Student student = studentService.findById(id)
                 .orElseThrow(() -> new RuntimeException("生徒が見つかりません: ID " + id));
 
@@ -126,16 +109,8 @@ public class StudentController {
         N4ClassDTO n4ClassDTO = n4ClassService.getOrCreateN4ClassDTO(id);
         model.addAttribute("n4Class", n4ClassDTO);
 
-        if (student.getInterviewNotes() == null) {
-            InterviewNotes interviewNotes = InterviewNotes.builder()
-                    .student(student)
-                    .build();
-            student.setInterviewNotes(interviewNotes);
-            studentService.save(student);
-        }
-
-        student = studentService.findById(id)
-                .orElseThrow();
+        InterviewNotesDTO interviewNotesDTO = interviewNotesService.getOrCreateInterviewNotesDTO(id);
+        model.addAttribute("interviewNotes", interviewNotesDTO);
 
         model.addAttribute("student", student);
         model.addAttribute("isNew", false);
@@ -227,7 +202,7 @@ public class StudentController {
             @ModelAttribute("n5Class") N5ClassDTO n5ClassDTO,
             RedirectAttributes redirectAttributes) {
         try {
-            n5ClassService.saveN5ClassDTO(id, n5ClassDTO);  
+            n5ClassService.saveN5ClassDTO(id, n5ClassDTO);
 
             redirectAttributes.addFlashAttribute("success", "N5クラス情報が正常に更新されました。");
         } catch (Exception e) {
@@ -238,15 +213,13 @@ public class StudentController {
         return "redirect:/students/student-update/" + id + "?tab=n5";
     }
 
-
     @PostMapping("/update-n4/{id}")
     public String updateN4ClassInfo(@PathVariable Long id,
-            @ModelAttribute("n4Class") N4ClassDTO n4ClassDTO, // Use DTO here
+            @ModelAttribute("n4Class") N4ClassDTO n4ClassDTO,
             RedirectAttributes redirectAttributes) {
         try {
-            // Use Service to save DTO
-            n4ClassService.saveN4ClassDTO(id, n4ClassDTO);
 
+            n4ClassService.saveN4ClassDTO(id, n4ClassDTO);
             redirectAttributes.addFlashAttribute("success", "N4クラス情報が正常に更新されました。");
         } catch (Exception e) {
             e.printStackTrace();
@@ -258,34 +231,20 @@ public class StudentController {
 
     @PostMapping("/update-interview/{id}")
     public String updateInterviewNotes(@PathVariable Long id,
-            @ModelAttribute InterviewNotes interviewNotes,
+            @ModelAttribute("interviewNotes") InterviewNotesDTO interviewNotesDTO,
             RedirectAttributes redirectAttributes) {
         try {
-            Student student = studentService.findById(id)
-                    .orElseThrow(() -> new RuntimeException("Student not found: " + id));
-
-            if (student.getInterviewNotes() == null) {
-                InterviewNotes newInterviewNotes = InterviewNotes.builder().student(student).build();
-                student.setInterviewNotes(newInterviewNotes);
-            }
-
-            InterviewNotes existingInterviewNotes = student.getInterviewNotes();
-
-            existingInterviewNotes.setInterview1(interviewNotes.getInterview1());
-            existingInterviewNotes.setInterview2(interviewNotes.getInterview2());
-            existingInterviewNotes.setInterview3(interviewNotes.getInterview3());
-            existingInterviewNotes.setOtherMemo(interviewNotes.getOtherMemo());
-
-            interviewNotesRepository.save(existingInterviewNotes);
-
+            interviewNotesService.saveInterviewNotesDTO(id, interviewNotesDTO);
             redirectAttributes.addFlashAttribute("success", "面談情報が正常に更新されました。");
         } catch (Exception e) {
+            e.printStackTrace();
             redirectAttributes.addFlashAttribute("error", "更新に失敗しました: " + e.getMessage());
         }
 
         return "redirect:/students/student-update/" + id + "?tab=interview";
     }
 
+    // ------------------------------------------------------------------------------------
     // ---- JSON API FOR FRONTEND CSV ----
     @RestController
     @RequestMapping("/students/export")
