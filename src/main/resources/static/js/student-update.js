@@ -16,6 +16,15 @@
     'interview': '面談・その他'
   };
 
+  // Map of tab IDs to form elements (Ensure these IDs match your HTML)
+  const formMap = {
+    'basic': document.getElementById('basicForm'),
+    'status': document.getElementById('statusForm'),
+    'n5': document.getElementById('n5Form'),
+    'n4': document.getElementById('n4Form'),
+    'interview': document.getElementById('interviewForm'),
+  };
+
   const queryAllFieldsInPane = (paneId) => {
     const pane = document.getElementById(paneId);
     return pane ? Array.from(pane.querySelectorAll('input, textarea, select')) : [];
@@ -113,6 +122,112 @@
     }
     
     return 'このタブ';
+  };
+  
+  // Server-Side Error Display Logic
+  function setupServerValidationDisplay() {
+    document.querySelectorAll('.is-invalid').forEach(el => {
+        el.classList.remove('is-invalid');
+    });
+    
+    document.querySelectorAll('.form-control, .form-select, textarea').forEach(input => {
+      let fieldName = input.getAttribute('name');
+      
+      if (!fieldName) {
+        const thymeleafField = input.getAttribute('th:field');
+        if (thymeleafField) {
+          fieldName = thymeleafField.replace('*{', '').replace('}', '');
+        }
+      }
+      
+      if (fieldName) {
+        const inputWrapper = input.closest('.col-md-6, .col-md-4, .col-md-3, .col-12');
+        if (inputWrapper) {
+          const errorDiv = inputWrapper.querySelector('.text-danger');
+          
+          if (errorDiv && errorDiv.textContent.trim() !== '') {
+            input.classList.add('is-invalid'); // Apply red border/icon
+          }
+        }
+      }
+    });
+  }
+
+  // Client-Side Validation Logic (Stops Submission) 
+  function validateTab(formElement) {
+    let isValid = true;
+    
+    // Clear all previous client-side error states for a clean check
+    formElement.querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'));
+    // Only remove injected client-side feedback elements
+    formElement.querySelectorAll('.invalid-feedback').forEach(el => el.remove()); 
+
+    // Check all required fields within the current form
+    formElement.querySelectorAll('.required-label').forEach(label => {
+      const inputId = label.getAttribute('for');
+      let input = inputId ? document.getElementById(inputId) : null;
+      
+      // Fallback for labels missing 'for': assume the next element is the input/select/textarea
+      if (!input) {
+          let nextSibling = label.nextElementSibling;
+          // Skip over hidden inputs (like the studentId hidden field)
+          while (nextSibling && nextSibling.tagName === 'INPUT' && nextSibling.type === 'hidden') {
+              nextSibling = nextSibling.nextElementSibling;
+          }
+          input = nextSibling;
+      }
+      
+      if (input && (input.tagName === 'INPUT' || input.tagName === 'SELECT' || input.tagName === 'TEXTAREA')) {
+        const value = input.value.trim();
+        
+        // Validation check: empty value or select with default option
+        if (!value || (input.tagName === 'SELECT' && input.value === '')) {
+          isValid = false;
+          
+          input.classList.add('is-invalid');
+          
+          const inputWrapper = input.closest('.col-md-6, .col-md-4, .col-md-3, .col-12');
+          const serverErrorDiv = inputWrapper ? inputWrapper.querySelector('.text-danger') : null;
+          
+          if (!serverErrorDiv || serverErrorDiv.textContent.trim() === '') {
+              const feedback = document.createElement('div');
+              feedback.classList.add('invalid-feedback');
+              feedback.textContent = 'この項目をご入力ください'; // "This field is required"
+              input.parentNode.insertBefore(feedback, input.nextSibling);
+          }
+        }
+      }
+    });
+    
+    return isValid;
+  }
+  
+  const setupFormValidationAndSubmission = () => {
+    document.querySelectorAll('.tab-pane form').forEach(form => {
+      const pane = form.closest('.tab-pane');
+      if (!pane) return;
+      const paneId = pane.id;
+
+      form.addEventListener('submit', function(event) {
+        event.preventDefault(); 
+
+        if (validateTab(form)) {          
+          queryAllFieldsInPane(paneId).forEach(f => {
+            f.dataset.originalValue = f.value ?? '';
+            f.classList.remove('changed-field');
+          });
+          changedMap[paneId] = new Set();
+          removeUnsavedBadgeFromNav(paneId);
+
+          form.submit(); 
+        } else {
+          const firstInvalid = form.querySelector('.is-invalid');
+          if (firstInvalid) {
+            firstInvalid.focus();
+          }
+        }
+      });
+    });
   };
 
   // reset visible fields back to original values
@@ -233,25 +348,14 @@ const setupModalHandlers = () => {
 
     programmaticSwitchToPane(pendingPaneId);
 
-    setTimeout(() => { allowProgrammaticSwitch = false; pendingPaneId = null; }, 100);
+    setTimeout(() => { 
+        allowProgrammaticSwitch = false; 
+        pendingPaneId = null; 
+        setupServerValidationDisplay(); // Re-apply server validation errors after switch
+    }, 100);
   });
 };
 
-  const attachFormSubmitHooks = () => {
-    document.querySelectorAll('.tab-pane form').forEach(form => {
-      form.addEventListener('submit', (e) => {
-         const pane = form.closest('.tab-pane');
-        if (!pane) return;
-        const paneId = pane.id;
-        queryAllFieldsInPane(paneId).forEach(f => {
-          f.dataset.originalValue = f.value ?? '';
-          f.classList.remove('changed-field');
-        });
-        changedMap[paneId] = new Set();
-        removeUnsavedBadgeFromNav(paneId);
-      });
-    });
-  };
 
   // Public function to mark a pane saved (for AJAX)
   window.markPaneSaved = function(paneId) {
@@ -283,7 +387,18 @@ const setupModalHandlers = () => {
     attachFieldListeners();
     interceptTabClicks();
     setupModalHandlers();
-    attachFormSubmitHooks();
+    
+    setupServerValidationDisplay(); 
+
+    setupFormValidationAndSubmission(); 
+
+    // NEW: Re-run server error display on tab switch
+    document.querySelectorAll('[data-bs-toggle="tab"]').forEach(tab => {
+        tab.addEventListener('shown.bs.tab', function() {
+          setTimeout(setupServerValidationDisplay, 100); 
+        });
+      });
+
 
     window.addEventListener('beforeunload', (ev) => {
       const anyUnsaved = Object.values(changedMap).some(s => s.size > 0);

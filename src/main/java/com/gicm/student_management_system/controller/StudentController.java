@@ -9,6 +9,8 @@ import com.gicm.student_management_system.entity.Student;
 import com.gicm.student_management_system.service.N5ClassService;
 import com.gicm.student_management_system.service.N4ClassService;
 import com.gicm.student_management_system.service.StudentService;
+import com.gicm.student_management_system.validation.BasicInfoGroup;
+import com.gicm.student_management_system.validation.StatusGroup;
 
 import jakarta.validation.Valid;
 import com.gicm.student_management_system.service.InterviewNotesService;
@@ -20,6 +22,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.time.LocalDate;
@@ -124,14 +128,27 @@ public class StudentController {
     @PostMapping("/update-basic/{id}")
     public String updateBasicInfo(
             @PathVariable Long id,
-            @Valid @ModelAttribute("student") Student student,
+            @Validated(BasicInfoGroup.class) @ModelAttribute("student") Student student,
             BindingResult bindingResult,
             RedirectAttributes redirectAttributes,
             Model model) {
 
         if (bindingResult.hasErrors()) {
+            // Load all necessary data for the form
+            Student existingStudent = studentService.findById(id)
+                    .orElseThrow(() -> new RuntimeException("Student not found: " + id));
+
+            N5ClassDTO n5ClassDTO = n5ClassService.getOrCreateN5ClassDTO(id);
+            model.addAttribute("n5Class", n5ClassDTO);
+
+            N4ClassDTO n4ClassDTO = n4ClassService.getOrCreateN4ClassDTO(id);
+            model.addAttribute("n4Class", n4ClassDTO);
+
+            InterviewNotesDTO interviewNotesDTO = interviewNotesService.getOrCreateInterviewNotesDTO(id);
+            model.addAttribute("interviewNotes", interviewNotesDTO);
+
             model.addAttribute("student", student);
-            model.addAttribute("validationError", true);
+            model.addAttribute("isNew", false);
             return "students/student-update.html?tab=basic";
         }
 
@@ -155,16 +172,35 @@ public class StudentController {
         studentService.save(existingStudent);
         redirectAttributes.addFlashAttribute("success", "基本情報が正常に更新されました。");
 
-        // redirectAttributes.addFlashAttribute("error", "更新に失敗しました: " +
-        // e.getMessage());
-
         return "redirect:/students/student-update/" + id + "?tab=basic";
     }
 
     @PostMapping("/update-status/{id}")
     public String updateStatusInfo(@PathVariable Long id,
-            @ModelAttribute Student student,
-            RedirectAttributes redirectAttributes) {
+            @Validated(StatusGroup.class) @ModelAttribute Student student,
+            BindingResult bindingResult,
+            RedirectAttributes redirectAttributes,
+            Model model) {
+
+        if (bindingResult.hasErrors()) {
+            // Load all necessary data for the form
+            Student existingStudent = studentService.findById(id)
+                    .orElseThrow(() -> new RuntimeException("Student not found: " + id));
+
+            N5ClassDTO n5ClassDTO = n5ClassService.getOrCreateN5ClassDTO(id);
+            model.addAttribute("n5Class", n5ClassDTO);
+
+            N4ClassDTO n4ClassDTO = n4ClassService.getOrCreateN4ClassDTO(id);
+            model.addAttribute("n4Class", n4ClassDTO);
+
+            InterviewNotesDTO interviewNotesDTO = interviewNotesService.getOrCreateInterviewNotesDTO(id);
+            model.addAttribute("interviewNotes", interviewNotesDTO);
+
+            model.addAttribute("student", student);
+            model.addAttribute("isNew", false);
+            return "students/student-update.html?tab=status";
+        }
+
         try {
             Student existingStudent = studentService.findById(id)
                     .orElseThrow(() -> new RuntimeException("Student not found: " + id));

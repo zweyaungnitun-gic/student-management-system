@@ -142,25 +142,25 @@
 
                       <div class="row g-3"></div>
                         <div class="col-md-6">
-                          <label class="form-label">なまえ（英語）</label>  
+                          <label class="form-label required-label">なまえ（英語）</label>  
                         <input type="text" class="form-control" th:field="*{studentName}" required />
                         <div class="text-danger" th:if="${#fields.hasErrors('studentName')}" th:errors="*{studentName}"></div>                      
                       </div>
                         
                         <div class="col-md-6">
-                          <label class="form-label">なまえ（カタカナ）</label>
+                          <label class="form-label required-label">なまえ（カタカナ）</label>
                           <input type="text" class="form-control" th:field="*{nameInJapanese}" />
                           <div class="text-danger" th:if="${#fields.hasErrors('nameInJapanese')}" th:errors="*{nameInJapanese}"></div>
                         </div>
 
                         <div class="col-md-6">
-                          <label class="form-label">生年月日</label>
+                          <label class="form-label required-label">生年月日</label>
                           <input type="date" class="form-control" th:field="*{dateOfBirth}" />
                           <div class="text-danger" th:if="${#fields.hasErrors('dateOfBirth')}" th:errors="*{dateOfBirth}"></div>
                         </div>
 
                         <div class="col-md-6">
-                          <label class="form-label">性別</label>
+                          <label class="form-label required-label">性別</label>
                           <select class="form-select" th:field="*{gender}">
                             <option value="">選択してください</option>
                             <option value="Male">男性</option>
@@ -170,19 +170,19 @@
                         </div>
 
                         <div class="col-md-6">
-                          <label class="form-label">父親名（ちちおや めい）</label>
+                          <label class="form-label required-label">父親名（ちちおや めい）</label>
                           <input type="text" class="form-control" th:field="*{fatherName}" />
                           <div class="text-danger" th:if="${#fields.hasErrors('fatherName')}" th:errors="*{fatherName}"></div>
                         </div>
 
                         <div class="col-md-6">
-                          <label class="form-label">連絡先(TEL, Viber)</label>
+                          <label class="form-label required-label">連絡先(TEL, Viber)</label>
                           <input type="text" class="form-control" th:field="*{contactViber}" />
                           <div class="text-danger" th:if="${#fields.hasErrors('contactViber')}" th:errors="*{contactViber}"></div>
                         </div>
 
                         <div class="col-md-6">
-                          <label class="form-label">国民 ID 番号</label>
+                          <label class="form-label required-label">国民 ID 番号</label>
                           <input type="text" class="form-control" th:field="*{nationalID}" />
                           <div class="text-danger" th:if="${#fields.hasErrors('nationalID')}" th:errors="*{nationalID}"></div>
                         </div>
@@ -194,25 +194,25 @@
                         </div>
 
                         <div class="col-md-6">
-                          <label class="form-label">電話番号</label>
+                          <label class="form-label required-label">電話番号</label>
                           <input type="tel" class="form-control" th:field="*{phoneNumber}" />
                           <div class="text-danger" th:if="${#fields.hasErrors('phoneNumber')}" th:errors="*{phoneNumber}"></div>
                         </div>
 
                         <div class="col-md-6">
-                          <label class="form-label">保護者電話番号</label>
+                          <label class="form-label required-label">保護者電話番号</label>
                           <input type="tel" class="form-control" th:field="*{secondaryPhone}" />
                           <div class="text-danger" th:if="${#fields.hasErrors('secondaryPhone')}" th:errors="*{secondaryPhone}"></div>
                         </div>
 
                         <div class="col-12">
-                          <label class="form-label">現住所</label>
+                          <label class="form-label required-label">現住所</label>
                           <textarea class="form-control" th:field="*{currentLivingAddress}" rows="2"></textarea>
                           <div class="text-danger" th:if="${#fields.hasErrors('currentLivingAddress')}" th:errors="*{currentLivingAddress}"></div>
                         </div>
 
                         <div class="col-12">
-                          <label class="form-label">出身地住所</label>
+                          <label class="form-label required-label">出身地住所</label>
                           <textarea class="form-control" th:field="*{homeTownAddress}" rows="2"></textarea>
                           <div class="text-danger" th:if="${#fields.hasErrors('homeTownAddress')}" th:errors="*{homeTownAddress}"></div>
                         </div>
@@ -243,7 +243,7 @@
                       <div class="row g-3">
                         
                         <div class="col-md-6">
-                          <label class="form-label">希望職種</label>
+                          <label class="form-label required-label">希望職種</label>
                           <select class="form-select" th:field="*{desiredJobType}" id="desiredJobType">
                             <option value="">選択してください</option>
                             <option value="kaigo">介護</option>
@@ -261,7 +261,7 @@
                         </div>
 
                         <div class="col-md-6">
-                          <label class="form-label">宗教</label>
+                          <label class="form-label required-label">宗教</label>
                           <select class="form-select" th:field="*{religion}" id="religion">
                             <option value="">選択</option>
                             <option value="buddhism">仏教</option>
@@ -279,7 +279,7 @@
                         </div>
 
                         <div class="col-md-6">
-                          <label class="form-label">現在のJLPT合格レベル</label>
+                          <label class="form-label required-label">現在のJLPT合格レベル</label>
                           <select class="form-select" th:field="*{currentJapanLevel}">
                             <option value="">選択してください</option>
                             <option value="none">なし</option>
@@ -293,13 +293,13 @@
                         </div>
 
                         <div class="col-md-6">
-                          <label class="form-label">生徒の授業ステータス</label>
+                          <label class="form-label required-label">生徒の授業ステータス</label>
                           <input type="text" class="form-control" th:field="*{attendingClassRelatedStatus}" placeholder="在校・卒業・途中退校"/>
                           <div class="text-danger" th:if="${#fields.hasErrors('attendingClassRelatedStatus')}" th:errors="*{attendingClassRelatedStatus}"></div>
                         </div>
 
                         <div class="col-md-6">
-                          <label class="form-label">在籍状況</label>
+                          <label class="form-label required-label">在籍状況</label>
                           <select class="form-select" th:field="*{status}">
                             <option value="">選択してください</option>
                             <option value="在校">在校</option>
@@ -310,14 +310,14 @@
                         </div>
 
                         <div class="col-md-6">
-                          <label class="form-label">合格した最高のJLPTレベル</label>
+                          <label class="form-label required-label">合格した最高のJLPTレベル</label>
                           <input type="text" class="form-control" th:field="*{passedHighestJLPTLevel}" />
                           <div class="text-danger" th:if="${#fields.hasErrors('passedHighestJLPTLevel')}" th:errors="*{passedHighestJLPTLevel}"></div>
                         </div>
                         <div></div>
 
                         <div class="col-md-4">
-                          <label class="form-label">日本渡航経験</label>
+                          <label class="form-label required-label">日本渡航経験</label>
                           <select class="form-select" th:field="*{japanTravelExperience}">
                             <option value="">選択</option>
                             <option value="ある">ある</option>
@@ -327,7 +327,7 @@
                         </div>
 
                         <div class="col-md-4">
-                          <label class="form-label">COE申請経験</label>
+                          <label class="form-label required-label">COE申請経験</label>
                           <select class="form-select" th:field="*{coeApplicationExperience}">
                             <option value="">選択</option>
                             <option value="ある">ある</option>
@@ -337,7 +337,7 @@
                         </div>
 
                         <div class="col-md-4">
-                          <label class="form-label">寮があれば入りたい</label>
+                          <label class="form-label required-label">寮があれば入りたい</label>
                           <select class="form-select" th:field="*{hostelPreference}">
                             <option value="">選択</option>
                             <option value="はい">はい</option>
@@ -348,7 +348,7 @@
                         <div></div>
 
                         <div class="col-md-4">
-                          <label class="form-label">お酒</label>
+                          <label class="form-label required-label">お酒</label>
                           <select class="form-select" th:field="*{isAlcoholDrink}">
                             <option value="">選択</option>
                             <option th:value="true">飲む</option>
@@ -358,7 +358,7 @@
                         </div>
 
                         <div class="col-md-4">
-                          <label class="form-label">タバコ</label>
+                          <label class="form-label required-label">タバコ</label>
                           <select class="form-select" th:field="*{isSmoking}">
                             <option value="">選択</option>
                             <option th:value="true">吸う</option>
@@ -368,7 +368,7 @@
                         </div>
 
                         <div class="col-md-4">
-                          <label class="form-label">入れ墨(Tattoo)</label>
+                          <label class="form-label required-label">入れ墨(Tattoo)</label>
                           <select class="form-select" th:field="*{haveTatto}">
                             <option value="">選択</option>
                             <option th:value="true">ある</option>
@@ -379,13 +379,13 @@
                         <div></div>
 
                         <div class="col-md-3">
-                          <label class="form-label">学校登録日</label>
+                          <label class="form-label required-label">学校登録日</label>
                           <input type="date" class="form-control" th:field="*{enrolledDate}"/>
                           <div class="text-danger" th:if="${#fields.hasErrors('enrolledDate')}" th:errors="*{enrolledDate}"></div>
                         </div>
 
                         <div class="col-md-3">
-                          <label class="form-label">授業料支払予定日</label>
+                          <label class="form-label required-label">授業料支払予定日</label>
                           <input type="date" class="form-control" th:field="*{schedulePaymentTutionDate}"/>
                           <div class="text-danger" th:if="${#fields.hasErrors('schedulePaymentTutionDate')}" th:errors="*{schedulePaymentTutionDate}"></div>
                         </div>
@@ -396,7 +396,7 @@
                         </div>
 
                         <div class="col-md-3">
-                          <label class="form-label">学費入金実績日</label>
+                          <label class="form-label required-label">学費入金実績日</label>
                           <input type="date" class="form-control" th:field="*{actualTutionPaymentDate}"/>
                           <div class="text-danger" th:if="${#fields.hasErrors('actualTutionPaymentDate')}" th:errors="*{actualTutionPaymentDate}"></div>
                         </div>
@@ -909,18 +909,6 @@
   
   <script th:src="@{/js/student-update.js}"></script>
   
-  <script>
-    document.addEventListener("DOMContentLoaded", function () {
-      const layout = document.querySelector(".dashboard-layout");
-      const toggles = document.querySelectorAll("[data-sidebar-toggle]");
-      toggles.forEach((btn) =>
-        btn.addEventListener("click", function (event) {
-          event.preventDefault();
-          layout?.classList.toggle("sidebar-open");
-        })
-      );
-    });
-  </script>
 
 </body>
 </html>

@@ -1,10 +1,7 @@
 package com.gicm.student_management_system.dto;
 
+import jakarta.validation.constraints.Size;
 import lombok.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 
 @Getter
 @Setter
@@ -15,8 +12,16 @@ import lombok.NoArgsConstructor;
 public class InterviewNotesDTO {
     private Long id;
     private Long studentId;
+
+    @Size(max = 500)
     private String interview1;
+
+    @Size(max = 500)
     private String interview2;
+
+    @Size(max = 500)
     private String interview3;
+
+    @Size(max = 500)
     private String otherMemo;
 }
