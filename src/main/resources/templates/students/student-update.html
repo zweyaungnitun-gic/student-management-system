@@ -98,7 +98,8 @@
                 <div class="card-body">
                   <form th:action="@{/students/update-basic/{id}(id=${student.id})}" th:object="${student}" method="post" id="basicForm">
                     <div class="form-section">
-                      <div class="row g-3">
+                      
+                      <div class="row g-3"> 
                         <div class="col-md-6">
                           <label class="form-label">生徒ID</label>
                           <input type="text" class="form-control" th:value="${student.studentId != null ? student.studentId : ('STU' + T(java.lang.String).format('%03d', student.id))}" readonly style="background-color: #e9ecef;"/>
@@ -127,7 +128,6 @@
                         <div class="col-md-6">
                           <label class="form-label required-label">性別</label>
                           <select class="form-select" th:field="*{gender}">
-                            <option value="">選択してください</option>
                             <option value="Male">男性</option>
                             <option value="Female">女性</option>
                           </select>
@@ -142,7 +142,8 @@
 
                         <div class="col-md-6">
                           <label class="form-label required-label">連絡先(TEL, Viber)</label>
-                          <input type="text" class="form-control" th:field="*{contactViber}" />
+                          <input type="text" class="form-control" th:field="*{contactViber}" oninput="this.value = this.value.replace(/[^0-9]/g, '')"
+                                 placeholder="数字のみ入力してください"/>
                           <div class="text-danger" th:if="${#fields.hasErrors('contactViber')}" th:errors="*{contactViber}"></div>
                         </div>
 
@@ -160,13 +161,17 @@
 
                         <div class="col-md-6">
                           <label class="form-label required-label">電話番号</label>
-                          <input type="tel" class="form-control" th:field="*{phoneNumber}" />
+                          <input type="tel" class="form-control" th:field="*{phoneNumber}" 
+                                 oninput="this.value = this.value.replace(/[^0-9]/g, '')"
+                                 placeholder="数字のみ入力してください" />
                           <div class="text-danger" th:if="${#fields.hasErrors('phoneNumber')}" th:errors="*{phoneNumber}"></div>
                         </div>
 
                         <div class="col-md-6">
                           <label class="form-label required-label">保護者電話番号</label>
-                          <input type="tel" class="form-control" th:field="*{secondaryPhone}" />
+                          <input type="tel" class="form-control" th:field="*{secondaryPhone}" 
+                                 oninput="this.value = this.value.replace(/[^0-9]/g, '')"
+                                 placeholder="数字のみ入力してください" />
                           <div class="text-danger" th:if="${#fields.hasErrors('secondaryPhone')}" th:errors="*{secondaryPhone}"></div>
                         </div>
 
@@ -210,7 +215,6 @@
                         <div class="col-md-6">
                           <label class="form-label required-label">希望職種</label>
                           <select class="form-select" th:field="*{desiredJobType}" id="desiredJobType">
-                            <option value="">選択してください</option>
                             <option value="kaigo">介護</option>
                             <option value="inshoku">飲食</option>
                             <option value="shukuhaku">宿泊</option>
@@ -228,7 +232,6 @@
                         <div class="col-md-6">
                           <label class="form-label required-label">宗教</label>
                           <select class="form-select" th:field="*{religion}" id="religion">
-                            <option value="">選択</option>
                             <option value="buddhism">仏教</option>
                             <option value="islam">イスラム教</option>
                             <option value="christian">キリスト教</option>
@@ -246,7 +249,6 @@
                         <div class="col-md-6">
                           <label class="form-label required-label">現在のJLPT合格レベル</label>
                           <select class="form-select" th:field="*{currentJapanLevel}">
-                            <option value="">選択してください</option>
                             <option value="none">なし</option>
                             <option value="N5">N5</option>
                             <option value="N4">N4</option>
@@ -266,7 +268,6 @@
                         <div class="col-md-6">
                           <label class="form-label required-label">在籍状況</label>
                           <select class="form-select" th:field="*{status}">
-                            <option value="">選択してください</option>
                             <option value="在校">在校</option>
                             <option value="卒業">卒業</option>
                             <option value="途中退校">途中退校</option>
@@ -284,7 +285,6 @@
                         <div class="col-md-4">
                           <label class="form-label required-label">日本渡航経験</label>
                           <select class="form-select" th:field="*{japanTravelExperience}">
-                            <option value="">選択</option>
                             <option value="ある">ある</option>
                             <option value="ない">ない</option>
                           </select>
@@ -294,7 +294,6 @@
                         <div class="col-md-4">
                           <label class="form-label required-label">COE申請経験</label>
                           <select class="form-select" th:field="*{coeApplicationExperience}">
-                            <option value="">選択</option>
                             <option value="ある">ある</option>
                             <option value="ない">ない</option>
                           </select>
@@ -304,7 +303,6 @@
                         <div class="col-md-4">
                           <label class="form-label required-label">寮があれば入りたい</label>
                           <select class="form-select" th:field="*{hostelPreference}">
-                            <option value="">選択</option>
                             <option value="はい">はい</option>
                             <option value="いいえ">いいえ</option>
                           </select>
@@ -315,7 +313,6 @@
                         <div class="col-md-4">
                           <label class="form-label required-label">お酒</label>
                           <select class="form-select" th:field="*{isAlcoholDrink}">
-                            <option value="">選択</option>
                             <option th:value="true">飲む</option>
                             <option th:value="false">飲まない</option>
                           </select>
@@ -325,7 +322,6 @@
                         <div class="col-md-4">
                           <label class="form-label required-label">タバコ</label>
                           <select class="form-select" th:field="*{isSmoking}">
-                            <option value="">選択</option>
                             <option th:value="true">吸う</option>
                             <option th:value="false">吸わない</option>
                           </select>
@@ -334,8 +330,7 @@
 
                         <div class="col-md-4">
                           <label class="form-label required-label">入れ墨(Tattoo)</label>
-                          <select class="form-select" th:field="*{haveTatto}">
-                            <option value="">選択</option>
+                          <select class="form-select select-placeholder" th:field="*{haveTatto}">
                             <option th:value="true">ある</option>
                             <option th:value="false">ない</option>
                           </select>

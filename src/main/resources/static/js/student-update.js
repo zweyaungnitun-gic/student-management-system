@@ -146,7 +146,7 @@
           const errorDiv = inputWrapper.querySelector('.text-danger');
           
           if (errorDiv && errorDiv.textContent.trim() !== '') {
-            input.classList.add('is-invalid'); // Apply red border/icon
+            input.classList.add('is-invalid');
           }
         }
       }
@@ -159,7 +159,6 @@
     
     // Clear all previous client-side error states for a clean check
     formElement.querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'));
-    // Only remove injected client-side feedback elements
     formElement.querySelectorAll('.invalid-feedback').forEach(el => el.remove()); 
 
     // Check all required fields within the current form
@@ -167,7 +166,6 @@
       const inputId = label.getAttribute('for');
       let input = inputId ? document.getElementById(inputId) : null;
       
-      // Fallback for labels missing 'for': assume the next element is the input/select/textarea
       if (!input) {
           let nextSibling = label.nextElementSibling;
           // Skip over hidden inputs (like the studentId hidden field)
@@ -192,7 +190,7 @@
           if (!serverErrorDiv || serverErrorDiv.textContent.trim() === '') {
               const feedback = document.createElement('div');
               feedback.classList.add('invalid-feedback');
-              feedback.textContent = 'この項目をご入力ください'; // "This field is required"
+              feedback.textContent = 'この項目をご入力ください'; 
               input.parentNode.insertBefore(feedback, input.nextSibling);
           }
         }
@@ -356,7 +354,6 @@ const setupModalHandlers = () => {
   });
 };
 
-
   // Public function to mark a pane saved (for AJAX)
   window.markPaneSaved = function(paneId) {
     queryAllFieldsInPane(paneId).forEach(f => {
@@ -380,6 +377,21 @@ const setupModalHandlers = () => {
     }
   };
 
+// To restrict Date of Birth (must be at least 18 years old)
+  const setupDobRestriction = () => {
+    const dobInput = document.getElementById('dateOfBirth'); 
+    
+    if (dobInput) {
+      const today = new Date();
+      const maxYear = today.getFullYear() - 18; 
+      
+      const maxDate = new Date(maxYear, today.getMonth(), today.getDate());
+      const maxDateString = maxDate.toISOString().split('T')[0];
+      
+      dobInput.setAttribute('max', maxDateString);
+    }
+  };
+
   function init() {
     setOriginalsOnLoad();
     detectActivePaneOnLoad();
@@ -389,16 +401,14 @@ const setupModalHandlers = () => {
     setupModalHandlers();
     
     setupServerValidationDisplay(); 
-
     setupFormValidationAndSubmission(); 
+    setupDobRestriction();
 
-    // NEW: Re-run server error display on tab switch
     document.querySelectorAll('[data-bs-toggle="tab"]').forEach(tab => {
         tab.addEventListener('shown.bs.tab', function() {
           setTimeout(setupServerValidationDisplay, 100); 
         });
       });
-
 
     window.addEventListener('beforeunload', (ev) => {
       const anyUnsaved = Object.values(changedMap).some(s => s.size > 0);
@@ -408,7 +418,5 @@ const setupModalHandlers = () => {
       }
     });
   }
-
   init();
-
 })();
