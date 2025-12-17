@@ -1,305 +1,343 @@
-/* =============================
-   GLOBAL
-============================= */
 body {
-    background-color: #f5f7fb;
-    font-family: "Inter", sans-serif;
-    margin: 0;
+  background-color: #f5f7fb;
+  font-family: "Inter", sans-serif;
+  margin: 0;
 }
 
-/* =============================
-   HEADER
-============================= */
+/* HEADER */
 .fixed-header-container {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    z-index: 1000;
-    background: white;
-    box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  background: white;
+  box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
 }
 
 .header-bar {
-    background: linear-gradient(135deg, #4b6cb7 0%, #182848 100%);
-    color: white;
-    padding: 15px 25px;
-    margin-bottom: 0;
+  background: linear-gradient(135deg, #4b6cb7 0%, #182848 100%);
+  color: white;
+  padding: 15px 25px;
+  margin-bottom: 0;
 }
 
 .header-content {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
 }
 
 .header-left {
-    width: 100px;
+  width: 100px;
 }
 
 .header-center {
-    text-align: center;
-    flex-grow: 1;
+  text-align: center;
+  flex-grow: 1;
 }
 
 .header-center h4 {
-    margin: 0;
-    font-size: 1.25rem;
-    font-weight: 500;
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 500;
 }
 
 .header-center p {
-    margin: 2px 0 0 0;
-    opacity: 0.9;
-    font-size: 0.85rem;
+  margin: 2px 0 0 0;
+  opacity: 0.9;
+  font-size: 0.85rem;
 }
 
 .header-right {
-    width: 100px;
-    display: flex;
-    justify-content: flex-end;
+  width: 100px;
+  display: flex;
+  justify-content: flex-end;
 }
 
-
-/* Button hover effects - matching update page */
+/* Button hover effects */
 .btn {
-    transition: all 0.2s ease;
-    font-weight: 500;
+  transition: all 0.2s ease;
+  font-weight: 500;
 }
 
 .btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 /* Specific back button styling */
 .btn-outline-secondary {
-    border: 1px solid #6c757d;
-    color: #6c757d;
-    display: inline-flex;
-    align-items: center;
-    padding: 8px 16px;
+  border: 1px solid #6c757d;
+  color: #6c757d;
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 16px;
 }
 
 .btn-outline-secondary i {
-    margin-right: 8px;
+  margin-right: 8px;
 }
 
-/* Primary buttons (if any) */
-.btn-primary {
-    background: linear-gradient(135deg, #4b6cb7 0%, #182848 100%);
-    border: none;
-}
-
-.btn-primary:hover {
-    background: linear-gradient(135deg, #3a5ca9 0%, #121f3a 100%);
-}
-
-/* Back Button Styles */
-.back-button {
-    background: rgba(255, 255, 255, 0.15);
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    color: white;
-    padding: 8px 12px;
-    border-radius: 5px;
-    text-decoration: none;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 0.9rem;
-    transition: all 0.2s;
-}
-
-.back-button:hover {
-    background: rgba(255, 255, 255, 0.25);
-    color: white;
-    text-decoration: none;
-}
-
-/* Back button hover effect - matching update page */
 .btn-outline-secondary:hover {
-    background-color: #5a6268 !important;
-    border-color: #545b62 !important;
-    color: white !important;
-    transform: translateY(-1px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    transition: all 0.2s ease;
+  background-color: #5a6268 !important;
+  border-color: #545b62 !important;
+  color: white !important;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s ease;
 }
 
 /* Student ID Badge Styles */
-.student-id-badge {
-    background-color: white;
-    color: #1a65ac; 
-    padding: 5px 10px;
-    border-radius: 5px;
-    font-weight: 700;
-    font-size: 0.9rem;
+.student-id-badge-wrapper {
+  background-color: white;
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  padding: 10px 15px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
-/* =============================
-   NAV-TABS (Bootstrap style)
-============================= */
+.student-id-badge-wrapper {
+  background: white;
+  color: #333;
+  padding: 8px 15px;
+  border-radius: 6px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+}
+
+.student-id-value {
+  color: #0a58a0 !important;
+  font-weight: 700 !important;
+}
+
+/* NAV-TABS (Updated to match Student Update Layout)*/
 .nav-tabs {
-    border-bottom: 1px solid #dee2e6 !important;
+  border-bottom: 2px solid #e9ecef !important;
+  gap: 10px;
+  margin-bottom: 20px;
+  padding: 0 5px;
+}
+
+/* Tab Link Styles */
+.nav-tabs::-webkit-scrollbar {
+  height: 4px;
+}
+
+.nav-tabs::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+.nav-tabs::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 2px;
+}
+
+.nav-tabs .nav-item {
+  flex-shrink: 0;
 }
 
 .nav-tabs .nav-link {
-    font-weight: 500;
-    color: #495057;
-    padding: 12px 33.5px;
-    border: none !important;
-    background: none !important;
-    display: flex;
-    align-items: center;
-    gap: 6px;
+  color: #666;
+  font-weight: 500;
+  border: 1px solid transparent;
+  border-bottom: none;
+  border-radius: 8px 8px 0 0;
+  padding: 10px 13px;
+  margin-bottom: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s ease;
+  background: transparent;
+  position: relative;
+  margin-bottom: -1px;
+  flex-shrink: 0;
+  min-width: fit-content;
+}
+
+.nav-tabs .nav-link:last-child {
+  margin-right: 0;
+}
+
+#cancelBtn {
+  background-color: #ff6b6b;
+  border-color: #ff6b6b;
+  color: white;
+}
+
+#cancelBtn:hover {
+  background-color: #ff5252;
+  border-color: #ff5252;
 }
 
 .nav-tabs .nav-link:hover {
-    color: #1a65ac;
+  color: #6c8ae4;
+  background-color: #e9ecef;
 }
 
 .nav-tabs .nav-link.active {
-    background-color: #ffffff !important;
-    color: #0d6efd !important;
-    border-radius: 6px 6px 0 0 !important;
-    border: 1px solid #dee2e6 !important;
-    border-bottom: 3px solid #fff !important;
-    border-top: 3px solid #0d6efd !important;
+  background: #ffffff;
+  color: #0d6efd;
+  border-color: #dee2e6;
+  border-top: 3px solid #0d6efd;
+  border-bottom: 1px solid #ffffff;
+  font-weight: 600;
+  position: relative;
+  z-index: 2;
 }
 
+.nav-tabs .nav-link i {
+  font-size: 1.1rem;
+  color: #adb5bd;
+}
 
-/* =============================
-   CARD
-============================= */
+.nav-tabs .nav-link.active i {
+  color: #0d6efd;
+}
+
+.tab-content .tab-pane {
+  background: white;
+  border: 1px solid #dee2e6;
+  border-top: none;
+  border-radius: 0 0 10px 10px;
+  overflow: hidden;
+}
+
+/*CARD */
 .card {
-    border-radius: 10px;
-    min-height: 500px;
+  border-radius: 12px;
+  border: 1px solid #e9ecef;
+  min-height: 500px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03) !important;
+  background-color: white;
 }
 
-
-
-/* =============================
-   VERTICAL TABS (Pills for N5/N4)
-============================= */
+/*VERTICAL TABS (Pills for N5/N4)*/
 /* Container for the vertical menu side */
 .vertical-tab-menu {
-    border-right: 1px solid #dee2e6;
-    padding-right: 15px;
+  border-right: 1px solid #dee2e6;
+  padding-right: 15px;
+  background-color: #fafbfc; /* Slight background for sidebar area */
+  border-top-left-radius: 12px;
+  border-bottom-left-radius: 12px;
 }
 
-/* The vertical links */
-.nav-pills .nav-link {
-    color: #1a65ac;
-    font-weight: 600;
-    text-align: left; 
-    padding: 12px 15px;
-    margin-bottom: 5px;
-    border-radius: 0 6px 6px 0;
-    transition: all 0.2s ease;
-    background-color: transparent; /* Light grey background for inactive */
+/* Adjust vertical tab spacing */
+.vertical-tab-menu .nav-link {
+  border-radius: 8px;
+  margin-bottom: 8px;
+  text-align: left;
+  border: 1px solid transparent;
+  color: #495057;
+  font-weight: 500;
+  padding: 12px 15px;
+  transition: all 0.2s ease;
+  background-color: transparent;
 }
 
-.nav-pills .nav-link:hover {
-    background-color: #e6f0fa;
-    color: #1a65ac;
+.vertical-tab-menu .nav-link:hover {
+  background-color: #e6f0fa;
+  color: #1a65ac;
 }
 
-/* Active State - Matches blue theme */
-.nav-pills .nav-link.active {
-    background-color: #ffffff !important;
-    color: #1a65ac !important;
-    font-weight: 700;
-    box-shadow: -5px 0 0 0 #1a65ac, 0 2px 5px rgba(0,0,0,0.05); 
-    border-radius: 0 6px 6px 0;
-    transform: translateX(3px);
+/* Active State for Vertical Pills */
+.vertical-tab-menu .nav-link.active {
+  background-color: #1a65ac !important;
+  color: white !important;
+  box-shadow: 0 4px 6px rgba(26, 101, 172, 0.2);
+  font-weight: 600;
 }
 
-/* =============================
-   RIGHT CONTENT AREA
-============================= */
+/*RIGHT CONTENT AREA*/
 .class-content-area {
-    flex-grow: 1;
-    padding-top: 5px;
+  flex-grow: 1;
+  padding-top: 5px;
 }
 
 .class-content-area h4 {
-    font-weight: 700;
+  font-weight: 700;
 }
 
 .class-content-area h5 {
-    font-weight: 600;
+  font-weight: 600;
 }
 
-
-/* =============================
-   TEXT COLORS
-============================= */
+/*TEXT COLORS*/
 .text-primary {
-    color: #1a65ac !important;
+  color: #1a65ac !important;
 }
 
-/* =============================
-   PERSONAL INFO FORM STYLES
-============================= */
+/*PERSONAL INFO FORM STYLES*/
 .info-group {
-    display: flex;
-    margin-bottom: 10px; /* Space between rows */
-    align-items: stretch; /* Ensures label and value are same height */
+  display: flex;
+  margin-bottom: 15px; /* Increased spacing */
+  align-items: stretch;
 }
 
 .info-label {
-    width: 180px; /* Fixed width for the label column */
-    border: 1px solid #1a65ac; /* Theme blue border */
-    color: #333;
-    padding: 8px 12px;
-    background-color: #fff; /* White background */
-    margin-right: 10px; /* Gap between label and value */
-    font-size: 0.9rem;
-    font-weight: 500;
-    display: flex;
-    align-items: center;
-    border-radius: 4px;
-    flex-shrink: 0; 
+  width: 180px;
+  /* Changed from blue border to subtle gray background for cleaner look */
+  border: 1px solid #dee2e6;
+  background-color: #f8f9fa;
+  color: #495057;
+  padding: 10px 15px;
+  margin-right: 0; /* Connected to value */
+  font-size: 0.9rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  border-radius: 6px 0 0 6px; /* Rounded left only */
+  flex-shrink: 0;
 }
 
 .info-value {
-    flex-grow: 1; /* Takes up remaining space */
-    border: 1px solid #ced4da; /* Standard input border color */
-    padding: 8px 12px;
-    background-color: #fff;
-    border-radius: 4px;
-    font-size: 0.95rem;
-    color: #495057;
-    min-height: 42px; /* Minimum height for consistency */
-    display: flex;
-    align-items: center;
+  flex-grow: 1;
+  border: 1px solid #dee2e6;
+  border-left: none;
+  padding: 10px 15px;
+  background-color: #fff;
+  border-radius: 0 6px 6px 0;
+  font-size: 0.95rem;
+  color: #212529;
+  min-height: 45px;
+  display: flex;
+  align-items: center;
 }
 
 .memo-area {
-    border: 1px solid #1a65ac; /* Blue border for the container */
-    padding: 15px;
-    border-radius: 6px;
-    background-color: #fff;
-    min-height: 100px;
-    width: 100%;
+  border: 1px solid #dee2e6;
+  padding: 15px;
+  border-radius: 6px;
+  background-color: #fff;
+  min-height: 100px;
+  width: 100%;
 }
 
-/* =============================
-   CONTACT TAB SPECIFIC
-============================= */
+.split-value-container {
+  flex-grow: 1;
+  display: flex;
+  border-radius: 0 6px 6px 0;
+}
+
+.split-value-container .info-value {
+  border-radius: 0;
+  border-left: 1px solid #dee2e6;
+}
+
+.split-value-container .info-value:last-child {
+  border-radius: 0 6px 6px 0;
+}
+
+/*CONTACT TAB SPECIFIC*/
 /* Styles for tall rows like Address */
 .info-group.tall-row .info-label,
 .info-group.tall-row .info-value {
-    min-height: 200px;       /* Sets the height for the big boxes */
-    align-items: flex-start; /* Pushes text to the top */
-    padding-top: 15px;       /* Adds space at the top */
+  min-height: 120px;
+  align-items: flex-start;
+  padding-top: 15px;
 }
-
-/* Ensure the wrapper for split fields (like phone numbers) fills space */
-.split-value-container {
-    flex-grow: 1;
-    display: flex;
-    gap: 15px; /* Space between the two phone number boxes */
-}
-
