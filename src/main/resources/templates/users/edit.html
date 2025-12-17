@@ -75,12 +75,18 @@
                   <div class="col-6 pe-4">
                     <label class="form-label required-field">ユーザー名</label>
                     <input type="text" class="form-control" th:field="*{username}" 
-                           placeholder="ユーザー名を入力" required>
+                           th:classappend="${#fields.hasErrors('username')} ? 'is-invalid' : ''"
+                           placeholder="ユーザー名を入力">
+                    <div class="invalid-feedback" th:if="${#fields.hasErrors('username')}" 
+                         th:errors="*{username}" ></div>
                   </div>
                   <div class="col-6 ps-4">
                     <label class="form-label required-field">メールアドレス</label>
-                    <input type="email" class="form-control" th:field="*{email}" 
-                           placeholder="email@example.com" required>
+                    <input type="text" class="form-control" th:field="*{email}" 
+                           th:classappend="${#fields.hasErrors('email')} ? 'is-invalid' : ''"
+                           placeholder="email@example.com">
+                    <div class="invalid-feedback" th:if="${#fields.hasErrors('email')}" 
+                         th:errors="*{email}" ></div>
                   </div>
                 </div>
 
@@ -88,14 +94,18 @@
                 <div class="row mb-4">
                   <div class="col-6 pe-4">
                     <label class="form-label required-field">ロール</label>
-                    <select class="form-select" th:field="*{role}" required>
+                    <select class="form-select" th:field="*{role}"
+                            th:classappend="${#fields.hasErrors('role')} ? 'is-invalid' : ''">
                       <option value="ADMIN">管理者</option>
                       <option value="GUEST">ゲスト</option>
                     </select>
+                    <div class="invalid-feedback" th:if="${#fields.hasErrors('role')}" 
+                         th:errors="*{role}" ></div>
                   </div>
                   <div class="col-6 ps-4">
                     <label class="form-label">新しいパスワード</label>
                     <input type="password" class="form-control" name="newPassword" 
+                           th:value="${newPassword}"
                            placeholder="変更する場合のみ入力">
                     <small class="text-muted">※ 空欄の場合は変更されません</small>
                   </div>

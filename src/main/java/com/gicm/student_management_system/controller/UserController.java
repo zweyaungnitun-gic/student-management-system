@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -16,6 +17,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.gicm.student_management_system.entity.Role;
 import com.gicm.student_management_system.entity.User;
 import com.gicm.student_management_system.service.UserService;
+
+import jakarta.validation.Valid;
 
 @Controller
 @RequestMapping("/users")
@@ -49,16 +52,36 @@ public class UserController {
     }
 
     @PostMapping("/add")
-    public String addUser(@ModelAttribute User user, RedirectAttributes redirectAttributes) {
+    public String addUser(@Valid @ModelAttribute User user, BindingResult bindingResult, Model model) {
+        // Store password to preserve it on validation errors
+        String submittedPassword = user.getPassword();
+        
+        // Check for validation errors
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("roles", Role.values());
+            model.addAttribute("submittedPassword", submittedPassword);
+            return "users/add";
+        }
+
         // Check if email already exists
         if (userService.existsByEmail(user.getEmail())) {
-            redirectAttributes.addFlashAttribute("error", "このメールアドレスは既に使用されています");
-            return "redirect:/users/add";
+            bindingResult.rejectValue("email", "error.user", "このメールアドレスは既に使用されています");
+            model.addAttribute("roles", Role.values());
+            model.addAttribute("submittedPassword", submittedPassword);
+            return "users/add";
+        }
+
+        // Validate password
+        if (user.getPassword() == null || user.getPassword().trim().isEmpty()) {
+            bindingResult.rejectValue("password", "error.user", "パスワードは必須です");
+            model.addAttribute("roles", Role.values());
+            model.addAttribute("submittedPassword", submittedPassword);
+            return "users/add";
         }
 
         userService.createUser(user);
 
-        redirectAttributes.addFlashAttribute("success", "ユーザーが追加されました");
+        model.addAttribute("success", "ユーザーが追加されました");
         return "redirect:/users";
     }
 
@@ -78,9 +101,39 @@ public class UserController {
 
     @PostMapping("/edit/{id}")
     public String updateUser(@PathVariable Long id,
-            @ModelAttribute User userForm,
+            @Valid @ModelAttribute User userForm,
+            BindingResult bindingResult,
             @RequestParam(required = false) String newPassword,
+            Model model,
             RedirectAttributes redirectAttributes) {
+        
+        // Fetch the original user to preserve immutable fields
+        User originalUser = userService.getUserById(id).orElse(null);
+        if (originalUser == null) {
+            redirectAttributes.addFlashAttribute("error", "ユーザーが見つかりません");
+            return "redirect:/users";
+        }
+
+        // Preserve immutable fields (id, createdAt) in the form object
+        userForm.setId(originalUser.getId());
+        userForm.setCreatedAt(originalUser.getCreatedAt());
+        
+        // Check for validation errors
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("roles", Role.values());
+            model.addAttribute("newPassword", newPassword); // Preserve password field
+            return "users/edit";
+        }
+
+        // Check if email already exists for another user
+        User existingUser = userService.getUserByEmail(userForm.getEmail()).orElse(null);
+        if (existingUser != null && !existingUser.getId().equals(id)) {
+            bindingResult.rejectValue("email", "error.user", "このメールアドレスは既に使用されています");
+            model.addAttribute("roles", Role.values());
+            model.addAttribute("newPassword", newPassword); // Preserve password field
+            return "users/edit";
+        }
+
         try {
             // Set password if provided
             if (newPassword != null && !newPassword.trim().isEmpty()) {

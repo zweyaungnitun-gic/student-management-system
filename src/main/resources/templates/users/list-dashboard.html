@@ -76,7 +76,7 @@
                     </div>
                   </th>
                 </tr>                <tr>
-                  <th scope="col">ユーザーID</th>
+                  <th scope="col">ID</th>
                   <th scope="col">名前</th>
                   <th scope="col">メール</th>
                   <th scope="col">ロール</th>
@@ -93,8 +93,8 @@
                   <td th:text="${user.username}"></td>
                   <td th:text="${user.email}"></td>
                   <td>
-                    <span th:if="${user.role.name() == 'ADMIN'}" class="badge bg-danger">管理者</span>
-                    <span th:if="${user.role.name() == 'GUEST'}" class="badge bg-secondary">ゲスト</span>
+                    <span th:if="${user.role.name() == 'ADMIN'}" class="badge text-black">管理者</span>
+                    <span th:if="${user.role.name() == 'GUEST'}" class="badge text-black">ゲスト</span>
                   </td>
                   <td th:text="${#temporals.format(user.createdAt, 'yyyy-MM-dd HH:mm')}"></td>
                   <td>
