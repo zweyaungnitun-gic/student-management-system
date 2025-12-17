@@ -3,11 +3,11 @@
 <head th:replace="~{layouts/admin-layout :: head(pageTitle=${'生徒情報更新 | Admin Dashboard'})}">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
-  <link rel="stylesheet" href="/css/student-update.css"/>
-
 </head>
 
 <body>
+  <link rel="stylesheet" href="/css/student-update.css"/>
+
   <div class="dashboard-layout">
 
     <!-- Sidebar -->
@@ -27,7 +27,6 @@
               <i class="fas fa-bars fs-4"></i>
             </button>
             <div>
-              <p class="text-uppercase text-muted small fw-semibold mb-1">生徒情報管理システム</p>
               <h1 class="mb-0" style="color: #0A58A0; font-weight: 600; font-size: 1.8rem;">
                 授業情報更新画面
               </h1>
@@ -54,35 +53,35 @@
           <div class="mb-4">
             <ul class="nav nav-tabs border-bottom-0 d-flex justify-content-between" id="studentTab" role="tablist">
               <li class="nav-item flex-fill text-center mx-1">
-                <button class="nav-link active w-100 px-3 py-3 position-relative" id="basic-tab" data-bs-toggle="tab" data-bs-target="#basic" type="button">
+                <button class="nav-link active w-100 px-4 py-3 position-relative" id="basic-tab" data-bs-toggle="tab" data-bs-target="#basic" type="button">
                   <i class="fas fa-id-card d-none d-md-inline me-2"></i>
                   <span class="fw-medium">基本情報</span>
                   <span class="unsaved-badge badge bg-danger position-absolute top-0 end-0 translate-middle" style="display: none;">!</span>
                 </button>
               </li>
               <li class="nav-item flex-fill text-center mx-1">
-                <button class="nav-link w-100 px-3 py-3 position-relative" id="status-tab" data-bs-toggle="tab" data-bs-target="#status" type="button">
+                <button class="nav-link w-100 px-4 py-3 position-relative" id="status-tab" data-bs-toggle="tab" data-bs-target="#status" type="button">
                   <i class="fas fa-tasks d-none d-md-inline me-2"></i>
-                  <span class="fw-medium">ステータス・属性</span>
+                  <span class="fw-medium">ステータス・情報</span>
                   <span class="unsaved-badge badge bg-danger position-absolute top-0 end-0 translate-middle" style="display: none;">!</span>
                 </button>
               </li>
               <li class="nav-item flex-fill text-center mx-1">
-                <button class="nav-link w-100 px-3 py-3 position-relative" id="n5-tab" data-bs-toggle="tab" data-bs-target="#n5" type="button">
+                <button class="nav-link w-100 px-4 py-3 position-relative" id="n5-tab" data-bs-toggle="tab" data-bs-target="#n5" type="button">
                   <i class="fas fa-book-open d-none d-md-inline me-2"></i>
                   <span class="fw-medium">N5クラス</span>
                   <span class="unsaved-badge badge bg-danger position-absolute top-0 end-0 translate-middle" style="display: none;">!</span>
                 </button>
               </li>
               <li class="nav-item flex-fill text-center mx-1">
-                <button class="nav-link w-100 px-3 py-3 position-relative" id="n4-tab" data-bs-toggle="tab" data-bs-target="#n4" type="button">
+                <button class="nav-link w-100 px-4 py-3 position-relative" id="n4-tab" data-bs-toggle="tab" data-bs-target="#n4" type="button">
                   <i class="fas fa-book-reader d-none d-md-inline me-2"></i>
                   <span class="fw-medium">N4クラス</span>
                   <span class="unsaved-badge badge bg-danger position-absolute top-0 end-0 translate-middle" style="display: none;">!</span>
                 </button>
               </li>
               <li class="nav-item flex-fill text-center mx-1">
-                <button class="nav-link w-100 px-3 py-3 position-relative" id="interview-tab" data-bs-toggle="tab" data-bs-target="#interview" type="button">
+                <button class="nav-link w-100 px-4 py-3 position-relative" id="interview-tab" data-bs-toggle="tab" data-bs-target="#interview" type="button">
                   <i class="fas fa-comments d-none d-md-inline me-2"></i>
                   <span class="fw-medium">面談・その他</span>
                   <span class="unsaved-badge badge bg-danger position-absolute top-0 end-0 translate-middle" style="display: none;">!</span>
@@ -90,40 +89,6 @@
               </li>
             </ul>
           </div>
-
-          <style>
-            #studentTab .nav-item.flex-fill .nav-link {
-              border-radius: 10px 10px 0 0;
-              border: 1px solid #dee2e6;
-              margin-bottom: -1px;
-              transition: all 0.3s ease;
-              background-color: #f8f9fa; 
-              color: #6c757d; 
-            }
-
-            #studentTab .nav-item.flex-fill .nav-link:hover:not(.active) {
-              background-color: #e9ecef;
-              color: #495057;
-            }
-
-            #studentTab .nav-item.flex-fill .nav-link.active {
-              background-color: white;
-              border-color: #dee2e6 #dee2e6 white;
-              border-top: 3px solid #0d6efd;
-              border-bottom: 1px solid white;
-              color: #0d6efd; 
-              font-weight: 600;
-              z-index: 2;
-            }
-
-            #studentTab .nav-item.flex-fill .nav-link i {
-              color: #6c757d; 
-            }
-
-            #studentTab .nav-item.flex-fill .nav-link.active i {
-              color: #0d6efd;
-            }
-          </style>       
 
           <div class="tab-content" id="studentTabContent">
             
@@ -378,25 +343,20 @@
                         </div>
                         <div></div>
 
-                        <div class="col-md-3">
+                        <div class="col-md-4">
                           <label class="form-label required-label">学校登録日</label>
                           <input type="date" class="form-control" th:field="*{enrolledDate}"/>
                           <div class="text-danger" th:if="${#fields.hasErrors('enrolledDate')}" th:errors="*{enrolledDate}"></div>
                         </div>
 
-                        <div class="col-md-3">
+                        <div class="col-md-4">
                           <label class="form-label required-label">授業料支払予定日</label>
                           <input type="date" class="form-control" th:field="*{schedulePaymentTutionDate}"/>
                           <div class="text-danger" th:if="${#fields.hasErrors('schedulePaymentTutionDate')}" th:errors="*{schedulePaymentTutionDate}"></div>
                         </div>
 
-                        <div class="col-md-3">
-                          <label class="form-label">学費入金予定日</label>
-                          <input type="date" class="form-control" th:field="*{schedulePaymentTutionDate}" readonly style="background-color: #e9ecef;"/>
-                        </div>
-
-                        <div class="col-md-3">
-                          <label class="form-label required-label">学費入金実績日</label>
+                        <div class="col-md-4">
+                          <label class="form-label">授業料支払実績日</label>
                           <input type="date" class="form-control" th:field="*{actualTutionPaymentDate}"/>
                           <div class="text-danger" th:if="${#fields.hasErrors('actualTutionPaymentDate')}" th:errors="*{actualTutionPaymentDate}"></div>
                         </div>
@@ -425,7 +385,7 @@
               </div>
             </div>
 
-           <!-- Tab 3 -->
+          <!-- Tab 3 -->
           <div class="tab-pane fade" id="n5" role="tabpanel" aria-labelledby="n5-tab">
             <div class="card shadow-sm border-0">
               <div class="card-body">
@@ -445,9 +405,9 @@
 
                       <div class="col-md-4">
                         <label class="form-label">出席率</label>
-                        <input type="text" class="form-control" th:field="*{n5ClassAttendance}" placeholder="例: 95%" />
+                        <input type="text" class="form-control" th:field="*{n5ClassAttendance}" />
                       </div>
-                      
+                      <div></div>
                       <div class="col-md-3">
                         <label class="form-label">日本語テスト結果 1</label>
                         <input type="text" class="form-control" th:field="*{n5ClassTestResult1}" />
@@ -499,7 +459,7 @@
                       </div>
 
                       <div class="col-md-3">
-                        <label class="form-label">テスト結果</label>
+                        <label class="form-label">日本語テスト結果</label>
                         <input type="text" class="form-control" th:field="*{n5Class1TestResult}" />
                         <div class="text-danger" th:if="${#fields.hasErrors('n5Class1TestResult')}" th:errors="*{n5Class1TestResult}"></div>
                       </div>
@@ -536,7 +496,7 @@
                       </div>
 
                       <div class="col-md-3">
-                        <label class="form-label">テスト結果</label>
+                        <label class="form-label">日本語テスト結果</label>
                         <input type="text" class="form-control" th:field="*{n5Class2TestResult}" />
                         <div class="text-danger" th:if="${#fields.hasErrors('n5Class2TestResult')}" th:errors="*{n5Class2TestResult}"></div>
                       </div>
@@ -573,7 +533,7 @@
                       </div>
 
                       <div class="col-md-3">
-                        <label class="form-label">テスト結果</label>
+                        <label class="form-label">日本語テスト結果</label>
                         <input type="text" class="form-control" th:field="*{n5Class3TestResult}" />
                         <div class="text-danger" th:if="${#fields.hasErrors('n5Class3AttendanceRate')}" th:errors="*{n5Class3AttendanceRate}"></div>
                       </div>
@@ -621,9 +581,9 @@
 
                       <div class="col-md-4">
                         <label class="form-label">出席率</label>
-                        <input type="text" class="form-control" th:field="*{n4ClassAttendance}" placeholder="例: 95%" />
+                        <input type="text" class="form-control" th:field="*{n4ClassAttendance}" />
                       </div>
-                      
+                      <div></div>
                       <div class="col-md-3">
                         <label class="form-label">日本語テスト結果 1</label>
                         <input type="text" class="form-control" th:field="*{n4ClassTestResult1}" />
@@ -676,7 +636,7 @@
                       </div>
 
                       <div class="col-md-3">
-                        <label class="form-label">テスト結果</label>
+                        <label class="form-label">日本語テスト結果</label>
                         <input type="text" class="form-control" th:field="*{n4Class1TestResult}" />
                         <div class="text-danger" th:if="${#fields.hasErrors('n4Class1TestResult')}" th:errors="*{n4Class1TestResult}"></div>
                       </div>
@@ -713,7 +673,7 @@
                       </div>
 
                       <div class="col-md-3">
-                        <label class="form-label">テスト結果</label>
+                        <label class="form-label">日本語テスト結果</label>
                         <input type="text" class="form-control" th:field="*{n4Class2TestResult}" />
                         <div class="text-danger" th:if="${#fields.hasErrors('n4Class2TestResult')}" th:errors="*{n4Class2TestResult}"></div>
                       </div>
@@ -750,7 +710,7 @@
                       </div>
 
                       <div class="col-md-3">
-                        <label class="form-label">テスト結果</label>
+                        <label class="form-label">日本語テスト結果</label>
                         <input type="text" class="form-control" th:field="*{n4Class3TestResult}" />
                         <div class="text-danger" th:if="${#fields.hasErrors('n4Class3TestResult')}" th:errors="*{n4Class3TestResult}"></div>
                       </div>
@@ -788,7 +748,7 @@
                   
                   <div class="mb-4">
                     <h5 class="border-bottom pb-2 mb-3">
-                      <i class="fas fa-comments me-2 text-primary"></i>面談記録
+                      <i class="fas fa-comments me-2 text-primary"></i>面談情報明細
                     </h5>
                     
                     <div class="mb-4">
@@ -880,7 +840,7 @@
         <div class="modal-body">
           <h6>変更が保存されていません</h6>
           <p class="mb-3">
-            <span class="tab-name" id="currentTabName">ステータス・属性</span>に
+            <span class="tab-name" id="currentTabName">ステータス・情報</span>に
             <span class="change-count" id="changedCount">1</span>件の変更があります。
           </p>
           
@@ -906,9 +866,6 @@
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
-  
   <script th:src="@{/js/student-update.js}"></script>
-  
-
 </body>
 </html>
