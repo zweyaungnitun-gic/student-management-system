@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="ja" xmlns:th="http://www.thymeleaf.org">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,224 +8,258 @@
     <link rel="icon" type="image/png" href="/images/image.png">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="/css/register-btn-fixed-width.css">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/register-radio-icons.js" defer></script>
+    <script src="/js/register-displayValidationErrors.js" defer></script>
+    <script src="/js/register-second-page.js" defer></script>
 </head>
-<body class="bg-light">
 
+<body class="bg-light">
     <div class="container py-5">
+        <!-- Registration Form -->
         <div class="card p-4 mx-auto rounded-3 shadow-sm" style="max-width: 900px;">
             <div class="card-body">
-                
                 <div class="text-center mb-4">
-                    <div class="d-inline-flex align-items-center justify-content-center bg-white mb-3" 
-                         style="width: 100px; height: 100px; overflow: hidden;">
+                    <div class="d-inline-flex align-items-center justify-content-center bg-white mb-3"
+                        style="width: 100px; height: 100px; overflow: hidden;">
                         <img src="/images/image.png" alt="Logo" class="w-100 h-100" style="object-fit: cover;">
                     </div>
-                    
                     <h2 class="text-primary fw-bold pb-2 border-bottom border-light mb-4">
                         生徒情報登録フォーム
                     </h2>
                 </div>
-
+                <!-- Form Start -->
                 <form novalidate>
                     <div class="row justify-content-center">
                         <div class="col-12 col-lg-10 col-xl-9">
-                            
+                            <!-- Father Name (required) -->
                             <div class="row mb-3">
                                 <label for="fatherName" class="col-md-4 col-form-label fw-bold">
                                     父親名<span class="text-danger ms-1">*</span>
                                 </label>
                                 <div class="col-md-8">
                                     <input type="text" class="form-control" id="fatherName" name="fatherName"
-                                           th:value="${studentData?.fatherName}"
-                                           placeholder="父親の名前を入力してください" required>
+                                        th:value="${studentData?.fatherName}" placeholder="父親の名前を入力してください" required>
                                     <div class="invalid-feedback">父親名は必須です</div>
                                 </div>
                             </div>
-
+                            <!-- Passport Number (optional) -->
                             <div class="row mb-3">
                                 <label for="passportNumber" class="col-md-4 col-form-label fw-bold">
                                     パスポート番号
                                 </label>
                                 <div class="col-md-8">
                                     <input type="text" class="form-control" id="passportNumber" name="passportNumber"
-                                           th:value="${studentData?.passportNumber}"
-                                           placeholder="パスポート番号を入力してください">
+                                        th:value="${studentData?.passportNumber}" placeholder="パスポート番号を入力してください">
                                     <div class="invalid-feedback">パスポート番号の形式が正しくありません</div>
                                 </div>
                             </div>
-
+                            <!-- ID Number (required) -->
                             <div class="row mb-3">
                                 <label for="nationalIdNumber" class="col-md-4 col-form-label fw-bold">
                                     国民 ID 番号<span class="text-danger ms-1">*</span>
                                 </label>
                                 <div class="col-md-8">
-                                    <input type="text" class="form-control" id="nationalIdNumber" name="nationalIdNumber"
-                                           th:value="${studentData?.nationalIdNumber}"
-                                           placeholder="国民ID番号を入力してください" required>
+                                    <input type="text" class="form-control" id="nationalIdNumber"
+                                        name="nationalIdNumber" th:value="${studentData?.nationalIdNumber}"
+                                        placeholder="国民ID番号を入力してください" required>
                                     <div class="invalid-feedback">国民ID番号は必須です</div>
                                 </div>
                             </div>
-
+                            <!-- Current JLPT Level (optional) -->
                             <div class="row mb-3">
                                 <label class="col-md-4 col-form-label fw-bold">
-                                    現在のJLPT合格レベル<span class="text-danger ms-1">*</span>
+                                    現在のJLPT合格レベル
                                 </label>
                                 <div class="col-md-8">
-                                    <div class="btn-group" role="group" aria-label="JLPT selection">
-                                        <input type="radio" class="btn-check" name="jlptLevel" id="jlptNone" value="なし" 
-                                               th:checked="${studentData?.jlptLevel == 'なし'}" required>
-                                        <label class="btn btn-outline-secondary d-flex align-items-center gap-2 me-2 rounded py-1 px-3" for="jlptNone">
+                                    <div class="btn-group" role="group" aria-label="JLPT selection"
+                                        id="jlptLevelBtnGroup">
+                                        <input type="radio" class="btn-check" name="jlptLevel" id="jlptNone" value="なし"
+                                            th:checked="${studentData?.jlptLevel == 'なし'}">
+                                        <label
+                                            class="btn btn-outline-secondary d-flex align-items-center gap-1 me-2 rounded py-1 btn-fixed-width-small"
+                                            for="jlptNone">
                                             <i class="bi bi-circle"></i>
                                             なし
                                         </label>
-
                                         <input type="radio" class="btn-check" name="jlptLevel" id="jlptN5" value="N5"
-                                               th:checked="${studentData?.jlptLevel == 'N5'}">
-                                        <label class="btn btn-outline-secondary d-flex align-items-center gap-2 me-2 rounded py-1 px-3" for="jlptN5">
+                                            th:checked="${studentData?.jlptLevel == 'N5'}">
+                                        <label
+                                            class="btn btn-outline-secondary d-flex align-items-center gap-1 me-2 rounded py-1 px-2 md:px-3 btn-fixed-width-small"
+                                            for="jlptN5">
                                             <i class="bi bi-circle"></i>
                                             N5
                                         </label>
-
                                         <input type="radio" class="btn-check" name="jlptLevel" id="jlptN4" value="N4"
-                                               th:checked="${studentData?.jlptLevel == 'N4'}">
-                                        <label class="btn btn-outline-secondary d-flex align-items-center gap-2 rounded py-1 px-3" for="jlptN4">
+                                            th:checked="${studentData?.jlptLevel == 'N4'}">
+                                        <label
+                                            class="btn btn-outline-secondary d-flex align-items-center gap-1 rounded py-1 px-2 md:px-3 btn-fixed-width-small"
+                                            for="jlptN4">
                                             <i class="bi bi-circle"></i>
                                             N4
                                         </label>
                                     </div>
-                                    <div class="invalid-feedback" id="jlptLevelError" style="display:none;">JLPTレベルを選択してください</div>
+                                    <div class="invalid-feedback" id="jlptLevelError" style="display:none;">
+                                        JLPTレベルを選択してください</div>
                                 </div>
                             </div>
-
+                            <!-- Desired Occupation (optional) -->
                             <div class="row mb-3">
                                 <label class="col-md-4 col-form-label fw-bold">
-                                    希望職種<span class="text-danger ms-1">*</span>
+                                    希望職種
                                 </label>
                                 <div class="col-md-8">
-                                    <div role="group" aria-label="Desired occupation selection" class="d-flex flex-column">
+                                    <div role="group" aria-label="Desired occupation selection"
+                                        id="desiredOccupationBtnGroup" class="d-flex flex-column">
                                         <!-- first row: 3 options -->
                                         <div class="d-flex gap-2 mb-2">
                                             <div>
-                                                <input type="radio" class="btn-check" name="desiredOccupation" id="occCare" value="介護"
-                                                       th:checked="${studentData?.desiredOccupation == '介護'}" required>
-                                                <label class="btn btn-outline-secondary d-flex align-items-center gap-2 rounded py-1 px-2 md:px-3" for="occCare">
+                                                <input type="radio" class="btn-check" name="desiredOccupation"
+                                                    id="occCare" value="介護"
+                                                    th:checked="${studentData?.desiredOccupation == '介護'}">
+                                                <label
+                                                    class="btn btn-outline-secondary d-flex align-items-center gap-1 rounded py-1  px-2 md:px-3 btn-fixed-width-small"
+                                                     for="occCare">
                                                     <i class="bi bi-circle"></i>
                                                     介護
                                                 </label>
                                             </div>
-
                                             <div>
-                                                <input type="radio" class="btn-check" name="desiredOccupation" id="occGaiShoku" value="外食"
-                                                       th:checked="${studentData?.desiredOccupation == '外食'}">
-                                                <label class="btn btn-outline-secondary d-flex align-items-center gap-2 rounded py-1 px-2 md:px-3" for="occGaiShoku">
+                                                <input type="radio" class="btn-check" name="desiredOccupation"
+                                                    id="occGaiShoku" value="外食"
+                                                    th:checked="${studentData?.desiredOccupation == '外食'}">
+                                                <label
+                                                    class="btn btn-outline-secondary d-flex align-items-center gap-1 rounded py-1 px-2 md:px-3 btn-fixed-width-small"
+                                                    for="occGaiShoku">
                                                     <i class="bi bi-circle"></i>
                                                     外食
                                                 </label>
                                             </div>
-
                                             <div>
-                                                <input type="radio" class="btn-check" name="desiredOccupation" id="occHotel" value="宿泊"
-                                                       th:checked="${studentData?.desiredOccupation == '宿泊'}">
-                                                <label class="btn btn-outline-secondary d-flex align-items-center gap-2 rounded py-1 px-2 md:px-3" for="occHotel">
+                                                <input type="radio" class="btn-check" name="desiredOccupation"
+                                                    id="occHotel" value="宿泊"
+                                                    th:checked="${studentData?.desiredOccupation == '宿泊'}">
+                                                <label
+                                                    class="btn btn-outline-secondary d-flex align-items-center gap-1 rounded py-1 px-2 md:px-3 btn-fixed-width-small"
+                                                    for="occHotel">
                                                     <i class="bi bi-circle"></i>
                                                     宿泊
                                                 </label>
                                             </div>
                                         </div>
-
                                         <!-- second row: 2 options -->
                                         <div class="d-flex gap-2">
                                             <div>
-                                                <input type="radio" class="btn-check" name="desiredOccupation" id="occNone" value="わからない"
-                                                       th:checked="${studentData?.desiredOccupation == 'わからない'}">
-                                                <label class="btn btn-outline-secondary d-flex align-items-center gap-2 rounded py-1 px-2 md:px-3" for="occNone">
+                                                <input type="radio" class="btn-check" name="desiredOccupation"
+                                                    id="occNone" value="わからない"
+                                                    th:checked="${studentData?.desiredOccupation == 'わからない'}">
+                                                <label
+                                                    class="btn btn-outline-secondary d-flex align-items-center gap-1 rounded py-1 px-2 md:px-3 btn-fixed-width-small"
+                                                    for="occNone">
                                                     <i class="bi bi-circle"></i>
                                                     わからない
                                                 </label>
                                             </div>
-
                                             <div>
-                                                <input type="radio" class="btn-check" name="desiredOccupation" id="occOther" value="その他"
-                                                       th:checked="${studentData?.desiredOccupation == 'その他'}">
-                                                <label class="btn btn-outline-secondary d-flex align-items-center gap-2 rounded py-1 px-2 md:px-3" for="occOther">
+                                                <input type="radio" class="btn-check" name="desiredOccupation"
+                                                    id="occOther" value="その他"
+                                                    th:checked="${studentData?.desiredOccupation == 'その他'}">
+                                                <label
+                                                    class="btn btn-outline-secondary d-flex align-items-center gap-1 rounded py-1 px-2 md:px-3 btn-fixed-width-small"
+                                                    for="occOther">
                                                     <i class="bi bi-circle"></i>
                                                     その他
                                                 </label>
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="invalid-feedback" id="desiredOccupationError" style="display:none;">希望職種を選択してください</div>
+                                    <div class="invalid-feedback" id="desiredOccupationError" style="display:none;">
+                                        希望職種を選択してください</div>
                                 </div>
                             </div>
-
+                            <!-- Other Occupation (optional) -->
                             <div class="row mb-3">
                                 <label for="otherOccupation" class="col-md-4 col-form-label fw-bold">
                                     その他職種
                                 </label>
                                 <div class="col-md-8">
                                     <textarea class="form-control" id="otherOccupation" name="otherOccupation" rows="3"
-                                              placeholder="その他の職種があれば入力してください" th:text="${studentData?.otherOccupation}"></textarea>
+                                        placeholder="その他の職種があれば入力してください"
+                                        th:text="${studentData?.otherOccupation}"></textarea>
                                     <div class="invalid-feedback">その他職種は200文字以内で入力してください</div>
                                 </div>
                             </div>
-
+                            <!-- Japan Travel Experience (optional) -->
                             <div class="row mb-3">
                                 <label class="col-md-4 col-form-label fw-bold">
-                                    日本渡航経験<span class="text-danger ms-1">*</span>
+                                    日本渡航経験
                                 </label>
                                 <div class="col-md-8">
-                                    <div class="btn-group" role="group" aria-label="Japan travel experience">
-                                        <input type="radio" class="btn-check" name="japanTravelExperience" id="travelYes" value="ある" 
-                                               th:checked="${studentData?.japanTravelExperience == 'ある'}" required>
-                                        <label class="btn btn-outline-secondary d-flex align-items-center gap-2 me-2 rounded py-1 px-3" for="travelYes">
+                                    <div class="btn-group" role="group" aria-label="Japan travel experience"
+                                        id="japanTravelExperienceBtnGroup">
+                                        <input type="radio" class="btn-check" name="japanTravelExperience"
+                                            id="travelYes" value="ある"
+                                            th:checked="${studentData?.japanTravelExperience == 'ある'}">
+                                        <label
+                                            class="btn btn-outline-secondary d-flex align-items-center gap-1 me-2 rounded py-1 btn-fixed-width-small"
+                                            for="travelYes">
                                             <i class="bi bi-circle"></i>
                                             ある
                                         </label>
-
-                                        <input type="radio" class="btn-check" name="japanTravelExperience" id="travelNo" value="ない"
-                                               th:checked="${studentData?.japanTravelExperience == 'ない'}">
-                                        <label class="btn btn-outline-secondary d-flex align-items-center gap-2 rounded py-1 px-3" for="travelNo">
+                                        <input type="radio" class="btn-check" name="japanTravelExperience" id="travelNo"
+                                            value="ない" th:checked="${studentData?.japanTravelExperience == 'ない'}">
+                                        <label
+                                            class="btn btn-outline-secondary d-flex align-items-center gap-1 rounded py-1  btn-fixed-width-small"
+                                            for="travelNo">
                                             <i class="bi bi-circle"></i>
                                             ない
                                         </label>
                                     </div>
-                                    <div class="invalid-feedback" id="japanTravelExperienceError" style="display:none;">日本渡航経験を選択してください</div>
+                                    <div class="invalid-feedback" id="japanTravelExperienceError" style="display:none;">
+                                        日本渡航経験を選択してください</div>
                                 </div>
                             </div>
-
+                            <!-- COE Application Experience (optional) -->
                             <div class="row mb-4">
                                 <label class="col-md-4 col-form-label fw-bold">
-                                    COE申請経験<span class="text-danger ms-1">*</span>
+                                    COE申請経験
                                 </label>
                                 <div class="col-md-8">
-                                    <div class="btn-group" role="group" aria-label="COE application experience">
-                                        <input type="radio" class="btn-check" name="coeApplicationExperience" id="coeYes" value="ある" 
-                                               th:checked="${studentData?.coeApplicationExperience == 'ある'}" required>
-                                        <label class="btn btn-outline-secondary d-flex align-items-center gap-2 me-2 rounded py-1 px-3" for="coeYes">
+                                    <div class="btn-group" role="group" aria-label="COE application experience"
+                                        id="coeApplicationExperienceBtnGroup">
+                                        <input type="radio" class="btn-check" name="coeApplicationExperience"
+                                            id="coeYes" value="ある"
+                                            th:checked="${studentData?.coeApplicationExperience == 'ある'}">
+                                        <label
+                                            class="btn btn-outline-secondary d-flex align-items-center gap-1 me-2 rounded py-1 btn-fixed-width-small"
+                                            for="coeYes">
                                             <i class="bi bi-circle"></i>
                                             ある
                                         </label>
-
-                                        <input type="radio" class="btn-check" name="coeApplicationExperience" id="coeNo" value="ない"
-                                               th:checked="${studentData?.coeApplicationExperience == 'ない'}">
-                                        <label class="btn btn-outline-secondary d-flex align-items-center gap-2 rounded py-1 px-3" for="coeNo">
+                                        <input type="radio" class="btn-check" name="coeApplicationExperience" id="coeNo"
+                                            value="ない" th:checked="${studentData?.coeApplicationExperience == 'ない'}">
+                                        <label
+                                            class="btn btn-outline-secondary d-flex align-items-center gap-1 rounded py-1 btn-fixed-width-small"
+                                            for="coeNo">
                                             <i class="bi bi-circle"></i>
                                             ない
                                         </label>
                                     </div>
-                                    <div class="invalid-feedback" id="coeApplicationExperienceError" style="display:none;">COE申請経験を選択してください</div>
+                                    <div class="invalid-feedback" id="coeApplicationExperienceError"
+                                        style="display:none;">COE申請経験を選択してください</div>
                                 </div>
                             </div>
-
                         </div>
                     </div>
-
+                    <!-- Submit Button -->
                     <div class="text-center pt-3 d-flex justify-content-center gap-3">
-                        <button type="button" class="btn btn-secondary btn-lg rounded py-1 px-3" id="backButton">戻る</button>
+                        <button type="button" class="btn btn-secondary btn-lg rounded py-1 px-3"
+                            id="backButton">戻る</button>
                         <button type="submit" class="btn btn-primary btn-lg rounded py-1 px-3">次へ</button>
                     </div>
                 </form>
-
+                <!-- Footer Section-->
                 <div class="text-center mt-5 pt-3 border-top border-light">
                     <small class="text-muted">
                         &copy; 2025 Global Innovation Consulting.Inc, All Rights Reserved.
@@ -233,111 +268,6 @@
             </div>
         </div>
     </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="/js/register-radio-icons.js"></script>
-    <script src="/js/register-displayValidationErrors.js"></script>
-    <script>
-        // Define required fields for this page
-        const requiredFields = [
-            { id: 'fatherName', message: '父親名は必須です', type: 'text' },
-            { id: 'nationalIdNumber', message: '国民ID番号は必須です', type: 'text' },
-            { name: 'jlptLevel', message: 'JLPTレベルを選択してください', type: 'radio' },
-            { name: 'desiredOccupation', message: '希望職種を選択してください', type: 'radio' },
-            { name: 'japanTravelExperience', message: '日本渡航経験を選択してください', type: 'radio' },
-            { name: 'coeApplicationExperience', message: 'COE申請経験を選択してください', type: 'radio' }
-        ];
-
-        // Setup error clearing listeners
-        setupErrorClearListeners(
-            ['fatherName', 'passportNumber', 'nationalIdNumber', 'otherOccupation'],
-            ['jlptLevel', 'desiredOccupation', 'japanTravelExperience', 'coeApplicationExperience']
-        );
-
-        // Function to collect current form data
-        function collectFormData() {
-            return {
-                fatherName: document.getElementById('fatherName').value.trim(),
-                passportNumber: document.getElementById('passportNumber').value.trim(),
-                nationalIdNumber: document.getElementById('nationalIdNumber').value.trim(),
-                jlptLevel: document.querySelector('input[name="jlptLevel"]:checked')?.value || '',
-                desiredOccupation: document.querySelector('input[name="desiredOccupation"]:checked')?.value || '',
-                otherOccupation: document.getElementById('otherOccupation').value.trim(),
-                japanTravelExperience: document.querySelector('input[name="japanTravelExperience"]:checked')?.value || '',
-                coeApplicationExperience: document.querySelector('input[name="coeApplicationExperience"]:checked')?.value || ''
-            };
-        }
-
-        // Back button - Save data to Redis before going back
-        document.getElementById('backButton').addEventListener('click', function() {
-            const formData = collectFormData();
-            
-            // Save to Redis session
-            fetch('/register/save-step2', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json'
-                },
-                body: JSON.stringify(formData)
-            })
-            .then(response => response.json())
-            .then(data => {
-                // Navigate back after saving (even if validation fails, allow going back)
-                window.location.href = '/register';
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                window.location.href = '/register';
-            });
-        });
-
-        // Form submit - Validate and save data
-        document.querySelector('form').addEventListener('submit', function(event) {
-            event.preventDefault();
-            
-            clearAllErrors();
-            
-            // Client-side validation
-            const clientErrors = validateRequiredFields(requiredFields);
-            if (Object.keys(clientErrors).length > 0) {
-                displayValidationErrors(clientErrors);
-                return;
-            }
-
-            const formData = collectFormData();
-
-            fetch('/register/save-step2', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json'
-                },
-                body: JSON.stringify(formData)
-            })
-            .then(async response => {
-                let data = null;
-                try { data = await response.json(); } catch (e) { /* ignore */ }
-
-                if (response.ok && data && data.status === 'success') {
-                    window.location.href = '/register/third-page';
-                    return;
-                }
-
-                if (response.status === 400 && data && data.errors) {
-                    // Show server-side validation errors in UI
-                    displayValidationErrors(data.errors);
-                    return;
-                }
-
-                console.error('Server error:', response.status, data);
-                alert('保存中に問題が発生しました。');
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('データの保存に失敗しました');
-            });
-        });
-    </script>
 </body>
+
 </html>

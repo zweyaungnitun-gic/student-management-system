@@ -23,7 +23,7 @@ public class StudentRegistrationDTO implements Serializable {
     private String dob;
     
     @NotBlank(message = "性別は必須です", groups = FirstPageValidation.class)
-    @Pattern(regexp = "^(Male|Female)$", message = "性別を選択してください", groups = FirstPageValidation.class)
+    @Pattern(regexp = "^(男性|女性)$", message = "性別を選択してください", groups = FirstPageValidation.class)
     private String gender;
     
     @NotBlank(message = "現在所は必須です", groups = FirstPageValidation.class)
@@ -48,49 +48,44 @@ public class StudentRegistrationDTO implements Serializable {
     @Pattern(regexp = "^[a-zA-Z\\s]+$", message = "父親名は英字とスペースのみ入力してください", groups = SecondPageValidation.class)
     private String fatherName;
 
-    @Size(max = 9, message = "パスポート番号は9文字以内で入力してください", groups = SecondPageValidation.class)
+    @Size(max = 8, message = "パスポート番号は8文字以内で入力してください", groups = SecondPageValidation.class)
+    @Pattern(regexp = "^$|^[A-Z]{1,2}[0-9]{6}$", 
+             message = "パスポート番号の形式が正しくありません（例：MA123456, M123456）", 
+             groups = SecondPageValidation.class)
     private String passportNumber;
 
     @NotBlank(message = "国民ID番号は必須です", groups = SecondPageValidation.class)
     @Pattern(regexp = "^\\d{1,2}/[A-Za-z]{3,9}\\([A-Z]\\)\\d{6}$", message = "国民ID番号の形式が正しくありません（例：12/ThaPhaYa(N)111111）", groups = SecondPageValidation.class)
     private String nationalIdNumber;
 
-    @NotBlank(message = "JLPTレベルは必須です", groups = SecondPageValidation.class)
     private String jlptLevel;
 
-    @NotBlank(message = "希望職種は必須です", groups = SecondPageValidation.class)
     private String desiredOccupation;
 
     @Size(max = 20, message = "その他職種は20文字以内で入力してください", groups = SecondPageValidation.class)
     private String otherOccupation;
 
-    @NotBlank(message = "日本渡航経験を選択してください", groups = SecondPageValidation.class)
     private String japanTravelExperience;
 
-    @NotBlank(message = "COE申請経験を選択してください", groups = SecondPageValidation.class)
     private String coeApplicationExperience;
 
     // Additional fields (third page with validation)
-    @NotBlank(message = "宗教を選択してください", groups = ThirdPageValidation.class)
     private String religion;
     
     @Size(max = 20, message = "その他宗教は20文字以内で入力してください", groups = ThirdPageValidation.class)
     private String otherReligion;
     
-    @NotBlank(message = "タバコを選択してください", groups = ThirdPageValidation.class)
     private String smoking;
     
-    @NotBlank(message = "お酒を選択してください", groups = ThirdPageValidation.class)
     private String alcohol;
     
-    @NotBlank(message = "入れ墨を選択してください", groups = ThirdPageValidation.class)
     private String tattoo;
     
-    @NotBlank(message = "授業料支払予定日は必須です", groups = ThirdPageValidation.class)
-    @Pattern(regexp = "^\\d{4}-\\d{2}-\\d{2}$", message = "正しい日付形式で入力してください", groups = ThirdPageValidation.class)
+    @Pattern(regexp = "^$|^\\d{4}-\\d{2}-\\d{2}$",
+             message = "正しい日付形式で入力してください",
+             groups = ThirdPageValidation.class)
     private String tuitionPaymentDate;
     
-    @NotBlank(message = "寮を選択してください", groups = ThirdPageValidation.class)
     private String wantDorm;
     
     private String otherMemo;

@@ -1,6 +1,3 @@
-// radio-icons.js
-// Toggles Bootstrap icon class inside label[for="..."] when radios change.
-// Safe: only updates when a label + icon exists for the radio.
 document.addEventListener('DOMContentLoaded', function () {
   const radios = document.querySelectorAll('input[type="radio"]');
 

@@ -62,7 +62,10 @@ public class RegisterStudentServiceImpl implements RegisterStudentService {
                 .isSmoking(convertToBoolean(dto.getSmoking()))
                 .isAlcoholDrink(convertToBoolean(dto.getAlcohol()))
                 .haveTattoo(convertToBoolean(dto.getTattoo()))
-                .schedulePaymentTuitionDate(LocalDate.parse(dto.getTuitionPaymentDate(), DATE_FORMATTER))
+                .schedulePaymentTuitionDate(
+                        dto.getTuitionPaymentDate() != null && !dto.getTuitionPaymentDate().isEmpty()
+                                ? LocalDate.parse(dto.getTuitionPaymentDate(), DATE_FORMATTER)
+                                : null)
                 .hostelPreference(dto.getWantDorm())
                 .memoNotes(dto.getOtherMemo())
                 .status("在校") // Default status: enrolled
@@ -78,20 +81,20 @@ public class RegisterStudentServiceImpl implements RegisterStudentService {
     public String generateStudentId() {
         // Format: STUXXX (e.g., STU001, STU002)
         String prefix = "STU";
-        
+
         // Get the total count of students + 1
         long count = registerStudentRepository.count() + 1;
         String sequence = String.format("%03d", count);
-        
+
         String newStudentId = prefix + sequence;
-        
-        // Check if exists, increment if needed
+
+        // if deleted IDs exist, not reuse them, always increment
         while (registerStudentRepository.existsByStudentId(newStudentId)) {
             count++;
             sequence = String.format("%03d", count);
             newStudentId = prefix + sequence;
         }
-        
+
         return newStudentId;
     }
 
@@ -100,7 +103,7 @@ public class RegisterStudentServiceImpl implements RegisterStudentService {
             return false;
         }
         // Map Japanese values to boolean
-        return value.equals("吸う") || value.equals("飲む") || value.equals("ある") || 
-               value.equalsIgnoreCase("yes") || value.equalsIgnoreCase("はい");
+        return value.equals("吸う") || value.equals("飲む") || value.equals("ある") ||
+                value.equalsIgnoreCase("yes") || value.equalsIgnoreCase("はい");
     }
 }

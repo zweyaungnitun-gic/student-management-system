@@ -6,7 +6,7 @@ function displayValidationErrors(errors) {
     for (const [fieldName, errorMessage] of Object.entries(errors)) {
         // first try element by id
         const inputElement = document.getElementById(fieldName);
-        
+
         if (inputElement) {
             inputElement.classList.add('is-invalid');
             // find existing feedback
@@ -26,6 +26,29 @@ function displayValidationErrors(errors) {
         // if no element by id, look for a radio/checkbox group (by name)
         const group = document.querySelector(`[name="${fieldName}"]`);
         if (group) {
+            // Special handling for radio button groups - only red border
+            const radioFieldMap = {
+                'gender': 'genderBtnGroup',
+                'jlptLevel': 'jlptLevelBtnGroup',
+                'japanTravelExperience': 'japanTravelExperienceBtnGroup',
+                'coeApplicationExperience': 'coeApplicationExperienceBtnGroup',
+                'smoking': 'smokingBtnGroup',
+                'alcohol': 'alcoholBtnGroup',
+                'tattoo': 'tattooBtnGroup',
+                'wantDorm': 'wantDormBtnGroup',
+                'desiredOccupation': 'desiredOccupationBtnGroup',
+                'religion': 'religionBtnGroup'
+            };
+
+            if (radioFieldMap[fieldName]) {
+                const btnGroup = document.getElementById(radioFieldMap[fieldName]);
+                if (btnGroup) {
+                    btnGroup.querySelectorAll('.btn').forEach(btn => {
+                        btn.classList.add('border-danger');
+                    });
+                }
+            }
+
             // find a container to attach feedback (closest parent .col-*-*)
             const first = document.querySelector(`[name="${fieldName}"]`);
             let container = first && first.closest('.col-md-8');
@@ -63,6 +86,21 @@ function displayValidationErrors(errors) {
 function clearAllErrors() {
     document.querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'));
     document.querySelectorAll('.invalid-feedback').forEach(f => f.style.display = 'none');
+    // Clear all radio button group errors - remove red border
+    const btnGroupIds = [
+        'genderBtnGroup', 'jlptLevelBtnGroup', 'japanTravelExperienceBtnGroup',
+        'coeApplicationExperienceBtnGroup', 'smokingBtnGroup', 'alcoholBtnGroup',
+        'tattooBtnGroup', 'wantDormBtnGroup', 'desiredOccupationBtnGroup', 'religionBtnGroup'
+    ];
+
+    btnGroupIds.forEach(id => {
+        const btnGroup = document.getElementById(id);
+        if (btnGroup) {
+            btnGroup.querySelectorAll('.btn').forEach(btn => {
+                btn.classList.remove('border-danger');
+            });
+        }
+    });
 }
 
 /**
@@ -115,6 +153,29 @@ function setupErrorClearListeners(textFieldIds, radioGroupNames) {
             r.addEventListener('change', () => {
                 const fb = document.getElementById(name + 'Error');
                 if (fb) fb.style.display = 'none';
+
+                // Clear radio button group error - remove red border only
+                const radioFieldMap = {
+                    'gender': 'genderBtnGroup',
+                    'jlptLevel': 'jlptLevelBtnGroup',
+                    'japanTravelExperience': 'japanTravelExperienceBtnGroup',
+                    'coeApplicationExperience': 'coeApplicationExperienceBtnGroup',
+                    'smoking': 'smokingBtnGroup',
+                    'alcohol': 'alcoholBtnGroup',
+                    'tattoo': 'tattooBtnGroup',
+                    'wantDorm': 'wantDormBtnGroup',
+                    'desiredOccupation': 'desiredOccupationBtnGroup',
+                    'religion': 'religionBtnGroup'
+                };
+
+                if (radioFieldMap[name]) {
+                    const btnGroup = document.getElementById(radioFieldMap[name]);
+                    if (btnGroup) {
+                        btnGroup.querySelectorAll('.btn').forEach(btn => {
+                            btn.classList.remove('border-danger');
+                        });
+                    }
+                }
             });
         });
     });
