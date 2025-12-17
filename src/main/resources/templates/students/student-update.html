@@ -121,7 +121,7 @@
 
                         <div class="col-md-6">
                           <label class="form-label required-label">生年月日</label>
-                          <input type="date" class="form-control" th:field="*{dateOfBirth}" />
+                          <input type="date" class="form-control" name="dateOfBirth" th:value="${student.dateOfBirth}" />
                           <div class="text-danger" th:if="${#fields.hasErrors('dateOfBirth')}" th:errors="*{dateOfBirth}"></div>
                         </div>
 
@@ -261,7 +261,11 @@
 
                         <div class="col-md-6">
                           <label class="form-label required-label">生徒の授業ステータス</label>
-                          <input type="text" class="form-control" th:field="*{attendingClassRelatedStatus}" placeholder="在校・卒業・途中退校"/>
+                          <select class="form-select" th:field="*{attendingClassRelatedStatus}">
+                            <option value="在校">在校</option>
+                            <option value="卒業">卒業</option>
+                            <option value="途中退校">途中退校</option>
+                          </select>
                           <div class="text-danger" th:if="${#fields.hasErrors('attendingClassRelatedStatus')}" th:errors="*{attendingClassRelatedStatus}"></div>
                         </div>
 
@@ -340,19 +344,19 @@
 
                         <div class="col-md-4">
                           <label class="form-label required-label">学校登録日</label>
-                          <input type="date" class="form-control" th:field="*{enrolledDate}"/>
+                          <input type="date" class="form-control" name="enrolledDate" th:value="${student.enrolledDate}"/>
                           <div class="text-danger" th:if="${#fields.hasErrors('enrolledDate')}" th:errors="*{enrolledDate}"></div>
                         </div>
 
                         <div class="col-md-4">
                           <label class="form-label required-label">授業料支払予定日</label>
-                          <input type="date" class="form-control" th:field="*{schedulePaymentTutionDate}"/>
+                          <input type="date" class="form-control" name="schedulePaymentTutionDate" th:value="${student.schedulePaymentTutionDate}"/>
                           <div class="text-danger" th:if="${#fields.hasErrors('schedulePaymentTutionDate')}" th:errors="*{schedulePaymentTutionDate}"></div>
                         </div>
 
                         <div class="col-md-4">
                           <label class="form-label">授業料支払実績日</label>
-                          <input type="date" class="form-control" th:field="*{actualTutionPaymentDate}"/>
+                          <input type="date" class="form-control" name="actualTutionPaymentDate" th:value="${student.actualTutionPaymentDate}"/>
                           <div class="text-danger" th:if="${#fields.hasErrors('actualTutionPaymentDate')}" th:errors="*{actualTutionPaymentDate}"></div>
                         </div>
                         <div></div>
