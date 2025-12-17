@@ -21,7 +21,7 @@ public class N5ClassServiceImpl implements N5ClassService {
 
     // --- Converter Methods ---
 
-    private N5ClassDTO convertToDTO(N5Class entity) {
+    public N5ClassDTO convertToDTO(N5Class entity) {
         if (entity == null) {
             return N5ClassDTO.builder().build();
         }
@@ -78,11 +78,12 @@ public class N5ClassServiceImpl implements N5ClassService {
     @Transactional(readOnly = true)
     public N5ClassDTO getOrCreateN5ClassDTO(Long studentId) {
         Optional<N5Class> n5ClassOpt = n5ClassRepository.findByStudentId(studentId);
-        
+
         if (n5ClassOpt.isPresent()) {
             return convertToDTO(n5ClassOpt.get());
         } else {
-            // Return an empty DTO with the studentId set, so the form knows who it belongs to
+            // Return an empty DTO with the studentId set, so the form knows who it belongs
+            // to
             return N5ClassDTO.builder()
                     .studentId(studentId)
                     .build();
@@ -102,7 +103,7 @@ public class N5ClassServiceImpl implements N5ClassService {
         updateEntityFromDTO(n5Class, n5ClassDTO);
 
         // Ensure relationship is set (crucial for new entities)
-        n5Class.setStudent(student); 
+        n5Class.setStudent(student);
 
         n5ClassRepository.save(n5Class);
     }

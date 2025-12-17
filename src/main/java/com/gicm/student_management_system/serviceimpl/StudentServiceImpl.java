@@ -17,7 +17,7 @@ public class StudentServiceImpl implements StudentService {
 
     private final StudentRepository studentRepository;
 
-    private StudentDTO convertToDTO(Student student) {
+    public StudentDTO convertToDTO(Student student) {
         return StudentDTO.builder()
                 .id(student.getId())
                 .studentId(student.getStudentId())
