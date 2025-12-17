@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.jsontype.BasicPolymorphicTypeValidator;
 import com.fasterxml.jackson.databind.jsontype.PolymorphicTypeValidator;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
@@ -15,6 +16,7 @@ import org.springframework.session.web.http.CookieHttpSessionIdResolver;
 import org.springframework.session.web.http.HttpSessionIdResolver;
 
 @Configuration
+@ConditionalOnProperty(name = "spring.session.store-type", havingValue = "redis", matchIfMissing = true)
 @EnableRedisHttpSession(maxInactiveIntervalInSeconds = 1800)
 public class SessionConfig {
 

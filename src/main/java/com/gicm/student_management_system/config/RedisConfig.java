@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.jsontype.BasicPolymorphicTypeValidator;
 import com.fasterxml.jackson.databind.jsontype.PolymorphicTypeValidator;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
@@ -15,8 +16,10 @@ import org.springframework.session.data.redis.config.annotation.web.http.EnableR
 /**
  * Redis Configuration for session management and caching
  * Configures Redis to store HTTP sessions with proper serialization
+ * Disabled in test profile
  */
 @Configuration
+@ConditionalOnProperty(name = "spring.session.store-type", havingValue = "redis", matchIfMissing = true)
 @EnableRedisHttpSession(maxInactiveIntervalInSeconds = 1800) // 30 minutes
 public class RedisConfig {
 
