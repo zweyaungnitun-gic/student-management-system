@@ -29,7 +29,6 @@ class StudentServiceImplTest {
     private StudentServiceImpl studentService;
 
     private Student testStudent;
-    private StudentDTO testStudentDTO;
     private Long studentId = 1L;
 
     @BeforeEach
@@ -58,7 +57,7 @@ class StudentServiceImplTest {
         testStudent.setUpdatedAt(LocalDate.now());
         testStudent.setContactViber("john_viber");
 
-        testStudentDTO = StudentDTO.builder()
+        StudentDTO.builder()
                 .id(studentId)
                 .studentId("STU001")
                 .studentName("John Doe")

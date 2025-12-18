@@ -143,15 +143,22 @@
 
                         <div class="col-md-6">
                           <label class="form-label required-label">連絡先(TEL, Viber)</label>
-                          <input type="text" class="form-control" th:field="*{contactViber}" oninput="this.value = this.value.replace(/[^0-9]/g, '')"
-                                 placeholder="数字のみ入力してください"/>
+                          <input type="text" class="form-control" th:field="*{contactViber}" 
+                                oninput="this.value = this.value.replace(/[^0-9]/g, '')"
+                                maxlength="11"
+                                placeholder="09から始まる11桁の数字"
+                                onblur="validatePhoneNumber(this, '連絡先(TEL, Viber)')"/>
                           <div class="text-danger" th:if="${#fields.hasErrors('contactViber')}" th:errors="*{contactViber}"></div>
+                          <div class="invalid-feedback" style="display: none;">09から始まる11桁の数字を入力してください</div>
                         </div>
 
                         <div class="col-md-6">
                           <label class="form-label required-label">国民 ID 番号</label>
-                          <input type="text" class="form-control" th:field="*{nationalID}" />
+                          <input type="text" class="form-control" th:field="*{nationalID}" 
+                                placeholder="例: 12/KaMaYa(N)54243"
+                                onblur="validateNationalID(this)"/>
                           <div class="text-danger" th:if="${#fields.hasErrors('nationalID')}" th:errors="*{nationalID}"></div>
+                          <div class="invalid-feedback" style="display: none;">形式: XX/XXXXX(X)XXXXXX (例: 12/KaMaYa(N)54243)。/ の前は1-14、( ) の後は6桁の数字</div>
                         </div>
 
                         <div class="col-md-6">
@@ -163,17 +170,23 @@
                         <div class="col-md-6">
                           <label class="form-label required-label">電話番号</label>
                           <input type="tel" class="form-control" th:field="*{phoneNumber}" 
-                                 oninput="this.value = this.value.replace(/[^0-9]/g, '')"
-                                 placeholder="数字のみ入力してください" />
+                                oninput="this.value = this.value.replace(/[^0-9]/g, '')"
+                                maxlength="11"
+                                placeholder="09から始まる11桁の数字"
+                                onblur="validatePhoneNumber(this, '電話番号')" />
                           <div class="text-danger" th:if="${#fields.hasErrors('phoneNumber')}" th:errors="*{phoneNumber}"></div>
+                          <div class="invalid-feedback" style="display: none;">09から始まる11桁の数字を入力してください</div>
                         </div>
 
                         <div class="col-md-6">
                           <label class="form-label required-label">保護者電話番号</label>
                           <input type="tel" class="form-control" th:field="*{secondaryPhone}" 
-                                 oninput="this.value = this.value.replace(/[^0-9]/g, '')"
-                                 placeholder="数字のみ入力してください" />
+                                oninput="this.value = this.value.replace(/[^0-9]/g, '')"
+                                maxlength="11"
+                                placeholder="09から始まる11桁の数字"
+                                onblur="validatePhoneNumber(this, '保護者電話番号')" />
                           <div class="text-danger" th:if="${#fields.hasErrors('secondaryPhone')}" th:errors="*{secondaryPhone}"></div>
+                          <div class="invalid-feedback" style="display: none;">09から始まる11桁の数字を入力してください</div>
                         </div>
 
                         <div class="col-12">
