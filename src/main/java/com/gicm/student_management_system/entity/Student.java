@@ -9,7 +9,8 @@ import java.time.LocalDate;
 @Table(name = "students", 
     uniqueConstraints = {
         @UniqueConstraint(columnNames = "student_id"),
-        @UniqueConstraint(columnNames = "national_id")
+        @UniqueConstraint(columnNames = "national_id"),
+        @UniqueConstraint(columnNames = "passport_number")
     })
 @Getter
 @Setter

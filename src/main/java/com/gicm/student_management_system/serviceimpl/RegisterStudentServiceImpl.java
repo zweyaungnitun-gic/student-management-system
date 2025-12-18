@@ -98,6 +98,7 @@ public class RegisterStudentServiceImpl implements RegisterStudentService {
         return newStudentId;
     }
 
+    // to convert Japanese "Yes"/"No" to Boolean
     private Boolean convertToBoolean(String value) {
         if (value == null || value.isEmpty()) {
             return false;
