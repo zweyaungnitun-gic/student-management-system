@@ -1,10 +1,10 @@
 package com.gicm.student_management_system.service;
 
-import com.gicm.student_management_system.dto.StudentDTO;
-import com.gicm.student_management_system.entity.Student;
-
 import java.util.List;
 import java.util.Optional;
+
+import com.gicm.student_management_system.dto.StudentDTO;
+import com.gicm.student_management_system.entity.Student;
 
 public interface StudentService {
 

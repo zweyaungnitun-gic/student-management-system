@@ -1,0 +1,468 @@
+body {
+  background-color: #f5f7fb;
+  padding: 0;
+  margin: 0;
+  min-height: 100vh;
+  width: 100vw;
+}
+
+.table tbody td a.action-icon {
+  display: inline-flex;
+  align-items: center;
+  margin-right: 8px;
+  white-space: nowrap;
+}
+
+.student-management {
+  padding: 0;
+}
+
+.table-responsive {
+  border-radius: 0;
+  box-shadow: none !important;
+  width: 100%;
+}
+
+/* Make action icons square with pagination color style */
+.action-icon {
+  display: inline-flex;
+  /* flex for centering */
+  align-items: center;
+  /* vertical center */
+  justify-content: center;
+  /* horizontal center */
+  width: 36px;
+  /* square width */
+  height: 36px;
+  /* square height */
+  margin: 0 2px;
+  /* spacing between buttons */
+  border-radius: 0.25rem;
+  /* optional rounded corners */
+  font-size: 1rem;
+  color: white;
+  /* text/icon color */
+  text-decoration: none;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+/* Make action icons square with background behind icon */
+.action-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  margin: 0 2px;
+  border-radius: 0.25rem;
+  font-size: 1rem;
+  text-decoration: none;
+  transition: background-color 0.2s;
+  color: white;
+  /* Icon color stays visible */
+}
+
+.table {
+  margin-bottom: 0;
+  border-radius: 0;
+  overflow: visible;
+  width: 100%;
+  table-layout: auto;
+}
+
+.title-header-row th {
+  background: #0f6cbd;
+  color: white;
+  padding: 1rem 1.5rem;
+  border-radius: 0 0 0 0;
+  border-bottom: 1px solid #0a58a0;
+}
+
+.title-header-row h4 {
+  color: white;
+  margin-bottom: 0 !important;
+}
+
+.filter-row th {
+  background: white;
+  color: black;
+  padding-left: 0.25rem !important;
+  border-radius: 0;
+  border-bottom: 1px solid #dee2e6;
+}
+
+.filter-row th span {
+  color: black;
+}
+
+.filter-control-group {
+  display: flex;
+  /* horizontal layout inside group */
+  flex-direction: row;
+  /* label + input in a row */
+  align-items: center;
+  /* vertically align label + input */
+  gap: 0.5rem;
+  /* small gap between label and input */
+}
+
+/* Make checkbox appear after label text */
+.filter-control-group.checkbox-group {
+  flex-direction: row-reverse;
+  /* Label first, checkbox after */
+}
+
+/* Inputs and select same height */
+.filter-control-group input[type="text"],
+.filter-control-group select {
+  height: calc(1.5em + 0.5rem + 2px);
+}
+
+#nameSearchInput:hover {
+  border-color: #1877f2 !important;
+  box-shadow: 0 0 0 0.25rem rgba(24, 119, 242, 0.25) !important;
+}
+
+/* Make student name search input smaller */
+#studentFilterForm #nameSearchInput {
+  width: 150px !important;
+  /* force width */
+  max-width: 150px !important;
+  font-size: 0.85rem;
+  padding: 0.25rem 0.5rem;
+  border: 1px solid rgb(61, 56, 56);
+}
+
+#nameSearchInput::placeholder {
+  color: black;
+  /* Replace with your desired color */
+  opacity: 1;
+  /* ensures full color, not faded */
+}
+
+#studentFilterForm {
+  display: flex;
+  /* horizontal layout */
+  flex-wrap: nowrap;
+  /* prevent wrapping to next line */
+  align-items: center;
+  /* vertically center everything */
+  gap: 3rem;
+  /* spacing between items */
+  margin: 0;
+  padding: 10px;
+}
+
+#studentStatusFilter .filter-control-group {
+  display: flex;
+  flex-direction: row;
+  /* horizontal */
+  align-items: center;
+  /* vertically center label and input */
+  gap: 0.5rem;
+  /* spacing between label and input */
+  width: auto;
+  /* optional: adjust width as needed */
+}
+
+#studentStatusFilter .filter-label {
+  font-size: 16px;
+  font-weight: 500;
+  color: black;
+}
+
+#studentStatusFilter .multiselect-wrapper {
+  position: relative;
+}
+
+#studentStatusFilter .multiselect-input {
+  width: 100%;
+  padding: 8px 35px 8px 12px;
+  font-size: 12px;
+  border: 1px solid rgb(61, 56, 56);
+  border-radius: 6px;
+  background-color: white;
+  cursor: pointer;
+  color: black;
+}
+
+#studentStatusFilter .multiselect-input:focus {
+  outline: none;
+  border-color: rgb(248, 244, 244);
+}
+
+#studentStatusFilter .dropdown-arrow {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 12px;
+  color: #0b5ed7;
+  pointer-events: none;
+}
+
+/* dropdown */
+#studentStatusFilter .multiselect-dropdown {
+  position: absolute;
+  top: 105%;
+  left: 0;
+  width: 100%;
+  background: white;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  box-shadow: 0px 3px 10px rgba(0, 0, 0, 0.1);
+  display: none;
+  z-index: 999;
+  padding: 6px 0;
+}
+
+/* Make 生徒ステータス input same size as 名前で検索 */
+#studentStatusFilter .multiselect-input {
+  width: 150px !important;
+  max-width: 150px !important;
+  height: calc(1.5em + 0.5rem + 2px); /* same height */
+  font-size: 0.85rem; /* same font size */
+  padding: 0.25rem 0.5rem; /* same padding */
+}
+
+#studentStatusFilter .multiselect-dropdown label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+#studentStatusFilter .multiselect-dropdown label:hover {
+  background-color: #eef1f4;
+}
+
+#studentStatusFilter {
+  position: relative;
+  z-index: 20000;
+  /* wrapper stacking context */
+  overflow: visible;
+  /* ensure dropdown is not clipped */
+}
+
+#studentStatusFilter .multiselect-dropdown {
+  position: absolute;
+  /* already set */
+  top: 100%;
+  /* right below input */
+  left: 0;
+  width: 100%;
+  z-index: 30000 !important;
+  /* above header and table */
+}
+
+#statusFilter[multiple] {
+  height: 32px !important;
+  overflow-y: auto;
+}
+
+#statusFilter option {
+  padding: 2px 4px;
+}
+
+/* Make header checkbox larger */
+#selectAll {
+  width: 1rem;
+  /* Adjust width */
+  height: 1rem;
+  /* Adjust height */
+  vertical-align: middle;
+  margin: 0;
+}
+
+.row-checkbox {
+  width: 1rem;
+  height: 1rem;
+}
+
+#studentFilterForm #statusFilterInput {
+  width: 150px !important;
+  max-width: 150px !important;
+}
+
+#statusFilterInput:hover,
+#statusFilterInput:focus {
+  border-color: #1877f2 !important;
+  box-shadow: 0 0 0 0.25rem rgba(24, 119, 242, 0.25) !important;
+  outline: none;
+  /* prevent default outline */
+}
+
+/* Match 生徒ステータス exactly to table header text */
+#studentStatusFilter .filter-label {
+  color: #000 !important;
+  font-weight: 600 !important;
+  opacity: 1 !important;
+}
+
+.filter-label-text {
+  color: black;
+  /* same as input text */
+}
+
+#downloadBtn {
+  margin-left: 6rem;
+  /* pushes it to the right */
+  margin-right: 0;
+  /* moves slightly inward */
+}
+
+#downloadBtn {
+  background-color: #0b5ed7;
+  border-color: #0b5ed7;
+}
+
+#downloadBtn:hover {
+  background-color: #0b5ed7;
+  border-color: #0b5ed7;
+}
+
+.table thead tr:last-child th {
+  font-size: 0.9rem;
+  color: black;
+  background-color: #b4d6fa;
+  vertical-align: middle;
+  border-bottom: 2px solid #dee2e6;
+}
+
+.table thead tr th {
+  font-size: 0.85rem;
+
+  font-weight: 600;
+
+  text-align: center;
+
+  white-space: nowrap;
+}
+
+.table thead tr:nth-of-type(3) th {
+  text-align: center;
+  vertical-align: middle;
+}
+
+.table tbody td {
+  text-align: center;
+  vertical-align: middle;
+}
+
+.table thead tr:last-child th:nth-child(1) {
+  width: 3%;
+}
+
+.table thead tr:last-child th:nth-child(2) {
+  width: 5%;
+}
+
+.table thead tr:last-child th:nth-child(3) {
+  width: 8%;
+}
+
+.table thead tr:last-child th:nth-child(4) {
+  width: 5%;
+}
+
+.table thead tr:last-child th:nth-child(5) {
+  width: 10%;
+}
+
+.table thead tr:last-child th:nth-child(6) {
+  width: 10%;
+}
+
+.table thead tr:last-child th:nth-child(7) {
+  width: 10%;
+}
+
+.table thead tr:last-child th:nth-child(8) {
+  width: 12%;
+}
+
+.table thead tr:last-child th:nth-child(9) {
+  width: 12%;
+}
+
+.table thead tr:last-child th:nth-child(10) {
+  width: 27%;
+}
+
+.table thead tr:last-child th:nth-child(1),
+.table thead tr:last-child th:nth-child(2),
+.table thead tr:last-child th:nth-child(3),
+.table thead tr:last-child th:nth-child(4),
+.table thead tr:last-child th:nth-child(5),
+.table thead tr:last-child th:nth-child(6),
+.table thead tr:last-child th:nth-child(7),
+.table thead tr:last-child th:nth-child(8),
+.table thead tr:last-child th:nth-child(10) {
+  width: 50px;
+}
+
+.table tbody tr {
+  background-color: #b4d6fa;
+}
+
+.table tbody tr:hover {
+  background-color: #9ac2f8;
+}
+
+.action-icon {
+  cursor: pointer;
+  padding: 0 0.25rem;
+  transition: color 0.2s;
+}
+
+.action-icon.edit {
+  color: #0d6efd;
+}
+
+.action-icon.detail {
+  color: #198754;
+}
+
+.action-icon.delete {
+  color: #dc3545;
+}
+
+.action-icon.edit:hover {
+  color: #0a58ca;
+}
+
+.action-icon.detail:hover {
+  color: #146c43;
+}
+
+.action-icon.delete:hover {
+  color: #bd2130;
+}
+
+.action-icon {
+  padding: 0 0.15rem !important;
+  font-size: 0.9rem;
+}
+
+.admin-title {
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: #212529;
+  letter-spacing: -0.5px;
+}
+.page-wrapper {
+  background-color: #f8fcff;
+  border: 0;
+}
+.dashboard-layout {
+  background-color: #f8fcff;
+}
+.glass-panel {
+  background-color: #fdfeff;
+}
+.table-wrapper .pagination {
+  background-color: transparent; /* remove all whites */
+  border-radius: 0; /* remove rounded corner if not needed */
+}
