@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GCG | 確認ページ</title>
+    <link rel="icon" type="image/png" href="/images/image.png">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/css/register-checkPageResponsive.css" rel="stylesheet">
+    <link href="/css/register-toastNotification.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/register-toastNotification.js" defer></script>
+    <script src="/js/register-check-page.js" defer></script>
+</head>
+
+<body class="bg-light">
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+    <!-- Registration Data Confirmation Card -->
+    <div class="container py-5">
+        <div class="card p-4 mx-auto rounded-3 shadow-sm" style="max-width: 900px;">
+            <!-- Card Body -->
+            <div class="card-body">
+                <div class="text-center mb-4">
+                    <div class="d-inline-flex align-items-center justify-content-center bg-white mb-3"
+                        style="width: 100px; height: 100px; overflow: hidden;">
+                        <img src="/images/image.png" alt="Logo" class="w-100 h-100" style="object-fit: cover;">
+                    </div>
+                    <h2 class="text-primary fw-bold pb-2 border-bottom border-light mb-4">
+                        登録データ確認
+                    </h2>
+                </div>
+                <!-- Data Table -->
+                <div class="col-lg-8 col-xl-8 mx-auto">
+                    <div class="data-table rounded-3 overflow-hidden">
+                        <!-- Basic / Personal -->
+                        <div class="data-row">
+                            <div class="data-label px-4">なまえ(英語)</div>
+                            <div class="data-value px-4" th:text="${studentData.englishName ?: '—'}">John Doe</div>
+                        </div>
+                        <div class="data-row">
+                            <div class="data-label px-4">なまえ(カタカナ)</div>
+                            <div class="data-value px-4" th:text="${studentData.katakanaName ?: '—'}">ジョン・ドウ</div>
+                        </div>
+                        <!-- 生年月日 -->
+                        <div class="data-row">
+                            <div class="data-label px-4">生年月日</div>
+                            <div class="data-value px-4" th:if="${studentData.dob}"
+                                th:text="${#strings.substring(studentData.dob, 5, 7) + '/' + #strings.substring(studentData.dob, 8, 10) + '/' + #strings.substring(studentData.dob, 0, 4)}">
+                                01/01/2000</div>
+                            <div class="data-value px-4" th:unless="${studentData.dob}">—</div>
+                        </div>
+                        <div class="data-row">
+                            <div class="data-label px-4">性別</div>
+                            <div class="data-value px-4" th:text="${studentData.gender ?: '—'}">Male</div>
+                        </div>
+                        <!-- Contact / Address -->
+                        <div class="data-row">
+                            <div class="data-label px-4">現在所</div>
+                            <div class="data-value px-4" th:text="${studentData.currentAddress ?: '—'}">123 Tokyo Street
+                            </div>
+                        </div>
+                        <div class="data-row">
+                            <div class="data-label px-4">出身地住所</div>
+                            <div class="data-value px-4" th:text="${studentData.hometownAddress ?: '—'}">456 Osaka
+                                Street</div>
+                        </div>
+                        <div class="data-row">
+                            <div class="data-label px-4">電話番号</div>
+                            <div class="data-value px-4" th:text="${studentData.phoneNumber ?: '—'}">090-1234-5678</div>
+                        </div>
+                        <div class="data-row">
+                            <div class="data-label px-4">保護者電話番号</div>
+                            <div class="data-value px-4" th:text="${studentData.guardianPhoneNumber ?: '—'}">
+                                090-8765-4321</div>
+                        </div>
+                        <!-- Family / Documents -->
+                        <div class="data-row">
+                            <div class="data-label px-4">父親名</div>
+                            <div class="data-value px-4" th:text="${studentData.fatherName ?: '—'}">Michael Doe</div>
+                        </div>
+                        <div class="data-row">
+                            <div class="data-label px-4">パスポート番号</div>
+                            <div class="data-value px-4" th:text="${studentData.passportNumber ?: '—'}">AB1234567</div>
+                        </div>
+                        <div class="data-row">
+                            <div class="data-label px-4">国民 ID 番号</div>
+                            <div class="data-value px-4" th:text="${studentData.nationalIdNumber ?: '—'}">JP-123456789
+                            </div>
+                        </div>
+                        <!-- Skills / Career -->
+                        <div class="data-row">
+                            <div class="data-label px-4">現在のJLPT合格レベル</div>
+                            <div class="data-value px-4" th:text="${studentData.jlptLevel ?: '—'}">N4</div>
+                        </div>
+                        <div class="data-row">
+                            <div class="data-label px-4">希望職種</div>
+                            <div class="data-value px-4" th:text="${studentData.desiredOccupation ?: '—'}">介護</div>
+                        </div>
+                        <div class="data-row">
+                            <div class="data-label px-4">その他職種</div>
+                            <div class="data-value px-4" th:text="${studentData.otherOccupation ?: '—'}">—</div>
+                        </div>
+                        <!-- Experience -->
+                        <div class="data-row">
+                            <div class="data-label px-4">日本渡航経験</div>
+                            <div class="data-value px-4" th:text="${studentData.japanTravelExperience ?: '—'}">ない</div>
+                        </div>
+                        <div class="data-row">
+                            <div class="data-label px-4">COE申請経験</div>
+                            <div class="data-value px-4" th:text="${studentData.coeApplicationExperience ?: '—'}">ない
+                            </div>
+                        </div>
+                        <!-- Additional Questions (third page fields) -->
+                        <div class="data-row">
+                            <div class="data-label px-4">宗教</div>
+                            <div class="data-value px-4"
+                                th:text="${studentData.religion == 'その他' ? (studentData.otherReligion ?: 'その他') : (studentData.religion ?: '—')}">
+                                仏教</div>
+                        </div>
+                        <div class="data-row">
+                            <div class="data-label px-4">その他宗教</div>
+                            <div class="data-value px-4" th:text="${studentData.otherReligion ?: '—'}">—</div>
+                        </div>
+                        <div class="data-row">
+                            <div class="data-label px-4">タバコ</div>
+                            <div class="data-value px-4" th:text="${studentData.smoking ?: '—'}">吸わない</div>
+                        </div>
+                        <div class="data-row">
+                            <div class="data-label px-4">お酒</div>
+                            <div class="data-value px-4" th:text="${studentData.alcohol ?: '—'}">飲む</div>
+                        </div>
+                        <div class="data-row">
+                            <div class="data-label px-4">入れ墨(Tattoo)</div>
+                            <div class="data-value px-4" th:text="${studentData.tattoo ?: '—'}">ない</div>
+                        </div>
+                        <!-- 学費支払予定日 -->
+                        <div class="data-row">
+                            <div class="data-label px-4">学費支払予定日</div>
+                            <div class="data-value px-4" th:if="${!#strings.isEmpty(studentData.tuitionPaymentDate)}"
+                                th:text="${#strings.substring(studentData.tuitionPaymentDate, 5, 7) + '/' + #strings.substring(studentData.tuitionPaymentDate, 8, 10) + '/' + #strings.substring(studentData.tuitionPaymentDate, 0, 4)}">
+                                01/01/2025</div>
+                            <div class="data-value px-4" th:if="${#strings.isEmpty(studentData.tuitionPaymentDate)}">—
+                            </div>
+                        </div>
+                        <div class="data-row">
+                            <div class="data-label px-4">寮があれば入りたい</div>
+                            <div class="data-value px-4" th:text="${studentData.wantDorm ?: '—'}">はい</div>
+                        </div>
+                        <div class="data-row">
+                            <div class="data-label px-4">その他メモ</div>
+                            <div class="data-value px-4" th:text="${studentData.otherMemo ?: '—'}">—</div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Buttons -->
+                <div class="text-center pt-4 d-flex flex-column flex-sm-row justify-content-center gap-3">
+                    <button type="button" class="btn btn-secondary btn-lg rounded py-1 px-3"
+                        onclick="window.location.href='/register'">
+                        変更
+                    </button>
+                    <button type="button" id="submitBtn" class="btn btn-success btn-lg rounded py-1 px-3"
+                        onclick="submitFinalData()">
+                        登録完了
+                    </button>
+                </div>
+                <!-- Footer Section -->
+                <div class="text-center mt-5 pt-3 border-top border-light">
+                    <small class="text-muted">
+                        &copy; 2025 Global Innovation Consulting.Inc, All Rights Reserved.
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

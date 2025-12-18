@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GIC Career Gateway</title>
+    <link rel="icon" type="image/png" href="/images/image.png">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        /* Hero section background */
+        .hero-section {
+            background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url("/images/tower.jpg");
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: white;
+            position: relative;
+        }
+
+        /* Dark overlay */
+        .hero-section::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.35);
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero-title {
+            font-size: 4rem;
+            font-weight: bold;
+        }
+
+        .hero-subtitle {
+            font-size: 2rem;
+            font-weight: 600;
+        }
+
+        .top-text {
+            font-size: 1.6rem;
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+
+        /* Navbar links color */
+        .navbar-nav .nav-link {
+            color: #0966A8 !important;
+            font-weight: bold;
+            position: relative;
+            display: inline-block;
+            padding-bottom: 4px;
+            white-space: nowrap;
+        }
+
+        .navbar-nav .nav-link::after {
+            content: "";
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 0%;
+            height: 3px;
+            background: #00aaff;
+            transition: width 0.3s ease;
+        }
+
+        .navbar-nav .nav-link:hover::after,
+        .navbar-nav .nav-link.active::after {
+            width: 100%;
+        }
+
+        /* Disable underline for dropdown toggles */
+        .navbar-nav .dropdown-toggle::after {
+            display: none !important;
+        }
+
+        .navbar-nav .dropdown-toggle:hover::after {
+            width: 0% !important;
+        }
+
+        .navbar-nav .nav-link:hover {
+            color: #03A9F4 !important;
+        }
+
+        .tech-html-bootstrap {
+            font-family: Arial, sans-serif;
+            /* Fallback font for Burmese text display */
+        }
+
+        /* Responsive image container so images show fully on small screens */
+        .responsive-img-container {
+            width: 100%;
+            height: 300px;
+            max-width: 450px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            border-radius: .25rem;
+        }
+
+        .responsive-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        @media (max-width: 767.98px) {
+            .responsive-img-container {
+                height: auto !important;
+                max-height: none !important;
+            }
+
+            .responsive-img {
+                height: auto !important;
+                object-fit: contain !important;
+            }
+
+            .navbar-brand {
+                margin-left: 0 !important;
+            }
+
+            .navbar-nav {
+                margin-right: 0 !important;
+            }
+        }
+
+        /* Smooth scroll and offset for fixed navbar */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        .scroll-target {
+            scroll-margin-top: 80px;
+        }
+
+        /* Collapse/stacked navbar adjustments */
+        @media (max-width: 991.98px) {
+            .navbar-brand {
+                margin-left: 0 !important;
+            }
+            .navbar-nav {
+                margin-right: 0 !important;
+            }
+            .navbar-toggler {
+                margin-left: 0;
+                position: relative;
+                left: -35px;
+                z-index: 1031;
+                transform: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- NAVBAR -->
+    <nav class="navbar navbar-expand-lg bg-white shadow-sm fixed-top">
+        <div class="container">
+            <a class="navbar-brand d-flex flex-column align-items-start" href="#" style="margin-left: -20px;">
+                <img src="/images/image.png" alt="GIC Logo" style="height:45px;">
+            </a>
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse justify-content-center" id="navbarNav">
+                <ul class="navbar-nav gap-2" style="margin-right: -120px;">
+                    <li class="nav-item"><a class="nav-link active" href="#home">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#about">About Us</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#who">Who Should Join</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#learn">What To Learn</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#why">Why Choose Us</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#courses">Course Offered</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#career">Career Path</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#events">Events & News</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- HERO SECTION -->
+    <section id="home" class="hero-section scroll-target">
+        <div class="hero-content">
+            <div class="top-text">For Your Better Future</div>
+
+            <div class="hero-title">GIC Career Gateway</div>
+
+            <div class="hero-subtitle mt-3">
+                Liberal Arts, IT & Japanese Language Training Center
+            </div>
+
+            <p class="mt-4 fs-5">
+                Take a Step to Your Future: Aim for a Career in Japan's IT Industry.<br>
+                Begin Your Journey by Learning the Latest Tech and Japanese Language Skills.
+            </p>
+
+            <a href="/register" class="btn btn-primary btn-lg px-4 mt-3 rounded-pill">
+                REGISTER NOW
+            </a>
+        </div>
+    </section>
+
+    <!-- ABOUT US -->
+    <section id="about" class="tech-html-bootstrap container mt-4 p-4 bg-white scroll-target">
+
+        <header class="text-center mb-4">
+            <h3 class="header-h3 fw-bold text-primary mb-4">
+                ခေတ်မီဆန်းသစ်သော IT Career လမ်းကြောင်းကိုထောက်ပံ့ပေးနေသည့် GIC Career Gateway
+            </h3>
+            <h4 class="header-h4 fw-bold text-center text-dark pb-2">
+                GIC Career Gateway မိတ်ဆက်
+            </h4>
+        </header>
+
+        <div class="content text-dark">
+            <p>
+                GIC Career Gateway သည် ၂၀၁၁ ခုနှစ်တွင် စတင်တည်ထောင်ခဲ့ပြီး၊ မြန်မာနိုင်ငံအတွက် အကောင်းဆုံး IT Solution
+                များကို ပံ့ပိုးပေးနိုင်ရန် IT ပညာရှင်များအား မွေးထုတ်ပေးနိုင်ရန် ရည်ရွယ်သည်။ ၎င်းသည် GIC Group မှ
+                တည်ထောင်ထားသော သင်တန်းကျောင်းတစ်ခုဖြစ်ပြီး၊ သင်တန်းကျောင်းသား/သူများအား ၂၀၁၃ ခုနှစ်မှစတင်၍
+                သင်ကြားပေးခဲ့ပါသည်။ GIC Group သည် ၂၀၁၁ ခုနှစ်မှစ၍ ယနေ့အထိ နိုင်ငံတကာအဆင့်မီ Training Program
+                များကိုပြုလုပ်လျက်ရှိပြီး၊ ကျောင်းသား/သူများ၏ အောင်မြင်မှုကို အမြဲဦးစားပေးသည်ဟု ဆိုပါသည်။ IT
+                ကျွမ်းကျင်မှုမရှိသေးသော သင်တန်းကျောင်းသား/သူများအတွက် Career Path အတွက် အထောက်အကူဖြစ်စေပါသည်။
+            </p>
+            <p>
+                IT ပညာရပ်များတွင်ကျွမ်းကျင်မှုရှိပြီး စိတ်ဝင်စားသူများ၊
+                မိမိတို့၏ပညာရေးနှင့်အလုပ်အကိုင်လမ်းကြောင်းများအတွက် ရည်ရွယ်ချက်ရှိသူများ၊ IT လုပ်ငန်းခွင်တွင်
+                အသက်မွေးဝမ်းကျောင်းပြုလုပ်လိုသူများအတွက် Scholarship Program များလည်း ပံ့ပိုးပေးလျက်ရှိပါသည်။
+            </p>
+            <div class="mt-4">
+                <a href="#" class="btn btn-outline-primary fw-bold">
+                    ပိုမိုသိရှိရန် &gt;&gt;
+                </a>
+            </div>
+        </div>
+
+    </section>
+
+    <!-- WHO SHOULD JOIN -->
+    <section id="who" class="tech-html-bootstrap container mt-4 p-4 bg-white scroll-target">
+
+        <header class="text-center mb-5">
+            <h3 class="header-h3 fw-bold text-primary mb-4">
+                ဘယ်သူတွေအတွက်လဲ？ဘယ်သူတွေတက်‌သင့်လဲ?
+            </h3>
+            <h4 class="header-h4 fw-bold text-center text-dark pb-2">
+                အနာဂတ်တွင် ဂျပန်နိုင်ငံသို့ ITပညာရှင်အနေဖြင့် သွားရောက်လိုသူလူငယ်တိုင်းအတွက်
+            </h4>
+        </header>
+
+        <div class="text-dark row  justify-content-center align-items-center">
+            <div class="left-content col-lg-6">
+                <ul class="list-unstyled">
+                    <li class="mb-3 text-dark ">
+                        <span class="me-2">၁)</span>
+                        <span>ဘွဲ့ရပြီးခါစ၊ သို့မဟုတ် ဘွဲ့ရပြီး (၃)နှစ်အတွင်းရှိသူများ</span>
+                    </li>
+                    <li class="mb-3">
+                        <span class="me-2">၂)</span>
+                        <span>IT ပညာရပ်ကို စိတ်ဝင်စားပြီး ဘွဲ့မရသေးသောသူများ</span>
+                    </li>
+                    <li class="mb-3">
+                        <span class="me-2">၃)</span>
+                        <span>IT & Japanese Language ကို zero level မှ စတင်သင်ယူလိုသူများ</span>
+                    </li>
+                    <li class="mb-3">
+                        <span class="me-2">၄)</span>
+                        <span>
+                            IT background ရှိပြီး၊ IT နယ်ပယ်သို့ ပြောင်းလဲလိုသူများ၊ IT လုပ်ငန်းတွင် အတွေ့အကြုံရှိ၍
+                            Japan Experience ရယူလိုသော ဂျပန်ကို စိတ်ဝင်စားသူများ
+                        </span>
+                    </li>
+                    <li class="mb-3">
+                        <span class="me-2">၅)</span>
+                        <span>ဂျပန်နိုင်ငံ Language School များမှဘွဲ့ရပြီးသော သင်တန်းသား/သူများ</span>
+                    </li>
+                    <li class="mb-3">
+                        <span class="me-2">၆)</span>
+                        <span>ဂျပန်နိုင်ငံတွင် IT Engineer အဖြစ် အလုပ်လုပ်ကိုင်လိုသူများ</span>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="right-content col-lg-6 d-flex justify-content-center mt-4 mt-lg-0">
+                <div class="text-muted text-center responsive-img-container">
+                    <img src="/images/it-theme-jp.jpg" alt="IT Theme" class="responsive-img img-fluid">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- WHAT TO LEARN -->
+    <section id="learn" class="tech-html-bootstrap container mt-4 p-4 bg-white scroll-target">
+
+        <header class="text-center mb-5">
+            <h3 class="header-h3 fw-bold text-primary mb-4">
+                ဘာတွေသင်ရမှာလဲ?
+            </h3>
+            <h4 class="header-h4 fw-bold text-center text-dark pb-2">
+                IT Engineer အဖြစ် လုပ်ငန်းခွင်ရောက်ရှိသည်အထိ သင်ကြားပေးမည့်
+            </h4>
+            <h4 class=" header-h4 fw-bold text-center text-dark pb-2">
+                GIC Career Gateway Japan IT Education・Bootcampeer
+            </h4>
+        </header>
+
+        <div class="text-dark row  justify-content-center align-items-center">
+            <div class="left-content col-lg-6 d-flex justify-content-center mt-lg-0">
+                <div class="text-muted text-center responsive-img-container">
+                    <img src="/images/study.jpg" alt="IT Theme" class="responsive-img img-fluid">
+                </div>
+            </div>
+
+            <div class="right-content col-lg-6 mt-4 ">
+
+                <ul class="list-unstyled text-dark">
+
+                    <li class="mb-3">
+                        <span class="me-2">၁)</span>
+                        <span>Liberal Arts</span>
+                    </li>
+
+                    <li class="mb-3">
+                        <span class="me-2">၂)</span>
+                        <span>IT Full Cycle Development Bootcamp</span>
+                    </li>
+
+                    <li class="mb-3">
+                        <span class="me-2">၃)</span>
+                        <span>IT လုပ်ငန်းခွင်သုံးဂျပန်စာ Training</span>
+                    </li>
+
+                    <li class="mb-3">
+                        <span class="me-2">၄)</span>
+                        <span>On Job Training</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- WHY CHOOSE US -->
+    <section id="why" class="tech-html-bootstrap container mt-4 p-4 bg-white scroll-target">
+        <header class="text-center mb-5">
+            <h3 class="header-h3 fw-bold text-primary mb-4">
+                GIC Career Gateway ကိုဘာကြောင့်ရွေးချယ်သင့်တာလဲ?
+            </h3>
+        </header>
+        <div class="header-h4 text-dark d-flex flex-row justify-content-center align-items-center">
+            <ul class="custom-list">
+                <li data-list-marker="၁)">
+                    ဂျပန်နိုင်ငံ၊ တိုကျိုမြို့ အခြေစိုက် IT ကဏ္ဍမှ ဦးဆောင်ဖွင့်လှစ်ထားသည့် Liberal Arts, IT & Japanese
+                    Training Center ဖြစ်ခြင်း
+                </li>
+                <li data-list-marker="၂)">
+                    သင်တန်းပြီးဆုံးနောက် GIC ကွန်ရက်အဖွဲ့အစည်းများကမှီ အတွင်းတွင် အလုပ်လုပ်ကိုင်ခွင့် ရရှိအောင်
+                    အခွင့်အလမ်းများဖန်တီးပေးခြင်း
+                </li>
+                <li data-list-marker="၃)">
+                    OJT Project များလုပ်ဆောင်ရန်အတွက် GIC ကွန်ရက်တွင် အလုပ်လုပ်ကိုင်လိုသူများအား GIC ဝန်ထမ်းများမှ
+                    support ပေးနိုင်ခြင်း
+                </li>
+                <li data-list-marker="၄)">
+                    အခြား ကျောင်းများနှင့်မတူဘဲ အခြေခံမှစ၍ လက်တွေ့လုပ်ဆောင်နိုင်သည့်အထိ သင်ကြားပေးခြင်း
+                </li>
+                <li data-list-marker="၅)">
+                    တက်ရောက်လုပ်ငန်းခွင် အတွေ့အကြုံများကို ရရှိစေခြင်း
+                </li>
+                <li data-list-marker="၆)">
+                    IT နယ်ပယ်သားသမီးများအတွက်သာမက IT Professional တစ်ယောက်အတွက် ရှိသင့်သည့် skill များ၊
+                    အတွေ့အကြုံများနှင့် ဉာဏ်ရည်ဉာဏ်သွေး မြင့်မားစေခြင်း
+                </li>
+            </ul>
+        </div>
+        </div>
+    </section>
+
+    <!-- COURSES OFFERED -->
+    <section id="courses" class="tech-html-bootstrap container mt-4 p-4 bg-white scroll-target">
+        <header class="text-center mb-5">
+            <h3 class="header-h3 fw-bold text-primary mb-4">
+                GIC Career Gateway မှဖွင့်လှစ်ထားသည့် သင်တန်းများ
+            </h3>
+        </header>
+        <div class="row  g-4 text-dark">
+            <div class="left-card-1 col-12 col-md-6 d-flex">
+                <div class="card border-1 shadow-sm w-100">
+                    <div class="card-body p-4">
+                        <h4 class="course-title fw-bold">All in One 2 Years Course</h4>
+                        <p class="course-description">
+                            IT ဘာသာရပ်များကို ဂျပန်ဘာသာစကားဖြင့် အခြေခံမှစ၍ သင်ကြားပေးရုံသာမက
+                            လုပ်ငန်းခွင်ရောက်ရင်သုံးရမည့် အထိ သင်ကြားပေးမည် ဖြစ်ပါသည်။ ဤ course တွင်
+                            ဘွဲ့ရရှိစေရန်သာမကဂျပန်နိုင်ငံအတွက် ရည်မှန်းထားသော National Exam ဖြစ်သော ITPPEC FE
+                            Exam ကို ဖြေဆိုအောင်မြင်နိုင်ရန်အတွက်လည်း လေ့ကျင့်သင်ကြားပေးမည် ဖြစ်ပါသည်။ </p>
+
+                        <div class="text-left mt-3">
+                            <a href="#" class="btn btn-link p-0 text-decoration-none" style="font-weight: bold;">
+                                ပိုမိုသိရှိလိုပါက >>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="right-card-1 col-12 col-md-6 d-flex">
+                <div class="card border-1 shadow-sm w-100">
+                    <div class="card-body p-4">
+                        <h4 class="course-title fw-bold">Individual Course</h4>
+
+                        <ul class="custom-bullet-list">
+                            <li>
+                                <strong>၁) Full Cycle Development Bootcamp</strong>
+                                <p class="course-description mt-2 mb-0">
+                                    ဤ course တွင် software development life cycle တစ်ခုလုံးကို နားလည်စေရန်
+                                    design ဆွဲရသည့် အဆင့်မှစ၍ development, testing, operations &
+                                    deployment, maintenance & updates လုပ်ငန်းစဉ်သည် အဆင့်ဆင့် အဆင့်ဆင့်
+                                    သင်ကြားပေးမည် ဖြစ်ပါသည်။
+                                </p>
+                            </li>
+                        </ul>
+                        <div class="text-left mt-3">
+                            <a href="#" class="btn btn-link p-0 text-decoration-none" style="font-weight: bold;">
+                                ပိုမိုသိရှိလိုပါက >>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="left-card-2 col-12 col-md-6 d-flex">
+                <div class="card border-1 shadow-sm w-100">
+                    <div class="card-body p-4">
+                        <h4 class="course-title fw-bold">Individual Course</h4>
+
+                        <ul class="custom-bullet-list">
+                            <li>
+                                <strong>၂) IT Japanese Bootcamp</strong>
+                                <p class="course-description mt-2 mb-0">
+                                    ဂျပန်နိုင်ငံတွင် IT ပညာရှင်အနေဖြင့်အလုပ်လုပ်ကိုင်နိုင်ရန်လိုအပ်သည့် IT
+                                    လုပ်ငန်းခွင်သုံး ဂျပန်ဘာသာရပ်ကို သင်ကြားပေးမည့်သင်တန်းဖြစ်ပါသည်။
+                                </p>
+                            </li>
+                        </ul>
+                        <div class="text-left mt-3">
+                            <a href="#" class="btn btn-link p-0 text-decoration-none" style="font-weight: bold;">
+                                ပိုမိုသိရှိလိုပါက >>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- CAREER PATH -->
+    <section id="career" class="tech-html-bootstrap container mt-4 p-4 bg-white scroll-target">
+
+        <header class="text-center mb-5">
+            <h3 class="header-h3 fw-bold text-primary mb-4">
+                Career Path with Career Gateway
+            </h3>
+        </header>
+
+        <div class="text-dark row justify-content-center align-items-center">
+            <div class="left-content col-lg-6 d-flex justify-content-center mt-lg-0">
+                <div class="text-muted text-center responsive-img-container">
+                    <img src="/images/internship.jpg" alt="IT Theme" class="responsive-img img-fluid">
+                </div>
+            </div>
+
+            <div class="right-content col-lg-6 mt-4 ">
+                <div class="career-text text-dark">
+                    <p>
+                        GIC Career Gateway မှသင်တန်းပြီးသည့်နောက် GIC ကုမ္ပဏီတွင် Internship အနေဖြင့်
+                        ဝင်ရောက်လုပ်ကိုင်နိုင်မည် ဖြစ်ပါသည်။ Internship ကာလအတွင်းတွင်လည်း ကုမ္ပဏီမှ လစာ ၁၀၀,၀၀၀
+                        ကျပ်အပြင် လမ်းစရိတ်ကိုပါ ထောက်ပံ့ပေးမည်ဖြစ်ပါသည်။ Internship ကာလမှာ ၆ လ ကြာမြင့်မည်ဖြစ်ပါသည်။
+                        Internship ကာလပြီးဆုံးသည့်နောက် ကုမ္ပဏီဘက်မှ အကဲဖြတ်၍ ပြဿနာတစ်စုံတစ်ရာမရှိပါက အလုပ်ခန့်အပ်မည်
+                        ဖြစ်ပါသည်။ ထို့အပြင် မိမိ skill နှင့် ကိုက်ညီမှုရှိသော အခြားမိတ်ဖက်ဂျပန် IT ကုမ္ပဏီများနှင့်လည်း
+                        မိတ်ဆက်ပေးမည်ဖြစ်သောကြောင့်အလုပ်အကိုင်ရရှိနိုင်ပါသည်။
+                    </p>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Events & News -->
+    <section id="events" class="tech-html-bootstrap container mt-4 p-4 bg-white scroll-target">
+        <header class="text-center mb-5">
+            <h3 class="header-h3 fw-bold text-primary mb-4">
+                Events & News
+            </h3>
+            <h4 class="header-h4 fw-bold text-center text-dark pb-2">
+                GIC Career Gateway ၏ နောက်ဆုံးရ သတင်း‌များ၊ ပွဲအခမ်းအနားများ၊ အကြောင်းအရာများ
+            </h4>
+        </header>
+        <div class="content row g-4 text-dark">
+            <div class="col-12 col-md-4 d-flex">
+                <div class="card border-1 shadow-sm w-100">
+                    <div class="card-body p-4">
+                        <div class="col-lg-12 d-flex justify-content-center mt-lg-0 border rounded">
+                            <div class="text-muted text-center responsive-img-container">
+                                <img src="/images/aots-1.jpg" alt="IT Theme" class="responsive-img img-fluid">
+                            </div>
+                        </div>
+                        <h4 class="course-title fw-bold mt-3">GIC မှ သင်ကြားပို့ချပေးမည့် AOTS ပညာဒါန Course</h4>
+                        <p class="course-description">
+                            IT လုပ်ငန်းနယ်ပယ်တွင် မရှိမဖြစ်အရေးပါသော RPA ကဲ့သို့သော နည်းပညာသင်တန်းများ နှင့် ITPEC FE
+                            စာမေးပွဲပြင်ဆင်မှုသင်တန်းများကို AOTS (The Association for Overseas Technical Cooperation
+                            and Sustainable...</p>
+                        <div class="text-left mt-3">
+                            <a href="#" class="btn btn-link p-0 text-decoration-none" style="font-weight: bold;">
+                                ပိုမိုသိရှိလိုပါက >>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 col-md-4 d-flex">
+                <div class="card border-1 shadow-sm w-100">
+                    <div class="card-body p-4">
+                        <div class="col-lg-12 d-flex justify-content-center mt-lg-0 border rounded">
+                            <div class="text-muted text-center responsive-img-container">
+                                <img src="/images/aots-2.jpg" alt="IT Theme" class="responsive-img img-fluid">
+                            </div>
+                        </div>
+                        <h4 class="course-title fw-bold mt-3">GIC မှ သင်ကြားပို့ချပေးမည့် AOTS ပညာဒါန Course</h4>
+                        <p class="course-description">
+                            IT လုပ်ငန်းနယ်ပယ်တွင် မရှိမဖြစ်အရေးပါသော RPA ကဲ့သို့သော နည်းပညာသင်တန်းများ နှင့် ITPEC FE
+                            စာမေးပွဲပြင်ဆင်မှုသင်တန်းများကို AOTS (The Association for Overseas Technical Cooperation
+                            and Sustainable...</p>
+                        <div class="text-left mt-3">
+                            <a href="#" class="btn btn-link p-0 text-decoration-none" style="font-weight: bold;">
+                                ပိုမိုသိရှိလိုပါက >>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 col-md-4 d-flex">
+                <div class="card border-1 shadow-sm w-100">
+                    <div class="card-body p-4">
+                        <div class="col-lg-12 d-flex justify-content-center mt-lg-0 border rounded">
+                            <div class="text-muted text-center responsive-img-container">
+                                <img src="/images/aots-3.jpg" alt="IT Theme" class="responsive-img img-fluid">
+                            </div>
+                        </div>
+                        <h4 class="course-title fw-bold mt-3">GIC မှ သင်ကြားပို့ချပေးမည့် AOTS ပညာဒါန Course</h4>
+                        <p class="course-description">
+                            IT လုပ်ငန်းနယ်ပယ်တွင် မရှိမဖြစ်အရေးပါသော RPA ကဲ့သို့သော နည်းပညာသင်တန်းများ နှင့် ITPEC FE
+                            စာမေးပွဲပြင်ဆင်မှုသင်တန်းများကို AOTS (The Association for Overseas Technical Cooperation
+                            and Sustainable...</p>
+                        <div class="text-left mt-3">
+                            <a href="#" class="btn btn-link p-0 text-decoration-none" style="font-weight: bold;">
+                                ပိုမိုသိရှိလိုပါက >>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="tech-html-bootstrap container mt-4 p-4 bg-white">
+        <div class="container">
+            <header class="text-left mb-3">
+                <h3 class="header-h3 fw-bold text-primary mb-4">
+                    ဆက်သွယ်ရန်
+                </h3>
+            </header>
+
+            <div class="header-h4 row mb-4">
+                <div class="col-md-6 mb-4 mb-md-0">
+                    <h5 class="text-dark fw-bold">ရန်ကုန်</h5>
+                    <p class="text-dark mb-1">09-40995-9533</p>
+                    <p class="text-dark mb-1">academy@gicjp.com</p>
+                    <p class="text-secondary small">Room B PH4, Myawaddy Luxury Bank Complex, Corner of Bogyoke Aung San
+                        Road & Warden St,Lanmadaw Township</p>
+                </div>
+
+                <div class="col-md-6">
+                    <h5 class="text-dark fw-bold">မန္တလေး</h5>
+                    <p class="text-dark mb-1">09-42338-5177</p>
+                    <p class="text-dark mb-1">academy@gicjp.com</p>
+                    <p class="text-secondary small">Block(6-11), Mingalar Mandalay, 73rd Street, Between Mingalar 1st st
+                        x Mingalar 2nd st, Myothit Quarter (1), Chanmyatharzi Township, Mandalay.</p>
+                </div>
+            </div>
+
+            <div class="content text-center mt-3">
+                <p class="text-dark small mb-1">
+                    ©2025 GIC Career Gateway IT & Japanese Language Training Center All Rights Reserved.
+                </p>
+                <p class="text-muted small">
+                    ©2025 GIC Academy. Created for free using WordPress and Colibri
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- ScrollReveal JS -->
+    <script src="https://unpkg.com/scrollreveal@4.0.9/dist/scrollreveal.min.js"></script>
+
+    <script>
+        // Initialize ScrollReveal
+        ScrollReveal().reveal('.header-h3', {
+            origin: 'bottom',
+            distance: '50px',
+            duration: 1200,
+            delay: 200,
+            easing: 'ease-in-out',
+            mobile: true
+        });
+        ScrollReveal().reveal('.header-h4', {
+            origin: 'bottom',
+            distance: '50px',
+            duration: 1200,
+            delay: 220,
+            easing: 'ease-in-out',
+            mobile: true
+        });
+        ScrollReveal().reveal('.content', {
+            origin: 'bottom',
+            distance: '50px',
+            duration: 1200,
+            delay: 240,
+            easing: 'ease-in-out',
+            mobile: true
+        });
+
+        ScrollReveal().reveal('.left-content, .left-card-1', {
+            origin: 'left',
+            distance: '50px',
+            duration: 1200,
+            delay: 250,
+            easing: 'ease-in-out',
+            mobile: true
+        });
+
+        ScrollReveal().reveal('.right-content, .right-card-1', {
+            origin: 'right',
+            distance: '50px',
+            duration: 1200,
+            delay: 250,
+            easing: 'ease-in-out',
+            mobile: true
+        });
+        ScrollReveal().reveal('.left-card-2', {
+            origin: 'left',
+            distance: '50px',
+            duration: 1200,
+            delay: 250,
+            easing: 'ease-in-out',
+            mobile: true
+        });
+    </script>
+    <!-- Active Navigation Script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const navLinks = document.querySelectorAll('.nav-link[href^="#"]');
+            const sections = document.querySelectorAll('section[id]');
+
+            function setActiveLink(targetHref) {
+                const currentActive = document.querySelector('.nav-link.active');
+                const newActive = document.querySelector('.nav-link[href="' + targetHref + '"]');
+
+                if (currentActive !== newActive) {
+                    currentActive?.classList.remove('active');
+                    newActive?.classList.add('active');
+                }
+            }
+
+            // Click event
+            navLinks.forEach(link => {
+                link.addEventListener('click', function () {
+                    setActiveLink(this.getAttribute('href'));
+                });
+            });
+
+            // Scroll event
+            function updateActiveNav() {
+                let currentSection = 'home';
+                const scrollPos = window.scrollY + 150;
+
+                for (const section of sections) {
+                    if (scrollPos >= section.offsetTop &&
+                        scrollPos < section.offsetTop + section.clientHeight) {
+                        currentSection = section.id;
+                        break;
+                    }
+                }
+
+                setActiveLink('#' + currentSection);
+            }
+
+            window.addEventListener('scroll', updateActiveNav);
+            updateActiveNav();
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GCG | 登録フォーム</title>
+    <link rel="icon" type="image/png" href="/images/image.png">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="/css/register-btn-fixed-width.css">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/register-radio-icons.js" defer></script>
+    <script src="/js/register-displayValidationErrors.js" defer></script>
+    <script src="/js/register-third-page.js" defer></script>
+    <script src="/js/register-blockPastDate.js" defer></script>
+</head>
+
+<body class="bg-light">
+    <div class="container py-5">
+        <!-- Registration Form -->
+        <div class="card p-4 mx-auto rounded-3 shadow-sm" style="max-width: 900px;">
+            <div class="card-body">
+                <div class="text-center mb-4">
+                    <div class="d-inline-flex align-items-center justify-content-center bg-white mb-3"
+                        style="width: 100px; height: 100px; overflow: hidden;">
+                        <img src="/images/image.png" alt="Logo" class="w-100 h-100" style="object-fit: cover;">
+                    </div>
+                    <h2 class="text-primary fw-bold pb-2 border-bottom border-light mb-4">
+                        生徒情報登録フォーム
+                    </h2>
+                </div>
+                <!-- Form Start -->
+                <form novalidate>
+                    <div class="row justify-content-center">
+                        <div class="col-12 col-lg-10 col-xl-9">
+                            <!-- 宗教 (optional) -->
+                            <div class="row mb-3">
+                                <label class="col-12 col-md-4 col-form-label text-md-start fw-bold mb-2 mb-md-0">
+                                    宗教
+                                </label>
+                                <div class="col-12 col-md-8">
+                                    <div role="group" aria-label="Religion selection" id="religionBtnGroup"
+                                        class="d-flex flex-column">
+                                        <!-- First row: 2 options -->
+                                        <div class="d-flex mb-2">
+                                            <input type="radio" class="btn-check" name="religion" id="religionBuddhism"
+                                                value="仏教" th:checked="${studentData?.religion == '仏教'}">
+                                            <label
+                                                class="btn btn-outline-secondary d-flex align-items-center gap-1 me-2 rounded py-1  btn-fixed-width"
+                                                for="religionBuddhism">
+                                                <i class="bi bi-circle"></i>
+                                                仏教
+                                            </label>
+                                            <input type="radio" class="btn-check" name="religion" id="religionIslam"
+                                                value="イスラム教" th:checked="${studentData?.religion == 'イスラム教'}">
+                                            <label
+                                                class="btn btn-outline-secondary d-flex align-items-center gap-1 me-2 rounded py-1  btn-fixed-width"
+                                                for="religionIslam">
+                                                <i class="bi bi-circle"></i>
+                                                イスラム教
+                                            </label>
+                                        </div>
+                                        <!-- Second row: 2 options -->
+                                        <div class="d-flex my-2">
+                                            <input type="radio" class="btn-check" name="religion" id="religionChristian"
+                                                value="キリスト教" th:checked="${studentData?.religion == 'キリスト教'}">
+                                            <label
+                                                class="btn btn-outline-secondary d-flex align-items-center gap-1 me-2 rounded py-1 btn-fixed-width"
+                                                for="religionChristian">
+                                                <i class="bi bi-circle"></i>
+                                                キリスト教
+                                            </label>
+                                            <input type="radio" class="btn-check" name="religion" id="religionOther"
+                                                value="その他" th:checked="${studentData?.religion == 'その他'}">
+                                            <label
+                                                class="btn btn-outline-secondary d-flex align-items-center gap-1 me-2 rounded py-1 btn-fixed-width"
+                                                for="religionOther">
+                                                <i class="bi bi-circle"></i>
+                                                その他
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="invalid-feedback" id="religionError" style="display:none;">宗教を選択してください
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- その他宗教 (NOT required) -->
+                            <div class="row mb-3">
+                                <label for="otherReligion"
+                                    class="col-12 col-md-4 col-form-label text-md-start fw-bold mb-2 mb-md-0">
+                                    その他宗教
+                                </label>
+                                <div class="col-12 col-md-8">
+                                    <input type="text" class="form-control" id="otherReligion" name="otherReligion"
+                                        th:value="${studentData?.otherReligion}" placeholder="その他の宗教を入力してください">
+                                    <div class="invalid-feedback">その他宗教を入力してください</div>
+                                </div>
+                            </div>
+                            <!-- タバコ (optional) -->
+                            <div class="row mb-3">
+                                <label class="col-12 col-md-4 col-form-label text-md-start fw-bold mb-2 mb-md-0">
+                                    タバコ
+                                </label>
+                                <div class="col-12 col-md-8">
+                                    <div class="btn-group" role="group" aria-label="Smoking" id="smokingBtnGroup">
+                                        <input type="radio" class="btn-check" name="smoking" id="smokingYes" value="吸う"
+                                            th:checked="${studentData?.smoking == '吸う'}">
+                                        <label
+                                            class="btn btn-outline-secondary d-flex align-items-center gap-1 me-2 rounded py-1 btn-fixed-width"
+                                            for="smokingYes">
+                                            <i class="bi bi-circle"></i>
+                                            吸う
+                                        </label>
+                                        <input type="radio" class="btn-check" name="smoking" id="smokingNo" value="吸わない"
+                                            th:checked="${studentData?.smoking == '吸わない'}">
+                                        <label
+                                            class="btn btn-outline-secondary d-flex  align-items-center gap-1 me-2 rounded py-1 btn-fixed-width"
+                                            for="smokingNo">
+                                            <i class="bi bi-circle"></i>
+                                            吸わない
+                                        </label>
+                                    </div>
+                                    <div class="invalid-feedback" id="smokingError" style="display:none;">タバコを選択してください
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- お酒 (optional) -->
+                            <div class="row mb-3">
+                                <label class="col-12 col-md-4 col-form-label text-md-start fw-bold mb-2 mb-md-0">
+                                    お酒
+                                </label>
+                                <div class="col-12 col-md-8">
+                                    <div class="btn-group" role="group" aria-label="Alcohol" id="alcoholBtnGroup">
+                                        <div>
+                                            <input type="radio" class="btn-check" name="alcohol" id="alcoholYes"
+                                                value="飲む" th:checked="${studentData?.alcohol == '飲む'}">
+                                            <label
+                                                class="btn btn-outline-secondary d-flex align-items-center gap-1 me-2 rounded py-1 btn-fixed-width"
+                                                for="alcoholYes">
+                                                <i class="bi bi-circle"></i>
+                                                飲む
+                                            </label>
+                                        </div>
+                                        <div>
+                                            <input type="radio" class="btn-check" name="alcohol" id="alcoholNo"
+                                                value="飲まない" th:checked="${studentData?.alcohol == '飲まない'}">
+                                            <label
+                                                class="btn btn-outline-secondary d-flex align-items-center gap-1 me-2 rounded py-1 btn-fixed-width"
+                                                for="alcoholNo">
+                                                <i class="bi bi-circle"></i>
+                                                飲まない
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="invalid-feedback" id="alcoholError" style="display:none;">お酒を選択してください
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- 入れ墨(Tattoo) (optional) -->
+                            <div class="row mb-3">
+                                <label class="col-12 col-md-4 col-form-label text-md-start fw-bold mb-2 mb-md-0">
+                                    入れ墨(Tattoo)
+                                </label>
+                                <div class="col-12 col-md-8">
+                                    <div class="btn-group" role="group" aria-label="Tattoo" id="tattooBtnGroup">
+                                        <div>
+                                            <input type="radio" class="btn-check" name="tattoo" id="tattooYes"
+                                                value="ある" th:checked="${studentData?.tattoo == 'ある'}">
+                                            <label
+                                                class="btn btn-outline-secondary d-flex align-items-center gap-1 me-2 rounded py-1 btn-fixed-width"
+                                                for="tattooYes">
+                                                <i class="bi bi-circle"></i>
+                                                ある
+                                            </label>
+                                        </div>
+                                        <div>
+                                            <input type="radio" class="btn-check" name="tattoo" id="tattooNo" value="ない"
+                                                th:checked="${studentData?.tattoo == 'ない'}">
+                                            <label
+                                                class="btn btn-outline-secondary d-flex align-items-center gap-1 me-2 rounded py-1 btn-fixed-width"
+                                                for="tattooNo">
+                                                <i class="bi bi-circle"></i>
+                                                ない
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="invalid-feedback" id="tattooError" style="display:none;">入れ墨を選択してください
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- 授業料支払予定日 (optional) -->
+                            <div class="row mb-3">
+                                <label for="tuitionPaymentDate"
+                                    class="col-12 col-md-4 col-form-label text-md-start fw-bold mb-2 mb-md-0">
+                                    授業料支払予定日
+                                </label>
+                                <div class="col-12 col-md-8">
+                                    <input type="date" class="form-control" id="tuitionPaymentDate"
+                                        name="tuitionPaymentDate" th:value="${studentData?.tuitionPaymentDate}">
+                                    <div class="invalid-feedback">授業料支払予定日は必須です</div>
+                                </div>
+                            </div>
+                            <!-- 寮があれば入りたい (optional) -->
+                            <div class="row mb-3">
+                                <label class="col-12 col-md-4 col-form-label text-md-start fw-bold mb-2 mb-md-0">
+                                    寮があれば入りたい
+                                </label>
+                                <div class="col-12 col-md-8">
+                                    <div class="btn-group" role="group" aria-label="Want dorm"
+                                        id="wantDormBtnGroup">
+                                        <div>
+                                            <input type="radio" class="btn-check" name="wantDorm" id="wantDormYes"
+                                                value="はい" th:checked="${studentData?.wantDorm == 'はい'}">
+                                            <label
+                                                class="btn btn-outline-secondary d-flex align-items-center gap-1 me-2 rounded py-1 btn-fixed-width"
+                                                for="wantDormYes">
+                                                <i class="bi bi-circle"></i>
+                                                はい
+                                            </label>
+                                        </div>
+                                        <div>
+                                            <input type="radio" class="btn-check" name="wantDorm" id="wantDormNo"
+                                                value="いいえ" th:checked="${studentData?.wantDorm == 'いいえ'}">
+                                            <label
+                                                class="btn btn-outline-secondary d-flex align-items-center gap-1 me-2 rounded py-1 btn-fixed-width"
+                                                for="wantDormNo">
+                                                <i class="bi bi-circle"></i>
+                                                いいえ
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="invalid-feedback" id="wantDormError" style="display:none;">寮を選択してください
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- その他メモ (NOT required) -->
+                            <div class="row  mb-3">
+                                <label for="otherMemo"
+                                    class="col-12 col-md-4 col-form-label text-md-start fw-bold mb-2 mb-md-0">
+                                    その他メモ ( 自由形式 )
+                                </label>
+                                <div class="col-12 col-md-8">
+                                    <textarea class="form-control" id="otherMemo" name="otherMemo" rows="4"
+                                        placeholder="自由にメモを入力してください" th:text="${studentData?.otherMemo}"></textarea>
+                                    <div class="invalid-feedback">その他メモを入力してください</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Submit Button -->
+                    <div class="text-center pt-3 d-flex justify-content-center gap-3">
+                        <button type="button" class="btn btn-secondary btn-lg rounded py-1 px-3"
+                            id="backButton">戻る</button>
+                        <button type="submit" class="btn btn-primary btn-lg rounded py-1 px-3">確認</button>
+                    </div>
+                </form>
+                <!-- Footer Section -->
+                <div class="text-center mt-5 pt-3 border-top border-light">
+                    <small class="text-muted">
+                        &copy; 2025 Global Innovation Consulting.Inc, All Rights Reserved.
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

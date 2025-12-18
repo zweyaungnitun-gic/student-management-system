@@ -1,0 +1,8 @@
+    .btn-fixed-width {
+        min-width: 125px;
+        justify-content: start;
+    }
+    .btn-fixed-width-small {
+        min-width: 90px;
+        justify-content: start;
+    }
