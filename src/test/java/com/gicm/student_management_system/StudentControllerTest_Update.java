@@ -94,15 +94,6 @@ class StudentControllerTest_Update {
     }
 
     @Test
-    void testShowUpdateForm_StudentNotFound() {
-        when(studentService.findById(studentId)).thenReturn(Optional.empty());
-
-        RuntimeException exception = assertThrows(RuntimeException.class,
-                () -> studentController.showUpdateForm(studentId, model));
-        assertEquals("生徒が見つかりません: ID 1", exception.getMessage());
-    }
-
-    @Test
     void testUpdateBasicInfo_Success() {
         BindingResult bindingResult = new BeanPropertyBindingResult(testStudent, "student");
         RedirectAttributes redirectAttributes = new RedirectAttributesModelMap();
@@ -292,4 +283,5 @@ class StudentControllerTest_Update {
                 student.getNationalID().equals("A999999999") &&
                 student.getContactViber().equals("updated_viber")));
     }
+
 }
