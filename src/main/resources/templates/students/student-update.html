@@ -281,7 +281,14 @@
 
                         <div class="col-md-6">
                           <label class="form-label required-label">合格した最高のJLPTレベル</label>
-                          <input type="text" class="form-control" th:field="*{passedHighestJLPTLevel}" />
+                          <select class="form-select" th:field="*{passedHighestJLPTLevel}">
+                            <option value="none">なし</option>
+                            <option value="N5">N5</option>
+                            <option value="N4">N4</option>
+                            <option value="N3">N3</option>
+                            <option value="N2">N2</option>
+                            <option value="N1">N1</option>
+                          </select>
                           <div class="text-danger" th:if="${#fields.hasErrors('passedHighestJLPTLevel')}" th:errors="*{passedHighestJLPTLevel}"></div>
                         </div>
                         <div></div>
@@ -362,7 +369,7 @@
                         <div></div>
 
                         <div class="col-12">
-                          <label class="form-label">メモ／備考</label>
+                          <label class="form-label">その他メモ（自由形式）</label>
                           <textarea class="form-control" th:field="*{memoNotes}" rows="4" placeholder="自由形式のメモ"></textarea>
                           <div class="text-danger" th:if="${#fields.hasErrors('memoNotes')}" th:errors="*{memoNotes}"></div>
                         </div>
@@ -781,7 +788,7 @@
                     </div>
                     
                     <div class="mb-4">
-                      <h6 class="text-secondary mb-3">その他メモ（自由形式）</h6>
+                      <h6 class="text-secondary mb-3">メモ／備考 </h6>
                       <div class="row g-3">
                         <div class="col-12">
                           <textarea class="form-control" th:field="*{otherMemo}" rows="6" placeholder="その他の備考、連絡事項など"></textarea>
