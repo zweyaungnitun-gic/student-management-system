@@ -106,9 +106,9 @@ public class StudentController {
         return "students/student-details";
     }
 
-    // ------------------------------------------------------------------------------------------------------------------------
-    // Student Update (HL)
-    // ------------------------------------------------------------------------------------------------------------------------
+    // ----------------------------------------------------------------------------------------
+    // Student Update
+    // ----------------------------------------------------------------------------------------
 
     @GetMapping("/student-update/{id}")
     public String showUpdateForm(@PathVariable Long id, Model model) {
@@ -288,26 +288,16 @@ public class StudentController {
         return "redirect:/students/student-update/" + id + "?tab=interview";
     }
 
-    // ------------------------------------------------------------------------------------------------------------------------
-    // ---- JSON API FOR FRONTEND CSV ----
-    @RestController
-    @RequestMapping("/students/export")
-    @RequiredArgsConstructor
-    public static class StudentExportController {
+    @GetMapping("/export")
+    @ResponseBody
+    public List<StudentFullExportDTO> getStudentsExport(
+            @RequestParam(value = "ids", required = false) List<Long> ids,
+            @RequestParam(value = "nameSearch", defaultValue = "") String nameSearch,
+            @RequestParam(value = "status", defaultValue = "") String status) {
 
-        private final StudentExportService studentExportService;
-
-        @GetMapping
-        public List<StudentFullExportDTO> getStudentsExport(
-                @RequestParam(value = "ids", required = false) List<Long> ids,
-                @RequestParam(value = "nameSearch", defaultValue = "") String nameSearch,
-                @RequestParam(value = "status", defaultValue = "") String status) {
-
-            if (ids != null && !ids.isEmpty()) {
-                return studentExportService.getStudentsByIds(ids);
-            } else {
-                return studentExportService.getAllStudentsFull(nameSearch, status);
-            }
+        if (ids != null && !ids.isEmpty()) {
+            return studentExportService.getStudentsByIds(ids);
         }
+        return studentExportService.getAllStudentsFull(nameSearch, status);
     }
 }

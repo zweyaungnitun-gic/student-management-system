@@ -12,10 +12,13 @@ import java.util.stream.Collectors;
 import java.util.Optional;
 
 @Service
-@RequiredArgsConstructor
 public class StudentServiceImpl implements StudentService {
 
     private final StudentRepository studentRepository;
+
+    public StudentServiceImpl(StudentRepository studentRepository) {
+        this.studentRepository = studentRepository;
+    }
 
     public StudentDTO convertToDTO(Student student) {
         return StudentDTO.builder()
