@@ -341,3 +341,39 @@ body {
   align-items: flex-start;
   padding-top: 15px;
 }
+
+/* INTERVIEW TAB (Student Details) */
+.interview-section h4 {
+  font-weight: 700;
+  margin-bottom: 20px;
+}
+
+.interview-section .card {
+  padding: 20px;
+}
+
+/* Section title inside interview card */
+.interview-section .fw-bold {
+  font-size: 0.95rem;
+  color: #495057;
+}
+
+/* Interview textarea styling */
+.interview-textarea {
+  border-color: #dee2e6;
+  background-color: #f8f9fa;
+  resize: none;
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+/* Read-only appearance improvement */
+.interview-textarea[readonly] {
+  cursor: default;
+}
+
+/* Spacing between memo blocks */
+.interview-section .mb-4 {
+  margin-bottom: 1.5rem !important;
+}
+

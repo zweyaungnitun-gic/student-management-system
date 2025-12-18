@@ -664,29 +664,25 @@
                             </div>
                         </div>
 
-                        <div th:if="${currentTab == 'interview'}" class="p-4">
+                        <div th:if="${currentTab == 'interview'}" class="p-4 interview-section">
                             <h4 class="text-primary border-bottom pb-2 mb-4">面接結果情報</h4>
                             <div th:if="${interviewNotes != null}" th:object="${interviewNotes}"
                                 class="card p-3 shadow-sm border-0">
                                 <div class="mb-4">
                                     <div class="mb-2 fw-bold border-bottom pb-1">一回目面接結果メモ</div>
-                                    <textarea class="form-control" rows="6" readonly th:text="*{interview1}"
-                                        style="border-color: #dee2e6;"></textarea>
+                                    <textarea class="form-control interview-textarea" rows="6" readonly th:text="*{interview1}"></textarea>
                                 </div>
                                 <div class="mb-4">
                                     <div class="mb-2 fw-bold border-bottom pb-1">二回目面接結果メモ</div>
-                                    <textarea class="form-control" rows="6" readonly th:text="*{interview2}"
-                                        style="border-color: #dee2e6;"></textarea>
+                                    <textarea class="form-control interview-textarea" rows="6" readonly th:text="*{interview2}"></textarea>
                                 </div>
                                 <div class="mb-4">
                                     <div class="mb-2 fw-bold border-bottom pb-1">三回目面接結果メモ</div>
-                                    <textarea class="form-control" rows="6" readonly th:text="*{interview3}"
-                                        style="border-color: #dee2e6;"></textarea>
+                                    <textarea class="form-control interview-textarea" rows="6" readonly th:text="*{interview3}"></textarea>                                      
                                 </div>
                                 <div class="mb-4">
                                     <div class="mb-2 fw-bold border-bottom pb-1">その他メモ</div>
-                                    <textarea class="form-control" rows="6" readonly th:text="*{otherMemo}"
-                                        style="border-color: #dee2e6;"></textarea>
+                                    <textarea class="form-control interview-textarea" rows="6" readonly th:text="*{otherMemo}"></textarea>                                       
                                 </div>
                             </div>
                             <div th:unless="${currentTab == 'personal' or currentTab == 'contact' 
