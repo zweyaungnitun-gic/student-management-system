@@ -22,21 +22,20 @@
 
     <div class="sidebar-overlay d-lg-none" data-sidebar-toggle></div>
 
-    <div class="dashboard-main" style="background-color: white;">
+    <div class="dashboard-main" style="background-color: #f8fcff;">
       
 
       <div class="page-wrapper" style="padding: 0; height: 100%;">
         
 
-        <section class="user-management glass-panel" style="height: 100%; margin: 0; border-radius: 0; padding: 3rem;">
-          <div class="d-flex align-items-center gap-3 pb-0 mb-5">
-            <button class="btn btn-light btn-icon d-lg-none" type="button" aria-label="Toggle sidebar"
-              data-sidebar-toggle>
-              <i class="bi bi-list fs-4"></i>
-            </button>
-            <div>
-              <p class="text-uppercase text-muted small fw-semibold mb-1">生徒情報管理システム</p>
-              <h4 class="mb-0" style="color: #0A58A0; font-weight: 600; font-size: 1.8rem;">ユーザー一覧</h4>
+        <section  style="height: 100%; margin: 0; border-radius: 0; padding: 3rem;">
+          <div class="page-header mb-3">
+            <div class="d-flex align-items-center gap-3">
+              <div>
+                <h1 class="mb-0" style="color:#0A58A0;font-weight:600;font-size:1.8rem;">
+                  ユーザー一覧
+                </h1>
+              </div>
             </div>
           </div>
           <!-- Success/Error Messages -->
@@ -51,37 +50,37 @@
           <span th:text="${error}"></span>
           <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
-          <div class="table-responsive" id="userTableWrapper" style="box-shadow: none; padding-left: 1rem;">
-            <table class="table data-table align-middle " id="userTable">
-              <thead>
-                <tr class="title-header-row">
-                  
-                </tr>
+          <div class="table-wrapper p-1" style="border:1px solid transparent;">
+            <div class="table-responsive me-3">
+              <table class="table data-table align-middle border border-radius" id="userTable">
+                <thead>
 
-                <tr class="filter-row">
-                  <th colspan="6" class="p-2">
-                    <div style="display: flex; justify-content: space-between; align-items: center; gap: 1rem;">
-                      <form th:action="@{/users}" method="get" id="userFilterForm" style="display: flex; flex-wrap: wrap; align-items: center; gap: 1rem; margin: 0; padding: 5px;">
-                        <div class="filter-control-group" style="display: flex; align-items: center; gap: 0.5rem;">
-                          <span style="font-size: 16px; white-space: nowrap;">検索</span>
-                          <input type="text" name="search" th:value="${search}"
-                            class="form-control form-control-sm" id="searchInput" placeholder="名前またはメールで検索" style="min-width: 250px;" />
-                        </div>
-                        <button type="submit" style="display: none;"></button>
-                      </form>
-                      <a th:href="@{/users/add}" class="btn btn-primary btn-sm d-flex align-items-center gap-2" style="white-space: nowrap; color: white !important;">
-                        <i class="bi bi-plus-lg" style="color: white !important;"></i>
-                        <span class="d-none d-sm-inline" style="color: white !important;">Add User</span>
-                      </a>
-                    </div>
-                  </th>
-                </tr>                <tr>
-                  <th scope="col">ID</th>
-                  <th scope="col">名前</th>
-                  <th scope="col">メール</th>
-                  <th scope="col">ロール</th>
-                  <th scope="col">作成日</th>
-                  <th scope="col">動作機能</th>
+                  <tr class="filter-row">
+                    <th colspan="6" class="p-3">
+                      <div style="display: flex; justify-content: space-between; align-items: center; gap: 1rem;">
+                        <form th:action="@{/users}" method="get" id="userFilterForm" style="display: flex; flex-wrap: wrap; align-items: center; gap: 1rem; margin: 0; padding: 0;">
+                          <div class="filter-control-group" style="display: flex; align-items: center; gap: 0.5rem;">
+                            <span style="font-size: 16px; white-space: nowrap;">名前で検索</span>
+                            <input type="text" name="search" th:value="${search}"
+                              class="form-control form-control-sm" id="searchInput" placeholder="名前またはメールで検索" style="min-width: 250px;" />
+                          </div>
+                          <button type="submit" style="display: none;"></button>
+                        </form>
+                        <a th:href="@{/users/add}" class="btn btn-primary btn-sm d-flex align-items-center gap-2" style="white-space: nowrap; color: white !important;">
+                          <i class="bi bi-plus-lg" style="color: white !important;"></i>
+                          <span class="d-none d-sm-inline" style="color: white !important;">Add User</span>
+                        </a>
+                      </div>
+                    </th>
+                  </tr>                </tr>
+
+                <tr>
+                  <th scope="col" class="text-center">ID</th>
+                  <th scope="col" class="text-center">名前</th>
+                  <th scope="col" class="text-center">メール</th>
+                  <th scope="col" class="text-center">ロール</th>
+                  <th scope="col" class="text-center">作成日</th>
+                  <th scope="col" class="text-center">動作機能</th>
                 </tr>
               </thead>
 
@@ -114,6 +113,7 @@
                   </td>
                 </tr>
               </tbody>
+
             </table>
           </div>
           <div id="pagination" class="d-flex justify-content-center mt-3"></div>

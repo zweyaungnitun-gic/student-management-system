@@ -4,7 +4,7 @@
 }
 
 .form-card {
-  background: white;
+  background: transparent;
   border-radius: 12px;
   box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
   padding: 2rem;
