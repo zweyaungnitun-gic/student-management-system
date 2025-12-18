@@ -85,20 +85,6 @@ public class UserController {
         return "redirect:/users";
     }
 
-    @GetMapping("/edit/{id}")
-    public String editUserForm(@PathVariable Long id, Model model, RedirectAttributes redirectAttributes) {
-        User user = userService.getUserById(id).orElse(null);
-
-        if (user == null) {
-            redirectAttributes.addFlashAttribute("error", "ユーザーが見つかりません");
-            return "redirect:/users";
-        }
-
-        model.addAttribute("user", user);
-        model.addAttribute("roles", Role.values());
-        return "users/edit";
-    }
-
     @PostMapping("/edit")
     public String editUserFormPost(@RequestParam Long id, Model model, RedirectAttributes redirectAttributes) {
         User user = userService.getUserById(id).orElse(null);
