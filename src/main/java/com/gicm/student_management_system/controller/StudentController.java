@@ -26,6 +26,7 @@ import org.springframework.validation.annotation.Validated;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -46,19 +47,23 @@ public class StudentController {
             @RequestParam(value = "status", defaultValue = "") String status,
             Model model) {
 
-        // Split comma-separated statuses
         List<String> statuses = new ArrayList<>();
         if (!status.isBlank()) {
             statuses = Arrays.asList(status.split(","));
         }
 
-        // Call new service method that supports multi-status
         List<StudentDTO> students = studentService.getStudentsByStatuses(nameSearch, statuses);
+
+        // Sort by STU ID safely
+        students.sort(Comparator.comparing(
+                StudentDTO::getStudentId,
+                Comparator.nullsLast(String::compareTo)));
 
         model.addAttribute("students", students);
         model.addAttribute("nameSearch", nameSearch);
         model.addAttribute("statusFilter", status);
-        return "students/student-list.html";
+
+        return "students/student-list"; // no .html
     }
 
     @GetMapping("/delete/{id}")

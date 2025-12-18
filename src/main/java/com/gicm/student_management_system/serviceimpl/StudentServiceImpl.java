@@ -99,9 +99,9 @@ public class StudentServiceImpl implements StudentService {
         boolean hasStatus = status != null && !status.isBlank();
 
         if (hasName && hasStatus) {
-            students = studentRepository.findByStudentNameContainingAndStatus(nameSearch, status);
+            students = studentRepository.findByStudentNameIgnoreCaseContainingAndStatus(nameSearch, status);
         } else if (hasName) {
-            students = studentRepository.findByStudentNameContaining(nameSearch);
+            students = studentRepository.findByStudentNameIgnoreCaseContaining(nameSearch);
         } else if (hasStatus) {
             students = studentRepository.findByStatus(status);
         } else {
@@ -121,8 +121,7 @@ public class StudentServiceImpl implements StudentService {
     @Override
     @Transactional
     public StudentDTO createStudent(StudentDTO dto) {
-        Student toSave = convertToEntity(dto, null);
-        Student saved = studentRepository.save(toSave);
+        Student saved = studentRepository.save(convertToEntity(dto, null));
         return convertToDTO(saved);
     }
 
@@ -132,8 +131,7 @@ public class StudentServiceImpl implements StudentService {
         Optional<Student> opt = studentRepository.findById(id);
         if (opt.isEmpty())
             return null;
-        Student updated = convertToEntity(dto, opt.get());
-        Student saved = studentRepository.save(updated);
+        Student saved = studentRepository.save(convertToEntity(dto, opt.get()));
         return convertToDTO(saved);
     }
 
@@ -141,19 +139,6 @@ public class StudentServiceImpl implements StudentService {
     @Transactional
     public void deleteStudent(Long id) {
         studentRepository.deleteById(id);
-    }
-
-    public List<Student> findAllEntities() {
-        return studentRepository.findAll();
-    }
-
-    public Optional<Student> findByIdEntity(Long id) {
-        return studentRepository.findById(id);
-    }
-
-    @Transactional
-    public Student saveEntity(Student student) {
-        return studentRepository.save(student);
     }
 
     @Override
@@ -177,9 +162,9 @@ public class StudentServiceImpl implements StudentService {
         boolean hasStatus = status != null && !status.isBlank();
 
         if (hasName && hasStatus) {
-            return studentRepository.findByStudentNameContainingAndStatus(nameSearch, status);
+            return studentRepository.findByStudentNameIgnoreCaseContainingAndStatus(nameSearch, status);
         } else if (hasName) {
-            return studentRepository.findByStudentNameContaining(nameSearch);
+            return studentRepository.findByStudentNameIgnoreCaseContaining(nameSearch);
         } else if (hasStatus) {
             return studentRepository.findByStatus(status);
         } else {
@@ -187,7 +172,6 @@ public class StudentServiceImpl implements StudentService {
         }
     }
 
-    // ... in StudentServiceImpl.java
     @Override
     public List<StudentDTO> getStudentsByStatuses(String nameSearch, List<String> statuses) {
         List<Student> students;
@@ -195,21 +179,29 @@ public class StudentServiceImpl implements StudentService {
         boolean hasStatuses = statuses != null && !statuses.isEmpty();
 
         if (hasName && hasStatuses) {
-            // This line requires findByStudentNameContainingAndStatusIn in the repository
-            students = studentRepository.findByStudentNameContainingAndStatusIn(nameSearch, statuses);
+            students = studentRepository.findByStudentNameIgnoreCaseContainingAndStatusIn(nameSearch, statuses);
         } else if (hasName) {
-            students = studentRepository.findByStudentNameContaining(nameSearch);
+            students = studentRepository.findByStudentNameIgnoreCaseContaining(nameSearch);
         } else if (hasStatuses) {
-            // This line requires findByStatusIn in the repository
             students = studentRepository.findByStatusIn(statuses);
         } else {
             students = studentRepository.findAll();
         }
 
-        // Correctly converts entities to DTOs
         return students.stream()
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
     }
-    // ...
+
+    private String generateStudentId() {
+        Student lastStudent = studentRepository.findTopByOrderByIdDesc();
+        if (lastStudent == null || lastStudent.getStudentId() == null) {
+            return "STU001";
+        }
+        String lastId = lastStudent.getStudentId(); // e.g., "STU005"
+        int num = Integer.parseInt(lastId.replace("STU", ""));
+        num++; // increment
+        return String.format("STU%03d", num); // e.g., "STU006"
+    }
+
 }
