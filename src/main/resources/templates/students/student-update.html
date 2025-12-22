@@ -24,7 +24,7 @@
                     type="button" 
                     aria-label="Toggle sidebar"
                     data-sidebar-toggle>
-              <i class="fas fa-bars fs-4"></i>
+              <i class="bi bi-list fs-4"></i>
             </button>
             <div>
               <h1 class="mb-0" style="color: #0A58A0; font-weight: 600; font-size: 1.8rem;">
@@ -975,5 +975,19 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 </script>
+  
+  <script>  
+  document.addEventListener("DOMContentLoaded", function () {
+    const layout = document.querySelector(".dashboard-layout");
+    const toggles = document.querySelectorAll("[data-sidebar-toggle]");
+    toggles.forEach((btn) =>
+      btn.addEventListener("click", function (event) {
+        event.preventDefault();
+        layout?.classList.toggle("sidebar-open");
+      })
+    );
+  });
+  </script>
+
 </body>
 </html>
