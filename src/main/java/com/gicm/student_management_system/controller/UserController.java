@@ -85,8 +85,8 @@ public class UserController {
         return "redirect:/users";
     }
 
-    @GetMapping("/edit/{id}")
-    public String editUserForm(@PathVariable Long id, Model model, RedirectAttributes redirectAttributes) {
+    @PostMapping("/edit")
+    public String editUserFormPost(@RequestParam Long id, Model model, RedirectAttributes redirectAttributes) {
         User user = userService.getUserById(id).orElse(null);
 
         if (user == null) {
