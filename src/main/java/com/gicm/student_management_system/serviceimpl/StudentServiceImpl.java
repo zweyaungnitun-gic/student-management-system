@@ -73,8 +73,13 @@ public class StudentServiceImpl implements StudentService {
         if (dto.getPhoneNumber() != null)
             s.setPhoneNumber(dto.getPhoneNumber());
 
-        if (dto.getDesiredJobType() != null)
-            s.setDesiredJobType(dto.getDesiredJobType());
+        if (dto.getDesiredJobType() != null) {
+            // Check if the text is already proper Japanese
+            String jobType = dto.getDesiredJobType();
+            // If it's coming as romaji, you may need to map it back
+            // But first, let's ensure the encoding is correct
+            s.setDesiredJobType(jobType);
+        }
 
         if (dto.getStatus() != null)
             s.setStatus(dto.getStatus());
@@ -139,6 +144,11 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
+    public List<Student> findAllByIds(List<Long> ids) {
+        return studentRepository.findAllById(ids);
+    }
+
+    @Override
     @Transactional
     public void deleteStudent(Long id) {
         studentRepository.deleteById(id);
@@ -191,20 +201,30 @@ public class StudentServiceImpl implements StudentService {
             students = studentRepository.findAll();
         }
 
+        // FIX: Sort by student ID at the service level
+        students.sort((s1, s2) -> {
+            if (s1.getStudentId() == null && s2.getStudentId() == null)
+                return 0;
+            if (s1.getStudentId() == null)
+                return 1;
+            if (s2.getStudentId() == null)
+                return -1;
+
+            // Extract numbers for proper numeric sorting
+            try {
+                String num1 = s1.getStudentId().replaceAll("[^0-9]", "");
+                String num2 = s2.getStudentId().replaceAll("[^0-9]", "");
+                if (!num1.isEmpty() && !num2.isEmpty()) {
+                    return Integer.compare(Integer.parseInt(num1), Integer.parseInt(num2));
+                }
+            } catch (Exception e) {
+                // Fallback to string comparison
+            }
+            return s1.getStudentId().compareTo(s2.getStudentId());
+        });
+
         return students.stream()
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
     }
-
-    private String generateStudentId() {
-        Student lastStudent = studentRepository.findTopByOrderByIdDesc();
-        if (lastStudent == null || lastStudent.getStudentId() == null) {
-            return "STU001";
-        }
-        String lastId = lastStudent.getStudentId(); // e.g., "STU005"
-        int num = Integer.parseInt(lastId.replace("STU", ""));
-        num++; // increment
-        return String.format("STU%03d", num); // e.g., "STU006"
-    }
-
 }

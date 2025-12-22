@@ -1,78 +1,468 @@
 <!DOCTYPE html>
-
 <html lang="ja" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{layouts/admin-layout :: head(
-    pageTitle=${'生徒情報更新 | Admin Dashboard'},
+  <head
+    th:replace="~{layouts/admin-layout :: head(
+    pageTitle=${'生徒情報一覧 | Admin Dashboard'},
     extraHead=~{::extraCSS},
     extraJS=~{::extraJS}
-)}">
-</head>
+)}"
+  >
+  </head>
 
+  <th:block th:fragment="extraCSS">
+    <link rel="stylesheet" href="/css/student-list.css" />
+  </th:block>
 
-<th:block th:fragment="extraCSS">
-  <link rel="stylesheet" href="/css/student-list.css" />
-</th:block>
+  <th:block th:fragment="extraJS">
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"
+    ></script>
 
-<!-- ===================== -->
-<!-- JS（head に移動）    -->
-<!-- ※ 中身は一切変更なし -->
-<!-- ===================== -->
-<th:block th:fragment="extraJS">
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <script>
+      // ============ GLOBAL VARIABLES ============
+      let allRows = [];
+      let currentPage = 1;
+      const rowsPerPage = 10;
 
+      // ============ DOCUMENT READY ============
+      document.addEventListener("DOMContentLoaded", function () {
+        initializePage();
+        setupEventListeners();
+        setupDownloadButton();
+        setupPagination();
+        setupFilterForm();
+      });
 
-  <script>
+      // ============ INITIALIZATION ============
+      function initializePage() {
+        // Get all rows (excluding header and empty rows)
+        allRows = Array.from(
+          document.querySelectorAll("#studentTableBody tr")
+        ).filter((r) => !r.querySelector("td[colspan]"));
 
-    document.addEventListener('DOMContentLoaded', function () {
+        // Set up select all checkbox
+        const selectAll = document.getElementById("selectAll");
+        if (selectAll) {
+          selectAll.addEventListener("change", handleSelectAll);
+        }
 
-      const selectAll = document.getElementById('selectAll');
-      const checkboxesContainer = document.getElementById('studentTableBody');
-      const filterForm = document.getElementById('studentFilterForm');
-      const nameSearchInput = document.getElementById('nameSearchInput');
+        // Display first page
+        displayPage(1);
+      }
 
+      // ============ EVENT LISTENERS ============
+      function setupEventListeners() {
+        // Listen for checkbox changes
+        document.addEventListener("change", function (e) {
+          if (e.target.classList.contains("row-checkbox")) {
+            updateSelectAllCheckbox();
+          }
+        });
+      }
 
-      selectAll.addEventListener('change', function (e) {
-        const checkboxes = checkboxesContainer.querySelectorAll('.row-checkbox');
-        checkboxes.forEach(checkbox => {
+      // ============ SELECT ALL FUNCTIONALITY ============
+      function handleSelectAll(e) {
+        const allCheckboxes = document.querySelectorAll(".row-checkbox");
+        allCheckboxes.forEach((checkbox) => {
           checkbox.checked = e.target.checked;
         });
-      });
-    });
+      }
 
-    document.addEventListener("DOMContentLoaded", function () {
-      const rows = Array.from(document.querySelectorAll("#studentTableBody tr"))
-        .filter(r => !r.querySelector("td[colspan]"));
+      function updateSelectAllCheckbox() {
+        const allCheckboxes = document.querySelectorAll(".row-checkbox");
+        const checkedCount = document.querySelectorAll(
+          ".row-checkbox:checked"
+        ).length;
+        const selectAll = document.getElementById("selectAll");
 
-      const rowsPerPage = 10;
-      let currentPage = 1;
+        if (!selectAll) return;
+
+        if (checkedCount === 0) {
+          selectAll.checked = false;
+          selectAll.indeterminate = false;
+        } else if (checkedCount === allCheckboxes.length) {
+          selectAll.checked = true;
+          selectAll.indeterminate = false;
+        } else {
+          selectAll.checked = false;
+          selectAll.indeterminate = true;
+        }
+      }
+
+      // ============ DOWNLOAD FUNCTIONALITY ============
+      function setupDownloadButton() {
+        const downloadBtn = document.getElementById("downloadBtn");
+        if (!downloadBtn) return;
+
+        downloadBtn.addEventListener("click", async function () {
+          await handleDownload();
+        });
+      }
+
+      async function handleDownload() {
+        const downloadBtn = document.getElementById("downloadBtn");
+        const originalText = downloadBtn.innerHTML;
+
+        try {
+          // Show loading
+          downloadBtn.innerHTML =
+            '<i class="fas fa-spinner fa-spin"></i> 処理中...';
+          downloadBtn.disabled = true;
+
+          // Get filter values
+          const nameSearch =
+            document.getElementById("nameSearchInput")?.value || "";
+          const status = Array.from(document.querySelectorAll(".status-option"))
+            .filter((cb) => cb.checked)
+            .map((cb) => cb.value)
+            .join(",");
+
+          // Get selected database IDs (for backend)
+          const allCheckboxes = document.querySelectorAll(".row-checkbox");
+          const selectedDbIds = Array.from(allCheckboxes)
+            .filter((cb) => cb.checked)
+            .map((cb) => cb.value)
+            .filter((id) => id && id !== "");
+
+          // Get selected student IDs (for display)
+          const selectedStudentIds = Array.from(allCheckboxes)
+            .filter((cb) => cb.checked)
+            .map((cb) => cb.getAttribute("data-student-id"))
+            .filter((id) => id);
+
+          console.log("Selected Database IDs for backend:", selectedDbIds);
+          console.log("Selected Student IDs for display:", selectedStudentIds);
+
+          // Build query parameters
+          const params = new URLSearchParams();
+          if (selectedDbIds.length > 0) {
+            params.append("ids", selectedDbIds.join(","));
+          }
+          if (nameSearch) params.append("nameSearch", nameSearch);
+          if (status) params.append("status", status);
+
+          // Fetch data from backend
+          const response = await fetch(`/students/export?${params.toString()}`);
+
+          if (!response.ok) {
+            throw new Error(`サーバーエラー: ${response.status}`);
+          }
+
+          const data = await response.json();
+
+          if (!data || data.length === 0) {
+            alert("エクスポートするデータがありません！");
+            return;
+          }
+
+          // Sort data by student ID before exporting
+          const sortedData = sortStudentData(data);
+
+          // Prepare Excel data
+          await exportToExcel(sortedData, selectedStudentIds);
+        } catch (err) {
+          console.error("Export error:", err);
+          alert("エクスポートに失敗しました: " + err.message);
+        } finally {
+          // Reset button
+          downloadBtn.innerHTML = originalText;
+          downloadBtn.disabled = false;
+        }
+      }
+
+      // ============ SORT STUDENT DATA ============
+      function sortStudentData(data) {
+        // Create a copy of the data array
+        const sortedData = [...data];
+
+        // Sort by student ID in ascending order
+        sortedData.sort((a, b) => {
+          // Extract numeric part from student ID (e.g., "STU001" -> 1, "STU010" -> 10)
+          const extractNumber = (studentId) => {
+            if (!studentId) return 0;
+            // Handle different student ID formats
+            const match = studentId.match(/\d+/);
+            return match ? parseInt(match[0], 10) : 0;
+          };
+
+          const numA = extractNumber(a.studentId);
+          const numB = extractNumber(b.studentId);
+
+          // If numbers are equal, sort alphabetically
+          if (numA === numB) {
+            return (a.studentId || "").localeCompare(b.studentId || "");
+          }
+
+          return numA - numB;
+        });
+
+        console.log(
+          "Sorted data:",
+          sortedData.map((s) => s.studentId)
+        );
+        return sortedData;
+      }
+
+      async function exportToExcel(data, selectedStudentIds) {
+        // Headers
+        const headers = [
+          "生徒ID",
+          "名前",
+          "名前(カタカナ)",
+          "生年月日",
+          "性別",
+          "現住所",
+          "出身地住所",
+          "連絡先(TEL,Viber)",
+          "父親名",
+          "パスポート番号",
+          "国民ID番号",
+          "現在のJLPT合格レベル",
+          "希望職種",
+          "その他希望職種",
+          "日本渡航経験",
+          "COE申請経験",
+          "宗教",
+          "その他宗教",
+          "タバコ",
+          "お酒",
+          "入れ墨",
+          "授業料支払予定日",
+          "寮があれば入りたい",
+          "その他メモ（自由形式）",
+          "授業料支払実績日",
+          "学校登録日",
+          "生徒の授業ステータス",
+          // N5 Class
+          "N5クラス名",
+          "N5担当教師",
+          "N5出席率",
+          "N5テスト結果1",
+          "N5テスト結果2",
+          "N5テスト結果3",
+          "N5テスト結果4",
+          "N5教師所感",
+          "N5会話クラス①名",
+          "N5会話クラス①教師",
+          "N5会話クラス①出席率",
+          "N5会話クラス①テスト結果",
+          "N5会話クラス①教師所感",
+          "N5会話クラス②名",
+          "N5会話クラス②教師",
+          "N5会話クラス②出席率",
+          "N5会話クラス②テスト結果",
+          "N5会話クラス②教師所感",
+          "N5会話クラス③名",
+          "N5会話クラス③教師",
+          "N5会話クラス③出席率",
+          "N5会話クラス③テスト結果",
+          "N5会話クラス③教師所感",
+          // N4 Class
+          "N4クラス名",
+          "N4担当教師",
+          "N4出席率",
+          "N4テスト結果1",
+          "N4テスト結果2",
+          "N4テスト結果3",
+          "N4テスト結果4",
+          "N4教師所感",
+          "N4会話クラス①名",
+          "N4会話クラス①教師",
+          "N4会話クラス①出席率",
+          "N4会話クラス①テスト結果",
+          "N4会話クラス①教師所感",
+          "N4会話クラス②名",
+          "N4会話クラス②教師",
+          "N4会話クラス②出席率",
+          "N4会話クラス②テスト結果",
+          "N4会話クラス②教師所感",
+          "N4会話クラス③名",
+          "N4会話クラス③教師",
+          "N4会話クラス③出席率",
+          "N4会話クラス③テスト結果",
+          "N4会話クラス③教師所感",
+          // Interview
+          "面談クラス名",
+          "面談教師",
+          "面談出席率",
+          "面談テスト結果",
+          "面談教師所感",
+          "合格済みJLPTレベル",
+          // Interview Notes
+          "一回目面接メモ",
+          "二回目面接メモ",
+          "三回目面接メモ",
+        ];
+
+        // Map data to rows
+        const rows = data.map((student) => [
+          student.studentId || "",
+          student.studentName || "",
+          student.nameInJapanese || "",
+          student.dateOfBirth || "",
+          student.gender || "",
+          student.currentLivingAddress || "",
+          student.homeTownAddress || "",
+          student.contactViber || "",
+          student.fatherName || "",
+          student.passportNumber || "",
+          student.nationalID || "",
+          student.currentJapanLevel || "",
+          student.desiredJobType || "",
+          student.otherDesiredJobType || "",
+          student.japanTravelExperience || "",
+          student.coeApplicationExperience || "",
+          student.religion || "",
+          student.otherReligion || "",
+          student.isSmoking ? "吸う" : "吸わない",
+          student.isAlcoholDrink ? "飲む" : "飲まない",
+          student.haveTatto ? "有" : "無",
+          student.schedulePaymentTutionDate || "",
+          student.hostelPreference || "",
+          student.memoNotes || "",
+          student.actualTutionPaymentDate || "",
+          student.enrolledDate || "",
+          student.status || "",
+          // N5 Class data
+          student.n5ClassName || "",
+          student.n5ClassTeacher || "",
+          student.n5ClassAttendance || "",
+          student.n5ClassTestResult1 || "",
+          student.n5ClassTestResult2 || "",
+          student.n5ClassTestResult3 || "",
+          student.n5ClassTestResult4 || "",
+          student.n5ClassFeedback || "",
+          student.n5Class2Name || "",
+          student.n5Class2Teacher || "",
+          student.n5Class2AttendanceRate || "",
+          student.n5Class2TestResult || "",
+          student.n5Class2Feedback || "",
+          student.n5Class3Name || "",
+          student.n5Class3Teacher || "",
+          student.n5Class3AttendanceRate || "",
+          student.n5Class3TestResult || "",
+          student.n5Class3Feedback || "",
+          // N4 Class data
+          student.n4Class1Name || "",
+          student.n4Class1Teacher || "",
+          student.n4Class1AttendanceRate || "",
+          student.n4Class1TestResult1 || "",
+          student.n4Class1Feedback || "",
+          student.n4Class2Name || "",
+          student.n4Class2Teacher || "",
+          student.n4Class2AttendanceRate || "",
+          student.n4Class2TestResult1 || "",
+          student.n4Class2TestResult2 || "",
+          student.n4Class2TestResult3 || "",
+          student.n4Class2TestResult4 || "",
+          student.n4Class2Feedback || "",
+          student.n4Class3Name || "",
+          student.n4Class3Teacher || "",
+          student.n4Class3AttendanceRate || "",
+          student.n4Class3TestResult || "",
+          student.n4Class3Feedback || "",
+          student.n4Class4Name || "",
+          student.n4Class4Teacher || "",
+          student.n4Class4AttendanceRate || "",
+          student.n4Class4TestResult || "",
+          student.n4Class4Feedback || "",
+          // Interview data
+          student.interviewClassName || "",
+          student.interviewTeacher || "",
+          student.interviewAttendanceRate || "",
+          student.interviewTestResult || "",
+          student.interviewFeedback || "",
+          student.passedHighestJLPTLevel || "",
+          // Interview Notes
+          student.interviewNote1 || "",
+          student.interviewNote2 || "",
+          student.interviewNote3 || "",
+        ]);
+
+        // Create workbook
+        const wb = XLSX.utils.book_new();
+        const ws = XLSX.utils.aoa_to_sheet([headers, ...rows]);
+
+        // Set column widths
+        ws["!cols"] = headers.map((h) => ({ wch: 20 }));
+
+        // Add color to headers
+        const colorMap = [
+          { start: 0, end: 27, bg: "FFFF99" }, // Student Info - Yellow
+          { start: 28, end: 48, bg: "99CCFF" }, // N5 Class - Light Blue
+          { start: 49, end: 69, bg: "99FF99" }, // N4 Class - Light Green
+          { start: 70, end: 77, bg: "FFCC99" }, // Interview - Orange
+        ];
+
+        colorMap.forEach((section) => {
+          for (let c = section.start; c <= section.end; c++) {
+            const cellAddress = XLSX.utils.encode_cell({ r: 0, c: c });
+            if (!ws[cellAddress]) continue;
+            ws[cellAddress].s = {
+              fill: { fgColor: { rgb: section.bg } },
+              font: { bold: true },
+              alignment: { horizontal: "center" },
+            };
+          }
+        });
+
+        XLSX.utils.book_append_sheet(wb, ws, "生徒情報");
+
+        // Create filename
+        const timestamp = new Date()
+          .toISOString()
+          .slice(0, 10)
+          .replace(/-/g, "");
+        let filename;
+
+        if (selectedStudentIds.length > 0) {
+          if (selectedStudentIds.length <= 3) {
+            filename = `生徒_${selectedStudentIds.join("_")}_${timestamp}.xlsx`;
+          } else {
+            filename = `選択生徒_${selectedStudentIds.length}名_${timestamp}.xlsx`;
+          }
+        } else {
+          filename = `全生徒_${timestamp}.xlsx`;
+        }
+
+        // Download file
+        XLSX.writeFile(wb, filename);
+      }
+
+      // ============ PAGINATION ============
+      function setupPagination() {
+        displayPage(1);
+      }
 
       function displayPage(page) {
         currentPage = page;
-
         const start = (page - 1) * rowsPerPage;
         const end = start + rowsPerPage;
 
-        rows.forEach((row, index) => {
+        allRows.forEach((row, index) => {
           row.style.display = index >= start && index < end ? "" : "none";
         });
 
         renderPagination();
+        updateSelectAllCheckbox();
       }
 
       function renderPagination() {
-        const pageCount = Math.ceil(rows.length / rowsPerPage);
+        const pageCount = Math.ceil(allRows.length / rowsPerPage);
         const paginationDiv = document.getElementById("pagination");
-        paginationDiv.innerHTML = "";
+        if (!paginationDiv) return;
 
+        paginationDiv.innerHTML = "";
 
         function createBtn(text, page, disabled = false, active = false) {
           const btn = document.createElement("button");
           btn.textContent = text;
-
-          btn.className = `btn btn-sm mx-1 ${active ? "btn-primary" : "btn-outline-primary"
-            }`;
-
+          btn.className = `btn btn-sm mx-1 ${
+            active ? "btn-primary" : "btn-outline-primary"
+          }`;
           btn.disabled = disabled;
 
           if (!disabled) {
@@ -82,446 +472,362 @@
           paginationDiv.appendChild(btn);
         }
 
+        // First and Previous buttons
         createBtn("<<", 1, currentPage === 1);
-
         createBtn("<", currentPage - 1, currentPage === 1);
 
-        let start = currentPage - 2;
-        let end = currentPage + 2;
+        // Page numbers
+        let startPage = Math.max(1, currentPage - 2);
+        let endPage = Math.min(pageCount, currentPage + 2);
 
-        if (start < 1) {
-          start = 1;
-          end = Math.min(5, pageCount);
+        if (endPage - startPage < 4) {
+          if (currentPage < 3) {
+            endPage = Math.min(pageCount, 5);
+          } else {
+            startPage = Math.max(1, pageCount - 4);
+          }
         }
 
-        if (end > pageCount) {
-          end = pageCount;
-          start = Math.max(1, pageCount - 4);
-        }
-
-        for (let i = start; i <= end; i++) {
+        for (let i = startPage; i <= endPage; i++) {
           createBtn(i, i, false, i === currentPage);
         }
 
+        // Next and Last buttons
         createBtn(">", currentPage + 1, currentPage === pageCount);
-
         createBtn(">>", pageCount, currentPage === pageCount);
       }
 
-      displayPage(1);
-    });
+      // ============ FILTER FORM ============
+      function setupFilterForm() {
+        const statusInput = document.getElementById("statusFilterInput");
+        const dropdown = document.getElementById("statusDropdownList");
+        const statusCheckboxes = document.querySelectorAll(".status-option");
+        const nameInput = document.getElementById("nameSearchInput");
+        const form = document.getElementById("studentFilterForm");
+        const hiddenStatus = document.getElementById("hiddenStatus");
 
-    document.addEventListener("DOMContentLoaded", function () {
-      const downloadBtn = document.getElementById("downloadBtn");
+        // Restore saved values
+        const savedStatuses = localStorage.getItem("savedStatuses");
+        const savedName = localStorage.getItem("savedName");
 
-      downloadBtn.addEventListener("click", async function () {
-        try {
-          const nameSearch = document.getElementById("nameSearchInput").value;
-          const status = Array.from(document.querySelectorAll(".status-option"))
-            .filter(cb => cb.checked)
-            .map(cb => cb.value)
-            .join(",");
-
-          const selectedIds = Array.from(document.querySelectorAll(".row-checkbox"))
-            .filter(cb => cb.checked)
-            .map(cb => cb.value);
-
-          // Build query parameters
-          const params = new URLSearchParams();
-          if (selectedIds.length > 0) params.append("ids", selectedIds.join(","));
-          if (nameSearch) params.append("nameSearch", nameSearch);
-          if (status) params.append("status", status);
-
-          // Fetch student data from backend
-          const response = await fetch(`/students/export?${params.toString()}`);
-          const data = await response.json();
-
-          if (!data || data.length === 0) {
-            alert("エクスポートするデータがありません！");
-            return;
+        if (savedStatuses && savedStatuses.length > 0) {
+          const statusArray = savedStatuses.split(",");
+          statusCheckboxes.forEach((cb) => {
+            if (statusArray.includes(cb.value)) cb.checked = true;
+          });
+          if (statusInput) {
+            statusInput.value = statusArray.join(", ");
           }
+          if (hiddenStatus) {
+            hiddenStatus.value = savedStatuses;
+          }
+        }
 
-          // Full headers
-          const headers = [
-            // Student Info
-            "生徒ID", "名前", "名前(カタカナ)", "生年月日", "性別", "現住所", "出身地住所",
-            "連絡先(TEL,Viber)", "父親名", "パスポート番号", "国民ID番号",
-            "現在のJLPT合格レベル", "希望職種", "その他希望職種", "日本渡航経験",
-            "COE申請経験", "宗教", "その他宗教", "タバコ", "お酒", "入れ墨",
-            "授業料支払予定日", "寮があれば入りたい", "その他メモ（自由形式）", "授業料支払実績日",
-            "学校登録日", "生徒の授業ステータス",
+        if (savedName && nameInput) {
+          nameInput.value = savedName;
+        }
 
-            // N5 Class
-            "所属クラス", "担当教師", "出席", "日本語テスト結果1", "日本語テスト結果2", "日本語テスト結果3", "日本語テスト結果4", "教師所感",
-            "所属クラス2", "担当教師 3", "出席率4", "日本語テスト結果", "教師所感5", "所属クラス6",
-            "担当教師 7", "出席率8", "日本語テスト結果9", "教師所感10",
+        // Update background colors
+        updateStatusInputBg();
+        updateNameInputBg();
 
-            // N4 Class
-            "所属クラス11", "担当教師 12", "出席率13", "日本語テスト結果14", "教師所感15",
-            "所属クラス16", "担当教師 17", "出席率18", "日本語テスト結果１19", "日本語テスト結果２20", "日本語テスト結果３21",
-            "日本語テスト結果４22", "教師所感23", "所属クラス24", "担当教師 25", "出席率26", "日本語テスト結果27", "教師所感28",
-            "所属クラス29", "担当教師 30", "出席率31", "日本語テスト結果32", "教師所感33",
+        // Status checkbox changes
+        statusCheckboxes.forEach((cb) =>
+          cb.addEventListener("change", () => {
+            const selected = Array.from(statusCheckboxes)
+              .filter((c) => c.checked)
+              .map((c) => c.value);
 
-            // Interview / JLPT
-            "所属クラス34", "担当教師 35", "出席率36", "日本語テスト結果37", "教師所感38",
-            "合格した日本語ラベル",
+            if (statusInput) {
+              statusInput.value =
+                selected.length > 0 ? selected.join(", ") : "ステータス選択";
+            }
+            if (hiddenStatus) {
+              hiddenStatus.value = selected.join(",");
+            }
 
-            // Interview Notes
-            "一回目面接メモ", "二回目面接メモ", "三回目面接メモ"
-          ];
+            localStorage.setItem("savedStatuses", selected.join(","));
+            updateStatusInputBg();
+          })
+        );
 
-          // Map student data to rows
-          const rows = data.map(student => [
-            student.id,
-            student.studentName,
-            student.nameInJapanese,
-            student.dateOfBirth,
-            student.gender,
-            student.currentLivingAddress,
-            student.homeTownAddress,
-            student.contactViber,
-            student.fatherName,
-            student.passportNumber,
-            student.nationalID,
-            student.currentJapanLevel,
-            student.desiredJobType,
-            student.otherDesiredJobType,
-            student.japanTravelExperience,
-            student.coeApplicationExperience,
-            student.religion,
-            student.otherReligion,
-            student.isSmoking ? "吸う" : "吸わない",
-            student.isAlcoholDrink ? "飲む" : "飲まない",
-            student.haveTatto ? "有" : "無",
-            student.schedulePaymentTutionDate,
-            student.hostelPreference,
-            student.memoNotes,
-            student.actualTutionPaymentDate,
-            student.enrolledDate,
-            student.status,
-            // N5 Class
-            student.n5ClassName,
-            student.n5ClassTeacher,
-            student.n5ClassAttendance,
-            student.n5ClassTestResult1,
-            student.n5ClassTestResult2,
-            student.n5ClassTestResult3,
-            student.n5ClassTestResult4,
-            student.n5ClassFeedback,
-            student.n5Class2Name,
-            student.n5Class2Teacher,
-            student.n5Class2AttendanceRate,
-            student.n5Class2TestResult,
-            student.n5Class2Feedback,
-            student.n5Class3Name,
-            student.n5Class3Teacher,
-            student.n5Class3AttendanceRate,
-            student.n5Class3TestResult,
-            student.n5Class3Feedback,
-            // N4 Class
-            student.n4Class1Name,
-            student.n4Class1Teacher,
-            student.n4Class1AttendanceRate,
-            student.n4Class1TestResult1,
-            student.n4Class1Feedback,
-            student.n4Class2Name,
-            student.n4Class2Teacher,
-            student.n4Class2AttendanceRate,
-            student.n4Class2TestResult1,
-            student.n4Class2TestResult2,
-            student.n4Class2TestResult3,
-            student.n4Class2TestResult4,
-            student.n4Class2Feedback,
-            student.n4Class3Name,
-            student.n4Class3Teacher,
-            student.n4Class3AttendanceRate,
-            student.n4Class3TestResult,
-            student.n4Class3Feedback,
-            student.n4Class4Name,
-            student.n4Class4Teacher,
-            student.n4Class4AttendanceRate,
-            student.n4Class4TestResult,
-            student.n4Class4Feedback,
-            // Interview / JLPT
-            student.interviewClassName,
-            student.interviewTeacher,
-            student.interviewAttendanceRate,
-            student.interviewTestResult,
-            student.interviewFeedback,
-            student.passedHighestJLPTLevel,
-            // Interview Notes
-            student.interviewNote1,
-            student.interviewNote2,
-            student.interviewNote3
-          ]);
+        // Name input changes
+        if (nameInput) {
+          nameInput.addEventListener("input", () => {
+            localStorage.setItem("savedName", nameInput.value);
+            updateNameInputBg();
+          });
+        }
 
-          // Create workbook and worksheet
-          const wb = XLSX.utils.book_new();
-          const ws = XLSX.utils.aoa_to_sheet([headers, ...rows]);
-
-          // Set column widths
-          ws['!cols'] = headers.map(h => ({ wch: 20 }));
-
-
-
-          // Color headers by section
-          const colorMap = [
-            { start: 0, end: 27, bg: "FFFF99" },    // Student Info - Yellow
-            { start: 28, end: 43, bg: "99CCFF" },   // N5 Class - Light Blue
-            { start: 44, end: 59, bg: "99FF99" },   // N4 Class - Light Green
-            { start: 60, end: 63, bg: "FFCC99" }    // Interview & JLPT - Orange
-          ];
-
-          colorMap.forEach(section => {
-            for (let c = section.start; c <= section.end; c++) {
-              const cellAddress = XLSX.utils.encode_cell({ r: 0, c: c });
-              if (!ws[cellAddress]) continue;
-              ws[cellAddress].s = {
-                fill: { fgColor: { rgb: section.bg } },
-                font: { bold: true },
-                alignment: { horizontal: "center" }
-              };
+        // Toggle dropdown
+        if (statusInput) {
+          statusInput.addEventListener("click", () => {
+            if (dropdown) {
+              dropdown.style.display =
+                dropdown.style.display === "block" ? "none" : "block";
             }
           });
-
-          XLSX.utils.book_append_sheet(wb, ws, "Students");
-          XLSX.writeFile(wb, "students_full.xlsx");
-
-        } catch (err) {
-          console.error(err);
-          alert("XLSXのエクスポートに失敗しました！");
         }
-      });
-    });
 
-
-
-    document.addEventListener("DOMContentLoaded", () => {
-      const statusInput = document.getElementById("statusFilterInput");
-      const dropdown = document.getElementById("statusDropdownList");
-      const statusCheckboxes = document.querySelectorAll(".status-option");
-      const nameInput = document.getElementById("nameSearchInput");
-      const form = document.getElementById("studentFilterForm");
-      const hiddenStatus = document.getElementById("hiddenStatus");
-
-      // Restore saved statuses and name
-      const savedStatuses = localStorage.getItem("savedStatuses");
-      const savedName = localStorage.getItem("savedName");
-
-      if (savedStatuses && savedStatuses.length > 0) {
-        const statusArray = savedStatuses.split(",");
-        statusCheckboxes.forEach(cb => {
-          if (statusArray.includes(cb.value)) cb.checked = true;
-        });
-        statusInput.value = statusArray.join(", ");
-        hiddenStatus.value = savedStatuses;
-      }
-
-      if (savedName) {
-        nameInput.value = savedName;
-      }
-
-      // Function to update status input background
-      function updateStatusInputBg() {
-        const anyChecked = Array.from(statusCheckboxes).some(cb => cb.checked);
-        statusInput.style.backgroundColor = anyChecked ? "#E8F0FE" : "white";
-      }
-
-      // Function to update name input background
-      function updateNameInputBg() {
-        nameInput.style.backgroundColor = nameInput.value.trim() !== "" ? "#E8F0FE" : "white";
-      }
-
-      // Call on page load
-      updateStatusInputBg();
-      updateNameInputBg();
-
-      // Update status input background on checkbox change
-      statusCheckboxes.forEach(cb => cb.addEventListener("change", () => {
-        const selected = Array.from(statusCheckboxes)
-          .filter(c => c.checked)
-          .map(c => c.value);
-
-        statusInput.value = selected.length > 0 ? selected.join(", ") : "ステータス選択";
-        hiddenStatus.value = selected.join(",");
-
-        localStorage.setItem("savedStatuses", selected.join(","));
-        updateStatusInputBg();
-      }));
-
-      // Update name input background on typing
-      nameInput.addEventListener("input", () => {
-        localStorage.setItem("savedName", nameInput.value);
-        updateNameInputBg();
-      });
-
-      // Toggle dropdown
-      statusInput.addEventListener("click", () => {
-        dropdown.style.display = dropdown.style.display === "block" ? "none" : "block";
-      });
-
-      // Submit form
-      function submitFilterForm() {
-        form.submit();
-      }
-
-      // Handle Enter key
-      [statusInput, nameInput].forEach(input => {
-        input.addEventListener("keydown", e => {
-          if (e.key === "Enter") {
-            e.preventDefault();
-            submitFilterForm();
+        // Close dropdown when clicking outside
+        document.addEventListener("click", (e) => {
+          if (!e.target.closest(".multiselect-wrapper") && dropdown) {
+            dropdown.style.display = "none";
           }
         });
-      });
 
-      // Close dropdown when clicking outside
-      document.addEventListener("click", e => {
-        if (!e.target.closest(".multiselect-wrapper")) {
-          dropdown.style.display = "none";
+        // Handle Enter key
+        [statusInput, nameInput].forEach((input) => {
+          if (input) {
+            input.addEventListener("keydown", (e) => {
+              if (e.key === "Enter") {
+                e.preventDefault();
+                if (form) form.submit();
+              }
+            });
+          }
+        });
+      }
+
+      function updateStatusInputBg() {
+        const statusInput = document.getElementById("statusFilterInput");
+        const statusCheckboxes = document.querySelectorAll(".status-option");
+        const anyChecked = Array.from(statusCheckboxes).some(
+          (cb) => cb.checked
+        );
+
+        if (statusInput) {
+          statusInput.style.backgroundColor = anyChecked ? "#E8F0FE" : "white";
         }
-      });
-    });
-  </script>
+      }
+
+      function updateNameInputBg() {
+        const nameInput = document.getElementById("nameSearchInput");
+        if (nameInput) {
+          nameInput.style.backgroundColor =
+            nameInput.value.trim() !== "" ? "#E8F0FE" : "white";
+        }
+      }
+    </script>
+  </th:block>
 
   <body>
     <div class="dashboard-layout">
-
       <!-- Sidebar -->
-        <th:block th:replace="~{layouts/admin-layout :: sidebar(currentPage=${'students'})}"></th:block>
+      <th:block
+        th:replace="~{layouts/admin-layout :: sidebar(currentPage=${'students'})}"
+      ></th:block>
 
       <div class="sidebar-overlay d-lg-none" data-sidebar-toggle></div>
 
       <!-- Main -->
       <div class="dashboard-main">
+        <div class="page-wrapper py-4 py-md-5 px-3 px-md-5">
+          <div class="page-header mb-3">
+            <div class="d-flex align-items-center gap-3">
+              <button
+                class="btn btn-light btn-icon d-lg-none"
+                type="button"
+                aria-label="Toggle sidebar"
+                data-sidebar-toggle
+              >
+                <i class="fas fa-bars fs-4"></i>
+              </button>
+              <div>
+                <h1
+                  class="mb-0"
+                  style="color: #0a58a0; font-weight: 600; font-size: 1.8rem"
+                >
+                  生徒情報一覧画面
+                </h1>
+              </div>
+            </div>
+          </div>
 
-              <div class="page-wrapper py-4 py-md-5 px-3 px-md-5">
-                <div class="page-header mb-3">
-                  <div class="d-flex align-items-center gap-3">
-                    <button class="btn btn-light btn-icon d-lg-none" 
-                    type="button" 
-                    aria-label="Toggle sidebar"
-                    data-sidebar-toggle>
-              <i class="fas fa-bars fs-4"></i>
-            </button>
-                    <div>
-                      <h1 class="mb-0" style="color:#0A58A0;font-weight:600;font-size:1.8rem;">
-                        生徒情報一覧画面
-                      </h1>
-                    </div>
-                  </div>
-                </div>
-
-
-                <div class="table-wrapper p-1" style="border:1px solid transparent;">
-                  <div class="table-responsive me-3">
-                    <table class="table data-table align-middle border border-radius" id="studentTable">
-                      <thead>
-
-                        <tr class="filter-row">
-                          <th colspan="10" class="p-3">
-                            <form th:action="@{/students}" method="get" id="studentFilterForm">
-                              <div class="filter-control-group checkbox-group">
-                                <span style="font-size: 16px;">全て選択</span>
-                                <input type="checkbox" id="selectAll" class="form-check-input" />
-                              </div>
+          <div class="table-wrapper p-1" style="border: 1px solid transparent">
+            <div class="table-responsive me-3">
+              <table
+                class="table data-table align-middle border border-radius"
+                id="studentTable"
+              >
+                <thead>
+                  <tr class="filter-row">
+                    <th colspan="10" class="p-3">
+                      <form
+                        th:action="@{/students}"
+                        method="get"
+                        id="studentFilterForm"
+                      >
+                        <div class="d-flex flex-wrap align-items-center gap-3">
+                          <div class="filter-control-group checkbox-group">
+                            <span style="font-size: 16px">全て選択</span>
+                            <input
+                              type="checkbox"
+                              id="selectAll"
+                              class="form-check-input"
+                            />
+                          </div>
+                          <div class="filter-control-group">
+                            <span style="font-size: 16px">名前で検索</span>
+                            <input
+                              type="text"
+                              name="nameSearch"
+                              th:value="${nameSearch}"
+                              class="form-control form-control-sm"
+                              id="nameSearchInput"
+                              placeholder="名前検索"
+                            />
+                          </div>
+                          <div
+                            class="filter-control-group"
+                            id="studentStatusWrapper"
+                          >
+                            <div id="studentStatusFilter">
                               <div class="filter-control-group">
-                                <span style="font-size: 16px;">名前で検索</span>
-                                <input type="text" name="nameSearch" th:value="${nameSearch}"
-                                  class="form-control form-control-sm" id="nameSearchInput" placeholder="名前検索" />
-                              </div>
-                              <div class="filter-control-group" id="studentStatusWrapper">
-                                <div id="studentStatusFilter">
-                                  <div class="filter-control-group">
-                                    <label class="filter-label">生徒ステータス</label>
-
-                                    <div class="multiselect-wrapper">
-                                      <input type="text" id="statusFilterInput" class="multiselect-input"
-                                        value="ステータス選択" readonly>
-
-                                      <span class="dropdown-arrow">▼</span>
-
-                                      <div id="statusDropdownList" class="multiselect-dropdown">
-                                        <label><input type="checkbox" class="status-option" value="在校"> 在校</label>
-                                        <label><input type="checkbox" class="status-option" value="卒業"> 卒業</label>
-                                        <label><input type="checkbox" class="status-option" value="途中退校"> 途中退校</label>
-                                      </div>
-                                    </div>
+                                <label class="filter-label"
+                                  >生徒ステータス</label
+                                >
+                                <div class="multiselect-wrapper">
+                                  <input
+                                    type="text"
+                                    id="statusFilterInput"
+                                    class="multiselect-input"
+                                    value="ステータス選択"
+                                    readonly
+                                  />
+                                  <span class="dropdown-arrow">▼</span>
+                                  <div
+                                    id="statusDropdownList"
+                                    class="multiselect-dropdown"
+                                  >
+                                    <label
+                                      ><input
+                                        type="checkbox"
+                                        class="status-option"
+                                        value="在校"
+                                      />
+                                      在校</label
+                                    >
+                                    <label
+                                      ><input
+                                        type="checkbox"
+                                        class="status-option"
+                                        value="卒業"
+                                      />
+                                      卒業</label
+                                    >
+                                    <label
+                                      ><input
+                                        type="checkbox"
+                                        class="status-option"
+                                        value="途中退校"
+                                      />
+                                      途中退校</label
+                                    >
                                   </div>
                                 </div>
-
-                                <button type="button" id="downloadBtn"
-                                  class="btn btn-success btn-sm px-4 fw-bold text-nowrap ml-3">
-                                  ↓ダウンロード
-                                </button>
-
-                                <button type="submit" style="display: none;"></button>
-                                <input type="hidden" name="status" id="hiddenStatus" />
-
-                            </form>
-                          </th>
-                        </tr>
-
-                        <tr>
-                          <th scope="col" style="width: 50px;">生徒ID</th>
-                          <th scope="col" style="width: 100px;">名前</th>
-                          <th scope="col" style="width: 80px;">性別</th>
-                          <th scope="col" style="width: 100px;">電話番号</th>
-                          <th scope="col" style="width: 100px;">希望職種</th>
-                          <th scope="col" style="width: 80px;">ステータス</th>
-                          <th scope="col" style="width: 100px;">支払予定日</th>
-                          <th scope="col" style="width: 100px;">支払実績日</th>
-                          <th scope="col" style="width: 120px;">動作機能</th>
-                        </tr>
-                      </thead>
-
-
-                      <tbody id="studentTableBody" th:if="${students != null}">
-                        <tr th:each="student : ${students}">
-                          <td class="id-cell">
-  <label class="d-flex align-items-center justify-content-center gap-1 m-0">
-    <input class="form-check-input row-checkbox" type="checkbox" th:value="${student.studentId}">
-    <span th:text="${student.studentId}"></span>
-  </label>
-</td>
-
-
-                          <td th:text="${student.studentName}"></td>
-                          <td th:text="${student.gender}"></td>
-                          <td th:text="${student.phoneNumber}"></td>
-                          <td th:text="${student.desiredJobType}"></td>
-                          <td th:text="${student.status}"></td>
-                          <td th:text="${student.paymentDueDate}"></td>
-                          <td th:text="${student.paymentDate}"></td>
-                          <td class="action-cell">
-                            <div class="d-flex flex-nowrap justify-content-center gap-0">
-                              <a th:href="@{'/students/student-update/' + ${student.id}}" class="action-icon edit"
-                                title="編集">
-                                <i class="bi bi-pencil-square"></i>
-                              </a>
-                              <a th:href="@{'/students/detail/' + ${student.id}}" class="action-icon detail" title="明細">
-                                <i class="bi bi-info-circle-fill"></i> 明細
-                              </a>
-                              <a href="#"
-                                th:onclick="'if(confirm(\'本当に削除しますか？\')) window.location.href=\'/students/delete/' + ${student.id} + '\';'"
-                                class="action-icon delete" title="削除">
-                                <i class="bi bi-trash-fill"></i>
-                              </a>
-                              </a>
+                              </div>
                             </div>
-                          </td>
-                        </tr>
+                          </div>
+                          <!-- Download button container - Plain button only -->
+                          <div class="download-button-container">
+                            <button type="button" id="downloadBtn">
+                              ↓ダウンロード
+                            </button>
+                          </div>
+                        </div>
+                        <button type="submit" style="display: none"></button>
+                        <input type="hidden" name="status" id="hiddenStatus" />
+                      </form>
+                    </th>
+                  </tr>
 
-                        <tr th:if="${students.size() == 0}">
-                          <td colspan="10" class="text-center text-muted py-5">
-                            生徒情報がありません。サーバーからのデータ読み込みを待機しています。
-                          </td>
-                        </tr>
-                      </tbody>
+                  <tr>
+                    <th scope="col" style="width: 50px">生徒ID</th>
+                    <th scope="col" style="width: 100px">名前</th>
+                    <th scope="col" style="width: 80px">性別</th>
+                    <th scope="col" style="width: 100px">電話番号</th>
+                    <th scope="col" style="width: 100px">希望職種</th>
+                    <th scope="col" style="width: 80px">ステータス</th>
+                    <th scope="col" style="width: 100px">支払予定日</th>
+                    <th scope="col" style="width: 100px">支払実績日</th>
+                    <th scope="col" style="width: 120px">動作機能</th>
+                  </tr>
+                </thead>
 
-                    </table>
-                  </div>
-                  <div id="pagination" class="d-flex justify-content-center mt-3"></div>
+                <tbody
+                  id="studentTableBody"
+                  th:if="${students != null && students.size() > 0}"
+                >
+                  <tr th:each="student : ${students}">
+                    <td class="id-cell">
+                      <label
+                        class="d-flex align-items-center justify-content-center gap-1 m-0"
+                      >
+                        <!-- Store database ID in value, student ID in data attribute -->
+                        <input
+                          class="form-check-input row-checkbox"
+                          type="checkbox"
+                          th:value="${student.id}"
+                          th:attr="data-student-id=${student.studentId}"
+                        />
+                        <span th:text="${student.studentId}">STU001</span>
+                      </label>
+                    </td>
+                    <td th:text="${student.studentName}">山田 太郎</td>
+                    <td th:text="${student.gender}">男性</td>
+                    <td th:text="${student.phoneNumber}">09012345678</td>
+                    <td th:text="${student.desiredJobType}">介護</td>
+                    <td th:text="${student.status}">在校</td>
+                    <td th:text="${student.paymentDueDate}">2024-03-15</td>
+                    <td th:text="${student.paymentDate}">2024-03-10</td>
+                    <td class="action-cell">
+                      <div
+                        class="d-flex flex-nowrap justify-content-center gap-0"
+                      >
+                        <a
+                          th:href="@{/students/student-update/{id}(id=${student.id}, nameSearch=${nameSearch}, status=${status})}"
+                          class="action-icon edit"
+                          title="編集"
+                        >
+                          <i class="bi bi-pencil-square"></i>
+                        </a>
+                        <a
+                          th:href="@{/students/detail/{id}(id=${student.id}, nameSearch=${nameSearch}, status=${statusFilter})}"
+                          class="action-icon detail"
+                          title="明細"
+                        >
+                          <i class="bi bi-info-circle-fill"></i> 明細
+                        </a>
+                        <a
+                          href="#"
+                          th:onclick="'if(confirm(\'本当に削除しますか？\')) window.location.href=\'/students/delete/' + ${student.id} + '\';'"
+                          class="action-icon delete"
+                          title="削除"
+                        >
+                          <i class="bi bi-trash-fill"></i>
+                        </a>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+
+                <tbody th:if="${students == null || students.size() == 0}">
+                  <tr>
+                    <td colspan="10" class="text-center text-muted py-5">
+                      生徒情報がありません。
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div
+              id="pagination"
+              class="d-flex justify-content-center mt-3"
+            ></div>
+          </div>
+        </div>
+      </div>
+    </div>
   </body>
-
 </html>

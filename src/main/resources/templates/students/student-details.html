@@ -11,30 +11,28 @@
     <link rel="stylesheet" th:href="@{/css/details.css}">
 
     <div class="dashboard-layout">
- 
-    <!-- Sidebar -->
-    <th:block th:replace="~{layouts/admin-layout :: sidebar(currentPage=${'students'})}"></th:block>
- 
-    <div class="sidebar-overlay d-lg-none" data-sidebar-toggle></div>
- 
-    <div class="dashboard-main">
-     
-      <div class="page-wrapper py-4 py-md-5 px-3 px-md-5">
-        <div class="page-header mb-4">
-          <div class="d-flex align-items-center gap-3">
-            <button class="btn btn-light btn-icon d-lg-none"
-                    type="button"
-                    aria-label="Toggle sidebar"
-                    data-sidebar-toggle>
-              <i class="bi bi-list fs-4"></i>
-            </button>
-            <div>
-              <h1 class="mb-0" style="color: #0A58A0; font-weight: 600; font-size: 1.8rem;">
-                授業情報更新画面
-              </h1>
-            </div>
-          </div>
-        </div>
+
+        <!-- Sidebar -->
+        <th:block th:replace="~{layouts/admin-layout :: sidebar(currentPage=${'students'})}"></th:block>
+
+        <div class="sidebar-overlay d-lg-none" data-sidebar-toggle></div>
+
+        <div class="dashboard-main">
+
+            <div class="page-wrapper py-4 py-md-5 px-3 px-md-5">
+                <div class="page-header mb-4">
+                    <div class="d-flex align-items-center gap-3">
+                        <button class="btn btn-light btn-icon d-lg-none" type="button" aria-label="Toggle sidebar"
+                            data-sidebar-toggle>
+                            <i class="bi bi-list fs-4"></i>
+                        </button>
+                        <div>
+                            <h1 class="mb-0" style="color: #0A58A0; font-weight: 600; font-size: 1.8rem;">
+                                授業情報更新画面
+                            </h1>
+                        </div>
+                    </div>
+                </div>
 
                 <main class="container-xxl flex-grow-1">
 
@@ -48,7 +46,8 @@
                                 STD001
                             </span>
                         </div>
-                        <a href="/students" class="btn btn-outline-secondary">
+                        <a th:href="@{/students(nameSearch=${nameSearch}, status=${status})}"
+                            class="btn btn-outline-secondary">
                             <i class="bi bi-arrow-left me-2"></i>生徒一覧に戻る
                         </a>
                     </div>
@@ -56,37 +55,37 @@
                     <ul class="nav nav-tabs" id="detailTabs">
                         <li class="nav-item">
                             <a class="nav-link" th:classappend="${currentTab == 'personal'} ? ' active'"
-                                th:href="@{/students/detail/{id}(id=${student.id}, tab='personal')}">
+                                th:href="@{/students/detail/{id}(id=${student.id}, tab='personal', nameSearch=${nameSearch}, status=${status})}">
                                 <i class="bi bi-person"></i> 個人情報
                             </a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" th:classappend="${currentTab == 'contact'} ? ' active'"
-                                th:href="@{/students/detail/{id}(id=${student.id}, tab='contact')}">
+                                th:href="@{/students/detail/{id}(id=${student.id}, tab='contact', nameSearch=${nameSearch}, status=${status})}">
                                 <i class="bi bi-telephone"></i> 連絡先情報
                             </a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" th:classappend="${currentTab == 'academic'} ? ' active'"
-                                th:href="@{/students/detail/{id}(id=${student.id}, tab='academic')}">
+                                th:href="@{/students/detail/{id}(id=${student.id}, tab='academic', nameSearch=${nameSearch}, status=${status})}">
                                 <i class="bi bi-mortarboard"></i> Academic情報
                             </a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" th:classappend="${currentTab == 'n5'} ? ' active'"
-                                th:href="@{/students/detail/{id}(id=${student.id}, tab='n5')}">
+                                th:href="@{/students/detail/{id}(id=${student.id}, tab='n5', nameSearch=${nameSearch}, status=${status})}">
                                 <i class="bi bi-book"></i> N5クラス情報
                             </a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" th:classappend="${currentTab == 'n4'} ? ' active'"
-                                th:href="@{/students/detail/{id}(id=${student.id}, tab='n4')}">
+                                th:href="@{/students/detail/{id}(id=${student.id}, tab='n4', nameSearch=${nameSearch}, status=${status})}">
                                 <i class="bi bi-book"></i> N4クラス情報
                             </a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" th:classappend="${currentTab == 'interview'} ? ' active'"
-                                th:href="@{/students/detail/{id}(id=${student.id}, tab='interview')}">
+                                th:href="@{/students/detail/{id}(id=${student.id}, tab='interview', nameSearch=${nameSearch}, status=${status})}">
                                 <i class="bi bi-chat-text"></i> 面接結果情報
                             </a>
                         </li>
@@ -250,13 +249,13 @@
                                     <div class="nav flex-column nav-pills" role="tablist" aria-orientation="vertical">
                                         <a class="nav-link"
                                             th:classappend="${currentSubTab == 'general' or currentSubTab == null} ? 'active'"
-                                            th:href="@{/students/detail/{id}(id=${student.id}, tab='n5', subTab='general')}">N5クラス</a>
+                                            th:href="@{/students/detail/{id}(id=${student.id}, tab='n5', subTab='general', nameSearch=${nameSearch}, status=${status})}">N5クラス</a>
                                         <a class="nav-link" th:classappend="${currentSubTab == 'class1'} ? 'active'"
-                                            th:href="@{/students/detail/{id}(id=${student.id}, tab='n5', subTab='class1')}">N5会話クラス①</a>
+                                            th:href="@{/students/detail/{id}(id=${student.id}, tab='n5', subTab='class1', nameSearch=${nameSearch}, status=${status})}">N5会話クラス①</a>
                                         <a class="nav-link" th:classappend="${currentSubTab == 'class2'} ? 'active'"
-                                            th:href="@{/students/detail/{id}(id=${student.id}, tab='n5', subTab='class2')}">N5会話クラス②</a>
+                                            th:href="@{/students/detail/{id}(id=${student.id}, tab='n5', subTab='class2', nameSearch=${nameSearch}, status=${status})}">N5会話クラス②</a>
                                         <a class="nav-link" th:classappend="${currentSubTab == 'class3'} ? 'active'"
-                                            th:href="@{/students/detail/{id}(id=${student.id}, tab='n5', subTab='class3')}">N5会話クラス③</a>
+                                            th:href="@{/students/detail/{id}(id=${student.id}, tab='n5', subTab='class3', nameSearch=${nameSearch}, status=${status})}">N5会話クラス③</a>
                                     </div>
                                 </div>
                                 <div class="col-md-9 p-4">
@@ -462,13 +461,13 @@
                                     <div class="nav flex-column nav-pills" role="tablist" aria-orientation="vertical">
                                         <a class="nav-link"
                                             th:classappend="${currentSubTab == 'general' or currentSubTab == null} ? 'active'"
-                                            th:href="@{/students/detail/{id}(id=${student.id}, tab='n4', subTab='general')}">N4クラス</a>
+                                            th:href="@{/students/detail/{id}(id=${student.id}, tab='n4', subTab='general', nameSearch=${nameSearch}, status=${status})}">N4クラス</a>
                                         <a class="nav-link" th:classappend="${currentSubTab == 'class1'} ? 'active'"
-                                            th:href="@{/students/detail/{id}(id=${student.id}, tab='n4', subTab='class1')}">N4会話クラス①</a>
+                                            th:href="@{/students/detail/{id}(id=${student.id}, tab='n4', subTab='class1', nameSearch=${nameSearch}, status=${status})}">N4会話クラス①</a>
                                         <a class="nav-link" th:classappend="${currentSubTab == 'class2'} ? 'active'"
-                                            th:href="@{/students/detail/{id}(id=${student.id}, tab='n4', subTab='class2')}">N4会話クラス②</a>
+                                            th:href="@{/students/detail/{id}(id=${student.id}, tab='n4', subTab='class2', nameSearch=${nameSearch}, status=${status})}">N4会話クラス②</a>
                                         <a class="nav-link" th:classappend="${currentSubTab == 'class3'} ? 'active'"
-                                            th:href="@{/students/detail/{id}(id=${student.id}, tab='n4', subTab='class3')}">N4会話クラス③</a>
+                                            th:href="@{/students/detail/{id}(id=${student.id}, tab='n4', subTab='class3', nameSearch=${nameSearch}, status=${status})}">N4会話クラス③</a>
                                     </div>
                                 </div>
                                 <div class="col-md-9 p-4">
@@ -711,6 +710,47 @@
                     layout?.classList.toggle("sidebar-open");
                 })
             );
+        });
+
+        // Handle browser back button for detail page
+        document.addEventListener('DOMContentLoaded', function () {
+            const nameSearch = '[[${nameSearch}]]';
+            const status = '[[${status}]]';
+
+            // Store the filtered URL in session storage
+            if (nameSearch || status) {
+                let filteredUrl = '/students';
+                const params = new URLSearchParams();
+
+                if (nameSearch && nameSearch.trim() !== '') {
+                    params.append('nameSearch', nameSearch.trim());
+                }
+                if (status && status.trim() !== '') {
+                    params.append('status', status.trim());
+                }
+
+                const queryString = params.toString();
+                if (queryString) {
+                    filteredUrl += '?' + queryString;
+                }
+
+                // Store in session storage for browser back handling
+                sessionStorage.setItem('lastFilteredStudentsUrl', filteredUrl);
+
+                // Replace history state to prevent going back to unfiltered list
+                window.history.replaceState({ hasFilters: true, filteredUrl: filteredUrl }, '');
+            }
+
+            // Override browser back button
+            window.addEventListener('popstate', function (event) {
+                const filteredUrl = sessionStorage.getItem('lastFilteredStudentsUrl');
+
+                if (filteredUrl) {
+                    // Redirect to filtered list instead of using browser history
+                    window.location.href = filteredUrl;
+                    return false; // Prevent default back behavior
+                }
+            });
         });
     </script>
 </body>

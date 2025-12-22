@@ -11,6 +11,7 @@ public class StudentFullExportDTO {
 
     // From StudentDTO
     private Long id;
+    private String studentId;
     private String studentName; // studentName
     private String nameInJapanese; // nameInJapanese
     private String dateOfBirth; // dateOfBirth as String

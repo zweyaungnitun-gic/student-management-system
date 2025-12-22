@@ -12,6 +12,7 @@ import com.gicm.student_management_system.service.StudentService;
 import com.gicm.student_management_system.validation.BasicInfoGroup;
 import com.gicm.student_management_system.validation.StatusGroup;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import com.gicm.student_management_system.service.InterviewNotesService;
 
@@ -27,6 +28,9 @@ import org.springframework.validation.annotation.Validated;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -54,22 +58,57 @@ public class StudentController {
 
         List<StudentDTO> students = studentService.getStudentsByStatuses(nameSearch, statuses);
 
-        // Sort by STU ID safely
-        students.sort(Comparator.comparing(
-                StudentDTO::getStudentId,
-                Comparator.nullsLast(String::compareTo)));
+        // Better sorting for Student IDs (STU001, STU002, etc.)
+        students.sort((s1, s2) -> {
+            // Handle null student IDs
+            if (s1.getStudentId() == null && s2.getStudentId() == null)
+                return 0;
+            if (s1.getStudentId() == null)
+                return 1;
+            if (s2.getStudentId() == null)
+                return -1;
+
+            // Extract numeric part from student ID (e.g., "STU004" -> 4)
+            String id1 = s1.getStudentId();
+            String id2 = s2.getStudentId();
+
+            try {
+                int num1 = extractNumberFromStudentId(id1);
+                int num2 = extractNumberFromStudentId(id2);
+                return Integer.compare(num1, num2);
+            } catch (Exception e) {
+                // Fallback to string comparison
+                return id1.compareTo(id2);
+            }
+        });
 
         model.addAttribute("students", students);
         model.addAttribute("nameSearch", nameSearch);
-        model.addAttribute("statusFilter", status);
+        model.addAttribute("status", status);
 
-        return "students/student-list"; // no .html
+        return "students/student-list";
     }
 
+    // Helper method for extracting number from Student ID
+    private int extractNumberFromStudentId(String studentId) {
+        if (studentId == null || studentId.isEmpty())
+            return 0;
+
+        // Extract numeric part from strings like "STU001" or "STU004"
+        String numericPart = studentId.replaceAll("[^0-9]", "");
+        if (numericPart.isEmpty())
+            return 0;
+        return Integer.parseInt(numericPart);
+    }
+
+    // KZT
+    // 181225
     @GetMapping("/delete/{id}")
-    public String deleteStudent(@PathVariable Long id) {
+    public String deleteStudent(@PathVariable Long id,
+            @RequestParam(value = "nameSearch", defaultValue = "") String nameSearch,
+            @RequestParam(value = "status", defaultValue = "") String status) {
         studentService.deleteStudent(id);
-        return "redirect:/students";
+        return buildRedirectUrl(nameSearch, status);
     }
 
     // METHOD FOR DETAILS
@@ -77,6 +116,8 @@ public class StudentController {
     public String showStudentDetails(@PathVariable Long id,
             @RequestParam(required = false, defaultValue = "personal") String tab,
             @RequestParam(required = false) String subTab,
+            @RequestParam(value = "nameSearch", defaultValue = "") String nameSearch,
+            @RequestParam(value = "status", defaultValue = "") String status,
             Model model) {
 
         Student student = studentService.findById(id)
@@ -111,7 +152,10 @@ public class StudentController {
     // ----------------------------------------------------------------------------------------
 
     @GetMapping("/student-update/{id}")
-    public String showUpdateForm(@PathVariable Long id, Model model) {
+    public String showUpdateForm(@PathVariable Long id,
+            @RequestParam(value = "nameSearch", defaultValue = "") String nameSearch,
+            @RequestParam(value = "status", defaultValue = "") String status,
+            Model model) {
         Student student = studentService.findById(id)
                 .orElseThrow(() -> new RuntimeException("生徒が見つかりません: ID " + id));
 
@@ -127,6 +171,9 @@ public class StudentController {
         model.addAttribute("student", student);
         model.addAttribute("isNew", false);
 
+        model.addAttribute("nameSearch", nameSearch);
+        model.addAttribute("status", status);
+
         return "students/student-update.html";
     }
 
@@ -136,7 +183,17 @@ public class StudentController {
             @Validated(BasicInfoGroup.class) @ModelAttribute("student") Student student,
             BindingResult bindingResult,
             RedirectAttributes redirectAttributes,
-            Model model) {
+            Model model,
+            @RequestParam(value = "nameSearch", defaultValue = "") String nameSearch,
+            @RequestParam(value = "status", defaultValue = "") String status,
+            HttpServletRequest request) {
+
+        // Set UTF-8 encoding for Japanese text
+        try {
+            request.setCharacterEncoding("UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
 
         if (bindingResult.hasErrors()) {
             // Load all necessary data for the form
@@ -154,7 +211,11 @@ public class StudentController {
 
             model.addAttribute("student", student);
             model.addAttribute("isNew", false);
-            return "students/student-update.html?tab=basic";
+            model.addAttribute("nameSearch", nameSearch);
+            model.addAttribute("status", status);
+            model.addAttribute("activeTab", "basic"); // Add this for tab activation
+
+            return "students/student-update.html"; // Remove ?tab=basic from here
         }
 
         Student existingStudent = studentService.findById(id)
@@ -177,7 +238,8 @@ public class StudentController {
         studentService.save(existingStudent);
         redirectAttributes.addFlashAttribute("success", "基本情報が正常に更新されました。");
 
-        return "redirect:/students/student-update/" + id + "?tab=basic";
+        // Redirect back to the filtered list with proper encoding
+        return buildRedirectUrl(nameSearch, status);
     }
 
     @PostMapping("/update-status/{id}")
@@ -185,7 +247,17 @@ public class StudentController {
             @Validated(StatusGroup.class) @ModelAttribute Student student,
             BindingResult bindingResult,
             RedirectAttributes redirectAttributes,
-            Model model) {
+            Model model,
+            @RequestParam(value = "nameSearch", defaultValue = "") String nameSearch,
+            @RequestParam(value = "status", defaultValue = "") String status,
+            HttpServletRequest request) {
+
+        // Set UTF-8 encoding for Japanese text
+        try {
+            request.setCharacterEncoding("UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
 
         if (bindingResult.hasErrors()) {
             // Load all necessary data for the form
@@ -203,13 +275,21 @@ public class StudentController {
 
             model.addAttribute("student", student);
             model.addAttribute("isNew", false);
-            return "students/student-update.html?tab=status";
+            model.addAttribute("nameSearch", nameSearch);
+            model.addAttribute("status", status);
+            model.addAttribute("activeTab", "status"); // Add this for tab activation
+
+            return "students/student-update.html"; // Remove ?tab=status from here
         }
 
         try {
             Student existingStudent = studentService.findById(id)
                     .orElseThrow(() -> new RuntimeException("Student not found: " + id));
 
+            // Preserve student ID - only update if provided and valid
+            if (student.getStudentId() != null && !student.getStudentId().trim().isEmpty()) {
+                existingStudent.setStudentId(student.getStudentId().trim());
+            }
             existingStudent.setCurrentJapanLevel(student.getCurrentJapanLevel());
             existingStudent.setDesiredJobType(student.getDesiredJobType());
             existingStudent.setOtherDesiredJobType(student.getOtherDesiredJobType());
@@ -238,7 +318,8 @@ public class StudentController {
             redirectAttributes.addFlashAttribute("error", "更新に失敗しました: " + e.getMessage());
         }
 
-        return "redirect:/students/student-update/" + id + "?tab=status";
+        // Redirect back to the filtered list with proper encoding
+        return buildRedirectUrl(nameSearch, status);
     }
 
     @PostMapping("/update-n5/{id}")
@@ -288,6 +369,8 @@ public class StudentController {
         return "redirect:/students/student-update/" + id + "?tab=interview";
     }
 
+    // KZT
+    // 181225
     @GetMapping("/export")
     @ResponseBody
     public List<StudentFullExportDTO> getStudentsExport(
@@ -299,5 +382,30 @@ public class StudentController {
             return studentExportService.getStudentsByIds(ids);
         }
         return studentExportService.getAllStudentsFull(nameSearch, status);
+    }
+
+    // Helper method to build redirect URL with proper encoding for Japanese
+    // characters
+    private String buildRedirectUrl(String nameSearch, String status) {
+        try {
+            StringBuilder url = new StringBuilder("redirect:/students");
+            List<String> params = new ArrayList<>();
+
+            if (nameSearch != null && !nameSearch.trim().isEmpty()) {
+                params.add("nameSearch=" + URLEncoder.encode(nameSearch.trim(), StandardCharsets.UTF_8));
+            }
+            if (status != null && !status.trim().isEmpty()) {
+                params.add("status=" + URLEncoder.encode(status.trim(), StandardCharsets.UTF_8));
+            }
+
+            if (!params.isEmpty()) {
+                url.append("?").append(String.join("&", params));
+            }
+
+            return url.toString();
+        } catch (Exception e) {
+            // Fallback to simple redirect if encoding fails
+            return "redirect:/students";
+        }
     }
 }
