@@ -24,7 +24,7 @@
                     type="button" 
                     aria-label="Toggle sidebar"
                     data-sidebar-toggle>
-              <i class="fas fa-bars fs-4"></i>
+              <i class="bi bi-list fs-4"></i>
             </button>
             <div>
               <h1 class="mb-0" style="color: #0A58A0; font-weight: 600; font-size: 1.8rem;">
@@ -45,7 +45,7 @@
                 STD001
               </span>
             </div>
-            <a href="/students" class="btn btn-outline-secondary">
+          <a th:href="@{/students(nameSearch=${nameSearch}, status=${status})}" class="btn btn-outline-secondary">
               <i class="fas fa-arrow-left me-2"></i>生徒一覧に戻る
             </a>
           </div>
@@ -97,7 +97,10 @@
             <div class="tab-pane fade show active" id="basic" role="tabpanel" aria-labelledby="basic-tab">
               <div class="card shadow-sm border-0">
                 <div class="card-body">
-                  <form th:action="@{/students/update-basic/{id}(id=${student.id})}" th:object="${student}" method="post" id="basicForm" novalidate>
+             <form th:action="@{/students/update-basic/{id}(id=${student.id})}" th:object="${student}" method="post" id="basicForm" novalidate>
+  <!-- Add these hidden inputs -->
+  <input type="hidden" name="nameSearch" th:value="${nameSearch}" />
+  <input type="hidden" name="status" th:value="${status}" />
                     <div class="form-section">
                       
                       <div class="row g-3"> 
@@ -129,8 +132,8 @@
                         <div class="col-md-6">
                           <label class="form-label required-label">性別</label>
                           <select class="form-select" th:field="*{gender}">
-                            <option value="Male">男性</option>
-                            <option value="Female">女性</option>
+                            <option value="男性">男性</option>
+                            <option value="女性">女性</option>
                           </select>
                           <div class="text-danger" th:if="${#fields.hasErrors('gender')}" th:errors="*{gender}"></div>
                         </div>
@@ -223,17 +226,19 @@
               <div class="card shadow-sm border-0">
                 <div class="card-body">
                   <form th:action="@{/students/update-status/{id}(id=${student.id})}" th:object="${student}" method="post" id="statusForm" novalidate>
+                     <input type="hidden" name="nameSearch" th:value="${nameSearch}" />
+  <input type="hidden" name="status" th:value="${status}" />
                     <div class="form-section">
                       <div class="row g-3">
                         
                         <div class="col-md-6">
                           <label class="form-label required-label">希望職種</label>
-                          <select class="form-select" th:field="*{desiredJobType}" id="desiredJobType">
-                            <option value="kaigo">介護</option>
-                            <option value="inshoku">飲食</option>
-                            <option value="shukuhaku">宿泊</option>
-                            <option value="other">その他</option>
-                          </select>
+                         <select class="form-select" th:field="*{desiredJobType}" id="desiredJobType">
+    <option value="介護">介護</option>
+    <option value="飲食">飲食</option>
+    <option value="宿泊">宿泊</option>
+    <option value="その他">その他</option>
+</select>
                           <div class="text-danger" th:if="${#fields.hasErrors('desiredJobType')}" th:errors="*{desiredJobType}"></div>
                         </div>
 
@@ -274,14 +279,31 @@
                         </div>
 
                         <div class="col-md-6">
-                          <label class="form-label required-label">生徒の授業ステータス</label>
-                          <select class="form-select" th:field="*{attendingClassRelatedStatus}">
-                            <option value="在校">在校</option>
-                            <option value="卒業">卒業</option>
-                            <option value="途中退校">途中退校</option>
-                          </select>
-                          <div class="text-danger" th:if="${#fields.hasErrors('attendingClassRelatedStatus')}" th:errors="*{attendingClassRelatedStatus}"></div>
-                        </div>
+    <label class="form-label required-label">生徒の授業ステータス</label>
+    <!-- Use explicit name attribute and ensure th:field is properly bound -->
+    <select class="form-select" 
+            th:field="*{attendingClassRelatedStatus}"
+            name="attendingClassRelatedStatus"
+            id="attendingClassRelatedStatusField">
+        <option th:value="''" th:if="${student.attendingClassRelatedStatus == null or student.attendingClassRelatedStatus == ''}">
+            選択してください
+        </option>
+        <option value="在校" 
+                th:selected="${student.attendingClassRelatedStatus == '在校'}">
+            在校
+        </option>
+        <option value="卒業" 
+                th:selected="${student.attendingClassRelatedStatus == '卒業'}">
+            卒業
+        </option>
+        <option value="途中退校" 
+                th:selected="${student.attendingClassRelatedStatus == '途中退校'}">
+            途中退校
+        </option>
+    </select>
+    <div class="text-danger" th:if="${#fields.hasErrors('attendingClassRelatedStatus')}" 
+         th:errors="*{attendingClassRelatedStatus}"></div>
+</div>
 
                         <div class="col-md-6">
                           <label class="form-label required-label">在籍状況</label>
@@ -411,6 +433,8 @@
               <div class="card-body">
                 <form th:action="@{/students/update-n5/{id}(id=${student.id})}" 
                     th:object="${n5Class}" method="post" id="n5Form">
+                     <input type="hidden" name="nameSearch" th:value="${nameSearch}" />
+  <input type="hidden" name="status" th:value="${status}" />
                   <input type="hidden" th:field="*{id}" novalidate/>
                   
                   <div class="mb-4">
@@ -587,6 +611,8 @@
               <div class="card-body">
                 <form th:action="@{/students/update-n4/{id}(id=${student.id})}" 
                 th:object="${n4Class}" method="post" id="n4Form" novalidate>
+                 <input type="hidden" name="nameSearch" th:value="${nameSearch}" />
+  <input type="hidden" name="status" th:value="${status}" />
                   <input type="hidden" th:if="${student.n4Class != null}" th:field="*{id}"/>
                   
                   <div class="mb-4">
@@ -764,6 +790,8 @@
               <div class="card-body">
                 <form th:action="@{/students/update-interview/{id}(id=${student.id})}" 
                       th:object="${interviewNotes}" method="post" id="interviewForm" novalidate>
+                       <input type="hidden" name="nameSearch" th:value="${nameSearch}" />
+  <input type="hidden" name="status" th:value="${status}" />
                   <input type="hidden" th:if="${interviewNotes != null}" th:field="*{id}"/>
                   
                   <div class="mb-4">
@@ -832,17 +860,23 @@
   </div> 
 
   <!-- Flash Messages -->
-  <div th:if="${success}" class="alert alert-success alert-dismissible fade show position-fixed top-0 start-50 translate-middle-x mt-5" style="z-index: 1100; min-width: 300px;" role="alert">
-    <i class="fas fa-check-circle me-2"></i>
-    <span th:text="${success}"></span>
-    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-  </div>
+<div th:if="${success}" 
+     class="alert alert-success alert-dismissible fade show position-fixed" 
+     style="z-index: 1100; min-width: 300px; top: 20%; left: 58%; transform: translate(-50%, -50%);" 
+     role="alert">
+  <i class="fas fa-check-circle me-2"></i>
+  <span th:text="${success}"></span>
+  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
 
-  <div th:if="${error}" class="alert alert-danger alert-dismissible fade show position-fixed top-0 start-50 translate-middle-x mt-5" style="z-index: 1100; min-width: 300px;" role="alert">
-    <i class="fas fa-exclamation-circle me-2"></i>
-    <span th:text="${error}"></span>
-    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-  </div>
+<div th:if="${error}" 
+     class="alert alert-danger alert-dismissible fade show position-fixed" 
+     style="z-index: 1100; min-width: 300px; top: 20%; left: 58%; transform: translate(-50%, -50%);" 
+     role="alert">
+  <i class="fas fa-exclamation-circle me-2"></i>
+  <span th:text="${error}"></span>
+  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
 
   <!-- MODAL: Unsaved Changes -->
   <div class="modal fade" id="unsavedModal" tabindex="-1" aria-labelledby="unsavedModalLabel" aria-hidden="true">
@@ -887,5 +921,73 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
   <script th:src="@{/js/student-update.js}"></script>
+<script>
+function cancelUpdate() {
+    const nameSearch = '[[${nameSearch}]]';
+    const status = '[[${status}]]';
+    
+    let url = '/students';
+    const params = [];
+    
+    if (nameSearch && nameSearch.trim() !== '') {
+        params.push('nameSearch=' + encodeURIComponent(nameSearch.trim()));
+    }
+    if (status && status.trim() !== '') {
+        params.push('status=' + encodeURIComponent(status.trim()));
+    }
+    
+    if (params.length > 0) {
+        url += '?' + params.join('&');
+    }
+    
+    window.location.href = url;
+}
+
+// Store search state to handle browser back button
+document.addEventListener('DOMContentLoaded', function() {
+    const nameSearch = '[[${nameSearch}]]';
+    const status = '[[${status}]]';
+    
+    if (nameSearch || status) {
+        // Push a new state to history
+        history.replaceState({hasFilters: true}, '');
+        
+        // Override back button
+        window.addEventListener('popstate', function(e) {
+            e.preventDefault();
+            
+            let url = '/students';
+            const params = [];
+            
+            if (nameSearch && nameSearch.trim() !== '') {
+                params.push('nameSearch=' + encodeURIComponent(nameSearch.trim()));
+            }
+            if (status && status.trim() !== '') {
+                params.push('status=' + encodeURIComponent(status.trim()));
+            }
+            
+            if (params.length > 0) {
+                url += '?' + params.join('&');
+            }
+            
+            window.location.href = url;
+        });
+    }
+});
+</script>
+  
+  <script>  
+  document.addEventListener("DOMContentLoaded", function () {
+    const layout = document.querySelector(".dashboard-layout");
+    const toggles = document.querySelectorAll("[data-sidebar-toggle]");
+    toggles.forEach((btn) =>
+      btn.addEventListener("click", function (event) {
+        event.preventDefault();
+        layout?.classList.toggle("sidebar-open");
+      })
+    );
+  });
+  </script>
+
 </body>
 </html>

@@ -30,4 +30,6 @@ public interface StudentService {
 
     List<StudentDTO> getStudentsByStatuses(String nameSearch, List<String> statuses);
 
+    List<Student> findAllByIds(List<Long> ids);
+
 }

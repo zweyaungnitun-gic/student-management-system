@@ -25,8 +25,8 @@ public class StudentExportServiceImpl implements StudentExportService {
 
     @Override
     public List<StudentFullExportDTO> getStudentsByIds(List<Long> ids) {
-        return studentService.findAll().stream()
-                .filter(s -> ids.contains(s.getId()))
+        // Use the new efficient method
+        return studentService.findAllByIds(ids).stream()
                 .map(this::convertToExportDTO)
                 .collect(Collectors.toList());
     }
@@ -36,6 +36,7 @@ public class StudentExportServiceImpl implements StudentExportService {
 
         // --- StudentDTO fields ---
         dto.setId(s.getId());
+        dto.setStudentId(s.getStudentId());
         dto.setStudentName(s.getStudentName());
         dto.setNameInJapanese(s.getNameInJapanese());
         dto.setDateOfBirth(s.getDateOfBirth() != null ? s.getDateOfBirth().toString() : "");
