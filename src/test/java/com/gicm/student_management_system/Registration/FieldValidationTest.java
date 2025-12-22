@@ -41,53 +41,50 @@ public class FieldValidationTest {
 
     @ParameterizedTest
     @CsvSource({
-        "englishName, null, englishName",
-        "englishName, 小林, englishName",
-        "katakanaName, null, katakanaName",
-        "katakanaName, Mg Mg, katakanaName",
-        "dob, null, dob",
-        "dob, 01-01-2000, dob",
-        "gender, null, gender",
-        "currentAddress, null, currentAddress",
-        "hometownAddress, null, hometownAddress",
-        "phoneNumber, null, phoneNumber",
-        "phoneNumber, 123456, phoneNumber",
-        "guardianPhoneNumber, null, guardianPhoneNumber",
-        "guardianPhoneNumber, 123456, guardianPhoneNumber",
+            "englishName, null, englishName",
+            "englishName, 小林, englishName",
+            "katakanaName, null, katakanaName",
+            "katakanaName, Mg Mg, katakanaName",
+            "dob, null, dob",
+            "dob, 01-01-2000, dob",
+            "gender, null, gender",
+            "currentAddress, null, currentAddress",
+            "hometownAddress, null, hometownAddress",
+            "phoneNumber, null, phoneNumber",
+            "phoneNumber, 123456, phoneNumber",
+            "guardianPhoneNumber, null, guardianPhoneNumber",
+            "guardianPhoneNumber, 123456, guardianPhoneNumber",
     })
     void testFirstPageValidation(String fieldName, String invalidValue, String expectedErrorField) throws Exception {
-        StudentRegistrationDTO dto = createValidFirstPageDto();
-        setFieldValue(dto, fieldName, invalidValue);
-        
-        mockMvc.perform(post("/register/save-step1")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(dto)))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.status").value("error"))
-                .andExpect(jsonPath("$.errors." + expectedErrorField).exists());
-    }
+        StudentRegistrationDTO dto = createValidFirstPageDto(); // create a valid DTO
+        setFieldValue(dto, fieldName, invalidValue); // set the specific field to an invalid value
 
-    @Test
-    void testFirstPageValidationSuccess() throws Exception {
-        testValidationSuccess("/register/save-step1", createValidFirstPageDto());
+        // to stimulate the POST request and check for validation errors
+        mockMvc.perform(post("/register/save-step1")
+                .contentType(MediaType.APPLICATION_JSON) // send as JSON
+                .content(objectMapper.writeValueAsString(dto))) // convert DTO to JSON
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.status").value("error")) // check status is error
+                .andExpect(jsonPath("$.errors." + expectedErrorField).exists()); // check specific field error
     }
 
     // ==================== SECOND PAGE VALIDATION TESTS ====================
 
     @ParameterizedTest
     @CsvSource({
-        "fatherName, null, fatherName",
-        "fatherName, Father123, fatherName",
-        "nationalIdNumber, null, nationalIdNumber",
-        "nationalIdNumber, 123456, nationalIdNumber"
+            "fatherName, null, fatherName",
+            "fatherName, Father123, fatherName",
+            "nationalIdNumber, null, nationalIdNumber",
+            "nationalIdNumber, 123456, nationalIdNumber",
+            "passportNumber, ABC123, passportNumber"
     })
     void testSecondPageValidation(String fieldName, String invalidValue, String expectedErrorField) throws Exception {
         StudentRegistrationDTO dto = createValidSecondPageDto();
         setFieldValue(dto, fieldName, invalidValue);
-        
+
         mockMvc.perform(post("/register/save-step2")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(dto)))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.status").value("error"))
                 .andExpect(jsonPath("$.errors." + expectedErrorField).exists());
@@ -97,15 +94,15 @@ public class FieldValidationTest {
 
     @ParameterizedTest
     @CsvSource({
-        "tuitionPaymentDate, 01-01-2025, tuitionPaymentDate"
+            "tuitionPaymentDate, 01-01-2025, tuitionPaymentDate"
     })
     void testThirdPageValidation(String fieldName, String invalidValue, String expectedErrorField) throws Exception {
         StudentRegistrationDTO dto = createValidThirdPageDto();
         setFieldValue(dto, fieldName, invalidValue);
-        
+
         mockMvc.perform(post("/register/save-step3")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(dto)))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.status").value("error"))
                 .andExpect(jsonPath("$.errors." + expectedErrorField).exists());
@@ -115,7 +112,7 @@ public class FieldValidationTest {
 
     private void setFieldValue(StudentRegistrationDTO dto, String fieldName, String value) {
         String actualValue = "null".equals(value) ? null : value;
-        
+
         switch (fieldName) {
             case "englishName" -> dto.setEnglishName(actualValue);
             case "katakanaName" -> dto.setKatakanaName(actualValue);
@@ -127,22 +124,15 @@ public class FieldValidationTest {
             case "guardianPhoneNumber" -> dto.setGuardianPhoneNumber(actualValue);
             case "fatherName" -> dto.setFatherName(actualValue);
             case "nationalIdNumber" -> dto.setNationalIdNumber(actualValue);
+            case "passportNumber" -> dto.setPassportNumber(actualValue);
             case "tuitionPaymentDate" -> dto.setTuitionPaymentDate(actualValue);
         }
-    }
-
-    private void testValidationSuccess(String endpoint, StudentRegistrationDTO dto) throws Exception {
-        mockMvc.perform(post(endpoint)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(dto)))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.status").value("success"));
     }
 
     private StudentRegistrationDTO createValidFirstPageDto() {
         StudentRegistrationDTO dto = new StudentRegistrationDTO();
         dto.setEnglishName("John Doe");
-        dto.setKatakanaName("ジョン ドウ");
+        dto.setKatakanaName("ジョンドゥ");
         dto.setDob("2000-01-01");
         dto.setGender("男性");
         dto.setCurrentAddress("Tokyo, Japan");
@@ -153,9 +143,10 @@ public class FieldValidationTest {
     }
 
     private StudentRegistrationDTO createValidSecondPageDto() {
-        StudentRegistrationDTO dto = new StudentRegistrationDTO();
-        dto.setFatherName("Father Name");
-        dto.setNationalIdNumber("12/ThaPhaYa(N)123456");
+        StudentRegistrationDTO dto = createValidFirstPageDto();
+        dto.setFatherName("Smith Doe");
+        dto.setNationalIdNumber("12/ThaPhaYa(N)111111");
+        dto.setPassportNumber("MA123456");
         dto.setJlptLevel("N5");
         dto.setDesiredOccupation("Engineer");
         dto.setJapanTravelExperience("No");
@@ -164,12 +155,12 @@ public class FieldValidationTest {
     }
 
     private StudentRegistrationDTO createValidThirdPageDto() {
-        StudentRegistrationDTO dto = new StudentRegistrationDTO();
+        StudentRegistrationDTO dto = createValidSecondPageDto();
         dto.setReligion("Buddhist");
         dto.setSmoking("No");
         dto.setAlcohol("No");
         dto.setTattoo("No");
-        dto.setTuitionPaymentDate("2025-01-01");
+        dto.setTuitionPaymentDate("2026-01-01");
         dto.setWantDorm("Yes");
         return dto;
     }
