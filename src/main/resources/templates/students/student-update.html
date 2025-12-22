@@ -54,37 +54,37 @@
           <div class="mb-4">
             <ul class="nav nav-tabs border-bottom-0 d-flex justify-content-between" id="studentTab" role="tablist">
               <li class="nav-item flex-fill text-center mx-1">
-                <button class="nav-link active w-100 px-4 py-3 position-relative" id="basic-tab" data-bs-toggle="tab" data-bs-target="#basic" type="button">
-                  <i class="fas fa-id-card d-none d-md-inline me-2"></i>
-                  <span class="fw-medium">基本情報</span>
+                <button class="nav-link active w-100 px-3 px-md-4 py-3 position-relative" id="basic-tab" data-bs-toggle="tab" data-bs-target="#basic" type="button">
+                  <i class="fas fa-id-card me-1 me-md-2"></i>
+                  <span class="nav-tab-text fw-medium d-none d-sm-inline">基本情報</span>
                   <span class="unsaved-badge badge bg-danger position-absolute top-0 end-0 translate-middle" style="display: none;">!</span>
                 </button>
               </li>
               <li class="nav-item flex-fill text-center mx-1">
-                <button class="nav-link w-100 px-4 py-3 position-relative" id="status-tab" data-bs-toggle="tab" data-bs-target="#status" type="button">
-                  <i class="fas fa-tasks d-none d-md-inline me-2"></i>
-                  <span class="fw-medium">ステータス・情報</span>
+                <button class="nav-link w-100 px-3 px-md-4 py-3 position-relative" id="status-tab" data-bs-toggle="tab" data-bs-target="#status" type="button">
+                  <i class="fas fa-tasks me-1 me-md-2"></i>
+                  <span class="nav-tab-text fw-medium d-none d-sm-inline">ステータス</span>
                   <span class="unsaved-badge badge bg-danger position-absolute top-0 end-0 translate-middle" style="display: none;">!</span>
                 </button>
               </li>
               <li class="nav-item flex-fill text-center mx-1">
-                <button class="nav-link w-100 px-4 py-3 position-relative" id="n5-tab" data-bs-toggle="tab" data-bs-target="#n5" type="button">
-                  <i class="fas fa-book-open d-none d-md-inline me-2"></i>
-                  <span class="fw-medium">N5クラス</span>
+                <button class="nav-link w-100 px-3 px-md-4 py-3 position-relative" id="n5-tab" data-bs-toggle="tab" data-bs-target="#n5" type="button">
+                  <i class="fas fa-book-open me-1 me-md-2"></i>
+                  <span class="nav-tab-text fw-medium d-none d-sm-inline">N5クラス</span>
                   <span class="unsaved-badge badge bg-danger position-absolute top-0 end-0 translate-middle" style="display: none;">!</span>
                 </button>
               </li>
               <li class="nav-item flex-fill text-center mx-1">
-                <button class="nav-link w-100 px-4 py-3 position-relative" id="n4-tab" data-bs-toggle="tab" data-bs-target="#n4" type="button">
-                  <i class="fas fa-book-reader d-none d-md-inline me-2"></i>
-                  <span class="fw-medium">N4クラス</span>
+                <button class="nav-link w-100 px-3 px-md-4 py-3 position-relative" id="n4-tab" data-bs-toggle="tab" data-bs-target="#n4" type="button">
+                  <i class="fas fa-book-reader me-1 me-md-2"></i>
+                  <span class="nav-tab-text fw-medium d-none d-sm-inline">N4クラス</span>
                   <span class="unsaved-badge badge bg-danger position-absolute top-0 end-0 translate-middle" style="display: none;">!</span>
                 </button>
               </li>
               <li class="nav-item flex-fill text-center mx-1">
-                <button class="nav-link w-100 px-4 py-3 position-relative" id="interview-tab" data-bs-toggle="tab" data-bs-target="#interview" type="button">
-                  <i class="fas fa-comments d-none d-md-inline me-2"></i>
-                  <span class="fw-medium">面談・その他</span>
+                <button class="nav-link w-100 px-3 px-md-4 py-3 position-relative" id="interview-tab" data-bs-toggle="tab" data-bs-target="#interview" type="button">
+                  <i class="fas fa-comments me-1 me-md-2"></i>
+                  <span class="nav-tab-text fw-medium d-none d-sm-inline">面談</span>
                   <span class="unsaved-badge badge bg-danger position-absolute top-0 end-0 translate-middle" style="display: none;">!</span>
                 </button>
               </li>
@@ -97,11 +97,11 @@
             <div class="tab-pane fade show active" id="basic" role="tabpanel" aria-labelledby="basic-tab">
               <div class="card shadow-sm border-0">
                 <div class="card-body">
-             <form th:action="@{/students/update-basic/{id}(id=${student.id})}" th:object="${student}" method="post" id="basicForm" novalidate>
-  <!-- Add these hidden inputs -->
-  <input type="hidden" name="nameSearch" th:value="${nameSearch}" />
-  <input type="hidden" name="status" th:value="${status}" />
-                    <div class="form-section">
+                  <form th:action="@{/students/update-basic/{id}(id=${student.id})}" th:object="${student}" method="post" id="basicForm" novalidate>
+                      <input type="hidden" name="nameSearch" th:value="${nameSearch}" />
+                      <input type="hidden" name="status" th:value="${status}" />
+                    
+                      <div class="form-section">
                       
                       <div class="row g-3"> 
                         <div class="col-md-6">
@@ -226,19 +226,19 @@
               <div class="card shadow-sm border-0">
                 <div class="card-body">
                   <form th:action="@{/students/update-status/{id}(id=${student.id})}" th:object="${student}" method="post" id="statusForm" novalidate>
-                     <input type="hidden" name="nameSearch" th:value="${nameSearch}" />
-  <input type="hidden" name="status" th:value="${status}" />
+                      <input type="hidden" name="nameSearch" th:value="${nameSearch}" />
+                      <input type="hidden" name="status" th:value="${status}" />
                     <div class="form-section">
                       <div class="row g-3">
                         
                         <div class="col-md-6">
                           <label class="form-label required-label">希望職種</label>
-                         <select class="form-select" th:field="*{desiredJobType}" id="desiredJobType">
-    <option value="介護">介護</option>
-    <option value="飲食">飲食</option>
-    <option value="宿泊">宿泊</option>
-    <option value="その他">その他</option>
-</select>
+                          <select class="form-select" th:field="*{desiredJobType}" id="desiredJobType">
+                            <option value="介護">介護</option>
+                            <option value="飲食">飲食</option>
+                            <option value="宿泊">宿泊</option>
+                            <option value="その他">その他</option>
+                          </select>
                           <div class="text-danger" th:if="${#fields.hasErrors('desiredJobType')}" th:errors="*{desiredJobType}"></div>
                         </div>
 
@@ -279,31 +279,21 @@
                         </div>
 
                         <div class="col-md-6">
-    <label class="form-label required-label">生徒の授業ステータス</label>
-    <!-- Use explicit name attribute and ensure th:field is properly bound -->
-    <select class="form-select" 
-            th:field="*{attendingClassRelatedStatus}"
-            name="attendingClassRelatedStatus"
-            id="attendingClassRelatedStatusField">
-        <option th:value="''" th:if="${student.attendingClassRelatedStatus == null or student.attendingClassRelatedStatus == ''}">
-            選択してください
-        </option>
-        <option value="在校" 
-                th:selected="${student.attendingClassRelatedStatus == '在校'}">
-            在校
-        </option>
-        <option value="卒業" 
-                th:selected="${student.attendingClassRelatedStatus == '卒業'}">
-            卒業
-        </option>
-        <option value="途中退校" 
-                th:selected="${student.attendingClassRelatedStatus == '途中退校'}">
-            途中退校
-        </option>
-    </select>
-    <div class="text-danger" th:if="${#fields.hasErrors('attendingClassRelatedStatus')}" 
-         th:errors="*{attendingClassRelatedStatus}"></div>
-</div>
+                          <label class="form-label required-label">生徒の授業ステータス</label>
+                          <select class="form-select" th:field="*{attendingClassRelatedStatus}"name="attendingClassRelatedStatus"
+                              id="attendingClassRelatedStatusField">
+                              <option th:value="''" th:if="${student.attendingClassRelatedStatus == null or student.attendingClassRelatedStatus == ''}">
+                                  選択してください </option>
+                              <option value="在校" th:selected="${student.attendingClassRelatedStatus == '在校'}">
+                                  在校 </option>
+                              <option value="卒業" th:selected="${student.attendingClassRelatedStatus == '卒業'}">
+                                  卒業 </option>
+                              <option value="途中退校" th:selected="${student.attendingClassRelatedStatus == '途中退校'}">
+                                  途中退校</option>
+                          </select>
+                          <div class="text-danger" th:if="${#fields.hasErrors('attendingClassRelatedStatus')}" 
+                              th:errors="*{attendingClassRelatedStatus}"></div>
+                          </div>
 
                         <div class="col-md-6">
                           <label class="form-label required-label">在籍状況</label>
@@ -433,9 +423,9 @@
               <div class="card-body">
                 <form th:action="@{/students/update-n5/{id}(id=${student.id})}" 
                     th:object="${n5Class}" method="post" id="n5Form">
-                     <input type="hidden" name="nameSearch" th:value="${nameSearch}" />
-  <input type="hidden" name="status" th:value="${status}" />
-                  <input type="hidden" th:field="*{id}" novalidate/>
+                    <input type="hidden" name="nameSearch" th:value="${nameSearch}" />
+                    <input type="hidden" name="status" th:value="${status}" />
+                    <input type="hidden" th:field="*{id}" novalidate/>
                   
                   <div class="mb-4">
                     <h5 class="border-bottom pb-2 mb-3">
@@ -610,9 +600,9 @@
             <div class="card shadow-sm border-0">
               <div class="card-body">
                 <form th:action="@{/students/update-n4/{id}(id=${student.id})}" 
-                th:object="${n4Class}" method="post" id="n4Form" novalidate>
-                 <input type="hidden" name="nameSearch" th:value="${nameSearch}" />
-  <input type="hidden" name="status" th:value="${status}" />
+                  th:object="${n4Class}" method="post" id="n4Form" novalidate>
+                  <input type="hidden" name="nameSearch" th:value="${nameSearch}" />
+                  <input type="hidden" name="status" th:value="${status}" />
                   <input type="hidden" th:if="${student.n4Class != null}" th:field="*{id}"/>
                   
                   <div class="mb-4">
@@ -790,8 +780,8 @@
               <div class="card-body">
                 <form th:action="@{/students/update-interview/{id}(id=${student.id})}" 
                       th:object="${interviewNotes}" method="post" id="interviewForm" novalidate>
-                       <input type="hidden" name="nameSearch" th:value="${nameSearch}" />
-  <input type="hidden" name="status" th:value="${status}" />
+                  <input type="hidden" name="nameSearch" th:value="${nameSearch}" />
+                  <input type="hidden" name="status" th:value="${status}" />
                   <input type="hidden" th:if="${interviewNotes != null}" th:field="*{id}"/>
                   
                   <div class="mb-4">
@@ -860,23 +850,23 @@
   </div> 
 
   <!-- Flash Messages -->
-<div th:if="${success}" 
-     class="alert alert-success alert-dismissible fade show position-fixed" 
-     style="z-index: 1100; min-width: 300px; top: 20%; left: 58%; transform: translate(-50%, -50%);" 
-     role="alert">
-  <i class="fas fa-check-circle me-2"></i>
-  <span th:text="${success}"></span>
-  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-</div>
+  <div th:if="${success}" 
+      class="alert alert-success alert-dismissible fade show position-fixed" 
+      style="z-index: 1100; min-width: 300px; top: 20%; left: 58%; transform: translate(-50%, -50%);" 
+      role="alert">
+    <i class="fas fa-check-circle me-2"></i>
+    <span th:text="${success}"></span>
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
 
-<div th:if="${error}" 
-     class="alert alert-danger alert-dismissible fade show position-fixed" 
-     style="z-index: 1100; min-width: 300px; top: 20%; left: 58%; transform: translate(-50%, -50%);" 
-     role="alert">
-  <i class="fas fa-exclamation-circle me-2"></i>
-  <span th:text="${error}"></span>
-  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-</div>
+  <div th:if="${error}" 
+      class="alert alert-danger alert-dismissible fade show position-fixed" 
+      style="z-index: 1100; min-width: 300px; top: 20%; left: 58%; transform: translate(-50%, -50%);" 
+      role="alert">
+    <i class="fas fa-exclamation-circle me-2"></i>
+    <span th:text="${error}"></span>
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
 
   <!-- MODAL: Unsaved Changes -->
   <div class="modal fade" id="unsavedModal" tabindex="-1" aria-labelledby="unsavedModalLabel" aria-hidden="true">
@@ -921,72 +911,68 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
   <script th:src="@{/js/student-update.js}"></script>
-<script>
-function cancelUpdate() {
-    const nameSearch = '[[${nameSearch}]]';
-    const status = '[[${status}]]';
-    
-    let url = '/students';
-    const params = [];
-    
-    if (nameSearch && nameSearch.trim() !== '') {
-        params.push('nameSearch=' + encodeURIComponent(nameSearch.trim()));
-    }
-    if (status && status.trim() !== '') {
-        params.push('status=' + encodeURIComponent(status.trim()));
-    }
-    
-    if (params.length > 0) {
-        url += '?' + params.join('&');
-    }
-    
-    window.location.href = url;
-}
-
-// Store search state to handle browser back button
-document.addEventListener('DOMContentLoaded', function() {
-    const nameSearch = '[[${nameSearch}]]';
-    const status = '[[${status}]]';
-    
-    if (nameSearch || status) {
-        // Push a new state to history
-        history.replaceState({hasFilters: true}, '');
-        
-        // Override back button
-        window.addEventListener('popstate', function(e) {
-            e.preventDefault();
-            
-            let url = '/students';
-            const params = [];
-            
-            if (nameSearch && nameSearch.trim() !== '') {
-                params.push('nameSearch=' + encodeURIComponent(nameSearch.trim()));
-            }
-            if (status && status.trim() !== '') {
-                params.push('status=' + encodeURIComponent(status.trim()));
-            }
-            
-            if (params.length > 0) {
-                url += '?' + params.join('&');
-            }
-            
-            window.location.href = url;
-        });
-    }
-});
-</script>
   
-  <script>  
-  document.addEventListener("DOMContentLoaded", function () {
-    const layout = document.querySelector(".dashboard-layout");
-    const toggles = document.querySelectorAll("[data-sidebar-toggle]");
-    toggles.forEach((btn) =>
-      btn.addEventListener("click", function (event) {
-        event.preventDefault();
-        layout?.classList.toggle("sidebar-open");
-      })
-    );
-  });
+  <script>
+    function cancelUpdate() {
+        const nameSearch = '[[${nameSearch}]]';
+        const status = '[[${status}]]';
+        
+        let url = '/students';
+        const params = [];
+        
+        if (nameSearch && nameSearch.trim() !== '') {
+            params.push('nameSearch=' + encodeURIComponent(nameSearch.trim()));
+        }
+        if (status && status.trim() !== '') {
+            params.push('status=' + encodeURIComponent(status.trim()));
+        }
+        
+        if (params.length > 0) {
+            url += '?' + params.join('&');
+        }
+        
+        window.location.href = url;
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const nameSearch = '[[${nameSearch}]]';
+        const status = '[[${status}]]';
+        
+        if (nameSearch || status) {
+            history.replaceState({hasFilters: true}, '');
+            
+            window.addEventListener('popstate', function(e) {
+                e.preventDefault();
+                
+                let url = '/students';
+                const params = [];
+                
+                if (nameSearch && nameSearch.trim() !== '') {
+                    params.push('nameSearch=' + encodeURIComponent(nameSearch.trim()));
+                }
+                if (status && status.trim() !== '') {
+                    params.push('status=' + encodeURIComponent(status.trim()));
+                }
+                
+                if (params.length > 0) {
+                    url += '?' + params.join('&');
+                }
+                
+                window.location.href = url;
+            });
+        }
+    });
+
+    document.addEventListener("DOMContentLoaded", function () {
+      const layout = document.querySelector(".dashboard-layout");
+      const toggles = document.querySelectorAll("[data-sidebar-toggle]");
+      toggles.forEach((btn) =>
+        btn.addEventListener("click", function (event) {
+          event.preventDefault();
+          layout?.classList.toggle("sidebar-open");
+        })
+      );
+    });
   </script>
 
 </body>
