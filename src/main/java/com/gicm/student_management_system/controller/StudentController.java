@@ -1,38 +1,43 @@
 package com.gicm.student_management_system.controller;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import com.gicm.student_management_system.dto.InterviewNotesDTO;
 import com.gicm.student_management_system.dto.N4ClassDTO;
 import com.gicm.student_management_system.dto.N5ClassDTO;
 import com.gicm.student_management_system.dto.StudentDTO;
 import com.gicm.student_management_system.dto.StudentFullExportDTO;
-import com.gicm.student_management_system.dto.InterviewNotesDTO;
 import com.gicm.student_management_system.entity.Student;
-import com.gicm.student_management_system.service.N5ClassService;
+import com.gicm.student_management_system.service.InterviewNotesService;
 import com.gicm.student_management_system.service.N4ClassService;
+import com.gicm.student_management_system.service.N5ClassService;
+import com.gicm.student_management_system.service.StudentExportService;
 import com.gicm.student_management_system.service.StudentService;
 import com.gicm.student_management_system.validation.BasicInfoGroup;
 import com.gicm.student_management_system.validation.StatusGroup;
 
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.validation.Valid;
-import com.gicm.student_management_system.service.InterviewNotesService;
-
-import com.gicm.student_management_system.service.StudentExportService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.annotation.Validated;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
-import java.time.LocalDate;
-import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
@@ -103,6 +108,7 @@ public class StudentController {
 
     // KZT
     // 181225
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/delete/{id}")
     public String deleteStudent(@PathVariable Long id,
             @RequestParam(value = "nameSearch", defaultValue = "") String nameSearch,
@@ -151,6 +157,7 @@ public class StudentController {
     // Student Update
     // ----------------------------------------------------------------------------------------
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/student-update/{id}")
     public String showUpdateForm(@PathVariable Long id,
             @RequestParam(value = "nameSearch", defaultValue = "") String nameSearch,
@@ -177,6 +184,7 @@ public class StudentController {
         return "students/student-update.html";
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/update-basic/{id}")
     public String updateBasicInfo(
             @PathVariable Long id,
@@ -242,6 +250,7 @@ public class StudentController {
         return buildRedirectUrl(nameSearch, status);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/update-status/{id}")
     public String updateStatusInfo(@PathVariable Long id,
             @Validated(StatusGroup.class) @ModelAttribute Student student,
@@ -322,6 +331,7 @@ public class StudentController {
         return buildRedirectUrl(nameSearch, status);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/update-n5/{id}")
     public String updateN5ClassInfo(@PathVariable Long id,
             @ModelAttribute("n5Class") N5ClassDTO n5ClassDTO,
@@ -338,6 +348,7 @@ public class StudentController {
         return "redirect:/students/student-update/" + id + "?tab=n5";
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/update-n4/{id}")
     public String updateN4ClassInfo(@PathVariable Long id,
             @ModelAttribute("n4Class") N4ClassDTO n4ClassDTO,
@@ -354,6 +365,7 @@ public class StudentController {
         return "redirect:/students/student-update/" + id + "?tab=n4";
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/update-interview/{id}")
     public String updateInterviewNotes(@PathVariable Long id,
             @ModelAttribute("interviewNotes") InterviewNotesDTO interviewNotesDTO,
