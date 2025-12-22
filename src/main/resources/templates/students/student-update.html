@@ -832,17 +832,23 @@
   </div> 
 
   <!-- Flash Messages -->
-  <div th:if="${success}" class="alert alert-success alert-dismissible fade show position-fixed top-0 start-50 translate-middle-x mt-5" style="z-index: 1100; min-width: 300px;" role="alert">
-    <i class="fas fa-check-circle me-2"></i>
-    <span th:text="${success}"></span>
-    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-  </div>
+<div th:if="${success}" 
+     class="alert alert-success alert-dismissible fade show position-fixed" 
+     style="z-index: 1100; min-width: 300px; top: 20%; left: 58%; transform: translate(-50%, -50%);" 
+     role="alert">
+  <i class="fas fa-check-circle me-2"></i>
+  <span th:text="${success}"></span>
+  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
 
-  <div th:if="${error}" class="alert alert-danger alert-dismissible fade show position-fixed top-0 start-50 translate-middle-x mt-5" style="z-index: 1100; min-width: 300px;" role="alert">
-    <i class="fas fa-exclamation-circle me-2"></i>
-    <span th:text="${error}"></span>
-    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-  </div>
+<div th:if="${error}" 
+     class="alert alert-danger alert-dismissible fade show position-fixed" 
+     style="z-index: 1100; min-width: 300px; top: 20%; left: 58%; transform: translate(-50%, -50%);" 
+     role="alert">
+  <i class="fas fa-exclamation-circle me-2"></i>
+  <span th:text="${error}"></span>
+  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
 
   <!-- MODAL: Unsaved Changes -->
   <div class="modal fade" id="unsavedModal" tabindex="-1" aria-labelledby="unsavedModalLabel" aria-hidden="true">
