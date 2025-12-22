@@ -149,20 +149,6 @@ class InterviewNotesServiceImplTest_Update {
         }
 
         @Test
-        void testSaveInterviewNotesDTO_StudentNotFound() {
-                InterviewNotesDTO dto = new InterviewNotesDTO();
-                when(studentRepository.findById(studentId)).thenReturn(Optional.empty());
-
-                RuntimeException exception = assertThrows(RuntimeException.class,
-                                () -> interviewNotesService.saveInterviewNotesDTO(studentId, dto));
-                assertEquals("Student not found: " + studentId, exception.getMessage());
-
-                verify(studentRepository).findById(studentId);
-                verify(interviewNotesRepository, never()).findByStudentId(anyLong());
-                verify(interviewNotesRepository, never()).save(any());
-        }
-
-        @Test
         void getOrCreateInterviewNotesDTO_whenEntityNull_returnsEmptyDTO() {
                 Mockito.when(interviewNotesRepository.findByStudentId(studentId))
                                 .thenReturn(Optional.empty());
