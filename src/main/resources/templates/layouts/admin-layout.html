@@ -41,18 +41,22 @@
       </div>
 
       <nav class="sidebar-nav mt-3">
-        <a class="sidebar-link" th:classappend="${currentPage} == 'dashboard' ? ' active' : ''" th:href="@{/}">
+        <a class="sidebar-link" th:classappend="${currentPage} == 'dashboard' ? ' active' : ''" th:href="@{/dashboard}">
           <i class="bi bi-grid-1x2-fill"></i><span>Dashboard</span>
-        </a>
-        <a class="sidebar-link" th:classappend="${currentPage} == 'employees' ? ' active' : ''" th:href="@{/employees}">
-          <i class="bi bi-people"></i><span>Employees</span>
+          <span class="sidebar-pill" th:if="${currentPage} == 'dashboard'">Now</span>
         </a>
         <a class="sidebar-link" th:classappend="${currentPage} == 'students' ? ' active' : ''" th:href="@{/students}">
           <i class="bi bi-person-badge"></i><span>Students</span>
+          <span class="sidebar-pill" th:if="${currentPage} == 'students'">Now</span>
         </a>
-        <a class="sidebar-link" th:classappend="${currentPage} == 'reports' ? ' active' : ''" th:href="@{/reports}">
-          <i class="bi bi-bar-chart"></i><span>Reports</span>
+        <a class="sidebar-link" th:classappend="${currentPage} == 'users' ? ' active' : ''" th:href="@{/users}" sec:authorize="hasRole('ADMIN')">
+          <i class="bi bi-bar-chart"></i><span>Users</span>
+          <span class="sidebar-pill" th:if="${currentPage} == 'users'">Now</span>
         </a>
+        <a class="sidebar-link" th:href="@{/logout}">
+              <i class="bi bi-box-arrow-right"></i>
+              <span>Logout</span>
+            </a>
       </nav>
 
       <div class="sidebar-mini-card mt-auto p-3">

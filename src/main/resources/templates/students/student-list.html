@@ -788,7 +788,7 @@
                         <a
                           th:href="@{/students/student-update/{id}(id=${student.id}, nameSearch=${nameSearch}, status=${status})}"
                           class="action-icon edit"
-                          title="編集"
+                          title="編集" sec:authorize="hasRole('ADMIN')"
                         >
                           <i class="bi bi-pencil-square"></i>
                         </a>
@@ -803,7 +803,7 @@
                           href="#"
                           th:onclick="'if(confirm(\'本当に削除しますか？\')) window.location.href=\'/students/delete/' + ${student.id} + '\';'"
                           class="action-icon delete"
-                          title="削除"
+                          title="削除"  sec:authorize="hasRole('ADMIN')"
                         >
                           <i class="bi bi-trash-fill"></i>
                         </a>
