@@ -117,10 +117,13 @@ body {
 
 /* NAV-TABS (Updated to match Student Update Layout)*/
 .nav-tabs {
+  display: flex;
+  flex-wrap: nowrap;          
+  overflow-x: auto;           
+  white-space: nowrap;
   border-bottom: 2px solid #e9ecef !important;
-  gap: 10px;
-  margin-bottom: 20px;
-  padding: 0 5px;
+  gap: 8px;
+  -webkit-overflow-scrolling: touch;
 }
 
 /* Tab Link Styles */
@@ -157,7 +160,9 @@ body {
   position: relative;
   margin-bottom: -1px;
   flex-shrink: 0;
-  min-width: fit-content;
+  white-space: nowrap;
+  flex-shrink: 0;
+  min-width: auto;
 }
 
 .nav-tabs .nav-link:last-child {

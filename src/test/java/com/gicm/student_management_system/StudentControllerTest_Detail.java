@@ -18,162 +18,147 @@ import static org.mockito.Mockito.*;
 
 class StudentControllerTest_Detail {
 
-    @Mock
-    private StudentService studentService;
+        @Mock
+        private StudentService studentService;
 
-    @Mock
-    private N5ClassService n5ClassService;
+        @Mock
+        private N5ClassService n5ClassService;
 
-    @Mock
-    private N4ClassService n4ClassService;
+        @Mock
+        private N4ClassService n4ClassService;
 
-    @Mock
-    private InterviewNotesService interviewNotesService;
+        @Mock
+        private InterviewNotesService interviewNotesService;
 
-    @InjectMocks
-    private StudentController studentController;
+        @InjectMocks
+        private StudentController studentController;
 
-    // to store data for the view
-    private Model model;
+        private Model model;
 
-    @BeforeEach
-    void setUp() {
-        MockitoAnnotations.openMocks(this);
-        // creates a fresh Model for each test
-        model = new ExtendedModelMap();
-    }
+        @BeforeEach
+        void setUp() {
+                MockitoAnnotations.openMocks(this);
+                model = new ExtendedModelMap();
+        }
 
-    // SUCCESS CASE
-    @Test
-    void showStudentDetails_success() {
+        // SUCCESS CASE
+        @Test
+        void showStudentDetails_success() {
 
-        Long studentId = 1L;
+                Long studentId = 1L;
 
-        Student student = new Student();
-        student.setId(studentId);
+                Student student = new Student();
+                student.setId(studentId);
 
-        // match what controller puts into model
-        StudentDTO studentDTO = new StudentDTO();
-        N5ClassDTO n5ClassDTO = new N5ClassDTO();
-        N4ClassDTO n4ClassDTO = new N4ClassDTO();
-        InterviewNotesDTO interviewNotesDTO = new InterviewNotesDTO();
+                when(studentService.findById(studentId))
+                                .thenReturn(Optional.of(student));
+                when(studentService.getStudentById(studentId))
+                                .thenReturn(new StudentDTO());
+                when(n5ClassService.getOrCreateN5ClassDTO(studentId))
+                                .thenReturn(new N5ClassDTO());
+                when(n4ClassService.getOrCreateN4ClassDTO(studentId))
+                                .thenReturn(new N4ClassDTO());
+                when(interviewNotesService.getOrCreateInterviewNotesDTO(studentId))
+                                .thenReturn(new InterviewNotesDTO());
 
-        when(studentService.findById(studentId))
-                .thenReturn(Optional.of(student));
-        when(studentService.getStudentById(studentId))
-                .thenReturn(studentDTO);
-        when(n5ClassService.getOrCreateN5ClassDTO(studentId))
-                .thenReturn(n5ClassDTO);
-        when(n4ClassService.getOrCreateN4ClassDTO(studentId))
-                .thenReturn(n4ClassDTO);
-        when(interviewNotesService.getOrCreateInterviewNotesDTO(studentId))
-                .thenReturn(interviewNotesDTO);
+                String viewName = studentController.showStudentDetails(
+                                studentId,
+                                "personal",
+                                null,
+                                "", // nameSearch
+                                "", // status
+                                model);
 
-        String viewName = studentController.showStudentDetails(
-                studentId,
-                "personal",
-                null,
-                model
-        );
+                assertEquals("students/student-details", viewName);
+                assertTrue(model.containsAttribute("student"));
+                assertTrue(model.containsAttribute("n5Class"));
+                assertTrue(model.containsAttribute("n4Class"));
+                assertTrue(model.containsAttribute("interviewNotes"));
+                assertEquals("personal", model.getAttribute("currentTab"));
 
-        //confirms controller returns correct page
-        assertEquals("students/student-details", viewName);
-        // data required by student-details.html exists
-        assertTrue(model.containsAttribute("student"));
-        assertTrue(model.containsAttribute("n5Class"));
-        assertTrue(model.containsAttribute("n4Class"));
-        assertTrue(model.containsAttribute("interviewNotes"));
-        // tab switching logic works //confirms the active tab is "personal"
-        assertEquals("personal", model.getAttribute("currentTab"));
+                verify(studentService).findById(studentId);
+                verify(studentService).getStudentById(studentId);
+        }
 
-        // findByID() is exactly called once
-        verify(studentService, times(1)).findById(studentId);
-        verify(studentService, times(1)).getStudentById(studentId);
-    }
+        // DEFAULT TAB CASE
+        @Test
+        void showStudentDetails_defaultTab() {
 
-    // DEFAULT TAB CASE
-    //if no tab provided "personal" is used
-    @Test
-    void showStudentDetails_defaultTab() {
+                Long studentId = 2L;
 
-        Long studentId = 2L;
+                when(studentService.findById(studentId))
+                                .thenReturn(Optional.of(new Student()));
+                when(studentService.getStudentById(studentId))
+                                .thenReturn(new StudentDTO());
+                when(n5ClassService.getOrCreateN5ClassDTO(studentId))
+                                .thenReturn(new N5ClassDTO());
+                when(n4ClassService.getOrCreateN4ClassDTO(studentId))
+                                .thenReturn(new N4ClassDTO());
+                when(interviewNotesService.getOrCreateInterviewNotesDTO(studentId))
+                                .thenReturn(new InterviewNotesDTO());
 
-        Student student = new Student();
-        student.setId(studentId);
+                String viewName = studentController.showStudentDetails(
+                                studentId,
+                                "personal",
+                                null,
+                                "",
+                                "",
+                                model);
 
-        when(studentService.findById(studentId))
-                .thenReturn(Optional.of(student));
-        when(studentService.getStudentById(studentId))
-                .thenReturn(new StudentDTO());
-        when(n5ClassService.getOrCreateN5ClassDTO(studentId))
-                .thenReturn(new N5ClassDTO());
-        when(n4ClassService.getOrCreateN4ClassDTO(studentId))
-                .thenReturn(new N4ClassDTO());
-        when(interviewNotesService.getOrCreateInterviewNotesDTO(studentId))
-                .thenReturn(new InterviewNotesDTO());
+                assertEquals("students/student-details", viewName);
+                assertEquals("personal", model.getAttribute("currentTab"));
+        }
 
-        String viewName = studentController.showStudentDetails(
-                studentId,
-                "personal",
-                null,
-                model
-        );
-
-        assertEquals("students/student-details", viewName);
-        assertEquals("personal", model.getAttribute("currentTab"));
-    }   
-
-    // TAB + SUBTAB CASE
+        // TAB + SUBTAB CASE
         @Test
         void showStudentDetails_n5TabWithSubTab() {
 
-            Long studentId = 3L;
+                Long studentId = 3L;
 
-            Student student = new Student();
-            student.setId(studentId);
+                when(studentService.findById(studentId))
+                                .thenReturn(Optional.of(new Student()));
+                when(studentService.getStudentById(studentId))
+                                .thenReturn(new StudentDTO());
+                when(n5ClassService.getOrCreateN5ClassDTO(studentId))
+                                .thenReturn(new N5ClassDTO());
+                when(n4ClassService.getOrCreateN4ClassDTO(studentId))
+                                .thenReturn(new N4ClassDTO());
+                when(interviewNotesService.getOrCreateInterviewNotesDTO(studentId))
+                                .thenReturn(new InterviewNotesDTO());
 
-            when(studentService.findById(studentId))
-                    .thenReturn(Optional.of(student));
-            when(studentService.getStudentById(studentId))
-                    .thenReturn(new StudentDTO());
-            when(n5ClassService.getOrCreateN5ClassDTO(studentId))
-                    .thenReturn(new N5ClassDTO());
-            when(n4ClassService.getOrCreateN4ClassDTO(studentId))
-                    .thenReturn(new N4ClassDTO());
-            when(interviewNotesService.getOrCreateInterviewNotesDTO(studentId))
-                    .thenReturn(new InterviewNotesDTO());
+                String viewName = studentController.showStudentDetails(
+                                studentId, // @PathVariable Long id
+                                "n5", // @RequestParam tab
+                                "class1", // @RequestParam subTab
+                                "", // @RequestParam nameSearch
+                                "", // @RequestParam status
+                                model // Model
+                );
 
-            String viewName = studentController.showStudentDetails(
-                    studentId,
-                    "n5",
-                    "class1",
-                    model
-            );
-
-            assertEquals("students/student-details", viewName);
-            assertEquals("n5", model.getAttribute("currentTab"));
-            assertEquals("class1", model.getAttribute("currentSubTab"));
+                assertEquals("students/student-details", viewName);
+                assertEquals("n5", model.getAttribute("currentTab"));
+                assertEquals("class1", model.getAttribute("currentSubTab"));
         }
 
-    // STUDENT NOT FOUND
-    @Test
-    void showStudentDetails_studentNotFound() {
+        // STUDENT NOT FOUND
+        @Test
+        void showStudentDetails_studentNotFound() {
 
-        Long studentId = 99L;
+                Long studentId = 99L;
 
-        when(studentService.findById(studentId))
-                .thenReturn(Optional.empty());
+                when(studentService.findById(studentId))
+                                .thenReturn(Optional.empty());
 
-        RuntimeException exception = assertThrows(
-                RuntimeException.class,
-                () -> studentController.showStudentDetails(
-                        studentId,
-                        "personal",
-                        null,
-                        model
-                )
-        );
+                RuntimeException exception = assertThrows(
+                                RuntimeException.class,
+                                () -> studentController.showStudentDetails(
+                                                studentId,
+                                                "personal",
+                                                null,
+                                                "",
+                                                "",
+                                                model));
 
-        assertTrue(exception.getMessage().contains("Student not found"));
-    }
+                assertTrue(exception.getMessage().contains("Student not found"));
+        }
 }
