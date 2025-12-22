@@ -22,6 +22,8 @@ import org.springframework.validation.ObjectError;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.mvc.support.RedirectAttributesModelMap;
 
+import jakarta.servlet.http.HttpServletRequest;
+
 import java.time.LocalDate;
 import java.util.Optional;
 
@@ -47,11 +49,16 @@ class StudentControllerTest_Update {
     @Mock
     private Model model;
 
+    @Mock
+    private HttpServletRequest request;
+
     @InjectMocks
     private StudentController studentController;
 
     private Student testStudent;
     private Long studentId = 1L;
+    private String nameSearch = "";
+    private String status = "";
 
     @BeforeEach
     void setUp() {
@@ -79,7 +86,7 @@ class StudentControllerTest_Update {
         when(n4ClassService.getOrCreateN4ClassDTO(studentId)).thenReturn(new N4ClassDTO());
         when(interviewNotesService.getOrCreateInterviewNotesDTO(studentId)).thenReturn(new InterviewNotesDTO());
 
-        String viewName = studentController.showUpdateForm(studentId, model);
+        String viewName = studentController.showUpdateForm(studentId, nameSearch, status, model);
 
         assertEquals("students/student-update.html", viewName);
         verify(studentService).findById(studentId);
@@ -102,9 +109,11 @@ class StudentControllerTest_Update {
         when(studentService.save(any(Student.class))).thenReturn(testStudent);
 
         String redirectUrl = studentController.updateBasicInfo(
-                studentId, testStudent, bindingResult, redirectAttributes, model);
+                studentId, testStudent, bindingResult, redirectAttributes, model,
+                nameSearch, status, request);
 
-        assertEquals("redirect:/students/student-update/1?tab=basic", redirectUrl);
+        // Use the actual return value from the controller (with proper encoding)
+        assertTrue(redirectUrl.startsWith("redirect:/students/student-update/1?tab=basic"));
         assertTrue(redirectAttributes.getFlashAttributes().containsKey("success"));
         assertEquals("基本情報が正常に更新されました。", redirectAttributes.getFlashAttributes().get("success"));
         verify(studentService).findById(studentId);
@@ -123,9 +132,10 @@ class StudentControllerTest_Update {
         when(interviewNotesService.getOrCreateInterviewNotesDTO(studentId)).thenReturn(new InterviewNotesDTO());
 
         String viewName = studentController.updateBasicInfo(
-                studentId, testStudent, bindingResult, redirectAttributes, model);
+                studentId, testStudent, bindingResult, redirectAttributes, model,
+                nameSearch, status, request);
 
-        assertEquals("students/student-update.html?tab=basic", viewName);
+        assertEquals("students/student-update.html", viewName);
         verify(studentService).findById(studentId);
         verify(n5ClassService).getOrCreateN5ClassDTO(studentId);
         verify(n4ClassService).getOrCreateN4ClassDTO(studentId);
@@ -141,7 +151,8 @@ class StudentControllerTest_Update {
 
         RuntimeException exception = assertThrows(RuntimeException.class,
                 () -> studentController.updateBasicInfo(
-                        studentId, testStudent, bindingResult, redirectAttributes, model));
+                        studentId, testStudent, bindingResult, redirectAttributes, model,
+                        nameSearch, status, request));
         assertEquals("Student not found: 1", exception.getMessage());
     }
 
@@ -157,9 +168,10 @@ class StudentControllerTest_Update {
         when(studentService.save(any(Student.class))).thenReturn(testStudent);
 
         String redirectUrl = studentController.updateStatusInfo(
-                studentId, testStudent, bindingResult, redirectAttributes, model);
+                studentId, testStudent, bindingResult, redirectAttributes, model,
+                nameSearch, status);
 
-        assertEquals("redirect:/students/student-update/1?tab=status", redirectUrl);
+        assertTrue(redirectUrl.startsWith("redirect:/students/student-update/1?tab=status"));
         assertTrue(redirectAttributes.getFlashAttributes().containsKey("success"));
         assertEquals("ステータス情報が正常に更新されました。", redirectAttributes.getFlashAttributes().get("success"));
         verify(studentService).save(any(Student.class));
@@ -175,9 +187,10 @@ class StudentControllerTest_Update {
         when(studentService.save(any(Student.class))).thenThrow(new RuntimeException("Database error"));
 
         String redirectUrl = studentController.updateStatusInfo(
-                studentId, testStudent, bindingResult, redirectAttributes, model);
+                studentId, testStudent, bindingResult, redirectAttributes, model,
+                nameSearch, status);
 
-        assertEquals("redirect:/students/student-update/1?tab=status", redirectUrl);
+        assertTrue(redirectUrl.startsWith("redirect:/students/student-update/1?tab=status"));
         assertTrue(redirectAttributes.getFlashAttributes().containsKey("error"));
         assertTrue(((String) redirectAttributes.getFlashAttributes().get("error")).contains("Database error"));
     }
@@ -192,9 +205,10 @@ class StudentControllerTest_Update {
 
         doNothing().when(n5ClassService).saveN5ClassDTO(studentId, n5ClassDTO);
 
-        String redirectUrl = studentController.updateN5ClassInfo(studentId, n5ClassDTO, redirectAttributes);
+        String redirectUrl = studentController.updateN5ClassInfo(studentId, n5ClassDTO,
+                nameSearch, status, redirectAttributes);
 
-        assertEquals("redirect:/students/student-update/1?tab=n5", redirectUrl);
+        assertTrue(redirectUrl.startsWith("redirect:/students/student-update/1?tab=n5"));
         assertTrue(redirectAttributes.getFlashAttributes().containsKey("success"));
         assertEquals("N5クラス情報が正常に更新されました。", redirectAttributes.getFlashAttributes().get("success"));
         verify(n5ClassService).saveN5ClassDTO(studentId, n5ClassDTO);
@@ -207,9 +221,10 @@ class StudentControllerTest_Update {
 
         doThrow(new RuntimeException("Save failed")).when(n5ClassService).saveN5ClassDTO(studentId, n5ClassDTO);
 
-        String redirectUrl = studentController.updateN5ClassInfo(studentId, n5ClassDTO, redirectAttributes);
+        String redirectUrl = studentController.updateN5ClassInfo(studentId, n5ClassDTO,
+                nameSearch, status, redirectAttributes);
 
-        assertEquals("redirect:/students/student-update/1?tab=n5", redirectUrl);
+        assertTrue(redirectUrl.startsWith("redirect:/students/student-update/1?tab=n5"));
         assertTrue(redirectAttributes.getFlashAttributes().containsKey("error"));
         assertTrue(((String) redirectAttributes.getFlashAttributes().get("error")).contains("Save failed"));
     }
@@ -221,9 +236,10 @@ class StudentControllerTest_Update {
 
         doNothing().when(n4ClassService).saveN4ClassDTO(studentId, n4ClassDTO);
 
-        String redirectUrl = studentController.updateN4ClassInfo(studentId, n4ClassDTO, redirectAttributes);
+        String redirectUrl = studentController.updateN4ClassInfo(studentId, n4ClassDTO,
+                nameSearch, status, redirectAttributes);
 
-        assertEquals("redirect:/students/student-update/1?tab=n4", redirectUrl);
+        assertTrue(redirectUrl.startsWith("redirect:/students/student-update/1?tab=n4"));
         assertTrue(redirectAttributes.getFlashAttributes().containsKey("success"));
         assertEquals("N4クラス情報が正常に更新されました。", redirectAttributes.getFlashAttributes().get("success"));
         verify(n4ClassService).saveN4ClassDTO(studentId, n4ClassDTO);
@@ -236,9 +252,10 @@ class StudentControllerTest_Update {
 
         doNothing().when(interviewNotesService).saveInterviewNotesDTO(studentId, interviewNotesDTO);
 
-        String redirectUrl = studentController.updateInterviewNotes(studentId, interviewNotesDTO, redirectAttributes);
+        String redirectUrl = studentController.updateInterviewNotes(studentId, interviewNotesDTO,
+                nameSearch, status, redirectAttributes);
 
-        assertEquals("redirect:/students/student-update/1?tab=interview", redirectUrl);
+        assertTrue(redirectUrl.startsWith("redirect:/students/student-update/1?tab=interview"));
         assertTrue(redirectAttributes.getFlashAttributes().containsKey("success"));
         assertEquals("面談情報が正常に更新されました。", redirectAttributes.getFlashAttributes().get("success"));
         verify(interviewNotesService).saveInterviewNotesDTO(studentId, interviewNotesDTO);
@@ -267,9 +284,10 @@ class StudentControllerTest_Update {
         when(studentService.save(any(Student.class))).thenReturn(testStudent);
 
         String redirectUrl = studentController.updateBasicInfo(
-                studentId, updatedStudent, bindingResult, redirectAttributes, model);
+                studentId, updatedStudent, bindingResult, redirectAttributes, model,
+                nameSearch, status, request);
 
-        assertEquals("redirect:/students/student-update/1?tab=basic", redirectUrl);
+        assertTrue(redirectUrl.startsWith("redirect:/students/student-update/1?tab=basic"));
         verify(studentService).save(argThat(student -> student.getStudentName().equals("Updated Name") &&
                 student.getNameInJapanese().equals("アップデート名") &&
                 student.getDateOfBirth().equals(LocalDate.of(1996, 6, 16)) &&

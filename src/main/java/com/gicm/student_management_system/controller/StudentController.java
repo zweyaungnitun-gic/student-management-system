@@ -117,6 +117,11 @@ public class StudentController {
         return buildRedirectUrl(nameSearch, status);
     }
 
+    private String buildRedirectUrl(String nameSearch, String status) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'buildRedirectUrl'");
+    }
+
     // METHOD FOR DETAILS
     @GetMapping("/detail/{id}")
     public String showStudentDetails(@PathVariable Long id,
@@ -156,7 +161,6 @@ public class StudentController {
     // ----------------------------------------------------------------------------------------
     // Student Update
     // ----------------------------------------------------------------------------------------
-
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/student-update/{id}")
     public String showUpdateForm(@PathVariable Long id,
@@ -196,15 +200,7 @@ public class StudentController {
             @RequestParam(value = "status", defaultValue = "") String status,
             HttpServletRequest request) {
 
-        // Set UTF-8 encoding for Japanese text
-        try {
-            request.setCharacterEncoding("UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
-
         if (bindingResult.hasErrors()) {
-            // Load all necessary data for the form
             Student existingStudent = studentService.findById(id)
                     .orElseThrow(() -> new RuntimeException("Student not found: " + id));
 
@@ -221,9 +217,10 @@ public class StudentController {
             model.addAttribute("isNew", false);
             model.addAttribute("nameSearch", nameSearch);
             model.addAttribute("status", status);
-            model.addAttribute("activeTab", "basic"); // Add this for tab activation
+            model.addAttribute("activeTab", "basic");
 
-            return "students/student-update.html"; // Remove ?tab=basic from here
+            model.addAttribute("activeTab", "basic");
+            return "students/student-update.html";
         }
 
         Student existingStudent = studentService.findById(id)
@@ -244,10 +241,10 @@ public class StudentController {
         existingStudent.setUpdatedAt(LocalDate.now());
 
         studentService.save(existingStudent);
+
         redirectAttributes.addFlashAttribute("success", "基本情報が正常に更新されました。");
 
-        // Redirect back to the filtered list with proper encoding
-        return buildRedirectUrl(nameSearch, status);
+        return buildUpdateRedirectUrl(id, "basic", nameSearch, status);
     }
 
     @PreAuthorize("hasRole('ADMIN')")
@@ -258,18 +255,14 @@ public class StudentController {
             RedirectAttributes redirectAttributes,
             Model model,
             @RequestParam(value = "nameSearch", defaultValue = "") String nameSearch,
-            @RequestParam(value = "status", defaultValue = "") String status,
-            HttpServletRequest request) {
-
-        // Set UTF-8 encoding for Japanese text
-        try {
-            request.setCharacterEncoding("UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
+            @RequestParam(value = "status", defaultValue = "") String status) {
 
         if (bindingResult.hasErrors()) {
-            // Load all necessary data for the form
+            model.addAttribute("activeTab", "status");
+            return "students/student-update.html";
+        }
+
+        try {
             Student existingStudent = studentService.findById(id)
                     .orElseThrow(() -> new RuntimeException("Student not found: " + id));
 
@@ -286,40 +279,7 @@ public class StudentController {
             model.addAttribute("isNew", false);
             model.addAttribute("nameSearch", nameSearch);
             model.addAttribute("status", status);
-            model.addAttribute("activeTab", "status"); // Add this for tab activation
-
-            return "students/student-update.html"; // Remove ?tab=status from here
-        }
-
-        try {
-            Student existingStudent = studentService.findById(id)
-                    .orElseThrow(() -> new RuntimeException("Student not found: " + id));
-
-            // Preserve student ID - only update if provided and valid
-            if (student.getStudentId() != null && !student.getStudentId().trim().isEmpty()) {
-                existingStudent.setStudentId(student.getStudentId().trim());
-            }
-            existingStudent.setCurrentJapanLevel(student.getCurrentJapanLevel());
-            existingStudent.setDesiredJobType(student.getDesiredJobType());
-            existingStudent.setOtherDesiredJobType(student.getOtherDesiredJobType());
-            existingStudent.setJapanTravelExperience(student.getJapanTravelExperience());
-            existingStudent.setCoeApplicationExperience(student.getCoeApplicationExperience());
-            existingStudent.setReligion(student.getReligion());
-            existingStudent.setOtherReligion(student.getOtherReligion());
-            existingStudent.setIsSmoking(student.getIsSmoking());
-            existingStudent.setIsAlcoholDrink(student.getIsAlcoholDrink());
-            existingStudent.setHaveTatto(student.getHaveTatto());
-            existingStudent.setSchedulePaymentTutionDate(student.getSchedulePaymentTutionDate());
-            existingStudent.setActualTutionPaymentDate(student.getActualTutionPaymentDate());
-            existingStudent.setHostelPreference(student.getHostelPreference());
-            existingStudent.setMemoNotes(student.getMemoNotes());
-            existingStudent.setEnrolledDate(student.getEnrolledDate());
-            existingStudent.setAttendingClassRelatedStatus(student.getAttendingClassRelatedStatus());
-            existingStudent.setPassedHighestJLPTLevel(student.getPassedHighestJLPTLevel());
-            existingStudent.setStatus(student.getStatus());
-            existingStudent.setStudentId(student.getStudentId());
-
-            existingStudent.setUpdatedAt(LocalDate.now());
+            model.addAttribute("activeTab", "status");
 
             studentService.save(existingStudent);
             redirectAttributes.addFlashAttribute("success", "ステータス情報が正常に更新されました。");
@@ -327,58 +287,55 @@ public class StudentController {
             redirectAttributes.addFlashAttribute("error", "更新に失敗しました: " + e.getMessage());
         }
 
-        // Redirect back to the filtered list with proper encoding
-        return buildRedirectUrl(nameSearch, status);
+        return buildUpdateRedirectUrl(id, "status", nameSearch, status);
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/update-n5/{id}")
     public String updateN5ClassInfo(@PathVariable Long id,
             @ModelAttribute("n5Class") N5ClassDTO n5ClassDTO,
+            @RequestParam(value = "nameSearch", defaultValue = "") String nameSearch,
+            @RequestParam(value = "status", defaultValue = "") String status,
             RedirectAttributes redirectAttributes) {
         try {
             n5ClassService.saveN5ClassDTO(id, n5ClassDTO);
-
             redirectAttributes.addFlashAttribute("success", "N5クラス情報が正常に更新されました。");
         } catch (Exception e) {
-            e.printStackTrace();
             redirectAttributes.addFlashAttribute("error", "更新に失敗しました: " + e.getMessage());
         }
-
-        return "redirect:/students/student-update/" + id + "?tab=n5";
+        return buildUpdateRedirectUrl(id, "n5", nameSearch, status);
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/update-n4/{id}")
     public String updateN4ClassInfo(@PathVariable Long id,
             @ModelAttribute("n4Class") N4ClassDTO n4ClassDTO,
+            @RequestParam(value = "nameSearch", defaultValue = "") String nameSearch,
+            @RequestParam(value = "status", defaultValue = "") String status,
             RedirectAttributes redirectAttributes) {
         try {
-
             n4ClassService.saveN4ClassDTO(id, n4ClassDTO);
             redirectAttributes.addFlashAttribute("success", "N4クラス情報が正常に更新されました。");
         } catch (Exception e) {
-            e.printStackTrace();
-            redirectAttributes.addFlashAttribute("error", "更新に失敗しました: " + e.getMessage());
+            redirectAttributes.addFlashAttribute("error", "更新に失敗しました。");
         }
-
-        return "redirect:/students/student-update/" + id + "?tab=n4";
+        return buildUpdateRedirectUrl(id, "n4", nameSearch, status);
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/update-interview/{id}")
     public String updateInterviewNotes(@PathVariable Long id,
             @ModelAttribute("interviewNotes") InterviewNotesDTO interviewNotesDTO,
+            @RequestParam(value = "nameSearch", defaultValue = "") String nameSearch,
+            @RequestParam(value = "status", defaultValue = "") String status,
             RedirectAttributes redirectAttributes) {
         try {
             interviewNotesService.saveInterviewNotesDTO(id, interviewNotesDTO);
             redirectAttributes.addFlashAttribute("success", "面談情報が正常に更新されました。");
         } catch (Exception e) {
-            e.printStackTrace();
-            redirectAttributes.addFlashAttribute("error", "更新に失敗しました: " + e.getMessage());
+            redirectAttributes.addFlashAttribute("error", "更新に失敗しました。");
         }
-
-        return "redirect:/students/student-update/" + id + "?tab=interview";
+        return buildUpdateRedirectUrl(id, "interview", nameSearch, status);
     }
 
     // KZT
@@ -398,26 +355,24 @@ public class StudentController {
 
     // Helper method to build redirect URL with proper encoding for Japanese
     // characters
-    private String buildRedirectUrl(String nameSearch, String status) {
+
+    // Updated helper to redirect back to the UPDATE page with all context
+    private String buildUpdateRedirectUrl(Long id, String tab, String nameSearch, String status) {
         try {
-            StringBuilder url = new StringBuilder("redirect:/students");
-            List<String> params = new ArrayList<>();
+            StringBuilder url = new StringBuilder("redirect:/students/student-update/");
+            url.append(id).append("?tab=").append(tab);
 
             if (nameSearch != null && !nameSearch.trim().isEmpty()) {
-                params.add("nameSearch=" + URLEncoder.encode(nameSearch.trim(), StandardCharsets.UTF_8));
+                url.append("&nameSearch=").append(URLEncoder.encode(nameSearch.trim(), StandardCharsets.UTF_8));
             }
             if (status != null && !status.trim().isEmpty()) {
-                params.add("status=" + URLEncoder.encode(status.trim(), StandardCharsets.UTF_8));
-            }
-
-            if (!params.isEmpty()) {
-                url.append("?").append(String.join("&", params));
+                url.append("&status=").append(URLEncoder.encode(status.trim(), StandardCharsets.UTF_8));
             }
 
             return url.toString();
         } catch (Exception e) {
-            // Fallback to simple redirect if encoding fails
-            return "redirect:/students";
+            // Fallback if encoding fails
+            return "redirect:/students/student-update/" + id + "?tab=" + tab;
         }
     }
 }
