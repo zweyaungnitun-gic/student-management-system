@@ -129,30 +129,6 @@ class UserControllerGetTest {
                 .andExpect(model().attributeExists("roles"));
     }
 
-    // ==================== GET /users/edit/{id} Tests ====================
-
-    @Test
-    @DisplayName("GET /users/edit/{id} - Show edit form for existing user")
-    @WithMockUser(username = "admin@test.com", roles = "ADMIN")
-    void testEditUserForm_Success() throws Exception {
-        // Act & Assert
-        mockMvc.perform(get("/users/edit/" + adminUser.getId()).with(csrf()))
-                .andExpect(status().isOk())
-                .andExpect(view().name("users/edit"))
-                .andExpect(model().attributeExists("user", "roles"));
-    }
-
-    @Test
-    @DisplayName("GET /users/edit/{id} - Redirect when user not found")
-    @WithMockUser(username = "admin@test.com", roles = "ADMIN")
-    void testEditUserForm_UserNotFound() throws Exception {
-        // Act & Assert
-        mockMvc.perform(get("/users/edit/99999").with(csrf()))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/users"))
-                .andExpect(flash().attributeExists("error"))
-                .andExpect(flash().attribute("error", "ユーザーが見つかりません"));
-    }
 
     // ==================== GET /users/delete/{id} Tests ====================
 

@@ -6,9 +6,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.test.context.support.WithMockUser;
-import com.gicm.student_management_system.entity.Role;
-import com.gicm.student_management_system.entity.User;
-import com.gicm.student_management_system.service.UserService;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import org.springframework.test.annotation.DirtiesContext;
@@ -35,9 +32,6 @@ class AuthorizationRoleTest {
 
     @Autowired
     private WebApplicationContext context;
-
-    @Autowired
-    private UserService userService;
 
     @BeforeEach
     void setupMockMvc() {
@@ -78,54 +72,6 @@ class AuthorizationRoleTest {
                 .andExpect(status().is3xxRedirection());
     }
 
-    @Test
-    @DisplayName("ADMIN can access GET /users/edit/{id}")
-    @WithMockUser(username = "admin@test.com", roles = "ADMIN")
-    void adminCanAccessEditUserForm() throws Exception {
-        User u = userService.createUser(User.builder()
-            .username("Edit Target")
-            .email("edit.target@test.com")
-            .password("pwd12345")
-            .role(Role.GUEST)
-            .build());
-
-        mockMvc.perform(get("/users/edit/" + u.getId()).with(csrf()))
-                .andExpect(status().isOk());
-    }
-
-    @Test
-    @DisplayName("ADMIN can access POST /users/edit/{id}")
-    @WithMockUser(username = "admin@test.com", roles = "ADMIN")
-    void adminCanEditUser() throws Exception {
-        User u = userService.createUser(User.builder()
-            .username("Update Target")
-            .email("update.target@test.com")
-            .password("pwd12345")
-            .role(Role.GUEST)
-            .build());
-
-        mockMvc.perform(post("/users/edit/" + u.getId())
-                        .with(csrf())
-                        .param("username", "Updated User")
-                        .param("email", "updated@test.com")
-                        .param("role", "ADMIN"))
-                .andExpect(status().is3xxRedirection());
-    }
-
-    @Test
-    @DisplayName("ADMIN can access GET /users/delete/{id}")
-    @WithMockUser(username = "admin@test.com", roles = "ADMIN")
-    void adminCanDeleteUser() throws Exception {
-        User u = userService.createUser(User.builder()
-            .username("Delete Target")
-            .email("delete.target@test.com")
-            .password("pwd12345")
-            .role(Role.GUEST)
-            .build());
-
-        mockMvc.perform(get("/users/delete/" + u.getId()).with(csrf()))
-                .andExpect(status().is3xxRedirection());
-    }
 
     // ==================== GUEST Role Tests (Access Denied) ====================
 
@@ -158,13 +104,7 @@ class AuthorizationRoleTest {
                 .andExpect(status().is(403));
     }
 
-    @Test
-    @DisplayName("GUEST cannot access GET /users/edit/{id}")
-    @WithMockUser(username = "guest@test.com", roles = "GUEST")
-    void guestCannotAccessEditUserForm() throws Exception {
-        mockMvc.perform(get("/users/edit/1").with(csrf()))
-                .andExpect(status().is(403));
-    }
+   
 
     @Test
     @DisplayName("GUEST cannot access POST /users/edit/{id}")

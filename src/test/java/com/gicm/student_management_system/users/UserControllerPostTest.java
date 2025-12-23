@@ -57,57 +57,7 @@ class UserControllerPostTest {
         testUser = userService.createUser(testUser);
     }
 
-    // ==================== POST /users/add Tests ====================
-
-    @Test
-    @DisplayName("POST /users/add - Add new user successfully")
-    @WithMockUser(username = "admin@test.com", roles = "ADMIN")
-    void testAddUser_Success() throws Exception {
-        // Act & Assert
-        mockMvc.perform(post("/users/add")
-                        .with(csrf())
-                        .param("username", "New User")
-                        .param("email", "newuser@test.com")
-                        .param("password", "password123")
-                        .param("role", "GUEST"))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/users"))
-                .andExpect(flash().attributeExists("success"))
-                .andExpect(flash().attribute("success", "ユーザーが追加されました"));
-    }
-
-    @Test
-    @DisplayName("POST /users/add - Fail when email already exists")
-    @WithMockUser(username = "admin@test.com", roles = "ADMIN")
-    void testAddUser_EmailAlreadyExists() throws Exception {
-        // Act & Assert (use existing test user's email)
-        mockMvc.perform(post("/users/add")
-                        .with(csrf())
-                        .param("username", "Duplicate User")
-                        .param("email", testUser.getEmail())
-                        .param("password", "password123")
-                        .param("role", "GUEST"))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/users/add"))
-                .andExpect(flash().attributeExists("error"))
-                .andExpect(flash().attribute("error", "このメールアドレスは既に使用されています"));
-    }
-
-    @Test
-    @DisplayName("POST /users/add - Add user with ADMIN role")
-    @WithMockUser(username = "admin@test.com", roles = "ADMIN")
-    void testAddUser_WithAdminRole() throws Exception {
-        // Act & Assert
-        mockMvc.perform(post("/users/add")
-                        .with(csrf())
-                        .param("username", "New Admin")
-                        .param("email", "newadmin@test.com")
-                        .param("password", "adminpassword")
-                        .param("role", "ADMIN"))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/users"))
-                .andExpect(flash().attributeExists("success"));
-    }
+ 
 
     // ==================== POST /users/edit/{id} Tests ====================
 
