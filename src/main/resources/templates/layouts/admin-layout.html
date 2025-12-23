@@ -41,10 +41,6 @@
       </div>
 
       <nav class="sidebar-nav mt-3">
-        <a class="sidebar-link" th:classappend="${currentPage} == 'dashboard' ? ' active' : ''" th:href="@{/dashboard}">
-          <i class="bi bi-grid-1x2-fill"></i><span>Dashboard</span>
-          <span class="sidebar-pill" th:if="${currentPage} == 'dashboard'">Now</span>
-        </a>
         <a class="sidebar-link" th:classappend="${currentPage} == 'students' ? ' active' : ''" th:href="@{/students}">
           <i class="bi bi-person-badge"></i><span>Students</span>
           <span class="sidebar-pill" th:if="${currentPage} == 'students'">Now</span>
@@ -58,15 +54,6 @@
               <span>Logout</span>
             </a>
       </nav>
-
-      <div class="sidebar-mini-card mt-auto p-3">
-        <p class="text-muted small mb-1">Next live exam</p>
-        <h6 class="mb-1" th:text="${nextExamName} ?: 'No upcoming exam'">Physics 101 Final</h6>
-        <div class="d-flex justify-content-between small">
-          <span th:text="${nextExamTime} ?: '—'">08:30 AM</span>
-          <span class="status-pill"><span class="dot"></span>Prep Mode</span>
-        </div>
-      </div>
     </aside>
   </th:block>
 
