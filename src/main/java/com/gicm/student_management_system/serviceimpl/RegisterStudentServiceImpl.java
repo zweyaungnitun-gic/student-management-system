@@ -41,38 +41,38 @@ public class RegisterStudentServiceImpl implements RegisterStudentService {
 
         // Map DTO to Entity
         Student student = Student.builder()
-                .studentId(studentId)
-                .studentName(dto.getEnglishName())
-                .nameInJapanese(dto.getKatakanaName())
-                .dateOfBirth(LocalDate.parse(dto.getDob(), DATE_FORMATTER))
-                .gender(dto.getGender())
-                .currentLivingAddress(dto.getCurrentAddress())
-                .homeTownAddress(dto.getHometownAddress())
-                .phoneNumber(dto.getPhoneNumber())
-                .secondaryPhone(dto.getGuardianPhoneNumber())
-                .fatherName(dto.getFatherName())
-                .passportNumber(dto.getPassportNumber())
-                .nationalID(dto.getNationalIdNumber())
-                .currentJapanLevel(dto.getJlptLevel())
-                .desiredJobType(dto.getDesiredOccupation())
-                .otherDesiredJobType(dto.getOtherOccupation())
-                .japanTravelExperience(convertToBoolean(dto.getJapanTravelExperience()))
-                .coeApplicationExperience(convertToBoolean(dto.getCoeApplicationExperience()))
-                .religion(dto.getReligion())
-                .otherReligion(dto.getOtherReligion())
-                .isSmoking(convertToBoolean(dto.getSmoking()))
-                .isAlcoholDrink(convertToBoolean(dto.getAlcohol()))
-                .haveTatto(convertToBoolean(dto.getTattoo()))
-                .schedulePaymentTutionDate(
-                        dto.getTuitionPaymentDate() != null && !dto.getTuitionPaymentDate().isEmpty()
-                                ? LocalDate.parse(dto.getTuitionPaymentDate(), DATE_FORMATTER)
-                                : null)
-                .hostelPreference(convertToBoolean(dto.getWantDorm()))
-                .memoNotes(dto.getOtherMemo())
-                .status("在校") // Default status: enrolled
-                .contactViber(dto.getPhoneNumber())
-                .enrolledDate(LocalDate.now()) // Add this line - same as createdAt
-                .build();
+            .studentId(studentId)
+            .studentName(dto.getEnglishName())
+            .nameInJapanese(dto.getKatakanaName())
+            .dateOfBirth(LocalDate.parse(dto.getDob(), DATE_FORMATTER))
+            .gender(dto.getGender())
+            .currentLivingAddress(dto.getCurrentAddress())
+            .homeTownAddress(dto.getHometownAddress())
+            .phoneNumber(dto.getPhoneNumber())
+            .secondaryPhone(dto.getGuardianPhoneNumber())
+            .fatherName(dto.getFatherName())
+            .passportNumber(dto.getPassportNumber())
+            .nationalID(dto.getNationalIdNumber())
+            .currentJapanLevel(dto.getJlptLevel())
+            .desiredJobType(dto.getDesiredOccupation())
+            .otherDesiredJobType(dto.getOtherOccupation())
+            .japanTravelExperience(dto.getJapanTravelExperience())
+            .coeApplicationExperience(dto.getCoeApplicationExperience())
+            .religion(dto.getReligion())
+            .otherReligion(dto.getOtherReligion())
+            .isSmoking(dto.getSmoking())
+            .isAlcoholDrink(dto.getAlcohol())
+            .haveTatto(dto.getTattoo())
+            .schedulePaymentTutionDate(
+                dto.getTuitionPaymentDate() != null && !dto.getTuitionPaymentDate().isEmpty()
+                    ? LocalDate.parse(dto.getTuitionPaymentDate(), DATE_FORMATTER)
+                    : null)
+            .hostelPreference(dto.getWantDorm())
+            .memoNotes(dto.getOtherMemo())
+            .status("在校") // Default status: enrolled
+            .contactViber(dto.getPhoneNumber())
+            .enrolledDate(LocalDate.now()) // Add this line - same as createdAt
+            .build();
 
         // Save to database
         return registerStudentRepository.save(student);
@@ -99,13 +99,5 @@ public class RegisterStudentServiceImpl implements RegisterStudentService {
         return newStudentId;
     }
 
-    // to convert Japanese "Yes"/"No" to Boolean
-    private Boolean convertToBoolean(String value) {
-        if (value == null || value.isEmpty()) {
-            return false;
-        }
-        // Map Japanese values to boolean
-        return value.equals("吸う") || value.equals("飲む") || value.equals("ある") ||
-                value.equalsIgnoreCase("yes") || value.equalsIgnoreCase("はい");
-    }
+    // No longer needed: convertToBoolean for boolean fields
 }

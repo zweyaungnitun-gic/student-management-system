@@ -104,16 +104,16 @@
                                 </label>
                                 <div class="col-12 col-md-8">
                                     <div class="btn-group" role="group" aria-label="Smoking" id="smokingBtnGroup">
-                                        <input type="radio" class="btn-check" name="smoking" id="smokingYes" value="吸う"
-                                            th:checked="${studentData?.smoking == '吸う'}">
+                                        <input type="radio" class="btn-check" name="smoking" id="smokingYes" value="true"
+                                            th:checked="${studentData?.smoking == true}">
                                         <label
                                             class="btn btn-outline-secondary d-flex align-items-center gap-1 me-2 rounded py-1 btn-fixed-width"
                                             for="smokingYes">
                                             <i class="bi bi-circle"></i>
                                             吸う
                                         </label>
-                                        <input type="radio" class="btn-check" name="smoking" id="smokingNo" value="吸わない"
-                                            th:checked="${studentData?.smoking == '吸わない'}">
+                                        <input type="radio" class="btn-check" name="smoking" id="smokingNo" value="false"
+                                            th:checked="${studentData?.smoking == false}">
                                         <label
                                             class="btn btn-outline-secondary d-flex  align-items-center gap-1 me-2 rounded py-1 btn-fixed-width"
                                             for="smokingNo">
@@ -134,7 +134,7 @@
                                     <div class="btn-group" role="group" aria-label="Alcohol" id="alcoholBtnGroup">
                                         <div>
                                             <input type="radio" class="btn-check" name="alcohol" id="alcoholYes"
-                                                value="飲む" th:checked="${studentData?.alcohol == '飲む'}">
+                                                value="true" th:checked="${studentData?.alcohol == true}">
                                             <label
                                                 class="btn btn-outline-secondary d-flex align-items-center gap-1 me-2 rounded py-1 btn-fixed-width"
                                                 for="alcoholYes">
@@ -144,7 +144,7 @@
                                         </div>
                                         <div>
                                             <input type="radio" class="btn-check" name="alcohol" id="alcoholNo"
-                                                value="飲まない" th:checked="${studentData?.alcohol == '飲まない'}">
+                                                value="false" th:checked="${studentData?.alcohol == false}">
                                             <label
                                                 class="btn btn-outline-secondary d-flex align-items-center gap-1 me-2 rounded py-1 btn-fixed-width"
                                                 for="alcoholNo">
@@ -166,7 +166,7 @@
                                     <div class="btn-group" role="group" aria-label="Tattoo" id="tattooBtnGroup">
                                         <div>
                                             <input type="radio" class="btn-check" name="tattoo" id="tattooYes"
-                                                value="ある" th:checked="${studentData?.tattoo == 'ある'}">
+                                                value="true" th:checked="${studentData?.tattoo == true}">
                                             <label
                                                 class="btn btn-outline-secondary d-flex align-items-center gap-1 me-2 rounded py-1 btn-fixed-width"
                                                 for="tattooYes">
@@ -175,8 +175,8 @@
                                             </label>
                                         </div>
                                         <div>
-                                            <input type="radio" class="btn-check" name="tattoo" id="tattooNo" value="ない"
-                                                th:checked="${studentData?.tattoo == 'ない'}">
+                                            <input type="radio" class="btn-check" name="tattoo" id="tattooNo" value="false"
+                                                th:checked="${studentData?.tattoo == false}">
                                             <label
                                                 class="btn btn-outline-secondary d-flex align-items-center gap-1 me-2 rounded py-1 btn-fixed-width"
                                                 for="tattooNo">
@@ -211,7 +211,7 @@
                                         id="wantDormBtnGroup">
                                         <div>
                                             <input type="radio" class="btn-check" name="wantDorm" id="wantDormYes"
-                                                value="はい" th:checked="${studentData?.wantDorm == 'はい'}">
+                                                value="true" th:checked="${studentData?.wantDorm == true}">
                                             <label
                                                 class="btn btn-outline-secondary d-flex align-items-center gap-1 me-2 rounded py-1 btn-fixed-width"
                                                 for="wantDormYes">
@@ -221,7 +221,7 @@
                                         </div>
                                         <div>
                                             <input type="radio" class="btn-check" name="wantDorm" id="wantDormNo"
-                                                value="いいえ" th:checked="${studentData?.wantDorm == 'いいえ'}">
+                                                value="false" th:checked="${studentData?.wantDorm == false}">
                                             <label
                                                 class="btn btn-outline-secondary d-flex align-items-center gap-1 me-2 rounded py-1 btn-fixed-width"
                                                 for="wantDormNo">

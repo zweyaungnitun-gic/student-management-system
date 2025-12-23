@@ -105,12 +105,11 @@
                         <!-- Experience -->
                         <div class="data-row">
                             <div class="data-label px-4">日本渡航経験</div>
-                            <div class="data-value px-4" th:text="${studentData.japanTravelExperience ?: '—'}">ない</div>
+                            <div class="data-value px-4" th:text="${studentData.japanTravelExperience == null ? '—' : (studentData.japanTravelExperience ? 'ある' : 'ない')}">ない</div>
                         </div>
                         <div class="data-row">
                             <div class="data-label px-4">COE申請経験</div>
-                            <div class="data-value px-4" th:text="${studentData.coeApplicationExperience ?: '—'}">ない
-                            </div>
+                            <div class="data-value px-4" th:text="${studentData.coeApplicationExperience == null ? '—' : (studentData.coeApplicationExperience ? 'ある' : 'ない')}">ない</div>
                         </div>
                         <!-- Additional Questions (third page fields) -->
                         <div class="data-row">
@@ -125,15 +124,15 @@
                         </div>
                         <div class="data-row">
                             <div class="data-label px-4">タバコ</div>
-                            <div class="data-value px-4" th:text="${studentData.smoking ?: '—'}">吸わない</div>
+                            <div class="data-value px-4" th:text="${studentData.smoking == null ? '—' : (studentData.smoking ? '吸う' : '吸わない')}">吸わない</div>
                         </div>
                         <div class="data-row">
                             <div class="data-label px-4">お酒</div>
-                            <div class="data-value px-4" th:text="${studentData.alcohol ?: '—'}">飲む</div>
+                            <div class="data-value px-4" th:text="${studentData.alcohol == null ? '—' : (studentData.alcohol ? '飲む' : '飲まない')}">飲む</div>
                         </div>
                         <div class="data-row">
                             <div class="data-label px-4">入れ墨(Tattoo)</div>
-                            <div class="data-value px-4" th:text="${studentData.tattoo ?: '—'}">ない</div>
+                            <div class="data-value px-4" th:text="${studentData.tattoo == null ? '—' : (studentData.tattoo ? 'ある' : 'ない')}">ない</div>
                         </div>
                         <!-- 学費支払予定日 -->
                         <div class="data-row">
@@ -146,7 +145,7 @@
                         </div>
                         <div class="data-row">
                             <div class="data-label px-4">寮があれば入りたい</div>
-                            <div class="data-value px-4" th:text="${studentData.wantDorm ?: '—'}">はい</div>
+                            <div class="data-value px-4" th:text="${studentData.wantDorm == null ? '—' : (studentData.wantDorm ? 'はい' : 'いいえ')}">はい</div>
                         </div>
                         <div class="data-row">
                             <div class="data-label px-4">その他メモ</div>

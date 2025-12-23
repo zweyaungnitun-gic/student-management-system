@@ -199,8 +199,7 @@
                                     <div class="btn-group" role="group" aria-label="Japan travel experience"
                                         id="japanTravelExperienceBtnGroup">
                                         <input type="radio" class="btn-check" name="japanTravelExperience"
-                                            id="travelYes" value="ある"
-                                            th:checked="${studentData?.japanTravelExperience == 'ある'}">
+                                            id="travelYes" value="true" th:checked="${studentData?.japanTravelExperience == true}">
                                         <label
                                             class="btn btn-outline-secondary d-flex align-items-center gap-1 me-2 rounded py-1 btn-fixed-width-small"
                                             for="travelYes">
@@ -208,7 +207,7 @@
                                             ある
                                         </label>
                                         <input type="radio" class="btn-check" name="japanTravelExperience" id="travelNo"
-                                            value="ない" th:checked="${studentData?.japanTravelExperience == 'ない'}">
+                                            value="false" th:checked="${studentData?.japanTravelExperience == false}">
                                         <label
                                             class="btn btn-outline-secondary d-flex align-items-center gap-1 rounded py-1  btn-fixed-width-small"
                                             for="travelNo">
@@ -229,8 +228,7 @@
                                     <div class="btn-group" role="group" aria-label="COE application experience"
                                         id="coeApplicationExperienceBtnGroup">
                                         <input type="radio" class="btn-check" name="coeApplicationExperience"
-                                            id="coeYes" value="ある"
-                                            th:checked="${studentData?.coeApplicationExperience == 'ある'}">
+                                            id="coeYes" value="true" th:checked="${studentData?.coeApplicationExperience == true}">
                                         <label
                                             class="btn btn-outline-secondary d-flex align-items-center gap-1 me-2 rounded py-1 btn-fixed-width-small"
                                             for="coeYes">
@@ -238,7 +236,7 @@
                                             ある
                                         </label>
                                         <input type="radio" class="btn-check" name="coeApplicationExperience" id="coeNo"
-                                            value="ない" th:checked="${studentData?.coeApplicationExperience == 'ない'}">
+                                            value="false" th:checked="${studentData?.coeApplicationExperience == false}">
                                         <label
                                             class="btn btn-outline-secondary d-flex align-items-center gap-1 rounded py-1 btn-fixed-width-small"
                                             for="coeNo">

@@ -65,9 +65,9 @@ public class StudentRegistrationDTO implements Serializable {
     @Size(max = 20, message = "その他職種は20文字以内で入力してください", groups = SecondPageValidation.class)
     private String otherOccupation;
 
-    private String japanTravelExperience;
+    private Boolean japanTravelExperience;
 
-    private String coeApplicationExperience;
+    private Boolean coeApplicationExperience;
 
     // Additional fields (third page with validation)
     private String religion;
@@ -75,18 +75,18 @@ public class StudentRegistrationDTO implements Serializable {
     @Size(max = 20, message = "その他宗教は20文字以内で入力してください", groups = ThirdPageValidation.class)
     private String otherReligion;
     
-    private String smoking;
+    private Boolean smoking;
     
-    private String alcohol;
+    private Boolean alcohol;
     
-    private String tattoo;
+    private Boolean tattoo;
     
     @Pattern(regexp = "^$|^\\d{4}-\\d{2}-\\d{2}$",
              message = "正しい日付形式で入力してください",
              groups = ThirdPageValidation.class)
     private String tuitionPaymentDate;
     
-    private String wantDorm;
+    private Boolean wantDorm;
     
     private String otherMemo;
 
@@ -137,11 +137,11 @@ public class StudentRegistrationDTO implements Serializable {
     public String getOtherOccupation() { return otherOccupation; }
     public void setOtherOccupation(String otherOccupation) { this.otherOccupation = otherOccupation; }
     
-    public String getJapanTravelExperience() { return japanTravelExperience; }
-    public void setJapanTravelExperience(String japanTravelExperience) { this.japanTravelExperience = japanTravelExperience; }
+    public Boolean getJapanTravelExperience() { return japanTravelExperience; }
+    public void setJapanTravelExperience(Boolean japanTravelExperience) { this.japanTravelExperience = japanTravelExperience; }
     
-    public String getCoeApplicationExperience() { return coeApplicationExperience; }
-    public void setCoeApplicationExperience(String coeApplicationExperience) { this.coeApplicationExperience = coeApplicationExperience; }
+    public Boolean getCoeApplicationExperience() { return coeApplicationExperience; }
+    public void setCoeApplicationExperience(Boolean coeApplicationExperience) { this.coeApplicationExperience = coeApplicationExperience; }
 
     // Getters and Setters for additional fields
     public String getReligion() {
@@ -158,24 +158,24 @@ public class StudentRegistrationDTO implements Serializable {
         this.otherReligion = otherReligion;
     }
 
-    public String getSmoking() {
+    public Boolean getSmoking() {
         return smoking;
     }
-    public void setSmoking(String smoking) {
+    public void setSmoking(Boolean smoking) {
         this.smoking = smoking;
     }
 
-    public String getAlcohol() {
+    public Boolean getAlcohol() {
         return alcohol;
     }
-    public void setAlcohol(String alcohol) {
+    public void setAlcohol(Boolean alcohol) {
         this.alcohol = alcohol;
     }
 
-    public String getTattoo() {
+    public Boolean getTattoo() {
         return tattoo;
     }
-    public void setTattoo(String tattoo) {
+    public void setTattoo(Boolean tattoo) {
         this.tattoo = tattoo;
     }
 
@@ -186,10 +186,10 @@ public class StudentRegistrationDTO implements Serializable {
         this.tuitionPaymentDate = tuitionPaymentDate;
     }
 
-    public String getWantDorm() {
+    public Boolean getWantDorm() {
         return wantDorm;
     }
-    public void setWantDorm(String wantDorm) {
+    public void setWantDorm(Boolean wantDorm) {
         this.wantDorm = wantDorm;
     }
 
