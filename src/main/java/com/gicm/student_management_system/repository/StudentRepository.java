@@ -2,9 +2,11 @@ package com.gicm.student_management_system.repository;
 
 import com.gicm.student_management_system.entity.Student;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Collection;
 
 @Repository
@@ -26,4 +28,9 @@ public interface StudentRepository extends JpaRepository<Student, Long> {
     List<Student> findByStatusIn(Collection<String> statuses);
 
     Student findTopByOrderByIdDesc();
+
+    @Query("SELECT MAX(s.studentId) FROM Student s WHERE s.studentId LIKE 'STU%'")
+    String findMaxStudentId();
+
+    Optional<Student> findByStudentId(String studentId);
 }

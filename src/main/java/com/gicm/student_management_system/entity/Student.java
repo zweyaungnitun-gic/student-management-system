@@ -1,6 +1,7 @@
 package com.gicm.student_management_system.entity;
 
 import java.time.LocalDate;
+import java.util.UUID;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -10,6 +11,8 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToOne;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -29,6 +32,10 @@ public class Student {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(name = "student_id", unique = true, nullable = false)
+    private String studentId;
+    // 生徒ID
 
     @Column(name = "student_name")
     private String studentName;
@@ -147,10 +154,6 @@ public class Student {
     private String contactViber;
     // 連絡先(TEL, Viber)
 
-    @Column(name = "student_id")
-    private String studentId;
-    // 生徒ID
-
     @OneToOne(mappedBy = "student", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private N5Class n5Class; // Changed from N5Class to n5Class
 
@@ -165,4 +168,19 @@ public class Student {
 
     @Column(name = "updated_at")
     private LocalDate updatedAt;
+
+    @PrePersist
+    protected void onCreate() {
+        if (this.studentId == null) {
+            // This will be overwritten by the service if needed
+            this.studentId = "TEMP-" + UUID.randomUUID().toString().substring(0, 8);
+        }
+        this.createdAt = LocalDate.now();
+        this.updatedAt = LocalDate.now();
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        this.updatedAt = LocalDate.now();
+    }
 }

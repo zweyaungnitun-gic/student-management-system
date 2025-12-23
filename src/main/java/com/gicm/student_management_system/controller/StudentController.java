@@ -161,6 +161,26 @@ public class StudentController {
     // ----------------------------------------------------------------------------------------
     // Student Update
     // ----------------------------------------------------------------------------------------
+    @PostMapping("/create")
+    public String createStudent(@Validated @ModelAttribute StudentDTO studentDTO,
+            BindingResult bindingResult,
+            RedirectAttributes redirectAttributes) {
+
+        if (bindingResult.hasErrors()) {
+            return "students/student-form";
+        }
+
+        // Let the service generate the student ID
+        studentDTO.setStudentId(null); // Clear any ID to let service generate
+
+        StudentDTO created = studentService.createStudent(studentDTO);
+
+        redirectAttributes.addFlashAttribute("success",
+                "生徒が作成されました。生徒ID: " + created.getStudentId());
+
+        return "redirect:/students";
+    }
+
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/student-update/{id}")
     public String showUpdateForm(@PathVariable Long id,

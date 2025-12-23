@@ -1,96 +1,213 @@
 package com.gicm.student_management_system.serviceimpl;
 
 import com.gicm.student_management_system.dto.StudentDTO;
+import com.gicm.student_management_system.entity.InterviewNotes;
+import com.gicm.student_management_system.entity.N4Class;
+import com.gicm.student_management_system.entity.N5Class;
 import com.gicm.student_management_system.entity.Student;
 import com.gicm.student_management_system.repository.StudentRepository;
+import com.gicm.student_management_system.service.StudentIdGeneratorService;
 import com.gicm.student_management_system.service.StudentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDate;
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class StudentServiceImpl implements StudentService {
 
     private final StudentRepository studentRepository;
-
-    public StudentServiceImpl(StudentRepository studentRepository) {
-        this.studentRepository = studentRepository;
-    }
+    private final StudentIdGeneratorService idGeneratorService;
 
     public StudentDTO convertToDTO(Student student) {
+        if (student == null) {
+            return null;
+        }
+
+        N5Class n5Class = student.getN5Class();
+        N4Class n4Class = student.getN4Class();
+        InterviewNotes interviewNotes = student.getInterviewNotes();
+
         return StudentDTO.builder()
                 .id(student.getId())
                 .studentId(student.getStudentId())
+
                 .studentName(student.getStudentName())
                 .nameInJapanese(student.getNameInJapanese())
                 .dateOfBirth(student.getDateOfBirth())
                 .gender(student.getGender())
-                .religion(student.getReligion()) // Fix for religious field
+
+                .religion(student.getReligion())
                 .otherReligion(student.getOtherReligion())
-                .nationalID(student.getNationalID()) // Fix for National ID
+                .nationalID(student.getNationalID())
                 .passportNumber(student.getPassportNumber())
                 .fatherName(student.getFatherName())
+
                 .currentJapanLevel(student.getCurrentJapanLevel())
                 .passedHighestJLPTLevel(student.getPassedHighestJLPTLevel())
+
                 .desiredJobType(student.getDesiredJobType())
                 .otherDesiredJobType(student.getOtherDesiredJobType())
-                .isSmoking(student.getIsSmoking()) // Correct Boolean binding
+
+                .isSmoking(student.getIsSmoking())
                 .isAlcoholDrink(student.getIsAlcoholDrink())
                 .haveTatto(student.getHaveTatto())
                 .hostelPreference(student.getHostelPreference())
+
                 .japanTravelExperience(student.getJapanTravelExperience())
                 .coeApplicationExperience(student.getCoeApplicationExperience())
+
                 .memoNotes(student.getMemoNotes())
-                // Contact Info
+
                 .phoneNumber(student.getPhoneNumber())
                 .secondaryPhone(student.getSecondaryPhone())
                 .contactViber(student.getContactViber())
                 .currentLivingAddress(student.getCurrentLivingAddress())
                 .homeTownAddress(student.getHomeTownAddress())
-                // Academic Info
-                .status(student.getStatus()) // Student Status binding
+
+                .status(student.getStatus())
                 .enrolledDate(student.getEnrolledDate())
+
                 .schedulePaymentTutionDate(student.getSchedulePaymentTutionDate())
                 .actualTutionPaymentDate(student.getActualTutionPaymentDate())
-                // Populate the short-form names
-                .paymentDueDate(student.getSchedulePaymentTutionDate()) // Map from entity
+                .paymentDueDate(student.getSchedulePaymentTutionDate())
                 .paymentDate(student.getActualTutionPaymentDate())
+
+                .createdAt(student.getCreatedAt())
+                .updatedAt(student.getUpdatedAt())
+
+                .interviewNotes(interviewNotes)
                 .build();
     }
 
+    private Student convertToEntity(StudentDTO dto) {
+        return convertToEntity(dto, null);
+    }
+
     private Student convertToEntity(StudentDTO dto, Student existing) {
-        Student s = existing == null ? new Student() : existing;
+        Student student = (existing != null) ? existing : new Student();
 
-        if (dto.getStudentName() != null)
-            s.setStudentName(dto.getStudentName());
-
-        if (dto.getGender() != null)
-            s.setGender(dto.getGender());
-
-        if (dto.getPhoneNumber() != null)
-            s.setPhoneNumber(dto.getPhoneNumber());
-
-        if (dto.getDesiredJobType() != null) {
-            // Check if the text is already proper Japanese
-            String jobType = dto.getDesiredJobType();
-            // If it's coming as romaji, you may need to map it back
-            // But first, let's ensure the encoding is correct
-            s.setDesiredJobType(jobType);
+        if (existing == null && (dto.getStudentId() == null || dto.getStudentId().isBlank())) {
+            String generatedId = idGeneratorService.generateStudentId();
+            student.setStudentId(generatedId);
+        } else if (dto.getStudentId() != null && !dto.getStudentId().isBlank()) {
+            student.setStudentId(dto.getStudentId());
         }
 
-        if (dto.getStatus() != null)
-            s.setStatus(dto.getStatus());
+        if (dto.getStudentName() != null) {
+            student.setStudentName(dto.getStudentName());
+        }
+        if (dto.getNameInJapanese() != null) {
+            student.setNameInJapanese(dto.getNameInJapanese());
+        }
+        if (dto.getDateOfBirth() != null) {
+            student.setDateOfBirth(dto.getDateOfBirth());
+        }
+        if (dto.getGender() != null) {
+            student.setGender(dto.getGender());
+        }
 
-        if (dto.getPaymentDueDate() != null)
-            s.setSchedulePaymentTutionDate(dto.getPaymentDueDate());
+        if (dto.getPhoneNumber() != null) {
+            student.setPhoneNumber(dto.getPhoneNumber());
+        }
+        if (dto.getSecondaryPhone() != null) {
+            student.setSecondaryPhone(dto.getSecondaryPhone());
+        }
+        if (dto.getContactViber() != null) {
+            student.setContactViber(dto.getContactViber());
+        }
+        if (dto.getCurrentLivingAddress() != null) {
+            student.setCurrentLivingAddress(dto.getCurrentLivingAddress());
+        }
+        if (dto.getHomeTownAddress() != null) {
+            student.setHomeTownAddress(dto.getHomeTownAddress());
+        }
 
-        if (dto.getPaymentDate() != null)
-            s.setActualTutionPaymentDate(dto.getPaymentDate());
+        if (dto.getFatherName() != null) {
+            student.setFatherName(dto.getFatherName());
+        }
+        if (dto.getPassportNumber() != null) {
+            student.setPassportNumber(dto.getPassportNumber());
+        }
+        if (dto.getNationalID() != null) {
+            student.setNationalID(dto.getNationalID());
+        }
 
-        return s;
+        if (dto.getCurrentJapanLevel() != null) {
+            student.setCurrentJapanLevel(dto.getCurrentJapanLevel());
+        }
+        if (dto.getPassedHighestJLPTLevel() != null) {
+            student.setPassedHighestJLPTLevel(dto.getPassedHighestJLPTLevel());
+        }
+        // if (dto.getAttendingClassRelatedStatus() != null) {
+        // student.setAttendingClassRelatedStatus(dto.getAttendingClassRelatedStatus());
+        // }
+
+        if (dto.getDesiredJobType() != null) {
+            student.setDesiredJobType(dto.getDesiredJobType());
+        }
+        if (dto.getOtherDesiredJobType() != null) {
+            student.setOtherDesiredJobType(dto.getOtherDesiredJobType());
+        }
+
+        if (dto.getJapanTravelExperience() != null) {
+            student.setJapanTravelExperience(dto.getJapanTravelExperience());
+        }
+        if (dto.getCoeApplicationExperience() != null) {
+            student.setCoeApplicationExperience(dto.getCoeApplicationExperience());
+        }
+
+        if (dto.getReligion() != null) {
+            student.setReligion(dto.getReligion());
+        }
+        if (dto.getOtherReligion() != null) {
+            student.setOtherReligion(dto.getOtherReligion());
+        }
+
+        if (dto.getIsSmoking() != null) {
+            student.setIsSmoking(dto.getIsSmoking());
+        }
+        if (dto.getIsAlcoholDrink() != null) {
+            student.setIsAlcoholDrink(dto.getIsAlcoholDrink());
+        }
+        if (dto.getHaveTatto() != null) {
+            student.setHaveTatto(dto.getHaveTatto());
+        }
+
+        if (dto.getHostelPreference() != null) {
+            student.setHostelPreference(dto.getHostelPreference());
+        }
+
+        if (dto.getSchedulePaymentTutionDate() != null) {
+            student.setSchedulePaymentTutionDate(dto.getSchedulePaymentTutionDate());
+        }
+        if (dto.getActualTutionPaymentDate() != null) {
+            student.setActualTutionPaymentDate(dto.getActualTutionPaymentDate());
+        }
+
+        if (dto.getMemoNotes() != null) {
+            student.setMemoNotes(dto.getMemoNotes());
+        }
+
+        if (dto.getEnrolledDate() != null) {
+            student.setEnrolledDate(dto.getEnrolledDate());
+        }
+
+        if (dto.getStatus() != null) {
+            student.setStatus(dto.getStatus());
+        }
+
+        if (existing == null) {
+            student.setCreatedAt(LocalDate.now());
+        }
+        student.setUpdatedAt(LocalDate.now());
+
+        return student;
     }
 
     @Override
@@ -116,7 +233,9 @@ public class StudentServiceImpl implements StudentService {
             students = studentRepository.findAll();
         }
 
-        return students.stream().map(this::convertToDTO).collect(Collectors.toList());
+        return students.stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -127,9 +246,26 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
+    public Optional<Student> findById(Long id) {
+        return studentRepository.findById(id);
+    }
+
+    public Student findByStudentId(String studentId) {
+        return studentRepository.findByStudentId(studentId)
+                .orElse(null);
+    }
+
+    @Override
     @Transactional
     public StudentDTO createStudent(StudentDTO dto) {
-        Student saved = studentRepository.save(convertToEntity(dto, null));
+        dto.setStudentId(null);
+
+        Student student = convertToEntity(dto);
+        Student saved = studentRepository.save(student);
+
+        dto.setStudentId(saved.getStudentId());
+        dto.setId(saved.getId());
+
         return convertToDTO(saved);
     }
 
@@ -137,9 +273,19 @@ public class StudentServiceImpl implements StudentService {
     @Transactional
     public StudentDTO updateStudent(Long id, StudentDTO dto) {
         Optional<Student> opt = studentRepository.findById(id);
-        if (opt.isEmpty())
+        if (opt.isEmpty()) {
             return null;
-        Student saved = studentRepository.save(convertToEntity(dto, opt.get()));
+        }
+
+        Student existing = opt.get();
+
+        if (existing.getStudentId() != null) {
+            dto.setStudentId(existing.getStudentId());
+        }
+
+        Student updated = convertToEntity(dto, existing);
+        Student saved = studentRepository.save(updated);
+
         return convertToDTO(saved);
     }
 
@@ -160,12 +306,19 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
-    public Optional<Student> findById(Long id) {
-        return studentRepository.findById(id);
-    }
-
-    @Override
     public Student save(Student student) {
+        // Ensure student ID is set for new records
+        if (student.getId() == null && (student.getStudentId() == null || student.getStudentId().isBlank())) {
+            String generatedId = idGeneratorService.generateStudentId();
+            student.setStudentId(generatedId);
+        }
+
+        // Set timestamps
+        if (student.getId() == null) {
+            student.setCreatedAt(LocalDate.now());
+        }
+        student.setUpdatedAt(LocalDate.now());
+
         return studentRepository.save(student);
     }
 
@@ -201,30 +354,47 @@ public class StudentServiceImpl implements StudentService {
             students = studentRepository.findAll();
         }
 
-        // FIX: Sort by student ID at the service level
         students.sort((s1, s2) -> {
-            if (s1.getStudentId() == null && s2.getStudentId() == null)
+            String id1 = s1.getStudentId();
+            String id2 = s2.getStudentId();
+
+            if (id1 == null && id2 == null)
                 return 0;
-            if (s1.getStudentId() == null)
+            if (id1 == null)
                 return 1;
-            if (s2.getStudentId() == null)
+            if (id2 == null)
                 return -1;
 
-            // Extract numbers for proper numeric sorting
             try {
-                String num1 = s1.getStudentId().replaceAll("[^0-9]", "");
-                String num2 = s2.getStudentId().replaceAll("[^0-9]", "");
+                String num1 = id1.replaceAll("[^0-9]", "");
+                String num2 = id2.replaceAll("[^0-9]", "");
                 if (!num1.isEmpty() && !num2.isEmpty()) {
                     return Integer.compare(Integer.parseInt(num1), Integer.parseInt(num2));
                 }
             } catch (Exception e) {
                 // Fallback to string comparison
             }
-            return s1.getStudentId().compareTo(s2.getStudentId());
+            return id1.compareTo(id2);
         });
 
         return students.stream()
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
+    }
+
+    private Integer extractNumberFromStudentId(String studentId) {
+        if (studentId == null || studentId.isEmpty()) {
+            return 0;
+        }
+
+        try {
+            String numericPart = studentId.replaceAll("[^0-9]", "");
+            if (!numericPart.isEmpty()) {
+                return Integer.parseInt(numericPart);
+            }
+        } catch (NumberFormatException e) {
+        }
+
+        return 0;
     }
 }
