@@ -122,4 +122,6 @@ public class StudentDTO {
 
     @NotBlank(groups = BasicInfoGroup.class, message = "This field is required")
     private String studentId;
+
+    private String attendingClassRelatedStatus;
 }

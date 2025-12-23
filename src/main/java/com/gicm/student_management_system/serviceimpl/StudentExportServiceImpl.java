@@ -18,7 +18,8 @@ public class StudentExportServiceImpl implements StudentExportService {
     private final StudentService studentService;
 
     @Override
-    public List<StudentFullExportDTO> getAllStudentsFull(String nameSearch, String status) {
+    public List<StudentFullExportDTO> getAllStudentsFull(String nameSearch,
+            String status) {
         return studentService.getStudentsByFilterFull(nameSearch, status).stream()
                 .map(this::convertToExportDTO)
                 .collect(Collectors.toList());
@@ -40,7 +41,8 @@ public class StudentExportServiceImpl implements StudentExportService {
         dto.setStudentId(s.getStudentId());
         dto.setStudentName(s.getStudentName());
         dto.setNameInJapanese(s.getNameInJapanese());
-        dto.setDateOfBirth(s.getDateOfBirth() != null ? s.getDateOfBirth().toString() : "");
+        dto.setDateOfBirth(s.getDateOfBirth() != null ? s.getDateOfBirth().toString()
+                : "");
         dto.setGender(s.getGender());
         dto.setCurrentLivingAddress(s.getCurrentLivingAddress());
         dto.setHomeTownAddress(s.getHomeTownAddress());

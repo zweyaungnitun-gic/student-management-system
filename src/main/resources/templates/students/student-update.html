@@ -257,7 +257,7 @@
                         </div>
 
                         <div class="col-md-6">
-                          <label class="form-label required-label">宗教</label>
+                          <label class="form-label">宗教</label>
                           <select class="form-select" th:field="*{religion}" id="religion">
                             <option value="buddhism">仏教</option>
                             <option value="islam">イスラム教</option>
@@ -274,14 +274,11 @@
                         </div>
 
                         <div class="col-md-6">
-                          <label class="form-label required-label">現在のJLPT合格レベル</label>
+                          <label class="form-label">現在のJLPT合格レベル</label>
                           <select class="form-select" th:field="*{currentJapanLevel}">
                             <option value="none">なし</option>
                             <option value="N5">N5</option>
                             <option value="N4">N4</option>
-                            <option value="N3">N3</option>
-                            <option value="N2">N2</option>
-                            <option value="N1">N1</option>
                           </select>
                           <div class="text-danger" th:if="${#fields.hasErrors('currentJapanLevel')}" th:errors="*{currentJapanLevel}"></div>
                         </div>
@@ -328,35 +325,35 @@
                         <div></div>
 
                         <div class="col-md-4">
-                          <label class="form-label required-label">日本渡航経験</label>
+                          <label class="form-label">日本渡航経験</label>
                           <select class="form-select" th:field="*{japanTravelExperience}">
-                            <option value="ある">ある</option>
-                            <option value="ない">ない</option>
+                            <option value="true">ある</option>
+                            <option value="false">ない</option>
                           </select>
                           <div class="text-danger" th:if="${#fields.hasErrors('japanTravelExperience')}" th:errors="*{japanTravelExperience}"></div>
                         </div>
 
                         <div class="col-md-4">
-                          <label class="form-label required-label">COE申請経験</label>
+                          <label class="form-label">COE申請経験</label>
                           <select class="form-select" th:field="*{coeApplicationExperience}">
-                            <option value="ある">ある</option>
-                            <option value="ない">ない</option>
+                            <option value="true">ある</option>
+                            <option value="false">ない</option>
                           </select>
                           <div class="text-danger" th:if="${#fields.hasErrors('coeApplicationExperience')}" th:errors="*{coeApplicationExperience}"></div>
                         </div>
 
                         <div class="col-md-4">
-                          <label class="form-label required-label">寮があれば入りたい</label>
+                          <label class="form-label">寮があれば入りたい</label>
                           <select class="form-select" th:field="*{hostelPreference}">
-                            <option value="はい">はい</option>
-                            <option value="いいえ">いいえ</option>
+                            <option value="true">はい</option>
+                            <option value="false">いいえ</option>
                           </select>
                           <div class="text-danger" th:if="${#fields.hasErrors('hostelPreference')}" th:errors="*{hostelPreference}"></div>
                         </div>
                         <div></div>
 
                         <div class="col-md-4">
-                          <label class="form-label required-label">お酒</label>
+                          <label class="form-label">お酒</label>
                           <select class="form-select" th:field="*{isAlcoholDrink}">
                             <option th:value="true">飲む</option>
                             <option th:value="false">飲まない</option>
@@ -365,7 +362,7 @@
                         </div>
 
                         <div class="col-md-4">
-                          <label class="form-label required-label">タバコ</label>
+                          <label class="form-label">タバコ</label>
                           <select class="form-select" th:field="*{isSmoking}">
                             <option th:value="true">吸う</option>
                             <option th:value="false">吸わない</option>
@@ -374,7 +371,7 @@
                         </div>
 
                         <div class="col-md-4">
-                          <label class="form-label required-label">入れ墨(Tattoo)</label>
+                          <label class="form-label">入れ墨(Tattoo)</label>
                           <select class="form-select select-placeholder" th:field="*{haveTatto}">
                             <option th:value="true">ある</option>
                             <option th:value="false">ない</option>

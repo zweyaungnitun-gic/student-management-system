@@ -36,51 +36,40 @@ public class StudentServiceImpl implements StudentService {
         return StudentDTO.builder()
                 .id(student.getId())
                 .studentId(student.getStudentId())
-
                 .studentName(student.getStudentName())
                 .nameInJapanese(student.getNameInJapanese())
                 .dateOfBirth(student.getDateOfBirth())
                 .gender(student.getGender())
-
                 .religion(student.getReligion())
                 .otherReligion(student.getOtherReligion())
                 .nationalID(student.getNationalID())
                 .passportNumber(student.getPassportNumber())
                 .fatherName(student.getFatherName())
-
                 .currentJapanLevel(student.getCurrentJapanLevel())
                 .passedHighestJLPTLevel(student.getPassedHighestJLPTLevel())
-
+                .attendingClassRelatedStatus(student.getAttendingClassRelatedStatus())
                 .desiredJobType(student.getDesiredJobType())
                 .otherDesiredJobType(student.getOtherDesiredJobType())
-
                 .isSmoking(student.getIsSmoking())
                 .isAlcoholDrink(student.getIsAlcoholDrink())
                 .haveTatto(student.getHaveTatto())
                 .hostelPreference(student.getHostelPreference())
-
                 .japanTravelExperience(student.getJapanTravelExperience())
                 .coeApplicationExperience(student.getCoeApplicationExperience())
-
                 .memoNotes(student.getMemoNotes())
-
                 .phoneNumber(student.getPhoneNumber())
                 .secondaryPhone(student.getSecondaryPhone())
                 .contactViber(student.getContactViber())
                 .currentLivingAddress(student.getCurrentLivingAddress())
                 .homeTownAddress(student.getHomeTownAddress())
-
                 .status(student.getStatus())
                 .enrolledDate(student.getEnrolledDate())
-
                 .schedulePaymentTutionDate(student.getSchedulePaymentTutionDate())
                 .actualTutionPaymentDate(student.getActualTutionPaymentDate())
                 .paymentDueDate(student.getSchedulePaymentTutionDate())
                 .paymentDate(student.getActualTutionPaymentDate())
-
                 .createdAt(student.getCreatedAt())
                 .updatedAt(student.getUpdatedAt())
-
                 .interviewNotes(interviewNotes)
                 .build();
     }
@@ -144,9 +133,9 @@ public class StudentServiceImpl implements StudentService {
         if (dto.getPassedHighestJLPTLevel() != null) {
             student.setPassedHighestJLPTLevel(dto.getPassedHighestJLPTLevel());
         }
-        // if (dto.getAttendingClassRelatedStatus() != null) {
-        // student.setAttendingClassRelatedStatus(dto.getAttendingClassRelatedStatus());
-        // }
+        if (dto.getAttendingClassRelatedStatus() != null) {
+            student.setAttendingClassRelatedStatus(dto.getAttendingClassRelatedStatus());
+        }
 
         if (dto.getDesiredJobType() != null) {
             student.setDesiredJobType(dto.getDesiredJobType());
@@ -156,10 +145,11 @@ public class StudentServiceImpl implements StudentService {
         }
 
         if (dto.getJapanTravelExperience() != null) {
-            student.setJapanTravelExperience(dto.getJapanTravelExperience());
+            student.setJapanTravelExperience(dto.getJapanTravelExperience()); // Boolean
         }
+
         if (dto.getCoeApplicationExperience() != null) {
-            student.setCoeApplicationExperience(dto.getCoeApplicationExperience());
+            student.setCoeApplicationExperience(dto.getCoeApplicationExperience()); // Boolean
         }
 
         if (dto.getReligion() != null) {
@@ -179,8 +169,12 @@ public class StudentServiceImpl implements StudentService {
             student.setHaveTatto(dto.getHaveTatto());
         }
 
+        if (dto.getAttendingClassRelatedStatus() != null) {
+            student.setAttendingClassRelatedStatus(dto.getAttendingClassRelatedStatus());
+        }
+
         if (dto.getHostelPreference() != null) {
-            student.setHostelPreference(dto.getHostelPreference());
+            student.setHostelPreference(dto.getHostelPreference()); // Boolean
         }
 
         if (dto.getSchedulePaymentTutionDate() != null) {
@@ -333,7 +327,6 @@ public class StudentServiceImpl implements StudentService {
 
     @Override
     public Student save(Student student) {
-        // Ensure student ID is set for new records
         if (student.getId() == null && (student.getStudentId() == null || student.getStudentId().isBlank())) {
             String generatedId = idGeneratorService.generateStudentId();
             student.setStudentId(generatedId);
