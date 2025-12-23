@@ -279,13 +279,39 @@ public class StudentServiceImpl implements StudentService {
 
         Student existing = opt.get();
 
-        if (existing.getStudentId() != null) {
-            dto.setStudentId(existing.getStudentId());
+        dto.setStudentId(existing.getStudentId());
+
+        if (dto.getStudentName() != null) {
+            existing.setStudentName(dto.getStudentName());
         }
 
-        Student updated = convertToEntity(dto, existing);
-        Student saved = studentRepository.save(updated);
+        if (dto.getGender() != null) {
+            existing.setGender(dto.getGender());
+        }
 
+        if (dto.getPhoneNumber() != null) {
+            existing.setPhoneNumber(dto.getPhoneNumber());
+        }
+
+        if (dto.getDesiredJobType() != null) {
+            existing.setDesiredJobType(dto.getDesiredJobType());
+        }
+
+        if (dto.getStatus() != null) {
+            existing.setStatus(dto.getStatus());
+        }
+
+        if (dto.getPaymentDueDate() != null) {
+            existing.setSchedulePaymentTutionDate(dto.getPaymentDueDate());
+        }
+
+        if (dto.getPaymentDate() != null) {
+            existing.setActualTutionPaymentDate(dto.getPaymentDate());
+        }
+
+        existing.setUpdatedAt(LocalDate.now());
+
+        Student saved = studentRepository.save(existing);
         return convertToDTO(saved);
     }
 
