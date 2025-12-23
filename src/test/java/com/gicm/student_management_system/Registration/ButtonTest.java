@@ -1,4 +1,3 @@
-
 package com.gicm.student_management_system.Registration;
 import com.gicm.student_management_system.controller.HomeController;
 
@@ -35,8 +34,8 @@ public class ButtonTest {
 				"\"jlptLevel\":\"N5\"," +
 				"\"desiredOccupation\":\"Engineer\"," +
 				"\"otherOccupation\":\"\"," +
-				"\"japanTravelExperience\":\"No\"," +
-				"\"coeApplicationExperience\":\"No\"" +
+				"\"japanTravelExperience\":true," +
+				"\"coeApplicationExperience\":false" +
 				"}";
 	}
 
@@ -48,8 +47,8 @@ public class ButtonTest {
 				"\"jlptLevel\":\"N5\"," +
 				"\"desiredOccupation\":\"Engineer\"," +
 				"\"otherOccupation\":\"\"," +
-				"\"japanTravelExperience\":\"No\"," +
-				"\"coeApplicationExperience\":\"No\"" +
+				"\"japanTravelExperience\":true," +
+				"\"coeApplicationExperience\":false" +
 				"}";
 	}
 
@@ -57,11 +56,11 @@ public class ButtonTest {
 		return "{" +
 				"\"religion\":\"仏教\"," +
 				"\"otherReligion\":\"\"," +
-				"\"smoking\":\"No\"," +
-				"\"alcohol\":\"No\"," +
-				"\"tattoo\":\"No\"," +
+				"\"smoking\":false," +
+				"\"alcohol\":true," +
+				"\"tattoo\":false," +
 				"\"tuitionPaymentDate\":\"2025-01-01\"," +
-				"\"wantDorm\":\"はい\"," +
+				"\"wantDorm\":true," +
 				"\"otherMemo\":\"Test memo\"" +
 				"}";
 	}
@@ -89,14 +88,14 @@ public class ButtonTest {
 		dto.setJlptLevel("N5");
 		dto.setDesiredOccupation("Engineer");
 		dto.setOtherOccupation("");
-		dto.setJapanTravelExperience("No");
-		dto.setCoeApplicationExperience("No");
+		dto.setJapanTravelExperience(false);
+		dto.setCoeApplicationExperience(false);
 		dto.setReligion("仏教");
-		dto.setSmoking("No");
-		dto.setAlcohol("No");
-		dto.setTattoo("No");
+		dto.setSmoking(false);
+		dto.setAlcohol(false);
+		dto.setTattoo(false);
 		dto.setTuitionPaymentDate("2025-01-01");
-		dto.setWantDorm("はい");
+		dto.setWantDorm(true);
 		dto.setOtherMemo("Test memo");
 		session.setAttribute("studentData", dto);
 		return session;
@@ -178,14 +177,14 @@ public class ButtonTest {
 		dto.setJlptLevel("N5");
 		dto.setDesiredOccupation("Engineer");
 		dto.setOtherOccupation("");
-		dto.setJapanTravelExperience("No");
-		dto.setCoeApplicationExperience("No");
+		dto.setJapanTravelExperience(false);
+		dto.setCoeApplicationExperience(false);
 		dto.setReligion("仏教");
-		dto.setSmoking("No");
-		dto.setAlcohol("No");
-		dto.setTattoo("No");
+		dto.setSmoking(false);
+		dto.setAlcohol(false);
+		dto.setTattoo(false);
 		dto.setTuitionPaymentDate("2025-01-01");
-		dto.setWantDorm("はい");
+		dto.setWantDorm(true);
 		dto.setOtherMemo("Test memo");
 		session.setAttribute("studentData", dto);
 
@@ -255,9 +254,9 @@ public class ButtonTest {
 		StudentRegistrationDTO dto = (StudentRegistrationDTO) session.getAttribute("studentData");
 		assert dto != null;
 		assert "仏教".equals(dto.getReligion());
-		assert "No".equals(dto.getSmoking());
+		assert !dto.getSmoking();
 		assert "2025-01-01".equals(dto.getTuitionPaymentDate());
-		assert "はい".equals(dto.getWantDorm());
+		assert dto.getWantDorm();
 		assert "Test memo".equals(dto.getOtherMemo());
 	    }
 

@@ -43,14 +43,14 @@ class RegisterStudentServiceTest {
         dto.setFatherName("Father Name");
         dto.setJlptLevel("N5");
         dto.setDesiredOccupation("Engineer");
-        dto.setJapanTravelExperience("No");
-        dto.setCoeApplicationExperience("No");
+        dto.setJapanTravelExperience(true);
+        dto.setCoeApplicationExperience(false);
         dto.setReligion("Buddhist");
-        dto.setSmoking("No");
-        dto.setAlcohol("No");
-        dto.setTattoo("No");
+        dto.setSmoking(false);
+        dto.setAlcohol(false);
+        dto.setTattoo(false);
         dto.setTuitionPaymentDate("2025-01-01");
-        dto.setWantDorm("Yes");
+        dto.setWantDorm(true);
 
         Student savedStudent = new Student();
         savedStudent.setStudentId("STU001");

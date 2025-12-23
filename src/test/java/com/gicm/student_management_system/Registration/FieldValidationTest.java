@@ -149,19 +149,19 @@ public class FieldValidationTest {
         dto.setPassportNumber("MA123456");
         dto.setJlptLevel("N5");
         dto.setDesiredOccupation("Engineer");
-        dto.setJapanTravelExperience("No");
-        dto.setCoeApplicationExperience("No");
+        dto.setJapanTravelExperience(false);
+        dto.setCoeApplicationExperience(false);
         return dto;
     }
 
     private StudentRegistrationDTO createValidThirdPageDto() {
         StudentRegistrationDTO dto = createValidSecondPageDto();
         dto.setReligion("Buddhist");
-        dto.setSmoking("No");
-        dto.setAlcohol("No");
-        dto.setTattoo("No");
+        dto.setSmoking(false);
+        dto.setAlcohol(false);
+        dto.setTattoo(false);
         dto.setTuitionPaymentDate("2026-01-01");
-        dto.setWantDorm("Yes");
+        dto.setWantDorm(true    );
         return dto;
     }
 }
