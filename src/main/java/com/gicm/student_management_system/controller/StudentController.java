@@ -281,6 +281,16 @@ public class StudentController {
             model.addAttribute("status", status);
             model.addAttribute("activeTab", "status");
 
+            existingStudent.setStatus(student.getStatus());
+            existingStudent.setDesiredJobType(student.getDesiredJobType());
+            existingStudent.setOtherDesiredJobType(student.getOtherDesiredJobType());
+            existingStudent.setReligion(student.getReligion());
+            existingStudent.setOtherReligion(student.getOtherReligion());
+            existingStudent.setEnrolledDate(student.getEnrolledDate());
+            existingStudent.setAttendingClassRelatedStatus(student.getAttendingClassRelatedStatus());
+            existingStudent.setPassedHighestJLPTLevel(student.getPassedHighestJLPTLevel());
+            existingStudent.setUpdatedAt(LocalDate.now());
+
             studentService.save(existingStudent);
             redirectAttributes.addFlashAttribute("success", "ステータス情報が正常に更新されました。");
         } catch (Exception e) {

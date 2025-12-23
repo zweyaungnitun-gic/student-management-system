@@ -682,6 +682,19 @@
     }
   };
 
+  const handleUrlTabParam = () => {
+  const urlParams = new URLSearchParams(window.location.search);
+  const tabParam = urlParams.get('tab');
+  
+    if (tabParam) {
+      const targetTabBtn = document.querySelector(`[data-bs-target="#${tabParam}"]`);
+      if (targetTabBtn) {
+        performTabSwitch(tabParam);
+        currentPaneId = tabParam;
+      }
+    }
+  };
+
   function init() {
     setOriginalsOnLoad();
     detectActivePaneOnLoad();
@@ -694,6 +707,7 @@
     setupFormValidationAndSubmission(); 
     setupDobRestriction();
     setupRealTimeValidation();
+    handleUrlTabParam();
 
     document.querySelectorAll('[data-bs-toggle="tab"]').forEach(tab => {
       tab.addEventListener('shown.bs.tab', function() {
