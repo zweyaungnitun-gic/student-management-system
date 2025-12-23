@@ -11,6 +11,97 @@
 
   <th:block th:fragment="extraCSS">
     <link rel="stylesheet" href="/css/student-list.css" />
+    <!-- <style>
+      /* Download button container */
+      #studentTable {
+        position: relative;
+      }
+
+      .download-button-container {
+        position: absolute;
+        top: 0;
+        right: 0;
+        height: 100%;
+        width: 150px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 10;
+        gap: 8px;
+      }
+
+      #downloadBtn {
+        background-color: #0c5ed7;
+        color: white;
+        border: none;
+        padding: 6px 12px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 14px;
+        transition: background-color 0.2s;
+        white-space: nowrap;
+      }
+
+      #downloadBtn:hover {
+        background-color: #0a4ebd;
+      }
+
+      #downloadBtn:disabled {
+        background-color: #cccccc;
+        cursor: not-allowed;
+      }
+
+      #selectedCount {
+        font-size: 12px;
+        min-width: 24px;
+      }
+
+      /* Filter row */
+      .filter-row th {
+        position: relative;
+      }
+
+      /* Selection info */
+      .selection-info {
+        font-size: 14px;
+        color: #666;
+        margin-left: 10px;
+        display: none;
+      }
+
+      /* Responsive adjustments */
+      @media (max-width: 992px) {
+        .download-button-container {
+          position: static;
+          width: auto;
+          margin-top: 10px;
+          justify-content: flex-end;
+          height: auto;
+          margin-right: 1rem;
+        }
+
+        .filter-control-group.checkbox-group,
+        .filter-control-group {
+          margin-bottom: 5px;
+        }
+      }
+
+      @media (max-width: 768px) {
+        .filter-control-group {
+          flex: 1 1 100%;
+          margin-bottom: 8px;
+        }
+
+        #studentStatusFilter {
+          flex: 1 1 100%;
+        }
+
+        #downloadBtn {
+          font-size: 13px;
+          padding: 5px 10px;
+        }
+      }
+    </style> -->
   </th:block>
 
   <th:block th:fragment="extraJS">
@@ -51,6 +142,7 @@
 
         // Display first page
         displayPage(1);
+        updateSelectionInfo();
       }
 
       // ============ EVENT LISTENERS ============
@@ -58,7 +150,9 @@
         // Listen for checkbox changes
         document.addEventListener("change", function (e) {
           if (e.target.classList.contains("row-checkbox")) {
-            updateSelectAllCheckbox();
+            // updateSelectAllCheckbox();
+            updateSelectionInfo();
+            updateDownloadButton();
           }
         });
       }
@@ -69,26 +163,63 @@
         allCheckboxes.forEach((checkbox) => {
           checkbox.checked = e.target.checked;
         });
+        updateSelectionInfo();
+        updateDownloadButton();
       }
 
       function updateSelectAllCheckbox() {
-        const allCheckboxes = document.querySelectorAll(".row-checkbox");
-        const checkedCount = document.querySelectorAll(
-          ".row-checkbox:checked"
-        ).length;
         const selectAll = document.getElementById("selectAll");
-
         if (!selectAll) return;
 
-        if (checkedCount === 0) {
+        // Check if all VISIBLE rows on the current page are checked
+        const visibleCheckboxes = document.querySelectorAll(
+          "#studentTableBody tr:not([style*='display: none']) .row-checkbox"
+        );
+        const checkedVisible = Array.from(visibleCheckboxes).filter(
+          (cb) => cb.checked
+        ).length;
+
+        if (checkedVisible === 0) {
           selectAll.checked = false;
           selectAll.indeterminate = false;
-        } else if (checkedCount === allCheckboxes.length) {
+        } else if (
+          checkedVisible === visibleCheckboxes.length &&
+          visibleCheckboxes.length > 0
+        ) {
           selectAll.checked = true;
           selectAll.indeterminate = false;
         } else {
+          // This shows the dash (-) in the checkbox if some are selected
           selectAll.checked = false;
           selectAll.indeterminate = true;
+        }
+      }
+
+      // ============ SELECTION INFO ============
+      function updateSelectionInfo() {
+        const checkedCount = document.querySelectorAll(
+          ".row-checkbox:checked"
+        ).length;
+        const totalCount = document.querySelectorAll(".row-checkbox").length;
+
+        // Create or update selection info display
+        let infoDiv = document.querySelector(".selection-info");
+        if (!infoDiv) {
+          infoDiv = document.createElement("div");
+          infoDiv.className = "selection-info";
+          const filterForm = document.querySelector(
+            "#studentFilterForm .d-flex"
+          );
+          if (filterForm) {
+            filterForm.appendChild(infoDiv);
+          }
+        }
+
+        if (checkedCount > 0) {
+          infoDiv.textContent = `${checkedCount}/${totalCount} 名選択中`;
+          infoDiv.style.display = "none";
+        } else {
+          infoDiv.style.display = "none";
         }
       }
 
@@ -170,6 +301,7 @@
           // Reset button
           downloadBtn.innerHTML = originalText;
           downloadBtn.disabled = false;
+          updateDownloadButton();
         }
       }
 
@@ -432,6 +564,14 @@
         XLSX.writeFile(wb, filename);
       }
 
+      function updateDownloadButton() {
+        const downloadBtn = document.getElementById("downloadBtn");
+        if (!downloadBtn) return;
+
+        // Simply keep the text static
+        downloadBtn.innerHTML = "↓ダウンロード";
+      }
+
       // ============ PAGINATION ============
       function setupPagination() {
         displayPage(1);
@@ -608,6 +748,16 @@
             nameInput.value.trim() !== "" ? "#E8F0FE" : "white";
         }
       }
+      document.addEventListener("DOMContentLoaded", function () {
+        const layout = document.querySelector(".dashboard-layout");
+        const toggles = document.querySelectorAll("[data-sidebar-toggle]");
+        toggles.forEach((btn) =>
+          btn.addEventListener("click", function (event) {
+            event.preventDefault();
+            layout?.classList.toggle("sidebar-open");
+          })
+        );
+      });
     </script>
   </th:block>
 
@@ -631,7 +781,7 @@
                 aria-label="Toggle sidebar"
                 data-sidebar-toggle
               >
-                <i class="fas fa-bars fs-4"></i>
+                <i class="bi bi-list fs-4"></i>
               </button>
               <div>
                 <h1
@@ -658,15 +808,23 @@
                         method="get"
                         id="studentFilterForm"
                       >
-                        <div class="d-flex flex-wrap align-items-center gap-3">
-                          <div class="filter-control-group checkbox-group">
-                            <span style="font-size: 16px">全て選択</span>
-                            <input
-                              type="checkbox"
-                              id="selectAll"
-                              class="form-check-input"
-                            />
+                        <div
+                          class="d-flex flex-col md:flex-row align-items-center gap-4 flex-wrap"
+                        >
+                          <!-- subete -->
+                          <div
+                            class="filter-control-group checkbox-group flex flex-row justify-content-start"
+                          >
+                            <div>
+                              <input
+                                type="checkbox"
+                                id="selectAll"
+                                class="form-check-input"
+                              />
+                              <span style="font-size: 16px">全て選択</span>
+                            </div>
                           </div>
+                          <!-- name search -->
                           <div class="filter-control-group">
                             <span style="font-size: 16px">名前で検索</span>
                             <input
@@ -678,6 +836,7 @@
                               placeholder="名前検索"
                             />
                           </div>
+                          <!-- status filter -->
                           <div
                             class="filter-control-group"
                             id="studentStatusWrapper"
@@ -729,8 +888,10 @@
                               </div>
                             </div>
                           </div>
-                          <!-- Download button container - Plain button only -->
-                          <div class="download-button-container">
+                          <!-- Download button container -->
+                          <div
+                            class="download-button-container flex flex-row justify-content-start"
+                          >
                             <button type="button" id="downloadBtn">
                               ↓ダウンロード
                             </button>

@@ -118,8 +118,26 @@ public class StudentController {
     }
 
     private String buildRedirectUrl(String nameSearch, String status) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'buildRedirectUrl'");
+        try {
+            StringBuilder url = new StringBuilder("redirect:/students");
+            List<String> params = new ArrayList<>();
+
+            if (nameSearch != null && !nameSearch.trim().isEmpty()) {
+                params.add("nameSearch=" + URLEncoder.encode(nameSearch.trim(), StandardCharsets.UTF_8));
+            }
+            if (status != null && !status.trim().isEmpty()) {
+                params.add("status=" + URLEncoder.encode(status.trim(), StandardCharsets.UTF_8));
+            }
+
+            if (!params.isEmpty()) {
+                url.append("?").append(String.join("&", params));
+            }
+
+            return url.toString();
+        } catch (Exception e) {
+            // Fallback to simple redirect if encoding fails
+            return "redirect:/students";
+        }
     }
 
     // METHOD FOR DETAILS
@@ -404,5 +422,7 @@ public class StudentController {
             // Fallback if encoding fails
             return "redirect:/students/student-update/" + id + "?tab=" + tab;
         }
-    }
-}
+    }}
+
+    
+    
