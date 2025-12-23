@@ -1,6 +1,7 @@
 package com.gicm.student_management_system.serviceimpl;
 
 import com.gicm.student_management_system.dto.StudentFullExportDTO;
+import com.gicm.student_management_system.enums.YesNoDisplay;
 import com.gicm.student_management_system.entity.Student;
 import com.gicm.student_management_system.service.StudentExportService;
 import com.gicm.student_management_system.service.StudentService;
@@ -50,8 +51,8 @@ public class StudentExportServiceImpl implements StudentExportService {
         dto.setCurrentJapanLevel(s.getCurrentJapanLevel());
         dto.setDesiredJobType(s.getDesiredJobType());
         dto.setOtherDesiredJobType(s.getOtherDesiredJobType());
-        dto.setJapanTravelExperience(s.getJapanTravelExperience());
-        dto.setCoeApplicationExperience(s.getCoeApplicationExperience());
+        dto.setJapanTravelExperience(YesNoDisplay.from(s.getJapanTravelExperience()).getLabel());
+        dto.setCoeApplicationExperience(YesNoDisplay.from(s.getCoeApplicationExperience()).getLabel());
         dto.setReligion(s.getReligion());
         dto.setOtherReligion(s.getOtherReligion());
         dto.setIsSmoking(s.getIsSmoking());
@@ -59,7 +60,7 @@ public class StudentExportServiceImpl implements StudentExportService {
         dto.setHaveTatto(s.getHaveTatto());
         dto.setSchedulePaymentTutionDate(
                 s.getSchedulePaymentTutionDate() != null ? s.getSchedulePaymentTutionDate().toString() : "");
-        dto.setHostelPreference(s.getHostelPreference());
+        dto.setHostelPreference(YesNoDisplay.from(s.getHostelPreference()).getLabel());
         dto.setMemoNotes(s.getMemoNotes());
         dto.setActualTutionPaymentDate(
                 s.getActualTutionPaymentDate() != null ? s.getActualTutionPaymentDate().toString() : "");

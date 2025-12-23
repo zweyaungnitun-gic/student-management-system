@@ -93,11 +93,11 @@ public class Student {
     // その他の希望職種
 
     @Column(name = "japan_travel_experience")
-    private String japanTravelExperience;
+    private Boolean japanTravelExperience;
     // 日本渡航経験
 
     @Column(name = "coe_application_experience")
-    private String coeApplicationExperience;
+    private Boolean coeApplicationExperience;
     // COE申請経験
 
     private String religion;
@@ -128,7 +128,7 @@ public class Student {
     // 授業料実際支払日
 
     @Column(name = "hostel_preference")
-    private String hostelPreference;
+    private Boolean hostelPreference;
     // 寮の希望
 
     @Column(name = "memo_notes", length = 2000)

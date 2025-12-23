@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import com.gicm.student_management_system.enums.YesNoDisplay;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -161,6 +162,24 @@ public class StudentController {
         N4ClassDTO n4Class = n4ClassService.getOrCreateN4ClassDTO(id);
 
         InterviewNotesDTO interviewNotes = interviewNotesService.getOrCreateInterviewNotesDTO(id);
+
+        model.addAttribute("japanTravelExperienceDisplay",
+                YesNoDisplay.from(studentDTO.getJapanTravelExperience()));
+
+        model.addAttribute("coeApplicationExperienceDisplay",
+                YesNoDisplay.from(studentDTO.getCoeApplicationExperience()));
+
+        model.addAttribute("isSmokingDisplay",
+                YesNoDisplay.from(studentDTO.getIsSmoking()));
+
+        model.addAttribute("isAlcoholDrinkDisplay",
+                YesNoDisplay.from(studentDTO.getIsAlcoholDrink()));
+
+        model.addAttribute("haveTattoDisplay",
+                YesNoDisplay.from(studentDTO.getHaveTatto()));
+
+        model.addAttribute("hostelPreferenceDisplay",
+                YesNoDisplay.from(studentDTO.getHostelPreference()));
 
         // Map InterviewNotes Entity to InterviewNotesDTO for the view
         // Add attributes to model so details.html can display them

@@ -156,31 +156,27 @@
                                     </div>
                                     <div class="info-group">
                                         <div class="info-label">タバコ</div>
-                                        <div class="info-value"
-                                            th:text="${student.isSmoking != null && student.isSmoking ? 'Yes' : 'No'}">
-                                        </div>
+                                        <div class="info-value" th:text="${isSmokingDisplay.label}"></div>
                                     </div>
                                     <div class="info-group">
                                         <div class="info-label">お酒</div>
-                                        <div class="info-value"
-                                            th:text="${student.isAlcoholDrink != null && student.isAlcoholDrink ? 'Yes' : 'No'}">
-                                        </div>
+                                        <div class="info-value" th:text="${isAlcoholDrinkDisplay.label}"></div>
                                     </div>
                                     <div class="info-group">
                                         <div class="info-label">入れ墨</div>
-                                        <div class="info-value" th:text="${student.haveTatto}"></div>
+                                        <div class="info-value" th:text="${haveTattoDisplay.label}"></div>
                                     </div>
                                     <div class="info-group">
                                         <div class="info-label">寮があれば入りたい</div>
-                                        <div class="info-value" th:text="${student.hostelPreference}"></div>
+                                        <div class="info-value" th:text="${hostelPreferenceDisplay.label}"></div>
                                     </div>
                                     <div class="info-group">
                                         <div class="info-label">日本渡航経験</div>
-                                        <div class="info-value" th:text="${student.japanTravelExperience}"></div>
+                                        <div class="info-value" th:text="${japanTravelExperienceDisplay.label}"></div>
                                     </div>
                                     <div class="info-group">
                                         <div class="info-label">COE申請経験</div>
-                                        <div class="info-value" th:text="${student.coeApplicationExperience}"></div>
+                                        <div class="info-value" th:text="${coeApplicationExperienceDisplay.label}"></div>
                                     </div>
                                 </div>
                             </div>

@@ -62,11 +62,11 @@ public class StudentDTO {
 
     private String otherDesiredJobType; // optional
 
-    @NotBlank(groups = BasicInfoGroup.class, message = "This field is required")
-    private String japanTravelExperience;
+    @NotNull(groups = BasicInfoGroup.class, message = "This field is required")
+    private Boolean japanTravelExperience;
 
-    @NotBlank(groups = BasicInfoGroup.class, message = "This field is required")
-    private String coeApplicationExperience;
+    @NotNull(groups = BasicInfoGroup.class, message = "This field is required")
+    private Boolean coeApplicationExperience;
 
     @NotBlank(groups = BasicInfoGroup.class, message = "This field is required")
     private String religion;
@@ -89,8 +89,8 @@ public class StudentDTO {
     @FutureOrPresent(groups = PaymentGroup.class)
     private LocalDate actualTutionPaymentDate;
 
-    @NotBlank(groups = BasicInfoGroup.class, message = "This field is required")
-    private String hostelPreference;
+    @NotNull(groups = BasicInfoGroup.class, message = "This field is required")
+    private Boolean hostelPreference;
 
     private String memoNotes; // optional
     @NotNull(groups = BasicInfoGroup.class, message = "This field is required")
