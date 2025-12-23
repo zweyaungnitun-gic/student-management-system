@@ -38,13 +38,6 @@
         <main class="container-xxl flex-grow-1">
           
           <div class="d-flex justify-content-between align-items-center mb-4">
-            <!-- <div class="student-id-badge bg-light border rounded p-3">
-              <i class="fas fa-id-badge me-2 text-primary"></i>
-              <span class="fw-bold">生徒ID: </span>
-              <span th:text="${student.studentId != null ? student.studentId : ('STU' + T(java.lang.String).format('%03d', student.id))}">
-                STD001
-              </span>
-            </div> -->
             <div class="student-id-badge bg-light border rounded p-3">
                 <i class="fas fa-id-badge me-2 text-primary"></i>
                 <span class="fw-bold">生徒ID: </span>
@@ -327,6 +320,7 @@
                         <div class="col-md-4">
                           <label class="form-label">日本渡航経験</label>
                           <select class="form-select" th:field="*{japanTravelExperience}">
+                            <option value="" disabled selected hidden>選択してください</option>                            
                             <option value="true">ある</option>
                             <option value="false">ない</option>
                           </select>
@@ -336,6 +330,7 @@
                         <div class="col-md-4">
                           <label class="form-label">COE申請経験</label>
                           <select class="form-select" th:field="*{coeApplicationExperience}">
+                            <option value="" disabled selected hidden>選択してください</option>                            
                             <option value="true">ある</option>
                             <option value="false">ない</option>
                           </select>
@@ -345,6 +340,7 @@
                         <div class="col-md-4">
                           <label class="form-label">寮があれば入りたい</label>
                           <select class="form-select" th:field="*{hostelPreference}">
+                            <option value="" disabled selected hidden>選択してください</option>
                             <option value="true">はい</option>
                             <option value="false">いいえ</option>
                           </select>
@@ -355,6 +351,7 @@
                         <div class="col-md-4">
                           <label class="form-label">お酒</label>
                           <select class="form-select" th:field="*{isAlcoholDrink}">
+                            <option value="" disabled selected hidden>選択してください</option>
                             <option th:value="true">飲む</option>
                             <option th:value="false">飲まない</option>
                           </select>
@@ -364,6 +361,7 @@
                         <div class="col-md-4">
                           <label class="form-label">タバコ</label>
                           <select class="form-select" th:field="*{isSmoking}">
+                            <option value="" disabled selected hidden>選択してください</option>
                             <option th:value="true">吸う</option>
                             <option th:value="false">吸わない</option>
                           </select>
@@ -373,6 +371,7 @@
                         <div class="col-md-4">
                           <label class="form-label">入れ墨(Tattoo)</label>
                           <select class="form-select select-placeholder" th:field="*{haveTatto}">
+                            <option value="" disabled selected hidden>選択してください</option>
                             <option th:value="true">ある</option>
                             <option th:value="false">ない</option>
                           </select>

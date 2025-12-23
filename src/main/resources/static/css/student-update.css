@@ -125,7 +125,7 @@ body {
 .form-section {
     background: #ffffff;
     border-radius: 10px;
-    padding: 25px;
+    padding: 20px;
     margin-bottom: 20px;
     border-top: 4px solid #4b6cb7;
     box-shadow: 0 2px 8px rgba(0,0,0,0.05);
@@ -159,6 +159,15 @@ body {
     scrollbar-width: none;
     padding-top: 10px;
     border-bottom: 2px solid #dee2e6;
+    position: relative;
+    border-bottom: 2px solid #dee2e6;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.card.shadow-sm.border-0 {
+    position: relative;
+    border-top: 1px solid rgba(10, 88, 160, 0.1) !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) inset;
 }
 
 .nav-tabs::-webkit-scrollbar {
@@ -468,9 +477,13 @@ body {
 /* ================= RESPONSIVE FIXES ================= */
 
 .page-wrapper {
-    padding: 1rem !important;
+    padding: 3.7rem !important;
     max-width: 100%;
     overflow-x: hidden;
+}
+
+.page-header {
+    margin-bottom: 2rem !important; /* Increase space below header */
 }
 
 .container-xxl {
