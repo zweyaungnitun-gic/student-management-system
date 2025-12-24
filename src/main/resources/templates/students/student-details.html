@@ -176,7 +176,8 @@
                                     </div>
                                     <div class="info-group">
                                         <div class="info-label">COE申請経験</div>
-                                        <div class="info-value" th:text="${coeApplicationExperienceDisplay.label}"></div>
+                                        <div class="info-value" th:text="${coeApplicationExperienceDisplay.label}">
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -665,19 +666,23 @@
                                 class="card p-3 shadow-sm border-0">
                                 <div class="mb-4">
                                     <div class="mb-2 fw-bold border-bottom pb-1">一回目面接結果メモ</div>
-                                    <textarea class="form-control interview-textarea" rows="6" readonly th:text="*{interview1}"></textarea>
+                                    <textarea class="form-control interview-textarea" rows="6" readonly
+                                        th:text="*{interview1}"></textarea>
                                 </div>
                                 <div class="mb-4">
                                     <div class="mb-2 fw-bold border-bottom pb-1">二回目面接結果メモ</div>
-                                    <textarea class="form-control interview-textarea" rows="6" readonly th:text="*{interview2}"></textarea>
+                                    <textarea class="form-control interview-textarea" rows="6" readonly
+                                        th:text="*{interview2}"></textarea>
                                 </div>
                                 <div class="mb-4">
                                     <div class="mb-2 fw-bold border-bottom pb-1">三回目面接結果メモ</div>
-                                    <textarea class="form-control interview-textarea" rows="6" readonly th:text="*{interview3}"></textarea>                                      
+                                    <textarea class="form-control interview-textarea" rows="6" readonly
+                                        th:text="*{interview3}"></textarea>
                                 </div>
                                 <div class="mb-4">
                                     <div class="mb-2 fw-bold border-bottom pb-1">その他メモ</div>
-                                    <textarea class="form-control interview-textarea" rows="6" readonly th:text="*{otherMemo}"></textarea>                                       
+                                    <textarea class="form-control interview-textarea" rows="6" readonly
+                                        th:text="*{otherMemo}"></textarea>
                                 </div>
                             </div>
                             <div th:unless="${currentTab == 'personal' or currentTab == 'contact' 
@@ -738,7 +743,7 @@
                 const filteredUrl = sessionStorage.getItem('lastFilteredStudentsUrl');
 
                 if (filteredUrl) {
-                    // Redirect to filtered list instead of using browser history
+                    // Redirect to filtered list 
                     window.location.href = filteredUrl;
                     return false; // Prevent default back behavior
                 }

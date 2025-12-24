@@ -326,6 +326,7 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
+    @Transactional
     public Student save(Student student) {
         if (student.getId() == null && (student.getStudentId() == null || student.getStudentId().isBlank())) {
             String generatedId = idGeneratorService.generateStudentId();

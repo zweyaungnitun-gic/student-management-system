@@ -57,33 +57,36 @@ public class StudentController {
             @RequestParam(value = "status", defaultValue = "") String status,
             Model model) {
 
-        List<String> statuses = new ArrayList<>();
-        if (!status.isBlank()) {
-            statuses = Arrays.asList(status.split(","));
+        List<StudentDTO> students;
+
+        // CHECK: If both are empty, it's the "Original Display" (Home) view
+        if (nameSearch.isBlank() && status.isBlank()) {
+            // Fetch everyone without filters
+            students = studentService.getAllStudents();
+        } else {
+            // Fetch based on filters
+            List<String> statuses = new ArrayList<>();
+            if (!status.isBlank()) {
+                statuses = Arrays.asList(status.split(","));
+            }
+            students = studentService.getStudentsByStatuses(nameSearch, statuses);
         }
 
-        List<StudentDTO> students = studentService.getStudentsByStatuses(nameSearch, statuses);
-
-        // Better sorting for Student IDs (STU001, STU002, etc.)
+        // --- Keep your sorting logic exactly as it is ---
         students.sort((s1, s2) -> {
-            // Handle null student IDs
             if (s1.getStudentId() == null && s2.getStudentId() == null)
                 return 0;
             if (s1.getStudentId() == null)
                 return 1;
             if (s2.getStudentId() == null)
                 return -1;
-
-            // Extract numeric part from student ID (e.g., "STU004" -> 4)
             String id1 = s1.getStudentId();
             String id2 = s2.getStudentId();
-
             try {
                 int num1 = extractNumberFromStudentId(id1);
                 int num2 = extractNumberFromStudentId(id2);
                 return Integer.compare(num1, num2);
             } catch (Exception e) {
-                // Fallback to string comparison
                 return id1.compareTo(id2);
             }
         });
@@ -147,7 +150,8 @@ public class StudentController {
             @RequestParam(required = false, defaultValue = "personal") String tab,
             @RequestParam(required = false) String subTab,
             @RequestParam(value = "nameSearch", defaultValue = "") String nameSearch,
-            @RequestParam(value = "status", defaultValue = "") String status,
+            // Rename this to filterStatus in the method signature
+            @RequestParam(value = "status", defaultValue = "") String filterStatus,
             Model model) {
 
         Student student = studentService.findById(id)
@@ -187,6 +191,8 @@ public class StudentController {
         model.addAttribute("n5Class", n5Class);
         model.addAttribute("n4Class", n4Class);
         model.addAttribute("interviewNotes", interviewNotes);
+        model.addAttribute("nameSearch", nameSearch);
+        model.addAttribute("status", filterStatus);
 
         // model.addAttribute("student", student);
         model.addAttribute("currentTab", tab);
@@ -306,55 +312,71 @@ public class StudentController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/update-status/{id}")
-    public String updateStatusInfo(@PathVariable Long id,
-            @Validated(StatusGroup.class) @ModelAttribute Student student,
+    public String updateStatusInfo(
+            @PathVariable Long id,
+            @Validated(StatusGroup.class) @ModelAttribute("student") Student student,
             BindingResult bindingResult,
             RedirectAttributes redirectAttributes,
             Model model,
             @RequestParam(value = "nameSearch", defaultValue = "") String nameSearch,
-            @RequestParam(value = "status", defaultValue = "") String status) {
+            // Ensure this comes from the hidden input 'filterStatus'
+            @RequestParam(value = "filterStatus", defaultValue = "") String filterStatus) {
+
+        // --- ADD THE DEBUG LINE HERE ---
+        System.out.println("DEBUG: Student ID from Path: " + id);
+        System.out.println("DEBUG: Status received from Form: " + student.getStatus());
+        System.out.println("DEBUG: Has Errors? " + bindingResult.hasErrors());
+        // -------------------------------
 
         if (bindingResult.hasErrors()) {
+            // If validation fails, we must reload the class DTOs for the UI to show the
+            // tabs correctly
+            N5ClassDTO n5ClassDTO = n5ClassService.getOrCreateN5ClassDTO(id);
+            N4ClassDTO n4ClassDTO = n4ClassService.getOrCreateN4ClassDTO(id);
+            InterviewNotesDTO interviewNotesDTO = interviewNotesService.getOrCreateInterviewNotesDTO(id);
+
+            model.addAttribute("n5Class", n5ClassDTO);
+            model.addAttribute("n4Class", n4ClassDTO);
+            model.addAttribute("interviewNotes", interviewNotesDTO);
             model.addAttribute("activeTab", "status");
             return "students/student-update.html";
         }
 
         try {
+            // 1. Fetch the REAL entity from DB
             Student existingStudent = studentService.findById(id)
                     .orElseThrow(() -> new RuntimeException("Student not found: " + id));
 
-            N5ClassDTO n5ClassDTO = n5ClassService.getOrCreateN5ClassDTO(id);
-            model.addAttribute("n5Class", n5ClassDTO);
-
-            N4ClassDTO n4ClassDTO = n4ClassService.getOrCreateN4ClassDTO(id);
-            model.addAttribute("n4Class", n4ClassDTO);
-
-            InterviewNotesDTO interviewNotesDTO = interviewNotesService.getOrCreateInterviewNotesDTO(id);
-            model.addAttribute("interviewNotes", interviewNotesDTO);
-
-            model.addAttribute("student", student);
-            model.addAttribute("isNew", false);
-            model.addAttribute("nameSearch", nameSearch);
-            model.addAttribute("status", status);
-            model.addAttribute("activeTab", "status");
-
+            // 2. Manually map ONLY the status-related fields from the form object
             existingStudent.setStatus(student.getStatus());
             existingStudent.setDesiredJobType(student.getDesiredJobType());
             existingStudent.setOtherDesiredJobType(student.getOtherDesiredJobType());
             existingStudent.setReligion(student.getReligion());
             existingStudent.setOtherReligion(student.getOtherReligion());
-            existingStudent.setEnrolledDate(student.getEnrolledDate());
+            existingStudent.setCurrentJapanLevel(student.getCurrentJapanLevel());
             existingStudent.setAttendingClassRelatedStatus(student.getAttendingClassRelatedStatus());
             existingStudent.setPassedHighestJLPTLevel(student.getPassedHighestJLPTLevel());
+            existingStudent.setJapanTravelExperience(student.getJapanTravelExperience());
+            existingStudent.setCoeApplicationExperience(student.getCoeApplicationExperience());
+            existingStudent.setHostelPreference(student.getHostelPreference());
+            existingStudent.setIsAlcoholDrink(student.getIsAlcoholDrink());
+            existingStudent.setIsSmoking(student.getIsSmoking());
+            existingStudent.setHaveTatto(student.getHaveTatto());
+            existingStudent.setEnrolledDate(student.getEnrolledDate());
+            existingStudent.setSchedulePaymentTutionDate(student.getSchedulePaymentTutionDate());
+            existingStudent.setActualTutionPaymentDate(student.getActualTutionPaymentDate());
+            existingStudent.setMemoNotes(student.getMemoNotes());
             existingStudent.setUpdatedAt(LocalDate.now());
 
+            // 3. Save the existing entity (which still has the Basic Info attached)
             studentService.save(existingStudent);
+
             redirectAttributes.addFlashAttribute("success", "ステータス情報が正常に更新されました。");
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", "更新に失敗しました: " + e.getMessage());
         }
 
-        return buildUpdateRedirectUrl(id, "status", nameSearch, status);
+        return buildUpdateRedirectUrl(id, "status", nameSearch, filterStatus);
     }
 
     @PreAuthorize("hasRole('ADMIN')")
@@ -423,25 +445,31 @@ public class StudentController {
     // Helper method to build redirect URL with proper encoding for Japanese
     // characters
 
-    // Updated helper to redirect back to the UPDATE page with all context
     private String buildUpdateRedirectUrl(Long id, String tab, String nameSearch, String status) {
         try {
             StringBuilder url = new StringBuilder("redirect:/students/student-update/");
             url.append(id).append("?tab=").append(tab);
 
+            // 1. Only keep nameSearch if it actually had a value
             if (nameSearch != null && !nameSearch.trim().isEmpty()) {
                 url.append("&nameSearch=").append(URLEncoder.encode(nameSearch.trim(), StandardCharsets.UTF_8));
             }
+
+            /*
+             * 2. THE FIX:
+             * Only append 'status' to the URL if it was part of a SEARCH.
+             * If the user just updated a student's status but wasn't
+             * filtering the list by that status before, we leave it empty.
+             */
             if (status != null && !status.trim().isEmpty()) {
+                // We check if the 'status' passed here is actually a filter context
+                // or just the student's new status.
                 url.append("&status=").append(URLEncoder.encode(status.trim(), StandardCharsets.UTF_8));
             }
 
             return url.toString();
         } catch (Exception e) {
-            // Fallback if encoding fails
             return "redirect:/students/student-update/" + id + "?tab=" + tab;
         }
-    }}
-
-    
-    
+    }
+}

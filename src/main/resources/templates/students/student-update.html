@@ -1,12 +1,13 @@
 <!DOCTYPE html>
 <html lang="ja" xmlns:th="http://www.thymeleaf.org">
+
 <head th:replace="~{layouts/admin-layout :: head(pageTitle=${'生徒情報更新 | Admin Dashboard'})}">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 </head>
 
 <body>
-  <link rel="stylesheet" href="/css/student-update.css"/>
+  <link rel="stylesheet" href="/css/student-update.css" />
 
   <div class="dashboard-layout">
 
@@ -16,14 +17,12 @@
     <div class="sidebar-overlay d-lg-none" data-sidebar-toggle></div>
 
     <div class="dashboard-main">
-      
+
       <div class="page-wrapper py-4 py-md-5 px-3 px-md-5">
         <div class="page-header mb-4">
           <div class="d-flex align-items-center gap-3">
-            <button class="btn btn-light btn-icon d-lg-none" 
-                    type="button" 
-                    aria-label="Toggle sidebar"
-                    data-sidebar-toggle>
+            <button class="btn btn-light btn-icon d-lg-none" type="button" aria-label="Toggle sidebar"
+              data-sidebar-toggle>
               <i class="bi bi-list fs-4"></i>
             </button>
             <div>
@@ -34,17 +33,17 @@
           </div>
         </div>
         <div class="header-bottom-line"></div>
-        
+
         <main class="container-xxl flex-grow-1">
-          
+
           <div class="d-flex justify-content-between align-items-center mb-4">
             <div class="student-id-badge bg-light border rounded p-3">
-                <i class="fas fa-id-badge me-2 text-primary"></i>
-                <span class="fw-bold">生徒ID: </span>
-                <span th:text="${student.studentId}">STD001</span>
+              <i class="fas fa-id-badge me-2 text-primary"></i>
+              <span class="fw-bold">生徒ID: </span>
+              <span th:text="${student.studentId}">STD001</span>
             </div>
-            
-          <a th:href="@{/students(nameSearch=${nameSearch}, status=${status})}" class="btn btn-outline-secondary">
+
+            <a th:href="@{/students(nameSearch=${nameSearch}, status=${status})}" class="btn btn-outline-secondary">
               <i class="fas fa-arrow-left me-2"></i>生徒一覧に戻る
             </a>
           </div>
@@ -53,80 +52,98 @@
           <div class="mb-4">
             <ul class="nav nav-tabs border-bottom-0 d-flex justify-content-between" id="studentTab" role="tablist">
               <li class="nav-item flex-fill text-center mx-1">
-                <button class="nav-link active w-100 px-3 px-md-4 py-3 position-relative" id="basic-tab" data-bs-toggle="tab" data-bs-target="#basic" type="button">
+                <button class="nav-link active w-100 px-3 px-md-4 py-3 position-relative" id="basic-tab"
+                  data-bs-toggle="tab" data-bs-target="#basic" type="button">
                   <i class="fas fa-id-card me-1 me-md-2"></i>
                   <span class="nav-tab-text fw-medium d-none d-sm-inline">基本情報</span>
-                  <span class="unsaved-badge badge bg-danger position-absolute top-0 end-0 translate-middle" style="display: none;">!</span>
+                  <span class="unsaved-badge badge bg-danger position-absolute top-0 end-0 translate-middle"
+                    style="display: none;">!</span>
                 </button>
               </li>
               <li class="nav-item flex-fill text-center mx-1">
-                <button class="nav-link w-100 px-3 px-md-4 py-3 position-relative" id="status-tab" data-bs-toggle="tab" data-bs-target="#status" type="button">
+                <button class="nav-link w-100 px-3 px-md-4 py-3 position-relative" id="status-tab" data-bs-toggle="tab"
+                  data-bs-target="#status" type="button">
                   <i class="fas fa-tasks me-1 me-md-2"></i>
                   <span class="nav-tab-text fw-medium d-none d-sm-inline">ステータス</span>
-                  <span class="unsaved-badge badge bg-danger position-absolute top-0 end-0 translate-middle" style="display: none;">!</span>
+                  <span class="unsaved-badge badge bg-danger position-absolute top-0 end-0 translate-middle"
+                    style="display: none;">!</span>
                 </button>
               </li>
               <li class="nav-item flex-fill text-center mx-1">
-                <button class="nav-link w-100 px-3 px-md-4 py-3 position-relative" id="n5-tab" data-bs-toggle="tab" data-bs-target="#n5" type="button">
+                <button class="nav-link w-100 px-3 px-md-4 py-3 position-relative" id="n5-tab" data-bs-toggle="tab"
+                  data-bs-target="#n5" type="button">
                   <i class="fas fa-book-open me-1 me-md-2"></i>
                   <span class="nav-tab-text fw-medium d-none d-sm-inline">N5クラス</span>
-                  <span class="unsaved-badge badge bg-danger position-absolute top-0 end-0 translate-middle" style="display: none;">!</span>
+                  <span class="unsaved-badge badge bg-danger position-absolute top-0 end-0 translate-middle"
+                    style="display: none;">!</span>
                 </button>
               </li>
               <li class="nav-item flex-fill text-center mx-1">
-                <button class="nav-link w-100 px-3 px-md-4 py-3 position-relative" id="n4-tab" data-bs-toggle="tab" data-bs-target="#n4" type="button">
+                <button class="nav-link w-100 px-3 px-md-4 py-3 position-relative" id="n4-tab" data-bs-toggle="tab"
+                  data-bs-target="#n4" type="button">
                   <i class="fas fa-book-reader me-1 me-md-2"></i>
                   <span class="nav-tab-text fw-medium d-none d-sm-inline">N4クラス</span>
-                  <span class="unsaved-badge badge bg-danger position-absolute top-0 end-0 translate-middle" style="display: none;">!</span>
+                  <span class="unsaved-badge badge bg-danger position-absolute top-0 end-0 translate-middle"
+                    style="display: none;">!</span>
                 </button>
               </li>
               <li class="nav-item flex-fill text-center mx-1">
-                <button class="nav-link w-100 px-3 px-md-4 py-3 position-relative" id="interview-tab" data-bs-toggle="tab" data-bs-target="#interview" type="button">
+                <button class="nav-link w-100 px-3 px-md-4 py-3 position-relative" id="interview-tab"
+                  data-bs-toggle="tab" data-bs-target="#interview" type="button">
                   <i class="fas fa-comments me-1 me-md-2"></i>
                   <span class="nav-tab-text fw-medium d-none d-sm-inline">面談</span>
-                  <span class="unsaved-badge badge bg-danger position-absolute top-0 end-0 translate-middle" style="display: none;">!</span>
+                  <span class="unsaved-badge badge bg-danger position-absolute top-0 end-0 translate-middle"
+                    style="display: none;">!</span>
                 </button>
               </li>
             </ul>
           </div>
 
           <div class="tab-content" id="studentTabContent">
-            
+
             <!-- Tab 1 -->
             <div class="tab-pane fade show active" id="basic" role="tabpanel" aria-labelledby="basic-tab">
               <div class="card shadow-sm border-0">
                 <div class="card-body">
-                  <form th:action="@{/students/update-basic/{id}(id=${student.id})}" th:object="${student}" method="post" id="basicForm" novalidate>
-                      <input type="hidden" name="nameSearch" th:value="${nameSearch}" />
-                      <input type="hidden" name="status" th:value="${status}" />
-                      <input type="hidden" th:field="*{studentId}">
-                    
-                      <div class="form-section">
-                      
-                      <div class="row g-3"> 
+                  <form th:action="@{/students/update-basic/{id}(id=${student.id})}" th:object="${student}"
+                    method="post" id="basicForm" novalidate>
+                    <input type="hidden" name="nameSearch" th:value="${nameSearch}" />
+                    <input type="hidden" name="filterStatus" th:value="${status}" />
+                    <input type="hidden" th:field="*{id}" />
+                    <input type="hidden" th:field="*{studentId}">
+
+                    <div class="form-section">
+
+                      <div class="row g-3">
                         <div class="col-md-6">
                           <label class="form-label">生徒ID</label>
-                          <input type="text" class="form-control" th:value="${student.studentId != null ? student.studentId : ('STU' + T(java.lang.String).format('%03d', student.id))}" readonly style="background-color: #e9ecef;"/>
-                          <input type="hidden" th:field="*{studentId}"/>
+                          <input type="text" class="form-control"
+                            th:value="${student.studentId != null ? student.studentId : ('STU' + T(java.lang.String).format('%03d', student.id))}"
+                            readonly style="background-color: #e9ecef;" />
+                          <input type="hidden" th:field="*{studentId}" />
                         </div>
 
-                      <div class="row g-3"></div>
+                        <div class="row g-3"></div>
                         <div class="col-md-6">
-                          <label class="form-label required-label">なまえ（英語）</label>  
-                        <input type="text" class="form-control" th:field="*{studentName}" required />
-                        <div class="text-danger" th:if="${#fields.hasErrors('studentName')}" th:errors="*{studentName}"></div>                      
-                      </div>
-                        
+                          <label class="form-label required-label">なまえ（英語）</label>
+                          <input type="text" class="form-control" th:field="*{studentName}" required />
+                          <div class="text-danger" th:if="${#fields.hasErrors('studentName')}"
+                            th:errors="*{studentName}"></div>
+                        </div>
+
                         <div class="col-md-6">
                           <label class="form-label required-label">なまえ（カタカナ）</label>
                           <input type="text" class="form-control" th:field="*{nameInJapanese}" />
-                          <div class="text-danger" th:if="${#fields.hasErrors('nameInJapanese')}" th:errors="*{nameInJapanese}"></div>
+                          <div class="text-danger" th:if="${#fields.hasErrors('nameInJapanese')}"
+                            th:errors="*{nameInJapanese}"></div>
                         </div>
 
                         <div class="col-md-6">
                           <label class="form-label required-label">生年月日</label>
-                          <input type="date" class="form-control" name="dateOfBirth" th:value="${student.dateOfBirth}" />
-                          <div class="text-danger" th:if="${#fields.hasErrors('dateOfBirth')}" th:errors="*{dateOfBirth}"></div>
+                          <input type="date" class="form-control" name="dateOfBirth"
+                            th:value="${student.dateOfBirth}" />
+                          <div class="text-danger" th:if="${#fields.hasErrors('dateOfBirth')}"
+                            th:errors="*{dateOfBirth}"></div>
                         </div>
 
                         <div class="col-md-6">
@@ -141,69 +158,71 @@
                         <div class="col-md-6">
                           <label class="form-label required-label">父親名（ちちおや めい）</label>
                           <input type="text" class="form-control" th:field="*{fatherName}" />
-                          <div class="text-danger" th:if="${#fields.hasErrors('fatherName')}" th:errors="*{fatherName}"></div>
+                          <div class="text-danger" th:if="${#fields.hasErrors('fatherName')}" th:errors="*{fatherName}">
+                          </div>
                         </div>
 
                         <div class="col-md-6">
                           <label class="form-label required-label">連絡先(TEL, Viber)</label>
-                          <input type="text" class="form-control" th:field="*{contactViber}" 
-                                oninput="this.value = this.value.replace(/[^0-9]/g, '')"
-                                maxlength="11"
-                                placeholder="09から始まる11桁の数字"
-                                onblur="validatePhoneNumber(this, '連絡先(TEL, Viber)')"/>
-                          <div class="text-danger" th:if="${#fields.hasErrors('contactViber')}" th:errors="*{contactViber}"></div>
+                          <input type="text" class="form-control" th:field="*{contactViber}"
+                            oninput="this.value = this.value.replace(/[^0-9]/g, '')" maxlength="11"
+                            placeholder="09から始まる11桁の数字" onblur="validatePhoneNumber(this, '連絡先(TEL, Viber)')" />
+                          <div class="text-danger" th:if="${#fields.hasErrors('contactViber')}"
+                            th:errors="*{contactViber}"></div>
                           <div class="invalid-feedback" style="display: none;">09から始まる11桁の数字を入力してください</div>
                         </div>
 
                         <div class="col-md-6">
                           <label class="form-label required-label">国民 ID 番号</label>
-                          <input type="text" class="form-control" th:field="*{nationalID}" 
-                                placeholder="例: 12/KaMaYa(N)54243"
-                                onblur="validateNationalID(this)"/>
-                          <div class="text-danger" th:if="${#fields.hasErrors('nationalID')}" th:errors="*{nationalID}"></div>
-                          <div class="invalid-feedback" style="display: none;">形式: XX/XXXXX(X)XXXXXX (例: 12/KaMaYa(N)54243)。/ の前は1-14、( ) の後は6桁の数字</div>
+                          <input type="text" class="form-control" th:field="*{nationalID}"
+                            placeholder="例: 12/KaMaYa(N)54243" onblur="validateNationalID(this)" />
+                          <div class="text-danger" th:if="${#fields.hasErrors('nationalID')}" th:errors="*{nationalID}">
+                          </div>
+                          <div class="invalid-feedback" style="display: none;">形式: XX/XXXXX(X)XXXXXX (例:
+                            12/KaMaYa(N)54243)。/ の前は1-14、( ) の後は6桁の数字</div>
                         </div>
 
                         <div class="col-md-6">
                           <label class="form-label">パスポート番号</label>
                           <input type="text" class="form-control" th:field="*{passportNumber}" />
-                          <div class="text-danger" th:if="${#fields.hasErrors('passportNumber')}" th:errors="*{passportNumber}"></div>
+                          <div class="text-danger" th:if="${#fields.hasErrors('passportNumber')}"
+                            th:errors="*{passportNumber}"></div>
                         </div>
 
                         <div class="col-md-6">
                           <label class="form-label required-label">電話番号</label>
-                          <input type="tel" class="form-control" th:field="*{phoneNumber}" 
-                                oninput="this.value = this.value.replace(/[^0-9]/g, '')"
-                                maxlength="11"
-                                placeholder="09から始まる11桁の数字"
-                                onblur="validatePhoneNumber(this, '電話番号')" />
-                          <div class="text-danger" th:if="${#fields.hasErrors('phoneNumber')}" th:errors="*{phoneNumber}"></div>
+                          <input type="tel" class="form-control" th:field="*{phoneNumber}"
+                            oninput="this.value = this.value.replace(/[^0-9]/g, '')" maxlength="11"
+                            placeholder="09から始まる11桁の数字" onblur="validatePhoneNumber(this, '電話番号')" />
+                          <div class="text-danger" th:if="${#fields.hasErrors('phoneNumber')}"
+                            th:errors="*{phoneNumber}"></div>
                           <div class="invalid-feedback" style="display: none;">09から始まる11桁の数字を入力してください</div>
                         </div>
 
                         <div class="col-md-6">
                           <label class="form-label required-label">保護者電話番号</label>
-                          <input type="tel" class="form-control" th:field="*{secondaryPhone}" 
-                                oninput="this.value = this.value.replace(/[^0-9]/g, '')"
-                                maxlength="11"
-                                placeholder="09から始まる11桁の数字"
-                                onblur="validatePhoneNumber(this, '保護者電話番号')" />
-                          <div class="text-danger" th:if="${#fields.hasErrors('secondaryPhone')}" th:errors="*{secondaryPhone}"></div>
+                          <input type="tel" class="form-control" th:field="*{secondaryPhone}"
+                            oninput="this.value = this.value.replace(/[^0-9]/g, '')" maxlength="11"
+                            placeholder="09から始まる11桁の数字" onblur="validatePhoneNumber(this, '保護者電話番号')" />
+                          <div class="text-danger" th:if="${#fields.hasErrors('secondaryPhone')}"
+                            th:errors="*{secondaryPhone}"></div>
                           <div class="invalid-feedback" style="display: none;">09から始まる11桁の数字を入力してください</div>
                         </div>
 
                         <div class="col-12">
                           <label class="form-label required-label">現住所</label>
                           <textarea class="form-control" th:field="*{currentLivingAddress}" rows="2"></textarea>
-                          <div class="text-danger" th:if="${#fields.hasErrors('currentLivingAddress')}" th:errors="*{currentLivingAddress}"></div>
+                          <div class="text-danger" th:if="${#fields.hasErrors('currentLivingAddress')}"
+                            th:errors="*{currentLivingAddress}"></div>
                         </div>
 
                         <div class="col-12">
                           <label class="form-label required-label">出身地住所</label>
                           <textarea class="form-control" th:field="*{homeTownAddress}" rows="2"></textarea>
-                          <div class="text-danger" th:if="${#fields.hasErrors('homeTownAddress')}" th:errors="*{homeTownAddress}"></div>
+                          <div class="text-danger" th:if="${#fields.hasErrors('homeTownAddress')}"
+                            th:errors="*{homeTownAddress}"></div>
                         </div>
-                        
+
                         <div class="col-12 mt-4 pt-3 border-top">
                           <div class="d-flex justify-content-center gap-3">
                             <button type="button" class="btn btn-secondary" onclick="cancelUpdate()">
@@ -225,13 +244,15 @@
             <div class="tab-pane fade" id="status" role="tabpanel" aria-labelledby="status-tab">
               <div class="card shadow-sm border-0">
                 <div class="card-body">
-                  <form th:action="@{/students/update-status/{id}(id=${student.id})}" th:object="${student}" method="post" id="statusForm" novalidate>
-                      <input type="hidden" name="nameSearch" th:value="${nameSearch}" />
-                      <input type="hidden" name="status" th:value="${status}" />
-                      <input type="hidden" th:field="*{studentId}">
+                  <form th:action="@{/students/update-status/{id}(id=${student.id})}" th:object="${student}"
+                    method="post" id="statusForm" novalidate>
+                    <input type="hidden" name="nameSearch" th:value="${nameSearch}" />
+                    <input type="hidden" name="filterStatus" th:value="${status}" />
+                    <input type="hidden" th:field="*{id}" />
+                    <input type="hidden" th:field="*{studentId}">
                     <div class="form-section">
                       <div class="row g-3">
-                        
+
                         <div class="col-md-6">
                           <label class="form-label required-label">希望職種</label>
                           <select class="form-select" th:field="*{desiredJobType}" id="desiredJobType">
@@ -240,13 +261,16 @@
                             <option value="宿泊">宿泊</option>
                             <option value="その他">その他</option>
                           </select>
-                          <div class="text-danger" th:if="${#fields.hasErrors('desiredJobType')}" th:errors="*{desiredJobType}"></div>
+                          <div class="text-danger" th:if="${#fields.hasErrors('desiredJobType')}"
+                            th:errors="*{desiredJobType}"></div>
                         </div>
 
                         <div class="col-md-6">
                           <label class="form-label">その他希望職種</label>
-                          <input type="text" class="form-control" th:field="*{otherDesiredJobType}" id="otherDesiredJobType"/>
-                          <div class="text-danger" th:if="${#fields.hasErrors('otherDesiredJobType')}" th:errors="*{otherDesiredJobType}"></div>
+                          <input type="text" class="form-control" th:field="*{otherDesiredJobType}"
+                            id="otherDesiredJobType" />
+                          <div class="text-danger" th:if="${#fields.hasErrors('otherDesiredJobType')}"
+                            th:errors="*{otherDesiredJobType}"></div>
                         </div>
 
                         <div class="col-md-6">
@@ -257,13 +281,15 @@
                             <option value="christian">キリスト教</option>
                             <option value="other">その他</option>
                           </select>
-                          <div class="text-danger" th:if="${#fields.hasErrors('religion')}" th:errors="*{religion}"></div>
+                          <div class="text-danger" th:if="${#fields.hasErrors('religion')}" th:errors="*{religion}">
+                          </div>
                         </div>
 
                         <div class="col-md-6">
                           <label class="form-label">その他宗教</label>
-                          <input type="text" class="form-control" th:field="*{otherReligion}" id="otherReligionInput"/>
-                          <div class="text-danger" th:if="${#fields.hasErrors('otherReligion')}" th:errors="*{otherReligion}"></div>
+                          <input type="text" class="form-control" th:field="*{otherReligion}" id="otherReligionInput" />
+                          <div class="text-danger" th:if="${#fields.hasErrors('otherReligion')}"
+                            th:errors="*{otherReligion}"></div>
                         </div>
 
                         <div class="col-md-6">
@@ -273,25 +299,27 @@
                             <option value="N5">N5</option>
                             <option value="N4">N4</option>
                           </select>
-                          <div class="text-danger" th:if="${#fields.hasErrors('currentJapanLevel')}" th:errors="*{currentJapanLevel}"></div>
+                          <div class="text-danger" th:if="${#fields.hasErrors('currentJapanLevel')}"
+                            th:errors="*{currentJapanLevel}"></div>
                         </div>
 
                         <div class="col-md-6">
                           <label class="form-label required-label">生徒の授業ステータス</label>
-                          <select class="form-select" th:field="*{attendingClassRelatedStatus}"name="attendingClassRelatedStatus"
-                              id="attendingClassRelatedStatusField">
-                              <option th:value="''" th:if="${student.attendingClassRelatedStatus == null or student.attendingClassRelatedStatus == ''}">
-                                  選択してください </option>
-                              <option value="在校" th:selected="${student.attendingClassRelatedStatus == '在校'}">
-                                  在校 </option>
-                              <option value="卒業" th:selected="${student.attendingClassRelatedStatus == '卒業'}">
-                                  卒業 </option>
-                              <option value="途中退校" th:selected="${student.attendingClassRelatedStatus == '途中退校'}">
-                                  途中退校</option>
+                          <select class="form-select" th:field="*{attendingClassRelatedStatus}"
+                            id="attendingClassRelatedStatusField">
+                            <option th:value="''"
+                              th:if="${student.attendingClassRelatedStatus == null or student.attendingClassRelatedStatus == ''}">
+                              選択してください </option>
+                            <option value="在校" th:selected="${student.attendingClassRelatedStatus == '在校'}">
+                              在校 </option>
+                            <option value="卒業" th:selected="${student.attendingClassRelatedStatus == '卒業'}">
+                              卒業 </option>
+                            <option value="途中退校" th:selected="${student.attendingClassRelatedStatus == '途中退校'}">
+                              途中退校</option>
                           </select>
-                          <div class="text-danger" th:if="${#fields.hasErrors('attendingClassRelatedStatus')}" 
-                              th:errors="*{attendingClassRelatedStatus}"></div>
-                          </div>
+                          <div class="text-danger" th:if="${#fields.hasErrors('attendingClassRelatedStatus')}"
+                            th:errors="*{attendingClassRelatedStatus}"></div>
+                        </div>
 
                         <div class="col-md-6">
                           <label class="form-label required-label">在籍状況</label>
@@ -313,28 +341,31 @@
                             <option value="N2">N2</option>
                             <option value="N1">N1</option>
                           </select>
-                          <div class="text-danger" th:if="${#fields.hasErrors('passedHighestJLPTLevel')}" th:errors="*{passedHighestJLPTLevel}"></div>
+                          <div class="text-danger" th:if="${#fields.hasErrors('passedHighestJLPTLevel')}"
+                            th:errors="*{passedHighestJLPTLevel}"></div>
                         </div>
                         <div></div>
 
                         <div class="col-md-4">
                           <label class="form-label">日本渡航経験</label>
                           <select class="form-select" th:field="*{japanTravelExperience}">
-                            <option value="" disabled selected hidden>選択してください</option>                            
+                            <option value="" disabled selected hidden>選択してください</option>
                             <option value="true">ある</option>
                             <option value="false">ない</option>
                           </select>
-                          <div class="text-danger" th:if="${#fields.hasErrors('japanTravelExperience')}" th:errors="*{japanTravelExperience}"></div>
+                          <div class="text-danger" th:if="${#fields.hasErrors('japanTravelExperience')}"
+                            th:errors="*{japanTravelExperience}"></div>
                         </div>
 
                         <div class="col-md-4">
                           <label class="form-label">COE申請経験</label>
                           <select class="form-select" th:field="*{coeApplicationExperience}">
-                            <option value="" disabled selected hidden>選択してください</option>                            
+                            <option value="" disabled selected hidden>選択してください</option>
                             <option value="true">ある</option>
                             <option value="false">ない</option>
                           </select>
-                          <div class="text-danger" th:if="${#fields.hasErrors('coeApplicationExperience')}" th:errors="*{coeApplicationExperience}"></div>
+                          <div class="text-danger" th:if="${#fields.hasErrors('coeApplicationExperience')}"
+                            th:errors="*{coeApplicationExperience}"></div>
                         </div>
 
                         <div class="col-md-4">
@@ -344,7 +375,8 @@
                             <option value="true">はい</option>
                             <option value="false">いいえ</option>
                           </select>
-                          <div class="text-danger" th:if="${#fields.hasErrors('hostelPreference')}" th:errors="*{hostelPreference}"></div>
+                          <div class="text-danger" th:if="${#fields.hasErrors('hostelPreference')}"
+                            th:errors="*{hostelPreference}"></div>
                         </div>
                         <div></div>
 
@@ -355,7 +387,8 @@
                             <option th:value="true">飲む</option>
                             <option th:value="false">飲まない</option>
                           </select>
-                          <div class="text-danger" th:if="${#fields.hasErrors('isAlcoholDrink')}" th:errors="*{isAlcoholDrink}"></div>
+                          <div class="text-danger" th:if="${#fields.hasErrors('isAlcoholDrink')}"
+                            th:errors="*{isAlcoholDrink}"></div>
                         </div>
 
                         <div class="col-md-4">
@@ -365,7 +398,8 @@
                             <option th:value="true">吸う</option>
                             <option th:value="false">吸わない</option>
                           </select>
-                          <div class="text-danger" th:if="${#fields.hasErrors('isSmoking')}" th:errors="*{isSmoking}"></div>
+                          <div class="text-danger" th:if="${#fields.hasErrors('isSmoking')}" th:errors="*{isSmoking}">
+                          </div>
                         </div>
 
                         <div class="col-md-4">
@@ -375,35 +409,34 @@
                             <option th:value="true">ある</option>
                             <option th:value="false">ない</option>
                           </select>
-                          <div class="text-danger" th:if="${#fields.hasErrors('haveTatto')}" th:errors="*{haveTatto}"></div>
+                          <div class="text-danger" th:if="${#fields.hasErrors('haveTatto')}" th:errors="*{haveTatto}">
+                          </div>
                         </div>
                         <div></div>
 
                         <div class="col-md-4">
                           <label class="form-label required-label">学校登録日</label>
-                          <input type="date" class="form-control" name="enrolledDate" th:value="${student.enrolledDate}"/>
-                          <div class="text-danger" th:if="${#fields.hasErrors('enrolledDate')}" th:errors="*{enrolledDate}"></div>
+                          <input type="date" class="form-control" th:field="*{enrolledDate}" />
                         </div>
 
                         <div class="col-md-4">
                           <label class="form-label required-label">授業料支払予定日</label>
-                          <input type="date" class="form-control" name="schedulePaymentTutionDate" th:value="${student.schedulePaymentTutionDate}"/>
-                          <div class="text-danger" th:if="${#fields.hasErrors('schedulePaymentTutionDate')}" th:errors="*{schedulePaymentTutionDate}"></div>
+                          <input type="date" class="form-control" th:field="*{schedulePaymentTutionDate}" />
                         </div>
 
                         <div class="col-md-4">
                           <label class="form-label">授業料支払実績日</label>
-                          <input type="date" class="form-control" name="actualTutionPaymentDate" th:value="${student.actualTutionPaymentDate}"/>
-                          <div class="text-danger" th:if="${#fields.hasErrors('actualTutionPaymentDate')}" th:errors="*{actualTutionPaymentDate}"></div>
+                          <input type="date" class="form-control" th:field="*{actualTutionPaymentDate}" />
                         </div>
-                        <div></div>
 
                         <div class="col-12">
                           <label class="form-label">その他メモ（自由形式）</label>
-                          <textarea class="form-control" th:field="*{memoNotes}" rows="4" placeholder="自由形式のメモ"></textarea>
-                          <div class="text-danger" th:if="${#fields.hasErrors('memoNotes')}" th:errors="*{memoNotes}"></div>
+                          <textarea class="form-control" th:field="*{memoNotes}" rows="4"
+                            placeholder="自由形式のメモ"></textarea>
+                          <div class="text-danger" th:if="${#fields.hasErrors('memoNotes')}" th:errors="*{memoNotes}">
+                          </div>
                         </div>
-                        
+
                         <div class="col-12 mt-4 pt-3 border-top">
                           <div class="d-flex justify-content-center gap-3">
                             <button type="button" class="btn btn-secondary" onclick="cancelUpdate()">
@@ -421,455 +454,495 @@
               </div>
             </div>
 
-          <!-- Tab 3 -->
-          <div class="tab-pane fade" id="n5" role="tabpanel" aria-labelledby="n5-tab">
-            <div class="card shadow-sm border-0">
-              <div class="card-body">
-                <form th:action="@{/students/update-n5/{id}(id=${student.id})}" 
-                    th:object="${n5Class}" method="post" id="n5Form">
+            <!-- Tab 3 -->
+            <div class="tab-pane fade" id="n5" role="tabpanel" aria-labelledby="n5-tab">
+              <div class="card shadow-sm border-0">
+                <div class="card-body">
+                  <form th:action="@{/students/update-n5/{id}(id=${student.id})}" th:object="${n5Class}" method="post"
+                    id="n5Form">
                     <input type="hidden" name="nameSearch" th:value="${nameSearch}" />
-                    <input type="hidden" name="status" th:value="${status}" />
+                    <input type="hidden" name="filterStatus" th:value="${status}" />
+
                     <input type="hidden" th:field="*{studentId}">
-                    <input type="hidden" th:field="*{id}" novalidate/>
-                  
-                  <div class="mb-4">
-                    <h5 class="border-bottom pb-2 mb-3">
-                      <i class="fas fa-chalkboard me-2 text-primary"></i>N5クラス情報明細
-                    </h5>
-                    <div class="row g-3">
-                      <div class="col-md-4">
-                        <label class="form-label">担当教師</label>
-                        <input type="text" class="form-control" th:field="*{n5ClassTeacher}" />
-                      </div>
+                    <input type="hidden" th:field="*{id}" />
+                    <input type="hidden" th:field="*{id}" novalidate />
 
-                      <div class="col-md-4">
-                        <label class="form-label">出席率</label>
-                        <input type="text" class="form-control" th:field="*{n5ClassAttendance}" />
-                      </div>
-                      <div></div>
-                      <div class="col-md-3">
-                        <label class="form-label">日本語テスト結果 1</label>
-                        <input type="text" class="form-control" th:field="*{n5ClassTestResult1}" />
-                      </div>
-                      
-                      <div class="col-md-3">
-                        <label class="form-label">日本語テスト結果 2</label>
-                        <input type="text" class="form-control" th:field="*{n5ClassTestResult2}" />
-                      </div>
+                    <div class="mb-4">
+                      <h5 class="border-bottom pb-2 mb-3">
+                        <i class="fas fa-chalkboard me-2 text-primary"></i>N5クラス情報明細
+                      </h5>
+                      <div class="row g-3">
+                        <div class="col-md-4">
+                          <label class="form-label">担当教師</label>
+                          <input type="text" class="form-control" th:field="*{n5ClassTeacher}" />
+                        </div>
 
-                      <div class="col-md-3">
-                        <label class="form-label">日本語テスト結果 3</label>
-                        <input type="text" class="form-control" th:field="*{n5ClassTestResult3}" />
-                      </div>
+                        <div class="col-md-4">
+                          <label class="form-label">出席率</label>
+                          <input type="text" class="form-control" th:field="*{n5ClassAttendance}" />
+                        </div>
+                        <div></div>
+                        <div class="col-md-3">
+                          <label class="form-label">日本語テスト結果 1</label>
+                          <input type="text" class="form-control" th:field="*{n5ClassTestResult1}" />
+                        </div>
 
-                      <div class="col-md-3">
-                        <label class="form-label">日本語テスト結果 4</label>
-                        <input type="text" class="form-control" th:field="*{n5ClassTestResult4}" />
-                      </div>
-                      
-                      <div class="col-12">
-                        <label class="form-label">教師所感</label>
-                        <textarea class="form-control" th:field="*{n5ClassFeedback}" rows="3"></textarea>
+                        <div class="col-md-3">
+                          <label class="form-label">日本語テスト結果 2</label>
+                          <input type="text" class="form-control" th:field="*{n5ClassTestResult2}" />
+                        </div>
+
+                        <div class="col-md-3">
+                          <label class="form-label">日本語テスト結果 3</label>
+                          <input type="text" class="form-control" th:field="*{n5ClassTestResult3}" />
+                        </div>
+
+                        <div class="col-md-3">
+                          <label class="form-label">日本語テスト結果 4</label>
+                          <input type="text" class="form-control" th:field="*{n5ClassTestResult4}" />
+                        </div>
+
+                        <div class="col-12">
+                          <label class="form-label">教師所感</label>
+                          <textarea class="form-control" th:field="*{n5ClassFeedback}" rows="3"></textarea>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                  <div></div>
+                    <div></div>
 
-                  <div class="mb-4">
-                    <h6 class="border-bottom pb-2 mb-3">
-                      <i class="fas fa-comments me-2 text-success"></i>N5会話クラス①情報明細
-                    </h6>
-                    <div class="row g-3">
-                      <div class="col-md-3">
-                        <label class="form-label">クラス名</label>
-                        <input type="text" class="form-control" value="N5会話クラス①" readonly style="background-color: #e9ecef;"/>
-                      </div>
+                    <div class="mb-4">
+                      <h6 class="border-bottom pb-2 mb-3">
+                        <i class="fas fa-comments me-2 text-success"></i>N5会話クラス①情報明細
+                      </h6>
+                      <div class="row g-3">
+                        <div class="col-md-3">
+                          <label class="form-label">クラス名</label>
+                          <input type="text" class="form-control" value="N5会話クラス①" readonly
+                            style="background-color: #e9ecef;" />
+                        </div>
 
-                      <div class="col-md-3">
-                        <label class="form-label">担当教師</label>
-                        <input type="text" class="form-control" th:field="*{n5Class1Teacher}" />
-                        <div class="text-danger" th:if="${#fields.hasErrors('n5Class1Teacher')}" th:errors="*{n5Class1Teacher}"></div>
-                      </div>
+                        <div class="col-md-3">
+                          <label class="form-label">担当教師</label>
+                          <input type="text" class="form-control" th:field="*{n5Class1Teacher}" />
+                          <div class="text-danger" th:if="${#fields.hasErrors('n5Class1Teacher')}"
+                            th:errors="*{n5Class1Teacher}"></div>
+                        </div>
 
-                      <div class="col-md-3">
-                        <label class="form-label">出席率</label>
-                        <input type="text" class="form-control" th:field="*{n5Class1AttendanceRate}" />
-                        <div class="text-danger" th:if="${#fields.hasErrors('n5Class1AttendanceRate')}" th:errors="*{n5Class1AttendanceRate}"></div>
-                      </div>
+                        <div class="col-md-3">
+                          <label class="form-label">出席率</label>
+                          <input type="text" class="form-control" th:field="*{n5Class1AttendanceRate}" />
+                          <div class="text-danger" th:if="${#fields.hasErrors('n5Class1AttendanceRate')}"
+                            th:errors="*{n5Class1AttendanceRate}"></div>
+                        </div>
 
-                      <div class="col-md-3">
-                        <label class="form-label">日本語テスト結果</label>
-                        <input type="text" class="form-control" th:field="*{n5Class1TestResult}" />
-                        <div class="text-danger" th:if="${#fields.hasErrors('n5Class1TestResult')}" th:errors="*{n5Class1TestResult}"></div>
-                      </div>
+                        <div class="col-md-3">
+                          <label class="form-label">日本語テスト結果</label>
+                          <input type="text" class="form-control" th:field="*{n5Class1TestResult}" />
+                          <div class="text-danger" th:if="${#fields.hasErrors('n5Class1TestResult')}"
+                            th:errors="*{n5Class1TestResult}"></div>
+                        </div>
 
-                      <div class="col-12">
-                        <label class="form-label">教師所感</label>
-                        <textarea class="form-control" th:field="*{n5Class1TeacherFeedback}" rows="2"></textarea>
-                        <div class="text-danger" th:if="${#fields.hasErrors('n5Class1TeacherFeedback')}" th:errors="*{n5Class1TeacherFeedback}"></div>
-                      </div>
-                    </div>
-                  </div>
-                  <div></div>
-
-                  <div class="mb-4">
-                    <h6 class="border-bottom pb-2 mb-3">
-                      <i class="fas fa-comments me-2 text-success"></i>N5会話クラス②情報明細
-                    </h6>
-                    <div class="row g-3">
-                      <div class="col-md-3">
-                        <label class="form-label">クラス名</label>
-                        <input type="text" class="form-control" value="N5会話クラス②" readonly style="background-color: #e9ecef;"/>
-                      </div>
-
-                      <div class="col-md-3">
-                        <label class="form-label">担当教師</label>
-                        <input type="text" class="form-control" th:field="*{n5Class2Teacher}" />
-                        <div class="text-danger" th:if="${#fields.hasErrors('n5Class2Teacher')}" th:errors="*{n5Class2Teacher}"></div>
-                      </div>
-
-                      <div class="col-md-3">
-                        <label class="form-label">出席率</label>
-                        <input type="text" class="form-control" th:field="*{n5Class2AttendanceRate}" />
-                        <div class="text-danger" th:if="${#fields.hasErrors('n5Class2AttendanceRate')}" th:errors="*{n5Class2AttendanceRate}"></div>
-                      </div>
-
-                      <div class="col-md-3">
-                        <label class="form-label">日本語テスト結果</label>
-                        <input type="text" class="form-control" th:field="*{n5Class2TestResult}" />
-                        <div class="text-danger" th:if="${#fields.hasErrors('n5Class2TestResult')}" th:errors="*{n5Class2TestResult}"></div>
-                      </div>
-
-                      <div class="col-12">
-                        <label class="form-label">教師所感</label>
-                        <textarea class="form-control" th:field="*{n5Class2TeacherFeedback}" rows="2"></textarea>
-                        <div class="text-danger" th:if="${#fields.hasErrors('n5Class2TeacherFeedback')}" th:errors="*{n5Class2TeacherFeedback}"></div>
+                        <div class="col-12">
+                          <label class="form-label">教師所感</label>
+                          <textarea class="form-control" th:field="*{n5Class1TeacherFeedback}" rows="2"></textarea>
+                          <div class="text-danger" th:if="${#fields.hasErrors('n5Class1TeacherFeedback')}"
+                            th:errors="*{n5Class1TeacherFeedback}"></div>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                  <div></div>
+                    <div></div>
 
-                  <div class="mb-4">
-                    <h6 class="border-bottom pb-2 mb-3">
-                      <i class="fas fa-comments me-2 text-success"></i>N5会話クラス③情報明細
-                    </h6>
-                    <div class="row g-3">
-                      <div class="col-md-3">
-                        <label class="form-label">クラス名</label>
-                        <input type="text" class="form-control" value="N5会話クラス③" readonly style="background-color: #e9ecef;"/>
-                      </div>
+                    <div class="mb-4">
+                      <h6 class="border-bottom pb-2 mb-3">
+                        <i class="fas fa-comments me-2 text-success"></i>N5会話クラス②情報明細
+                      </h6>
+                      <div class="row g-3">
+                        <div class="col-md-3">
+                          <label class="form-label">クラス名</label>
+                          <input type="text" class="form-control" value="N5会話クラス②" readonly
+                            style="background-color: #e9ecef;" />
+                        </div>
 
-                      <div class="col-md-3">
-                        <label class="form-label">担当教師</label>
-                        <input type="text" class="form-control" th:field="*{n5Class3Teacher}" />
-                        <div class="text-danger" th:if="${#fields.hasErrors('n5Class3Teacher')}" th:errors="*{n5Class3Teacher}"></div>
-                      </div>
+                        <div class="col-md-3">
+                          <label class="form-label">担当教師</label>
+                          <input type="text" class="form-control" th:field="*{n5Class2Teacher}" />
+                          <div class="text-danger" th:if="${#fields.hasErrors('n5Class2Teacher')}"
+                            th:errors="*{n5Class2Teacher}"></div>
+                        </div>
 
-                      <div class="col-md-3">
-                        <label class="form-label">出席率</label>
-                        <input type="text" class="form-control" th:field="*{n5Class3AttendanceRate}" />
-                        <div class="text-danger" th:if="${#fields.hasErrors('n5Class3AttendanceRate')}" th:errors="*{n5Class3AttendanceRate}"></div>
-                      </div>
+                        <div class="col-md-3">
+                          <label class="form-label">出席率</label>
+                          <input type="text" class="form-control" th:field="*{n5Class2AttendanceRate}" />
+                          <div class="text-danger" th:if="${#fields.hasErrors('n5Class2AttendanceRate')}"
+                            th:errors="*{n5Class2AttendanceRate}"></div>
+                        </div>
 
-                      <div class="col-md-3">
-                        <label class="form-label">日本語テスト結果</label>
-                        <input type="text" class="form-control" th:field="*{n5Class3TestResult}" />
-                        <div class="text-danger" th:if="${#fields.hasErrors('n5Class3AttendanceRate')}" th:errors="*{n5Class3AttendanceRate}"></div>
-                      </div>
+                        <div class="col-md-3">
+                          <label class="form-label">日本語テスト結果</label>
+                          <input type="text" class="form-control" th:field="*{n5Class2TestResult}" />
+                          <div class="text-danger" th:if="${#fields.hasErrors('n5Class2TestResult')}"
+                            th:errors="*{n5Class2TestResult}"></div>
+                        </div>
 
-                      <div class="col-12">
-                        <label class="form-label">教師所感</label>
-                        <textarea class="form-control" th:field="*{n5Class3TeacherFeedback}" rows="2"></textarea>
-                        <div class="text-danger" th:if="${#fields.hasErrors('n5Class3TeacherFeedback')}" th:errors="*{n5Class3TeacherFeedback}"></div>
+                        <div class="col-12">
+                          <label class="form-label">教師所感</label>
+                          <textarea class="form-control" th:field="*{n5Class2TeacherFeedback}" rows="2"></textarea>
+                          <div class="text-danger" th:if="${#fields.hasErrors('n5Class2TeacherFeedback')}"
+                            th:errors="*{n5Class2TeacherFeedback}"></div>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                  
-                  <div class="col-12 mt-4 pt-3 border-top">
-                    <div class="d-flex justify-content-center gap-3">
-                      <button type="button" class="btn btn-secondary" onclick="cancelUpdate()">
-                        <i class="fas fa-times me-2"></i>キャンセル
-                      </button>
-                      <button type="submit" class="btn btn-primary px-4">
-                        <i class="fas fa-save me-2"></i>更新
-                      </button>
+                    <div></div>
+
+                    <div class="mb-4">
+                      <h6 class="border-bottom pb-2 mb-3">
+                        <i class="fas fa-comments me-2 text-success"></i>N5会話クラス③情報明細
+                      </h6>
+                      <div class="row g-3">
+                        <div class="col-md-3">
+                          <label class="form-label">クラス名</label>
+                          <input type="text" class="form-control" value="N5会話クラス③" readonly
+                            style="background-color: #e9ecef;" />
+                        </div>
+
+                        <div class="col-md-3">
+                          <label class="form-label">担当教師</label>
+                          <input type="text" class="form-control" th:field="*{n5Class3Teacher}" />
+                          <div class="text-danger" th:if="${#fields.hasErrors('n5Class3Teacher')}"
+                            th:errors="*{n5Class3Teacher}"></div>
+                        </div>
+
+                        <div class="col-md-3">
+                          <label class="form-label">出席率</label>
+                          <input type="text" class="form-control" th:field="*{n5Class3AttendanceRate}" />
+                          <div class="text-danger" th:if="${#fields.hasErrors('n5Class3AttendanceRate')}"
+                            th:errors="*{n5Class3AttendanceRate}"></div>
+                        </div>
+
+                        <div class="col-md-3">
+                          <label class="form-label">日本語テスト結果</label>
+                          <input type="text" class="form-control" th:field="*{n5Class3TestResult}" />
+                          <div class="text-danger" th:if="${#fields.hasErrors('n5Class3AttendanceRate')}"
+                            th:errors="*{n5Class3AttendanceRate}"></div>
+                        </div>
+
+                        <div class="col-12">
+                          <label class="form-label">教師所感</label>
+                          <textarea class="form-control" th:field="*{n5Class3TeacherFeedback}" rows="2"></textarea>
+                          <div class="text-danger" th:if="${#fields.hasErrors('n5Class3TeacherFeedback')}"
+                            th:errors="*{n5Class3TeacherFeedback}"></div>
+                        </div>
+                      </div>
                     </div>
-                  </div>
-                </form>
+
+                    <div class="col-12 mt-4 pt-3 border-top">
+                      <div class="d-flex justify-content-center gap-3">
+                        <button type="button" class="btn btn-secondary" onclick="cancelUpdate()">
+                          <i class="fas fa-times me-2"></i>キャンセル
+                        </button>
+                        <button type="submit" class="btn btn-primary px-4">
+                          <i class="fas fa-save me-2"></i>更新
+                        </button>
+                      </div>
+                    </div>
+                  </form>
+                </div>
               </div>
             </div>
-          </div>
 
-          <!-- Tab 4 -->
-          <div class="tab-pane fade" id="n4" role="tabpanel" aria-labelledby="n4-tab">
-            <div class="card shadow-sm border-0">
-              <div class="card-body">
-                <form th:action="@{/students/update-n4/{id}(id=${student.id})}" 
-                  th:object="${n4Class}" method="post" id="n4Form" novalidate>
-                  <input type="hidden" name="nameSearch" th:value="${nameSearch}" />
-                  <input type="hidden" name="status" th:value="${status}" />
-                  <input type="hidden" th:field="*{studentId}">
-                  <input type="hidden" th:if="${student.n4Class != null}" th:field="*{id}"/>
-                  
-                  <div class="mb-4">
-                    <h5 class="border-bottom pb-2 mb-3">
-                      <i class="fas fa-chalkboard me-2 text-primary"></i>N4クラス情報明細
-                    </h5>
-                    <div class="row g-3">
-                      <div class="col-md-4">
-                        <label class="form-label">担当教師</label>
-                        <input type="text" class="form-control" th:field="*{n4ClassTeacher}" />
-                      </div>
+            <!-- Tab 4 -->
+            <div class="tab-pane fade" id="n4" role="tabpanel" aria-labelledby="n4-tab">
+              <div class="card shadow-sm border-0">
+                <div class="card-body">
+                  <form th:action="@{/students/update-n4/{id}(id=${student.id})}" th:object="${n4Class}" method="post"
+                    id="n4Form" novalidate>
+                    <input type="hidden" name="nameSearch" th:value="${nameSearch}" />
+                    <input type="hidden" name="filterStatus" th:value="${status}" />
 
-                      <div class="col-md-4">
-                        <label class="form-label">出席率</label>
-                        <input type="text" class="form-control" th:field="*{n4ClassAttendance}" />
-                      </div>
-                      <div></div>
-                      <div class="col-md-3">
-                        <label class="form-label">日本語テスト結果 1</label>
-                        <input type="text" class="form-control" th:field="*{n4ClassTestResult1}" />
-                      </div>
+                    <input type="hidden" th:field="*{studentId}">
+                    <input type="hidden" th:field="*{id}" />
+                    <input type="hidden" th:if="${student.n4Class != null}" th:field="*{id}" />
 
-                      <div class="col-md-3">
-                        <label class="form-label">日本語テスト結果 2</label>
-                        <input type="text" class="form-control" th:field="*{n4ClassTestResult2}" />
-                      </div>
+                    <div class="mb-4">
+                      <h5 class="border-bottom pb-2 mb-3">
+                        <i class="fas fa-chalkboard me-2 text-primary"></i>N4クラス情報明細
+                      </h5>
+                      <div class="row g-3">
+                        <div class="col-md-4">
+                          <label class="form-label">担当教師</label>
+                          <input type="text" class="form-control" th:field="*{n4ClassTeacher}" />
+                        </div>
 
-                      <div class="col-md-3">
-                        <label class="form-label">日本語テスト結果 3</label>
-                        <input type="text" class="form-control" th:field="*{n4ClassTestResult3}" />
-                      </div>
+                        <div class="col-md-4">
+                          <label class="form-label">出席率</label>
+                          <input type="text" class="form-control" th:field="*{n4ClassAttendance}" />
+                        </div>
+                        <div></div>
+                        <div class="col-md-3">
+                          <label class="form-label">日本語テスト結果 1</label>
+                          <input type="text" class="form-control" th:field="*{n4ClassTestResult1}" />
+                        </div>
 
-                      <div class="col-md-3">
-                        <label class="form-label">日本語テスト結果 4</label>
-                        <input type="text" class="form-control" th:field="*{n4ClassTestResult4}" />
-                      </div>
-                      
-                      <div class="col-12">
-                        <label class="form-label">教師所感</label>
-                        <textarea class="form-control" th:field="*{n4ClassFeedback}" rows="3"></textarea>
+                        <div class="col-md-3">
+                          <label class="form-label">日本語テスト結果 2</label>
+                          <input type="text" class="form-control" th:field="*{n4ClassTestResult2}" />
+                        </div>
+
+                        <div class="col-md-3">
+                          <label class="form-label">日本語テスト結果 3</label>
+                          <input type="text" class="form-control" th:field="*{n4ClassTestResult3}" />
+                        </div>
+
+                        <div class="col-md-3">
+                          <label class="form-label">日本語テスト結果 4</label>
+                          <input type="text" class="form-control" th:field="*{n4ClassTestResult4}" />
+                        </div>
+
+                        <div class="col-12">
+                          <label class="form-label">教師所感</label>
+                          <textarea class="form-control" th:field="*{n4ClassFeedback}" rows="3"></textarea>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                  <div></div>
+                    <div></div>
 
-                  <div class="mb-4">
-                    <h6 class="border-bottom pb-2 mb-3">
-                      <i class="fas fa-comments me-2 text-success"></i>N4会話クラス①情報明細
-                    </h6>
-                    <div class="row g-3">
-                      <div class="col-md-3">
-                        <label class="form-label">クラス名</label>
-                        <input type="text" class="form-control" value="N4会話クラス①" readonly style="background-color: #e9ecef;"/>
-                      
-                      </div>
-                      
-                      <div class="col-md-3">
-                        <label class="form-label">担当教師</label>
-                        <input type="text" class="form-control" th:field="*{n4Class1Teacher}" />
-                        <div class="text-danger" th:if="${#fields.hasErrors('n4Class1Teacher')}" th:errors="*{n4Class1Teacher}"></div>
-                      </div>
+                    <div class="mb-4">
+                      <h6 class="border-bottom pb-2 mb-3">
+                        <i class="fas fa-comments me-2 text-success"></i>N4会話クラス①情報明細
+                      </h6>
+                      <div class="row g-3">
+                        <div class="col-md-3">
+                          <label class="form-label">クラス名</label>
+                          <input type="text" class="form-control" value="N4会話クラス①" readonly
+                            style="background-color: #e9ecef;" />
 
-                      <div class="col-md-3">
-                        <label class="form-label">出席率</label>
-                        <input type="text" class="form-control" th:field="*{n4Class1AttendanceRate}" />
-                        <div class="text-danger" th:if="${#fields.hasErrors('n4Class1AttendanceRate')}" th:errors="*{n4Class1AttendanceRate}"></div>
-                      </div>
+                        </div>
 
-                      <div class="col-md-3">
-                        <label class="form-label">日本語テスト結果</label>
-                        <input type="text" class="form-control" th:field="*{n4Class1TestResult}" />
-                        <div class="text-danger" th:if="${#fields.hasErrors('n4Class1TestResult')}" th:errors="*{n4Class1TestResult}"></div>
-                      </div>
+                        <div class="col-md-3">
+                          <label class="form-label">担当教師</label>
+                          <input type="text" class="form-control" th:field="*{n4Class1Teacher}" />
+                          <div class="text-danger" th:if="${#fields.hasErrors('n4Class1Teacher')}"
+                            th:errors="*{n4Class1Teacher}"></div>
+                        </div>
 
-                      <div class="col-12">
-                        <label class="form-label">教師所感</label>
-                        <textarea class="form-control" th:field="*{n4Class1TeacherFeedback}" rows="2"></textarea>
-                        <div class="text-danger" th:if="${#fields.hasErrors('n4Class1TeacherFeedback')}" th:errors="*{n4Class1TeacherFeedback}"></div>
+                        <div class="col-md-3">
+                          <label class="form-label">出席率</label>
+                          <input type="text" class="form-control" th:field="*{n4Class1AttendanceRate}" />
+                          <div class="text-danger" th:if="${#fields.hasErrors('n4Class1AttendanceRate')}"
+                            th:errors="*{n4Class1AttendanceRate}"></div>
+                        </div>
+
+                        <div class="col-md-3">
+                          <label class="form-label">日本語テスト結果</label>
+                          <input type="text" class="form-control" th:field="*{n4Class1TestResult}" />
+                          <div class="text-danger" th:if="${#fields.hasErrors('n4Class1TestResult')}"
+                            th:errors="*{n4Class1TestResult}"></div>
+                        </div>
+
+                        <div class="col-12">
+                          <label class="form-label">教師所感</label>
+                          <textarea class="form-control" th:field="*{n4Class1TeacherFeedback}" rows="2"></textarea>
+                          <div class="text-danger" th:if="${#fields.hasErrors('n4Class1TeacherFeedback')}"
+                            th:errors="*{n4Class1TeacherFeedback}"></div>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                  <div></div>
+                    <div></div>
 
-                  <div class="mb-4">
-                    <h6 class="border-bottom pb-2 mb-3">
-                      <i class="fas fa-comments me-2 text-success"></i>N4会話クラス②情報明細
-                    </h6>
-                    <div class="row g-3">
-                      <div class="col-md-3">
-                        <label class="form-label">クラス名</label>
-                        <input type="text" class="form-control" value="N4会話クラス②" readonly style="background-color: #e9ecef;"/>
-                      </div>
+                    <div class="mb-4">
+                      <h6 class="border-bottom pb-2 mb-3">
+                        <i class="fas fa-comments me-2 text-success"></i>N4会話クラス②情報明細
+                      </h6>
+                      <div class="row g-3">
+                        <div class="col-md-3">
+                          <label class="form-label">クラス名</label>
+                          <input type="text" class="form-control" value="N4会話クラス②" readonly
+                            style="background-color: #e9ecef;" />
+                        </div>
 
-                      <div class="col-md-3">
-                        <label class="form-label">担当教師</label>
-                        <input type="text" class="form-control" th:field="*{n4Class2Teacher}" />
-                        <div class="text-danger" th:if="${#fields.hasErrors('n4Class2Teacher')}" th:errors="*{n4Class2Teacher}"></div>
-                      </div>
+                        <div class="col-md-3">
+                          <label class="form-label">担当教師</label>
+                          <input type="text" class="form-control" th:field="*{n4Class2Teacher}" />
+                          <div class="text-danger" th:if="${#fields.hasErrors('n4Class2Teacher')}"
+                            th:errors="*{n4Class2Teacher}"></div>
+                        </div>
 
-                      <div class="col-md-3">
-                        <label class="form-label">出席率</label>
-                        <input type="text" class="form-control" th:field="*{n4Class2AttendanceRate}" />
-                        <div class="text-danger" th:if="${#fields.hasErrors('n4Class2AttendanceRate')}" th:errors="*{n4Class2AttendanceRate}"></div>
-                      </div>
+                        <div class="col-md-3">
+                          <label class="form-label">出席率</label>
+                          <input type="text" class="form-control" th:field="*{n4Class2AttendanceRate}" />
+                          <div class="text-danger" th:if="${#fields.hasErrors('n4Class2AttendanceRate')}"
+                            th:errors="*{n4Class2AttendanceRate}"></div>
+                        </div>
 
-                      <div class="col-md-3">
-                        <label class="form-label">日本語テスト結果</label>
-                        <input type="text" class="form-control" th:field="*{n4Class2TestResult}" />
-                        <div class="text-danger" th:if="${#fields.hasErrors('n4Class2TestResult')}" th:errors="*{n4Class2TestResult}"></div>
-                      </div>
+                        <div class="col-md-3">
+                          <label class="form-label">日本語テスト結果</label>
+                          <input type="text" class="form-control" th:field="*{n4Class2TestResult}" />
+                          <div class="text-danger" th:if="${#fields.hasErrors('n4Class2TestResult')}"
+                            th:errors="*{n4Class2TestResult}"></div>
+                        </div>
 
-                      <div class="col-12">
-                        <label class="form-label">教師所感</label>
-                        <textarea class="form-control" th:field="*{n4Class2TeacherFeedback}" rows="2"></textarea>
-                        <div class="text-danger" th:if="${#fields.hasErrors('n4Class2TeacherFeedback')}" th:errors="*{n4Class2TeacherFeedback}"></div>
+                        <div class="col-12">
+                          <label class="form-label">教師所感</label>
+                          <textarea class="form-control" th:field="*{n4Class2TeacherFeedback}" rows="2"></textarea>
+                          <div class="text-danger" th:if="${#fields.hasErrors('n4Class2TeacherFeedback')}"
+                            th:errors="*{n4Class2TeacherFeedback}"></div>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                  <div></div>
-                  
-                  <div class="mb-4">
-                    <h6 class="border-bottom pb-2 mb-3">
-                      <i class="fas fa-comments me-2 text-success"></i>N4会話クラス③情報明細
-                    </h6>
-                    <div class="row g-3">
-                      <div class="col-md-3">
-                        <label class="form-label">クラス名</label>
-                        <input type="text" class="form-control" value="N4会話クラス③" readonly style="background-color: #e9ecef;"/>
-                      </div>
+                    <div></div>
 
-                      <div class="col-md-3">
-                        <label class="form-label">担当教師</label>
-                        <input type="text" class="form-control" th:field="*{n4Class3Teacher}" />
-                        <div class="text-danger" th:if="${#fields.hasErrors('n4Class3Teacher')}" th:errors="*{n4Class3Teacher}"></div>
-                      </div>
+                    <div class="mb-4">
+                      <h6 class="border-bottom pb-2 mb-3">
+                        <i class="fas fa-comments me-2 text-success"></i>N4会話クラス③情報明細
+                      </h6>
+                      <div class="row g-3">
+                        <div class="col-md-3">
+                          <label class="form-label">クラス名</label>
+                          <input type="text" class="form-control" value="N4会話クラス③" readonly
+                            style="background-color: #e9ecef;" />
+                        </div>
 
-                      <div class="col-md-3">
-                        <label class="form-label">出席率</label>
-                        <input type="text" class="form-control" th:field="*{n4Class3AttendanceRate}" />
-                        <div class="text-danger" th:if="${#fields.hasErrors('n4Class3AttendanceRate')}" th:errors="*{n4Class3AttendanceRate}"></div>
-                      </div>
+                        <div class="col-md-3">
+                          <label class="form-label">担当教師</label>
+                          <input type="text" class="form-control" th:field="*{n4Class3Teacher}" />
+                          <div class="text-danger" th:if="${#fields.hasErrors('n4Class3Teacher')}"
+                            th:errors="*{n4Class3Teacher}"></div>
+                        </div>
 
-                      <div class="col-md-3">
-                        <label class="form-label">日本語テスト結果</label>
-                        <input type="text" class="form-control" th:field="*{n4Class3TestResult}" />
-                        <div class="text-danger" th:if="${#fields.hasErrors('n4Class3TestResult')}" th:errors="*{n4Class3TestResult}"></div>
-                      </div>
+                        <div class="col-md-3">
+                          <label class="form-label">出席率</label>
+                          <input type="text" class="form-control" th:field="*{n4Class3AttendanceRate}" />
+                          <div class="text-danger" th:if="${#fields.hasErrors('n4Class3AttendanceRate')}"
+                            th:errors="*{n4Class3AttendanceRate}"></div>
+                        </div>
 
-                      <div class="col-12">
-                        <label class="form-label">教師所感</label>
-                        <textarea class="form-control" th:field="*{n4Class3TeacherFeedback}" rows="2"></textarea>
-                        <div class="text-danger" th:if="${#fields.hasErrors('n4Class3TeacherFeedback')}" th:errors="*{n4Class3TeacherFeedback}"></div>
+                        <div class="col-md-3">
+                          <label class="form-label">日本語テスト結果</label>
+                          <input type="text" class="form-control" th:field="*{n4Class3TestResult}" />
+                          <div class="text-danger" th:if="${#fields.hasErrors('n4Class3TestResult')}"
+                            th:errors="*{n4Class3TestResult}"></div>
+                        </div>
+
+                        <div class="col-12">
+                          <label class="form-label">教師所感</label>
+                          <textarea class="form-control" th:field="*{n4Class3TeacherFeedback}" rows="2"></textarea>
+                          <div class="text-danger" th:if="${#fields.hasErrors('n4Class3TeacherFeedback')}"
+                            th:errors="*{n4Class3TeacherFeedback}"></div>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                  
-                  <div class="col-12 mt-4 pt-3 border-top">
-                    <div class="d-flex justify-content-center gap-3">
-                      <button type="button" class="btn btn-secondary" onclick="cancelUpdate()">
-                        <i class="fas fa-times me-2"></i>キャンセル
-                      </button>
-                      <button type="submit" class="btn btn-primary px-4">
-                        <i class="fas fa-save me-2"></i>更新
-                      </button>
+
+                    <div class="col-12 mt-4 pt-3 border-top">
+                      <div class="d-flex justify-content-center gap-3">
+                        <button type="button" class="btn btn-secondary" onclick="cancelUpdate()">
+                          <i class="fas fa-times me-2"></i>キャンセル
+                        </button>
+                        <button type="submit" class="btn btn-primary px-4">
+                          <i class="fas fa-save me-2"></i>更新
+                        </button>
+                      </div>
                     </div>
-                  </div>
-                </form>
+                  </form>
+                </div>
               </div>
             </div>
-          </div>
 
-          <!-- Tab 5 -->
-          <div class="tab-pane fade" id="interview" role="tabpanel" aria-labelledby="interview-tab">
-            <div class="card shadow-sm border-0">
-              <div class="card-body">
-                <form th:action="@{/students/update-interview/{id}(id=${student.id})}" 
-                      th:object="${interviewNotes}" method="post" id="interviewForm" novalidate>
-                  <input type="hidden" name="nameSearch" th:value="${nameSearch}" />
-                  <input type="hidden" name="status" th:value="${status}" />
-                  <input type="hidden" th:field="*{studentId}">
-                  <input type="hidden" th:if="${interviewNotes != null}" th:field="*{id}"/>
-                  
-                  <div class="mb-4">
-                    <h5 class="border-bottom pb-2 mb-3">
-                      <i class="fas fa-comments me-2 text-primary"></i>面談情報明細
-                    </h5>
-                    
+            <!-- Tab 5 -->
+            <div class="tab-pane fade" id="interview" role="tabpanel" aria-labelledby="interview-tab">
+              <div class="card shadow-sm border-0">
+                <div class="card-body">
+                  <form th:action="@{/students/update-interview/{id}(id=${student.id})}" th:object="${interviewNotes}"
+                    method="post" id="interviewForm" novalidate>
+                    <input type="hidden" name="nameSearch" th:value="${nameSearch}" />
+                    <input type="hidden" name="filterStatus" th:value="${status}" />
+
+                    <input type="hidden" th:field="*{studentId}">
+                    <input type="hidden" th:field="*{id}" />
+                    <input type="hidden" th:if="${interviewNotes != null}" th:field="*{id}" />
+
                     <div class="mb-4">
-                      <h6 class="text-secondary mb-3">一回目面接メモ</h6>
-                      <div class="row g-3">
-                        <div class="col-12">
-                          <textarea class="form-control" th:field="*{interview1}" rows="4" placeholder="面接内容、評価、備考など"></textarea>
-                          <div class="text-danger" th:if="${#fields.hasErrors('interview1')}" th:errors="*{interview1}"></div>
+                      <h5 class="border-bottom pb-2 mb-3">
+                        <i class="fas fa-comments me-2 text-primary"></i>面談情報明細
+                      </h5>
+
+                      <div class="mb-4">
+                        <h6 class="text-secondary mb-3">一回目面接メモ</h6>
+                        <div class="row g-3">
+                          <div class="col-12">
+                            <textarea class="form-control" th:field="*{interview1}" rows="4"
+                              placeholder="面接内容、評価、備考など"></textarea>
+                            <div class="text-danger" th:if="${#fields.hasErrors('interview1')}"
+                              th:errors="*{interview1}"></div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="mb-4">
+                        <h6 class="text-secondary mb-3">二回目面接メモ</h6>
+                        <div class="row g-3">
+                          <div class="col-12">
+                            <textarea class="form-control" th:field="*{interview2}" rows="4"
+                              placeholder="面接内容、評価、備考など"></textarea>
+                            <div class="text-danger" th:if="${#fields.hasErrors('interview2')}"
+                              th:errors="*{interview2}"></div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="mb-4">
+                        <h6 class="text-secondary mb-3">三回目面接メモ</h6>
+                        <div class="row g-3">
+                          <div class="col-12">
+                            <textarea class="form-control" th:field="*{interview3}" rows="4"
+                              placeholder="面接内容、評価、備考など"></textarea>
+                            <div class="text-danger" th:if="${#fields.hasErrors('interview3')}"
+                              th:errors="*{interview3}"></div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="mb-4">
+                        <h6 class="text-secondary mb-3">メモ／備考 </h6>
+                        <div class="row g-3">
+                          <div class="col-12">
+                            <textarea class="form-control" th:field="*{otherMemo}" rows="6"
+                              placeholder="その他の備考、連絡事項など"></textarea>
+                            <div class="text-danger" th:if="${#fields.hasErrors('otherMemo')}" th:errors="*{otherMemo}">
+                            </div>
+                          </div>
                         </div>
                       </div>
                     </div>
-                    
-                    <div class="mb-4">
-                      <h6 class="text-secondary mb-3">二回目面接メモ</h6>
-                      <div class="row g-3">
-                        <div class="col-12">
-                          <textarea class="form-control" th:field="*{interview2}" rows="4" placeholder="面接内容、評価、備考など"></textarea>
-                          <div class="text-danger" th:if="${#fields.hasErrors('interview2')}" th:errors="*{interview2}"></div>
-                        </div>
+
+                    <div class="col-12 mt-4 pt-3 border-top">
+                      <div class="d-flex justify-content-center gap-3">
+                        <button type="button" class="btn btn-secondary" onclick="cancelUpdate()">
+                          <i class="fas fa-times me-2"></i>キャンセル
+                        </button>
+                        <button type="submit" class="btn btn-primary px-4">
+                          <i class="fas fa-save me-2"></i>更新
+                        </button>
                       </div>
                     </div>
-                    
-                    <div class="mb-4">
-                      <h6 class="text-secondary mb-3">三回目面接メモ</h6>
-                      <div class="row g-3">
-                        <div class="col-12">
-                          <textarea class="form-control" th:field="*{interview3}" rows="4" placeholder="面接内容、評価、備考など"></textarea>
-                          <div class="text-danger" th:if="${#fields.hasErrors('interview3')}" th:errors="*{interview3}"></div>
-                        </div>
-                      </div>
-                    </div>
-                    
-                    <div class="mb-4">
-                      <h6 class="text-secondary mb-3">メモ／備考 </h6>
-                      <div class="row g-3">
-                        <div class="col-12">
-                          <textarea class="form-control" th:field="*{otherMemo}" rows="6" placeholder="その他の備考、連絡事項など"></textarea>
-                          <div class="text-danger" th:if="${#fields.hasErrors('otherMemo')}" th:errors="*{otherMemo}"></div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <div class="col-12 mt-4 pt-3 border-top">
-                    <div class="d-flex justify-content-center gap-3">
-                      <button type="button" class="btn btn-secondary" onclick="cancelUpdate()">
-                        <i class="fas fa-times me-2"></i>キャンセル
-                      </button>
-                      <button type="submit" class="btn btn-primary px-4">
-                        <i class="fas fa-save me-2"></i>更新
-                      </button>
-                    </div>
-                  </div>
-                </form>
+                  </form>
+                </div>
               </div>
             </div>
-          </div>
         </main>
-      </div> 
-    </div> 
-  </div> 
+      </div>
+    </div>
+  </div>
 
   <!-- Flash Messages -->
-  <div th:if="${success}" 
-      class="alert alert-success alert-dismissible fade show position-fixed" 
-      style="z-index: 1100; min-width: 300px; top: 20%; left: 58%; transform: translate(-50%, -50%);" 
-      role="alert">
+  <div th:if="${success}" class="alert alert-success alert-dismissible fade show position-fixed"
+    style="z-index: 1100; min-width: 300px; top: 20%; left: 58%; transform: translate(-50%, -50%);" role="alert">
     <i class="fas fa-check-circle me-2"></i>
     <span th:text="${success}"></span>
     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
   </div>
 
-  <div th:if="${error}" 
-      class="alert alert-danger alert-dismissible fade show position-fixed" 
-      style="z-index: 1100; min-width: 300px; top: 20%; left: 58%; transform: translate(-50%, -50%);" 
-      role="alert">
+  <div th:if="${error}" class="alert alert-danger alert-dismissible fade show position-fixed"
+    style="z-index: 1100; min-width: 300px; top: 20%; left: 58%; transform: translate(-50%, -50%);" role="alert">
     <i class="fas fa-exclamation-circle me-2"></i>
     <span th:text="${error}"></span>
     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
@@ -879,13 +952,14 @@
   <div class="modal fade" id="unsavedModal" tabindex="-1" aria-labelledby="unsavedModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
-        
+
         <div class="modal-header">
           <h5 class="modal-title">
             <i class="fas fa-exclamation-triangle me-2" style="color: #ffc107;"></i>
             未保存の変更
           </h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="閉じる" style="color: #1976d2;"></button>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="閉じる"
+            style="color: #1976d2;"></button>
         </div>
 
         <div class="modal-body">
@@ -894,7 +968,7 @@
             <span class="tab-name" id="currentTabName">ステータス・情報</span>に
             <span class="change-count" id="changedCount">1</span>件の変更があります。
           </p>
-          
+
           <div class="warning-note">
             <i class="fas fa-lightbulb"></i>
             先に「更新」ボタンをクリックして保存してください
@@ -904,7 +978,7 @@
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
             <i class="fas fa-times me-2"></i>
-            キャンセル            <!-- このページに留まる -->
+            キャンセル <!-- このページに留まる -->
           </button>
           <button type="button" id="confirmLeaveBtn" class="btn btn-danger">
             <i class="fas fa-arrow-right me-2"></i>
@@ -918,56 +992,57 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
   <script th:src="@{/js/student-update.js}"></script>
-  
+
   <script>
     function cancelUpdate() {
-        const nameSearch = '[[${nameSearch}]]';
-        const status = '[[${status}]]';
-        
-        let url = '/students';
-        const params = [];
-        
-        if (nameSearch && nameSearch.trim() !== '') {
-            params.push('nameSearch=' + encodeURIComponent(nameSearch.trim()));
-        }
-        if (status && status.trim() !== '') {
-            params.push('status=' + encodeURIComponent(status.trim()));
-        }
-        
-        if (params.length > 0) {
-            url += '?' + params.join('&');
-        }
-        
-        window.location.href = url;
+      const nameSearch = '[[${nameSearch}]]';
+      const status = '[[${status}]]';
+
+      let url = '/students';
+      const params = [];
+
+      // Only push if the string isn't empty or literally the word 'null'
+      if (nameSearch && nameSearch.trim() !== '' && nameSearch !== 'null') {
+        params.push('nameSearch=' + encodeURIComponent(nameSearch.trim()));
+      }
+      if (status && status.trim() !== '' && status !== 'null') {
+        params.push('status=' + encodeURIComponent(status.trim()));
+      }
+
+      if (params.length > 0) {
+        url += '?' + params.join('&');
+      }
+
+      window.location.href = url;
     }
 
-    document.addEventListener('DOMContentLoaded', function() {
-        const nameSearch = '[[${nameSearch}]]';
-        const status = '[[${status}]]';
-        
-        if (nameSearch || status) {
-            history.replaceState({hasFilters: true}, '');
-            
-            window.addEventListener('popstate', function(e) {
-                e.preventDefault();
-                
-                let url = '/students';
-                const params = [];
-                
-                if (nameSearch && nameSearch.trim() !== '') {
-                    params.push('nameSearch=' + encodeURIComponent(nameSearch.trim()));
-                }
-                if (status && status.trim() !== '') {
-                    params.push('status=' + encodeURIComponent(status.trim()));
-                }
-                
-                if (params.length > 0) {
-                    url += '?' + params.join('&');
-                }
-                
-                window.location.href = url;
-            });
-        }
+    document.addEventListener('DOMContentLoaded', function () {
+      const nameSearch = '[[${nameSearch}]]';
+      const status = '[[${status}]]';
+
+      if (nameSearch || status) {
+        history.replaceState({ hasFilters: true }, '');
+
+        window.addEventListener('popstate', function (e) {
+          e.preventDefault();
+
+          let url = '/students';
+          const params = [];
+
+          if (nameSearch && nameSearch.trim() !== '') {
+            params.push('nameSearch=' + encodeURIComponent(nameSearch.trim()));
+          }
+          if (status && status.trim() !== '') {
+            params.push('status=' + encodeURIComponent(status.trim()));
+          }
+
+          if (params.length > 0) {
+            url += '?' + params.join('&');
+          }
+
+          window.location.href = url;
+        });
+      }
     });
 
     document.addEventListener("DOMContentLoaded", function () {
@@ -983,4 +1058,5 @@
   </script>
 
 </body>
+
 </html>

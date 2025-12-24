@@ -16,7 +16,7 @@
       #studentTable {
         position: relative;
       }
-
+ 
       .download-button-container {
         position: absolute;
         top: 0;
@@ -29,7 +29,7 @@
         z-index: 10;
         gap: 8px;
       }
-
+ 
       #downloadBtn {
         background-color: #0c5ed7;
         color: white;
@@ -41,26 +41,26 @@
         transition: background-color 0.2s;
         white-space: nowrap;
       }
-
+ 
       #downloadBtn:hover {
         background-color: #0a4ebd;
       }
-
+ 
       #downloadBtn:disabled {
         background-color: #cccccc;
         cursor: not-allowed;
       }
-
+ 
       #selectedCount {
         font-size: 12px;
         min-width: 24px;
       }
-
+ 
       /* Filter row */
       .filter-row th {
         position: relative;
       }
-
+ 
       /* Selection info */
       .selection-info {
         font-size: 14px;
@@ -68,7 +68,7 @@
         margin-left: 10px;
         display: none;
       }
-
+ 
       /* Responsive adjustments */
       @media (max-width: 992px) {
         .download-button-container {
@@ -79,23 +79,23 @@
           height: auto;
           margin-right: 1rem;
         }
-
+ 
         .filter-control-group.checkbox-group,
         .filter-control-group {
           margin-bottom: 5px;
         }
       }
-
+ 
       @media (max-width: 768px) {
         .filter-control-group {
           flex: 1 1 100%;
           margin-bottom: 8px;
         }
-
+ 
         #studentStatusFilter {
           flex: 1 1 100%;
         }
-
+ 
         #downloadBtn {
           font-size: 13px;
           padding: 5px 10px;
@@ -921,11 +921,10 @@
                   th:if="${students != null && students.size() > 0}"
                 >
                   <tr th:each="student : ${students}">
-                    <td class="id-cell">
+                    <td data-label="生徒ID" class="id-cell">
                       <label
-                        class="d-flex align-items-center justify-content-center gap-1 m-0"
+                        class="d-flex align-items-center justify-content-md-center gap-1 m-0"
                       >
-                        <!-- Store database ID in value, student ID in data attribute -->
                         <input
                           class="form-check-input row-checkbox"
                           type="checkbox"
@@ -935,36 +934,59 @@
                         <span th:text="${student.studentId}">STU001</span>
                       </label>
                     </td>
-                    <td th:text="${student.studentName}">山田 太郎</td>
-                    <td th:text="${student.gender}">男性</td>
-                    <td th:text="${student.phoneNumber}">09012345678</td>
-                    <td th:text="${student.desiredJobType}">介護</td>
-                    <td th:text="${student.status}">在校</td>
-                    <td th:text="${student.paymentDueDate}">2024-03-15</td>
-                    <td th:text="${student.paymentDate}">2024-03-10</td>
-                    <td class="action-cell">
+                    <td data-label="名前" th:text="${student.studentName}">
+                      山田 太郎
+                    </td>
+                    <td data-label="性別" th:text="${student.gender}">男性</td>
+                    <td data-label="電話番号" th:text="${student.phoneNumber}">
+                      09012345678
+                    </td>
+                    <td
+                      data-label="希望職種"
+                      th:text="${student.desiredJobType}"
+                    >
+                      介護
+                    </td>
+                    <td data-label="ステータス" th:text="${student.status}">
+                      在校
+                    </td>
+                    <td
+                      data-label="支払予定日"
+                      th:text="${student.paymentDueDate}"
+                    >
+                      2024-03-15
+                    </td>
+                    <td
+                      data-label="支払実績日"
+                      th:text="${student.paymentDate}"
+                    >
+                      2024-03-10
+                    </td>
+                    <td data-label="動作機能" class="action-cell">
                       <div
-                        class="d-flex flex-nowrap justify-content-center gap-0"
+                        class="d-flex flex-nowrap justify-content-center gap-2"
                       >
                         <a
                           th:href="@{/students/student-update/{id}(id=${student.id}, nameSearch=${nameSearch}, status=${status})}"
                           class="action-icon edit"
-                          title="編集" sec:authorize="hasRole('ADMIN')"
+                          title="編集"
+                          sec:authorize="hasRole('ADMIN')"
                         >
                           <i class="bi bi-pencil-square"></i>
                         </a>
                         <a
-                          th:href="@{/students/detail/{id}(id=${student.id}, nameSearch=${nameSearch}, status=${statusFilter})}"
+                          th:href="@{/students/detail/{id}(id=${student.id}, nameSearch=${nameSearch}, status=${status})}"
                           class="action-icon detail"
                           title="明細"
                         >
-                          <i class="bi bi-info-circle-fill"></i> 明細
+                          <i class="bi bi-info-circle-fill"></i>
                         </a>
                         <a
                           href="#"
                           th:onclick="'if(confirm(\'本当に削除しますか？\')) window.location.href=\'/students/delete/' + ${student.id} + '\';'"
                           class="action-icon delete"
-                          title="削除"  sec:authorize="hasRole('ADMIN')"
+                          title="削除"
+                          sec:authorize="hasRole('ADMIN')"
                         >
                           <i class="bi bi-trash-fill"></i>
                         </a>
