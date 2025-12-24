@@ -259,6 +259,19 @@ body {
     box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
 }
 
+.select-placeholder option[value=""] {
+  color: #999;
+  font-style: italic;
+}
+
+.select-placeholder:required:invalid {
+  color: #999;
+}
+
+.select-placeholder option:not([value=""]) {
+  color: #000;
+}
+
 .unsaved-badge-pill {
     position: absolute;
     top: -2px;
