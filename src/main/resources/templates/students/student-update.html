@@ -254,8 +254,10 @@
                       <div class="row g-3">
 
                         <div class="col-md-6">
-                          <label class="form-label required-label">希望職種</label>
+                          <label class="form-label">希望職種</label>
                           <select class="form-select" th:field="*{desiredJobType}" id="desiredJobType">
+                            <option th:value="''" th:if="${student.desiredJobType == null or student.desiredJobType == ''}">
+                              選択してください </option>
                             <option value="介護">介護</option>
                             <option value="飲食">飲食</option>
                             <option value="宿泊">宿泊</option>
@@ -276,6 +278,8 @@
                         <div class="col-md-6">
                           <label class="form-label">宗教</label>
                           <select class="form-select" th:field="*{religion}" id="religion">
+                            <option th:value="''" th:if="${student.religion == null or student.religion == ''}">
+                                  選択してください </option>
                             <option value="buddhism">仏教</option>
                             <option value="islam">イスラム教</option>
                             <option value="christian">キリスト教</option>
@@ -295,6 +299,8 @@
                         <div class="col-md-6">
                           <label class="form-label">現在のJLPT合格レベル</label>
                           <select class="form-select" th:field="*{currentJapanLevel}">
+                            <option th:value="''" th:if="${student.currentJapanLevel == null or student.currentJapanLevel == ''}">
+                                  選択してください </option>
                             <option value="none">なし</option>
                             <option value="N5">N5</option>
                             <option value="N4">N4</option>
@@ -305,11 +311,7 @@
 
                         <div class="col-md-6">
                           <label class="form-label required-label">生徒の授業ステータス</label>
-                          <select class="form-select" th:field="*{attendingClassRelatedStatus}"
-                            id="attendingClassRelatedStatusField">
-                            <option th:value="''"
-                              th:if="${student.attendingClassRelatedStatus == null or student.attendingClassRelatedStatus == ''}">
-                              選択してください </option>
+                          <select class="form-select" th:field="*{attendingClassRelatedStatus}"id="attendingClassRelatedStatusField">
                             <option value="在校" th:selected="${student.attendingClassRelatedStatus == '在校'}">
                               在校 </option>
                             <option value="卒業" th:selected="${student.attendingClassRelatedStatus == '卒業'}">
@@ -332,8 +334,10 @@
                         </div>
 
                         <div class="col-md-6">
-                          <label class="form-label required-label">合格した最高のJLPTレベル</label>
+                          <label class="form-label">合格した最高のJLPTレベル</label>
                           <select class="form-select" th:field="*{passedHighestJLPTLevel}">
+                            <option th:value="''" th:if="${student.passedHighestJLPTLevel == null or student.passedHighestJLPTLevel == ''}">
+                                  選択してください </option>
                             <option value="none">なし</option>
                             <option value="N5">N5</option>
                             <option value="N4">N4</option>
@@ -348,8 +352,9 @@
 
                         <div class="col-md-4">
                           <label class="form-label">日本渡航経験</label>
-                          <select class="form-select" th:field="*{japanTravelExperience}">
-                            <option value="" disabled selected hidden>選択してください</option>                            
+                          <select class="form-select select-placeholder" th:field="*{japanTravelExperience}">
+                            <option th:value="''" th:if="${student.japanTravelExperience == null or student.japanTravelExperience == ''}">
+                                  選択してください </option>
                             <option value="true">ある</option>
                             <option value="false">ない</option>
                           </select>
@@ -358,42 +363,44 @@
 
                         <div class="col-md-4">
                           <label class="form-label">COE申請経験</label>
-                          <select class="form-select" th:field="*{coeApplicationExperience}">
-                            <option value="" disabled selected hidden>選択してください</option>                            
+                          <select class="form-select select-placeholder" th:field="*{coeApplicationExperience}">
+                            <option th:value="''" th:if="${student.coeApplicationExperience == null or student.coeApplicationExperience == ''}">
+                                  選択してください </option>
                             <option value="true">ある</option>
                             <option value="false">ない</option>
                           </select>
                           <div class="text-danger" th:if="${#fields.hasErrors('coeApplicationExperience')}" th:errors="*{coeApplicationExperience}"></div>
                         </div>
 
-<div class="col-md-4">
-  <label class="form-label">寮があれば入りたい</label>
-  <select class="form-select select-placeholder" th:field="*{hostelPreference}">
-<option th:value="''" th:if="${student.hostelPreference == null or student.hostelPreference == ''}">
+                        <div class="col-md-4">
+                          <label class="form-label">寮があれば入りたい</label>
+                          <select class="form-select select-placeholder" th:field="*{hostelPreference}">
+                            <option th:value="''" th:if="${student.hostelPreference == null or student.hostelPreference == ''}">
                                   選択してください </option>
-    <option value="true">はい</option>
-    <option value="false">いいえ</option>
-  </select>
-  <div class="text-danger" th:if="${#fields.hasErrors('hostelPreference')}" th:errors="*{hostelPreference}"></div>
-</div>
+                            <option value="true">はい</option>
+                            <option value="false">いいえ</option>
+                          </select>
+                          <div class="text-danger" th:if="${#fields.hasErrors('hostelPreference')}" th:errors="*{hostelPreference}"></div>
+                        </div>
                         <div></div>
 
-<div class="col-md-4">
-  <label class="form-label">お酒</label>
-  <select class="form-select select-placeholder" th:field="*{isAlcoholDrink}">
-<option th:value="''" th:if="${student.isAlcoholDrink == null or student.isAlcoholDrink == ''}">
+                        <div class="col-md-4">
+                          <label class="form-label">お酒</label>
+                          <select class="form-select select-placeholder" th:field="*{isAlcoholDrink}">
+                            <option th:value="''" th:if="${student.isAlcoholDrink == null or student.isAlcoholDrink == ''}">
                                   選択してください </option>
-    <option th:value="true">飲む</option>
-    <option th:value="false">飲まない</option>
-  </select>
-  <div class="text-danger" th:if="${#fields.hasErrors('isAlcoholDrink')}"
-                            th:errors="*{isAlcoholDrink}"></div>
-</div>
+                            <option th:value="true">飲む</option>
+                            <option th:value="false">飲まない</option>
+                          </select>
+                          <div class="text-danger" th:if="${#fields.hasErrors('isAlcoholDrink')}"
+                                                    th:errors="*{isAlcoholDrink}"></div>
+                        </div>
 
                         <div class="col-md-4">
                           <label class="form-label">タバコ</label>
-                          <select class="form-select" th:field="*{isSmoking}">
-                            <option value="" disabled selected hidden>選択してください</option>
+                          <select class="form-select select-placeholder" th:field="*{isSmoking}">
+                            <option th:value="''" th:if="${student.isSmoking == null or student.isSmoking == ''}">
+                                 選択してください </option>
                             <option th:value="true">吸う</option>
                             <option th:value="false">吸わない</option>
                           </select>
@@ -403,7 +410,8 @@
                         <div class="col-md-4">
                           <label class="form-label">入れ墨(Tattoo)</label>
                           <select class="form-select select-placeholder" th:field="*{haveTatto}">
-                            <option value="" disabled selected hidden>選択してください</option>
+                            <option th:value="''" th:if="${student.haveTatto == null or student.haveTatto == ''}">
+                                                          選択してください </option>
                             <option th:value="true">ある</option>
                             <option th:value="false">ない</option>
                           </select>
