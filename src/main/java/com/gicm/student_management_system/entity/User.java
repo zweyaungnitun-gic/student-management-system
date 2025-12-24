@@ -13,6 +13,7 @@ import jakarta.persistence.Table;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -32,11 +33,13 @@ public class User {
     private Long id;
 
     @NotBlank(message = "ユーザー名は必須です")
+    @Size(max = 25, message = "ユーザー名は25文字以内で入力してください")
     @Column(name = "Name", nullable = false)
     private String username;
 
     @NotBlank(message = "メールアドレスは必須です")
     @Email(message = "有効なメールアドレスを入力してください")
+    @Size(max = 25, message = "メールアドレスは25文字以内で入力してください")
     @Column(name = "email", nullable = false, unique = true)
     private String email;
 

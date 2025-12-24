@@ -34,7 +34,7 @@
           <img class="user-avatar" th:src="@{/images/profile.png}" alt="Admin avatar"/>
           <div>
             <p class="mb-0 fw-semibold" th:text="${userName} ?: 'Admin'">Admin</p>
-            <small class="text-muted">Exam Administrator</small>
+            <p class="mb-0 small text-muted" th:text="${userRole} ?: 'Role'">Role</p>
           </div>
         </div>
         <div class="badge badge-muted fw-medium mt-3 w-100 text-center">Verified Account</div>

@@ -62,7 +62,7 @@
                     <label class="form-label required-field">ユーザー名</label>
                     <input type="text" class="form-control" th:field="*{username}" 
                            th:classappend="${#fields.hasErrors('username')} ? 'is-invalid' : ''"
-                           placeholder="ユーザー名を入力">
+                           placeholder="ユーザー名を入力" maxlength="25">
                     <div class="invalid-feedback" th:if="${#fields.hasErrors('username')}" 
                          th:errors="*{username}" ></div>
                   </div>
@@ -70,7 +70,7 @@
                     <label class="form-label required-field">メールアドレス</label>
                     <input type="text" class="form-control" th:field="*{email}" 
                            th:classappend="${#fields.hasErrors('email')} ? 'is-invalid' : ''"
-                           placeholder="email@example.com">
+                           placeholder="email@example.com" maxlength="25">
                     <div class="invalid-feedback" th:if="${#fields.hasErrors('email')}" 
                          th:errors="*{email}" ></div>
                   </div>
@@ -93,7 +93,7 @@
                     <input type="password" class="form-control" name="password" 
                            th:value="${submittedPassword}"
                            th:classappend="${#fields.hasErrors('password')} ? 'is-invalid' : ''"
-                           placeholder="パスワードを入力">
+                           placeholder="パスワードを入力" maxlength="25">
                     <div class="invalid-feedback" th:if="${#fields.hasErrors('password')}" 
                          th:errors="*{password}" ></div>
                   </div>
