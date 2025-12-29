@@ -1,7 +1,6 @@
 package com.gicm.student_management_system.controller;
 
 
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -18,12 +17,6 @@ public class GlobalExceptionHandler {
         return "error/404";
     }
 
-    @ExceptionHandler(DataIntegrityViolationException.class)
-    public String handleDataIntegrity(DataIntegrityViolationException ex, Model model) {
-        model.addAttribute("statusCode", HttpStatus.CONFLICT.value());
-        model.addAttribute("errorMessage", "Data integrity violation");
-        return "error/500";
-    }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public String handleValidation(MethodArgumentNotValidException ex, Model model) {

@@ -49,12 +49,4 @@ public class GlobalControllerAdvice {
         response.setStatus(HttpStatus.NOT_FOUND.value());
         return "error/404";
     }
-
-    @ExceptionHandler(Exception.class)
-    public String handleGeneralException(Exception ex, Model model, HttpServletResponse response) {
-        response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-        model.addAttribute("status", HttpStatus.INTERNAL_SERVER_ERROR.value());
-        model.addAttribute("message", "An unexpected error occurred");
-        return "error/error";
-    }
 }
