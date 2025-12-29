@@ -557,6 +557,53 @@
     });
   };
 
+  document.addEventListener('DOMContentLoaded', function () {
+      const alertBox = document.querySelector('.alert-dismissible');
+      const body = document.body;
+
+      if (alertBox) {
+          body.classList.add('stop-scrolling');
+
+          const closeBtn = alertBox.querySelector('.btn-close');
+          
+          if (closeBtn) {
+              closeBtn.addEventListener('click', function () {
+                  body.classList.remove('stop-scrolling');
+              });
+          }
+      }
+  });
+
+  // ======================================================================================
+  // Flash message handling
+  function closeFlashMessage() {
+      const flashOverlay = document.querySelector('.custom-flash-overlay');
+      if (flashOverlay) {
+          flashOverlay.style.display = 'none';
+          document.body.classList.remove('flash-modal-open');
+          flashOverlay.remove();
+      }
+  }
+
+  document.addEventListener('DOMContentLoaded', function() {
+      const flashOverlay = document.querySelector('.custom-flash-overlay');
+      if (flashOverlay) {
+          flashOverlay.style.display = 'flex';
+          
+          document.body.classList.add('flash-modal-open');
+          
+          const okButton = flashOverlay.querySelector('.custom-flash-button');
+          if (okButton) {
+              okButton.addEventListener('click', function(e) {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  closeFlashMessage();
+              });
+          }
+      }
+  });
+  // ======================================================================================
+
   // To restrict Date of Birth (must be at least 18 years old)
   const setupDobRestriction = () => {
     const dobInput = document.querySelector('input[name="dateOfBirth"]'); 

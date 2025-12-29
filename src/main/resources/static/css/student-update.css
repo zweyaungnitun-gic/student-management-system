@@ -10,6 +10,11 @@ body {
     overflow-x: hidden;
 }
 
+body.stop-scrolling {
+  height: 100%;
+  overflow: hidden;
+}
+
 .fixed-header-container {
     position: fixed;
     top: 0;
@@ -960,5 +965,326 @@ body {
     
     .tab-pane h6 {
         font-size: 1rem;
+    }
+}
+
+/* Custom Success Alert Modal Styles - NEW */
+.custom-alert-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 20000;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.custom-alert-overlay.show {
+    opacity: 1;
+    visibility: visible;
+}
+
+.custom-alert-modal {
+    background: white;
+    padding: 2.5rem;
+    border-radius: 16px;
+    width: 90%;
+    max-width: 380px;
+    text-align: center;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    transform: translateY(20px);
+    transition: transform 0.3s ease;
+}
+
+.custom-alert-overlay.show .custom-alert-modal {
+    transform: translateY(0);
+}
+
+.custom-alert-icon {
+    font-size: 4.5rem;
+    margin-bottom: 1.25rem;
+    display: block;
+    color: #22c55e;
+}
+
+.custom-alert-error-icon {
+    color: #ef4444 !important;
+}
+
+.custom-alert-title {
+    color: #16a34a;
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+}
+
+.custom-alert-error-title {
+    color: #dc2626 !important;
+}
+
+.custom-alert-message {
+    color: #374151;
+    font-size: 1.125rem;
+    line-height: 1.5;
+    margin-bottom: 1.75rem;
+}
+
+.custom-alert-button {
+    background: linear-gradient(135deg, #4b6cb7 0%, #182848 100%);
+    color: white;
+    border: none;
+    padding: 14px 24px;
+    border-radius: 8px;
+    font-size: 1.125rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    width: 100%;
+    max-width: 220px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    box-shadow: 0 4px 6px rgba(37, 99, 235, 0.2);
+}
+
+.custom-alert-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 8px rgba(37, 99, 235, 0.3);
+}
+
+.custom-alert-button:active {
+    transform: translateY(0);
+}
+
+.custom-alert-button i {
+    font-size: 1.25rem;
+}
+
+/* Prevent scrolling when alert is active */
+body.alert-modal-open {
+    overflow: hidden !important;
+    position: fixed;
+    width: 100%;
+    height: 100%;
+}
+
+/* Animation for modal appearance */
+@keyframes modalSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.custom-alert-modal {
+    animation: modalSlideIn 0.3s ease-out;
+}
+
+/* Adjust for mobile */
+@media (max-width: 576px) {
+    .custom-alert-modal {
+        padding: 1.75rem;
+        max-width: 320px;
+    }
+    
+    .custom-alert-icon {
+        font-size: 3.5rem;
+        margin-bottom: 1rem;
+    }
+    
+    .custom-alert-title {
+        font-size: 1.25rem;
+    }
+    
+    .custom-alert-message {
+        font-size: 1rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .custom-alert-button {
+        padding: 12px 20px;
+        font-size: 1rem;
+        max-width: 180px;
+    }
+}
+
+/* Badge for unsaved changes */
+.nav-tabs .nav-link .unsaved-badge {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background-color: #dc3545;
+    color: white;
+    font-size: 10px;
+    font-weight: bold;
+    min-width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+    border: 2px solid white;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+/* Custom Flash Message Styles */
+.custom-flash-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 20000;
+}
+
+.custom-flash-modal {
+    background: white;
+    padding: 2.5rem;
+    border-radius: 16px;
+    width: 90%;
+    max-width: 380px;
+    text-align: center;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+.custom-flash-icon {
+    font-size: 4.5rem;
+    margin-bottom: 1.25rem;
+    display: block;
+}
+
+.custom-flash-overlay:first-child .custom-flash-icon {
+    color: #22c55e;
+}
+
+.custom-flash-overlay:last-child .custom-flash-icon {
+    color: #ef4444;
+}
+
+.custom-flash-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+}
+
+.custom-flash-overlay:first-child .custom-flash-title {
+    color: #16a34a;
+}
+
+.custom-flash-overlay:last-child .custom-flash-title {
+    color: #dc2626;
+}
+
+.custom-flash-message {
+    color: #374151;
+    font-size: 1.125rem;
+    line-height: 1.5;
+    margin-bottom: 1.75rem;
+}
+
+.custom-flash-button {
+    background: linear-gradient(135deg, #4b6cb7 0%, #182848 100%);
+    color: white;
+    border: none;
+
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    box-shadow: 0 4px 6px rgba(37, 99, 235, 0.2);
+
+    padding: 8px 16px;        
+    font-size: 14px;          
+    border-radius: 6px;       
+    max-width: 160px;        
+    width: auto;             
+    margin: 0 auto;   
+}
+
+.custom-flash-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 8px rgba(37, 99, 235, 0.3);
+}
+
+.custom-flash-button:active {
+    transform: translateY(0);
+}
+
+.custom-flash-button i {
+    font-size: 1.25rem;
+}
+
+/* Prevent scrolling when alert is active */
+body.flash-modal-open {
+    overflow: hidden !important;
+    position: fixed;
+    width: 100%;
+    height: 100%;
+}
+
+/* Animation for modal appearance */
+@keyframes flashModalSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.custom-flash-modal {
+    animation: flashModalSlideIn 0.3s ease-out;
+}
+
+/* Adjust for mobile */
+@media (max-width: 576px) {
+    .custom-flash-modal {
+        padding: 1.75rem;
+        max-width: 320px;
+    }
+    
+    .custom-flash-icon {
+        font-size: 3.5rem;
+        margin-bottom: 1rem;
+    }
+    
+    .custom-flash-title {
+        font-size: 1.25rem;
+    }
+    
+    .custom-flash-message {
+        font-size: 1rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .custom-flash-button {
+        padding: 12px 20px;
+        font-size: 1rem;
+        max-width: 180px;
     }
 }

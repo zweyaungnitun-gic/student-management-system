@@ -336,8 +336,7 @@
                         <div class="col-md-6">
                           <label class="form-label">合格した最高のJLPTレベル</label>
                           <select class="form-select" th:field="*{passedHighestJLPTLevel}">
-                            <option th:value="''" th:if="${student.passedHighestJLPTLevel == null or student.passedHighestJLPTLevel == ''}">
-                                  選択してください </option>
+                            <option th:value="''" > 選択してください </option>
                             <option value="none">なし</option>
                             <option value="N5">N5</option>
                             <option value="N4">N4</option>
@@ -353,8 +352,7 @@
                         <div class="col-md-4">
                           <label class="form-label">日本渡航経験</label>
                           <select class="form-select select-placeholder" th:field="*{japanTravelExperience}">
-                            <option th:value="''" th:if="${student.japanTravelExperience == null or student.japanTravelExperience == ''}">
-                                  選択してください </option>
+                            <option th:value="''" >選択してください </option>
                             <option value="true">ある</option>
                             <option value="false">ない</option>
                           </select>
@@ -364,8 +362,7 @@
                         <div class="col-md-4">
                           <label class="form-label">COE申請経験</label>
                           <select class="form-select select-placeholder" th:field="*{coeApplicationExperience}">
-                            <option th:value="''" th:if="${student.coeApplicationExperience == null or student.coeApplicationExperience == ''}">
-                                  選択してください </option>
+                            <option th:value="''" > 選択してください </option>
                             <option value="true">ある</option>
                             <option value="false">ない</option>
                           </select>
@@ -375,8 +372,7 @@
                         <div class="col-md-4">
                           <label class="form-label">寮があれば入りたい</label>
                           <select class="form-select select-placeholder" th:field="*{hostelPreference}">
-                            <option th:value="''" th:if="${student.hostelPreference == null or student.hostelPreference == ''}">
-                                  選択してください </option>
+                            <option th:value="''">選択してください </option>
                             <option value="true">はい</option>
                             <option value="false">いいえ</option>
                           </select>
@@ -387,20 +383,17 @@
                         <div class="col-md-4">
                           <label class="form-label">お酒</label>
                           <select class="form-select select-placeholder" th:field="*{isAlcoholDrink}">
-                            <option th:value="''" th:if="${student.isAlcoholDrink == null or student.isAlcoholDrink == ''}">
-                                  選択してください </option>
+                            <option th:value="''">選択してください </option>
                             <option th:value="true">飲む</option>
                             <option th:value="false">飲まない</option>
                           </select>
-                          <div class="text-danger" th:if="${#fields.hasErrors('isAlcoholDrink')}"
-                                                    th:errors="*{isAlcoholDrink}"></div>
+                          <div class="text-danger" th:if="${#fields.hasErrors('isAlcoholDrink')}" th:errors="*{isAlcoholDrink}"></div>
                         </div>
 
                         <div class="col-md-4">
                           <label class="form-label">タバコ</label>
                           <select class="form-select select-placeholder" th:field="*{isSmoking}">
-                            <option th:value="''" th:if="${student.isSmoking == null or student.isSmoking == ''}">
-                                 選択してください </option>
+                            <option th:value="''"> 選択してください </option>
                             <option th:value="true">吸う</option>
                             <option th:value="false">吸わない</option>
                           </select>
@@ -410,8 +403,7 @@
                         <div class="col-md-4">
                           <label class="form-label">入れ墨(Tattoo)</label>
                           <select class="form-select select-placeholder" th:field="*{haveTatto}">
-                            <option th:value="''" th:if="${student.haveTatto == null or student.haveTatto == ''}">
-                                                          選択してください </option>
+                            <option th:value="''"> 選択してください </option>
                             <option th:value="true">ある</option>
                             <option th:value="false">ない</option>
                           </select>
@@ -420,8 +412,10 @@
                         <div></div>
 
                         <div class="col-md-4">
-                          <label class="form-label">学校登録日</label>
-                          <input type="date" class="form-control" th:field="*{enrolledDate}" />
+                          <label class="form-label required-label">学校登録日</label>
+                          <input type="date" class="form-control" name="enrolledDate"
+                            th:value="${student.enrolledDate}" />
+                          <div class="text-danger" th:if="${#fields.hasErrors('enrolledDate')}"th:errors="*{enrolledDate}"></div>
                         </div>
 
                         <div class="col-md-4">
@@ -939,20 +933,26 @@
   </div>
 
   <!-- Flash Messages -->
-  <div th:if="${success}" class="alert alert-success alert-dismissible fade show position-fixed"
-    style="z-index: 1100; min-width: 300px; top: 20%; left: 58%; transform: translate(-50%, -50%);" role="alert">
-    <i class="fas fa-check-circle me-2"></i>
-    <span th:text="${success}"></span>
-    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  <div th:if="${success}" class="custom-flash-overlay" style="display: none;">
+    <div class="custom-flash-modal">
+      <p class="custom-flash-message" th:text="${success}"></p>
+      <button class="custom-flash-button" onclick="closeFlashMessage()">
+        <i class="fas fa-check"></i>
+        了解
+      </button>
+    </div>
   </div>
 
-  <div th:if="${error}" class="alert alert-danger alert-dismissible fade show position-fixed"
-    style="z-index: 1100; min-width: 300px; top: 20%; left: 58%; transform: translate(-50%, -50%);" role="alert">
-    <i class="fas fa-exclamation-circle me-2"></i>
-    <span th:text="${error}"></span>
-    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  <div th:if="${error}" class="custom-flash-overlay" style="display: none;">
+    <div class="custom-flash-modal">
+      <p class="custom-flash-message" th:text="${error}"></p>
+      <button class="custom-flash-button">
+          <i class="fas fa-check"></i>
+          了解
+      </button>
+    </div>
   </div>
-
+  
   <!-- MODAL: Unsaved Changes -->
   <div class="modal fade" id="unsavedModal" tabindex="-1" aria-labelledby="unsavedModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
@@ -1063,5 +1063,4 @@
   </script>
 
 </body>
-
 </html>
