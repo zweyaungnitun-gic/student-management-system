@@ -301,6 +301,7 @@ public class StudentController {
         existingStudent.setPassportNumber(student.getPassportNumber());
         existingStudent.setNationalID(student.getNationalID());
         existingStudent.setUpdatedAt(LocalDate.now());
+        existingStudent.setEnrolledDate(LocalDate.now());
 
         studentService.save(existingStudent);
 
