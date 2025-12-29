@@ -1,6 +1,5 @@
 package com.gicm.student_management_system.controller;
 
-import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
@@ -8,7 +7,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import com.gicm.student_management_system.enums.YesNoDisplay;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -29,6 +27,7 @@ import com.gicm.student_management_system.dto.N5ClassDTO;
 import com.gicm.student_management_system.dto.StudentDTO;
 import com.gicm.student_management_system.dto.StudentFullExportDTO;
 import com.gicm.student_management_system.entity.Student;
+import com.gicm.student_management_system.enums.YesNoDisplay;
 import com.gicm.student_management_system.service.InterviewNotesService;
 import com.gicm.student_management_system.service.N4ClassService;
 import com.gicm.student_management_system.service.N5ClassService;
@@ -429,6 +428,7 @@ public class StudentController {
 
     // KZT
     // 181225
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/export")
     @ResponseBody
     public List<StudentFullExportDTO> getStudentsExport(

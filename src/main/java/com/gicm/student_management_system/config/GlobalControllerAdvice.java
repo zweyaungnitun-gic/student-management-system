@@ -19,12 +19,12 @@ public class GlobalControllerAdvice {
     @ModelAttribute
     public void addUserAttributes(Model model) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        
-        if (authentication != null && authentication.isAuthenticated() 
+
+        if (authentication != null && authentication.isAuthenticated()
                 && !"anonymousUser".equals(authentication.getPrincipal())) {
-            
+
             String email = authentication.getName();
-            
+
             // Get user from database
             userRepository.findByEmail(email).ifPresent(user -> {
                 model.addAttribute("userName", user.getUsername());
