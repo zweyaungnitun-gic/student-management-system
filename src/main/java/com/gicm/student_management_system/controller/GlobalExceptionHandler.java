@@ -1,10 +1,9 @@
 package com.gicm.student_management_system.controller;
 
-import java.time.Instant;
-import java.util.Map;
+
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -12,26 +11,32 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<Map<String, Object>> handleIllegalArgument(IllegalArgumentException ex) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body(Map.of("timestamp", Instant.now(), "error", ex.getMessage()));
+     @ExceptionHandler(IllegalArgumentException.class)
+    public String handleIllegalArgument(IllegalArgumentException ex, Model model) {
+        model.addAttribute("statusCode", HttpStatus.NOT_FOUND.value());
+        model.addAttribute("errorMessage", ex.getMessage());
+        return "error/404";
     }
 
     @ExceptionHandler(DataIntegrityViolationException.class)
-    public ResponseEntity<Map<String, Object>> handleDataIntegrity(DataIntegrityViolationException ex) {
-        return ResponseEntity.status(HttpStatus.CONFLICT)
-                .body(Map.of("timestamp", Instant.now(), "error", ex.getMostSpecificCause().getMessage()));
+    public String handleDataIntegrity(DataIntegrityViolationException ex, Model model) {
+        model.addAttribute("statusCode", HttpStatus.CONFLICT.value());
+        model.addAttribute("errorMessage", "Data integrity violation");
+        return "error/500";
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<Map<String, Object>> handleValidation(MethodArgumentNotValidException ex) {
-        String message = ex.getBindingResult().getFieldErrors().stream()
+    public String handleValidation(MethodArgumentNotValidException ex, Model model) {
+        String message = ex.getBindingResult()
+                .getFieldErrors()
+                .stream()
                 .map(error -> error.getField() + " " + error.getDefaultMessage())
                 .findFirst()
                 .orElse("Invalid request");
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(Map.of("timestamp", Instant.now(), "error", message));
+
+        model.addAttribute("statusCode", HttpStatus.BAD_REQUEST.value());
+        model.addAttribute("errorMessage", message);
+        return "error/400";
     }
 }
 

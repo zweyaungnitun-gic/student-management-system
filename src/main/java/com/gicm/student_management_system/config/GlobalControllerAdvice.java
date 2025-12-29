@@ -1,13 +1,18 @@
 package com.gicm.student_management_system.config;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.servlet.NoHandlerFoundException;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import com.gicm.student_management_system.repository.UserRepository;
 
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 
 @ControllerAdvice
@@ -31,5 +36,25 @@ public class GlobalControllerAdvice {
                 model.addAttribute("userRole", user.getRole().name());
             });
         }
+    }
+
+    @ExceptionHandler(NoHandlerFoundException.class)
+    public String handleNotFound(NoHandlerFoundException ex, HttpServletResponse response) {
+        response.setStatus(HttpStatus.NOT_FOUND.value());
+        return "error/404";
+    }
+
+    @ExceptionHandler(NoResourceFoundException.class)
+    public String handleNoResourceFound(NoResourceFoundException ex, HttpServletResponse response) {
+        response.setStatus(HttpStatus.NOT_FOUND.value());
+        return "error/404";
+    }
+
+    @ExceptionHandler(Exception.class)
+    public String handleGeneralException(Exception ex, Model model, HttpServletResponse response) {
+        response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+        model.addAttribute("status", HttpStatus.INTERNAL_SERVER_ERROR.value());
+        model.addAttribute("message", "An unexpected error occurred");
+        return "error/error";
     }
 }
