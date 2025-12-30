@@ -28,7 +28,7 @@
                         </button>
                         <div>
                             <h1 class="mb-0" style="color: #0A58A0; font-weight: 600; font-size: 1.8rem;">
-                                授業情報更新画面
+                                生徒情報詳細画面
                             </h1>
                         </div>
                     </div>
@@ -71,7 +71,7 @@
                                 <i class="bi bi-mortarboard"></i> Academic情報
                             </a>
                         </li>
-                        <li class="nav-item">
+                        <li class="nav-item">   
                             <a class="nav-link" th:classappend="${currentTab == 'n5'} ? ' active'"
                                 th:href="@{/students/detail/{id}(id=${student.id}, tab='n5', nameSearch=${nameSearch}, status=${status})}">
                                 <i class="bi bi-book"></i> N5クラス情報
@@ -105,7 +105,11 @@
                                     </div>
                                     <div class="info-group">
                                         <div class="info-label">生 年 月 日</div>
-                                        <div class="info-value" th:text="${student.dateOfBirth}"></div>
+                                        <div class="info-value"
+                                            th:text="${student.dateOfBirth != null 
+                                                    ? #temporals.format(student.dateOfBirth, 'MM/dd/yyyy') 
+                                                    : 'N/A'}">
+                                        </div>
                                     </div>
                                     <div class="info-group">
                                         <div class="info-label">性 別</div>
@@ -113,7 +117,7 @@
                                     </div>
                                     <div class="info-group">
                                         <div class="info-label">宗 教</div>
-                                        <div class="info-value" th:text="${student.religion}"></div>
+                                        <div class="info-value" th:text="${religionDisplay}"></div>
                                     </div>
                                     <div class="info-group">
                                         <div class="info-label">その他宗教</div>
@@ -156,11 +160,11 @@
                                     </div>
                                     <div class="info-group">
                                         <div class="info-label">タバコ</div>
-                                        <div class="info-value" th:text="${isSmokingDisplay.label}"></div>
+                                        <div class="info-value" th:text="${isSmokingDisplay.getLabelForType('tabacco')}"></div>
                                     </div>
                                     <div class="info-group">
                                         <div class="info-label">お酒</div>
-                                        <div class="info-value" th:text="${isAlcoholDrinkDisplay.label}"></div>
+                                        <div class="info-value" th:text="${isAlcoholDrinkDisplay.getLabelForType('osake')}"></div>
                                     </div>
                                     <div class="info-group">
                                         <div class="info-label">入れ墨</div>
@@ -168,7 +172,7 @@
                                     </div>
                                     <div class="info-group">
                                         <div class="info-label">寮があれば入りたい</div>
-                                        <div class="info-value" th:text="${hostelPreferenceDisplay.label}"></div>
+                                        <div class="info-value" th:text="${hostelPreferenceDisplay.getLabelForType('hostel')}"></div>
                                     </div>
                                     <div class="info-group">
                                         <div class="info-label">日本渡航経験</div>
@@ -224,16 +228,26 @@
                                     </div>
                                     <div class="info-group">
                                         <div class="info-label">学校登録日</div>
-                                        <div class="info-value" th:text="${student.enrolledDate ?: 'N/A'}"></div>
+                                        <div class="info-value"
+                                            th:text="${student.enrolledDate != null
+                                                    ? #temporals.format(student.enrolledDate, 'MM/dd/yyyy')
+                                                    : 'N/A'}">
+                                        </div>
                                     </div>
                                     <div class="info-group">
                                         <div class="info-label">授業料支払予定日</div>
-                                        <div class="info-value" th:text="${student.schedulePaymentTutionDate ?: '未定'}">
+                                        <div class="info-value"
+                                            th:text="${student.schedulePaymentTutionDate != null
+                                                    ? #temporals.format(student.schedulePaymentTutionDate, 'MM/dd/yyyy')
+                                                    : '未定'}">
                                         </div>
                                     </div>
                                     <div class="info-group">
                                         <div class="info-label">授業料支払実績日</div>
-                                        <div class="info-value" th:text="${student.actualTutionPaymentDate ?: 'N/A'}">
+                                        <div class="info-value"
+                                            th:text="${student.actualTutionPaymentDate != null
+                                                    ? #temporals.format(student.actualTutionPaymentDate, 'MM/dd/yyyy')
+                                                    : 'N/A'}">
                                         </div>
                                     </div>
                                 </div>

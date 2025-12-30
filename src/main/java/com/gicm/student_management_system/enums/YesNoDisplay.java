@@ -18,10 +18,23 @@ public enum YesNoDisplay {
         return label;
     }
 
-    public static YesNoDisplay from(Boolean value) {
-        if (value == null) {
-            return EMPTY;
+    public String getLabelForType(String type) {
+        if (value == null) return "";
+
+        switch (type.toLowerCase()) {
+            case "tabacco":
+                return value ? "吸う" : "吸わない";
+            case "osake":
+                return value ? "飲む" : "飲まない";
+            case "hostel":
+                return value ? "はい" : "いいえ";
+            default:
+                return label;
         }
+    }
+
+    public static YesNoDisplay from(Boolean value) {
+        if (value == null) return EMPTY;
         return value ? YES : NO;
     }
 }

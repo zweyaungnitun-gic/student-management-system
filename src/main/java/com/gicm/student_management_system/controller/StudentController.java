@@ -28,6 +28,7 @@ import com.gicm.student_management_system.dto.StudentDTO;
 import com.gicm.student_management_system.dto.StudentFullExportDTO;
 import com.gicm.student_management_system.entity.Student;
 import com.gicm.student_management_system.enums.YesNoDisplay;
+import com.gicm.student_management_system.enums.Religion;
 import com.gicm.student_management_system.service.InterviewNotesService;
 import com.gicm.student_management_system.service.N4ClassService;
 import com.gicm.student_management_system.service.N5ClassService;
@@ -183,6 +184,8 @@ public class StudentController {
 
         model.addAttribute("hostelPreferenceDisplay",
                 YesNoDisplay.from(studentDTO.getHostelPreference()));
+        String religionLabel = Religion.getLabelFromValue(studentDTO.getReligion());
+        model.addAttribute("religionDisplay", religionLabel);
 
         // Map InterviewNotes Entity to InterviewNotesDTO for the view
         // Add attributes to model so details.html can display them
