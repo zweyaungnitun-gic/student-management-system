@@ -1027,6 +1027,7 @@
                           th:href="@{/students/student-update/{id}(id=${student.id}, nameSearch=${nameSearch}, status=${status})}"
                           class="action-icon edit"
                           title="編集"
+                          disabled
                           sec:authorize="hasRole('GUEST')"
                           style="cursor: not-allowed; opacity: 0.6;"
                           onclick="return false;"
@@ -1053,9 +1054,9 @@
                         <!-- Delete Button - Disabled for GUEST -->
                         <a
                           href="#"
-                          th:onclick="'if(confirm(\'本当に削除しますか？\')) window.location.href=\'/students/delete/' + ${student.id} + '\';'"
                           class="action-icon delete"
                           title="削除"
+                          disabled
                           sec:authorize="hasRole('GUEST')"
                           style="cursor: not-allowed; opacity: 0.6;"
                           onclick="return false;"
