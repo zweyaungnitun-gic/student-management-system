@@ -420,12 +420,18 @@
 
                         <div class="col-md-4">
                           <label class="form-label">授業料支払予定日</label>
-                          <input type="date" class="form-control" name="schedulePaymentTutionDate" th:value="*{student.schedulePaymentTutionDate}" />
+                          <input type="date" class="form-control" 
+                                name="schedulePaymentTutionDate" 
+                                id="schedulePaymentTutionDate"
+                                th:value="${student.schedulePaymentTutionDate}" />
                         </div>
 
                         <div class="col-md-4">
                           <label class="form-label">授業料支払実績日</label>
-                          <input type="date" class="form-control" name="actualTutionPaymentDate" th:value="*{student.actualTutionPaymentDate}" />
+                          <input type="date" class="form-control" 
+                                name="actualTutionPaymentDate" 
+                                id="actualTutionPaymentDate"
+                                th:value="${student.actualTutionPaymentDate}" />
                         </div>
 
                         <div class="col-12">
