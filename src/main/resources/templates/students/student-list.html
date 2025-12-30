@@ -942,7 +942,12 @@
                           <div
                             class="download-button-container flex flex-row justify-content-start"
                           >
-                            <button type="button" id="downloadBtn">
+                            <button type="button" id="downloadBtn" 
+                              sec:authorize="hasRole('GUEST')" disabled style="cursor: not-allowed; opacity: 0.6;">
+                              ↓ダウンロード
+                            </button>
+                            <button type="button" id="downloadBtn" 
+                              sec:authorize="hasRole('ADMIN')">
                               ↓ダウンロード
                             </button>
                           </div>
@@ -1017,13 +1022,27 @@
                       <div
                         class="d-flex flex-nowrap justify-content-center gap-2"
                       >
+                        <!-- Edit Button - Disabled for GUEST -->
                         <a
                           th:href="@{/students/student-update/{id}(id=${student.id}, nameSearch=${nameSearch}, status=${status})}"
                           class="action-icon edit"
                           title="編集"
+                          sec:authorize="hasRole('GUEST')"
+                          style="cursor: not-allowed; opacity: 0.6;"
+                          onclick="return false;"
                         >
                           <i class="bi bi-pencil-square"></i>
                         </a>
+                        <!-- Edit Button - Enabled for ADMIN -->
+                        <a
+                          th:href="@{/students/student-update/{id}(id=${student.id}, nameSearch=${nameSearch}, status=${status})}"
+                          class="action-icon edit"
+                          title="編集"
+                          sec:authorize="hasRole('ADMIN')"
+                        >
+                          <i class="bi bi-pencil-square"></i>
+                        </a>
+                        <!-- Detail Button - Always Visible -->
                         <a
                           th:href="@{/students/detail/{id}(id=${student.id}, nameSearch=${nameSearch}, status=${status})}"
                           class="action-icon detail"
@@ -1031,11 +1050,25 @@
                         >
                           <i class="bi bi-info-circle-fill"></i> 明細
                         </a>
+                        <!-- Delete Button - Disabled for GUEST -->
                         <a
                           href="#"
                           th:onclick="'if(confirm(\'本当に削除しますか？\')) window.location.href=\'/students/delete/' + ${student.id} + '\';'"
                           class="action-icon delete"
                           title="削除"
+                          sec:authorize="hasRole('GUEST')"
+                          style="cursor: not-allowed; opacity: 0.6;"
+                          onclick="return false;"
+                        >
+                          <i class="bi bi-trash-fill"></i>
+                        </a>
+                        <!-- Delete Button - Enabled for ADMIN -->
+                        <a
+                          href="#"
+                          th:onclick="'if(confirm(\'本当に削除しますか？\')) window.location.href=\'/students/delete/' + ${student.id} + '\';'"
+                          class="action-icon delete"
+                          title="削除"
+                          sec:authorize="hasRole('ADMIN')"
                         >
                           <i class="bi bi-trash-fill"></i>
                         </a>
