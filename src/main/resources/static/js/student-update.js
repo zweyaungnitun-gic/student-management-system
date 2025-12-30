@@ -706,6 +706,68 @@
     });
   };
 
+  function cancelUpdate() {
+      const nameSearch = '[[${nameSearch}]]';
+      const status = '[[${status}]]';
+
+      let url = '/students';
+      const params = [];
+
+      // Only push if the string isn't empty or literally the word 'null'
+      if (nameSearch && nameSearch.trim() !== '' && nameSearch !== 'null') {
+        params.push('nameSearch=' + encodeURIComponent(nameSearch.trim()));
+      }
+      if (status && status.trim() !== '' && status !== 'null') {
+        params.push('status=' + encodeURIComponent(status.trim()));
+      }
+
+      if (params.length > 0) {
+        url += '?' + params.join('&');
+      }
+
+      window.location.href = url;
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+      const nameSearch = '[[${nameSearch}]]';
+      const status = '[[${status}]]';
+
+      if (nameSearch || status) {
+        history.replaceState({ hasFilters: true }, '');
+
+        window.addEventListener('popstate', function (e) {
+          e.preventDefault();
+
+          let url = '/students';
+          const params = [];
+
+          if (nameSearch && nameSearch.trim() !== '') {
+            params.push('nameSearch=' + encodeURIComponent(nameSearch.trim()));
+          }
+          if (status && status.trim() !== '') {
+            params.push('status=' + encodeURIComponent(status.trim()));
+          }
+
+          if (params.length > 0) {
+            url += '?' + params.join('&');
+          }
+
+          window.location.href = url;
+        });
+      }
+    });
+
+    document.addEventListener("DOMContentLoaded", function () {
+      const layout = document.querySelector(".dashboard-layout");
+      const toggles = document.querySelectorAll("[data-sidebar-toggle]");
+      toggles.forEach((btn) =>
+        btn.addEventListener("click", function (event) {
+          event.preventDefault();
+          layout?.classList.toggle("sidebar-open");
+        })
+      );
+    });
+
   // Public function to mark a pane saved (for AJAX)
   window.markPaneSaved = function(paneId) {
     queryAllFieldsInPane(paneId).forEach(f => {
