@@ -224,6 +224,20 @@
         }
       }
 
+      // ============ DATE FORMATTING FOR EXPORT (mm/dd/yyyy) ============
+      function formatExportDate(dateStr) {
+        if (!dateStr) return "";
+        const date = new Date(dateStr);
+        if (isNaN(date.getTime())) return dateStr;
+
+        const mm = String(date.getMonth() + 1).padStart(2, "0");
+        const dd = String(date.getDate()).padStart(2, "0");
+        const yyyy = date.getFullYear();
+
+        // The '\u200B' is a zero-width space.
+        // It is invisible to the user but stops Excel from re-formatting the cell.
+        return `\u200B${mm}/${dd}/${yyyy}`;
+      }
       // ============ DOWNLOAD FUNCTIONALITY ============
       function setupDownloadButton() {
         const downloadBtn = document.getElementById("downloadBtn");
@@ -243,6 +257,18 @@
       async function handleDownload() {
         const downloadBtn = document.getElementById("downloadBtn");
         const originalText = downloadBtn.innerHTML;
+
+        // --- NEW ADDITION START ---
+        // Get all checkboxes that are checked
+        const checkedCheckboxes = document.querySelectorAll(
+          ".row-checkbox:checked"
+        );
+
+        // If no student is selected, show alert and stop execution
+        if (checkedCheckboxes.length === 0) {
+          alert("少なくとも1つのチェックボックスをチェックしてください。");
+          return;
+        }
 
         try {
           // Show loading
@@ -441,7 +467,7 @@
           student.studentId || "",
           student.studentName || "",
           student.nameInJapanese || "",
-          student.dateOfBirth || "",
+          formatExportDate(student.dateOfBirth),
           student.gender || "",
           student.currentLivingAddress || "",
           student.homeTownAddress || "",
@@ -456,17 +482,29 @@
           student.coeApplicationExperience || "",
           student.religion || "",
           student.otherReligion || "",
-          student.isSmoking ? "吸う" : "吸わない",
-          student.isAlcoholDrink ? "飲む" : "飲まない",
-          student.haveTatto ? "有" : "無",
-          student.schedulePaymentTutionDate || "",
+          student.isSmoking === true
+            ? "吸う"
+            : student.isSmoking === false
+            ? "吸わない"
+            : "",
+          student.isAlcoholDrink === true
+            ? "飲む"
+            : student.isAlcoholDrink === false
+            ? "飲まない"
+            : "",
+          student.haveTatto === true
+            ? "ある"
+            : student.haveTatto === false
+            ? "ない"
+            : "",
+          formatExportDate(student.schedulePaymentTutionDate),
           student.hostelPreference || "",
           student.memoNotes || "",
-          student.actualTutionPaymentDate || "",
-          student.enrolledDate || "",
+          formatExportDate(student.actualTutionPaymentDate),
+          formatExportDate(student.enrolledDate),
           student.status || "",
           // N5 Class data
-          student.n5ClassName || "",
+          student.n5ClassName || "N5クラス",
           student.n5ClassTeacher || "",
           student.n5ClassAttendance || "",
           student.n5ClassTestResult1 || "",
@@ -474,40 +512,45 @@
           student.n5ClassTestResult3 || "",
           student.n5ClassTestResult4 || "",
           student.n5ClassFeedback || "",
-          student.n5Class2Name || "",
+          student.n5Class1Name || "N5会話クラス①",
+          student.n5Class1Teacher || "",
+          student.n5Class1AttendanceRate || "",
+          student.n5Class1TestResult || "",
+          student.n5Class1Feedback || "",
+          student.n5Class2Name || "N5会話クラス②",
           student.n5Class2Teacher || "",
           student.n5Class2AttendanceRate || "",
           student.n5Class2TestResult || "",
           student.n5Class2Feedback || "",
-          student.n5Class3Name || "",
+          student.n5Class3Name || "N5会話クラス③",
           student.n5Class3Teacher || "",
           student.n5Class3AttendanceRate || "",
           student.n5Class3TestResult || "",
           student.n5Class3Feedback || "",
           // N4 Class data
-          student.n4Class1Name || "",
+          student.n4ClassName || "N4クラス",
+          student.n4ClassTeacher || "",
+          student.n4ClassAttendance || "",
+          student.n4ClassTestResult1 || "",
+          student.n4ClassTestResult2 || "",
+          student.n4ClassTestResult3 || "",
+          student.n4ClassTestResult4 || "",
+          student.n4ClassFeedback || "",
+          student.n4Class1Name || "N4会話クラス①",
           student.n4Class1Teacher || "",
           student.n4Class1AttendanceRate || "",
-          student.n4Class1TestResult1 || "",
+          student.n4Class1TestResult || "",
           student.n4Class1Feedback || "",
-          student.n4Class2Name || "",
+          student.n4Class2Name || "N4会話クラス②",
           student.n4Class2Teacher || "",
           student.n4Class2AttendanceRate || "",
-          student.n4Class2TestResult1 || "",
-          student.n4Class2TestResult2 || "",
-          student.n4Class2TestResult3 || "",
-          student.n4Class2TestResult4 || "",
+          student.n4Class2TestResult || "",
           student.n4Class2Feedback || "",
-          student.n4Class3Name || "",
+          student.n4Class3Name || "N4会話クラス③",
           student.n4Class3Teacher || "",
           student.n4Class3AttendanceRate || "",
           student.n4Class3TestResult || "",
           student.n4Class3Feedback || "",
-          student.n4Class4Name || "",
-          student.n4Class4Teacher || "",
-          student.n4Class4AttendanceRate || "",
-          student.n4Class4TestResult || "",
-          student.n4Class4Feedback || "",
           // Interview data
           student.interviewClassName || "",
           student.interviewTeacher || "",
@@ -516,9 +559,9 @@
           student.interviewFeedback || "",
           student.passedHighestJLPTLevel || "",
           // Interview Notes
-          student.interviewNote1 || "",
-          student.interviewNote2 || "",
-          student.interviewNote3 || "",
+          student.interview1 || "",
+          student.interview2 || "",
+          student.interview3 || "",
         ]);
 
         // Create workbook
@@ -959,15 +1002,16 @@
                     </td>
                     <td
                       data-label="支払予定日"
-                      th:text="${student.paymentDueDate}"
+                      th:text="${student.paymentDueDate != null ? #temporals.format(student.paymentDueDate, 'MM/dd/yyyy') : ''}"
                     >
-                      2024-03-15
+                      01/01/2025
                     </td>
+
                     <td
                       data-label="支払実績日"
-                      th:text="${student.paymentDate}"
+                      th:text="${student.paymentDate != null ? #temporals.format(student.paymentDate, 'MM/dd/yyyy') : ''}"
                     >
-                      2024-03-10
+                      01/01/2025
                     </td>
                     <td data-label="動作機能" class="action-cell">
                       <div
