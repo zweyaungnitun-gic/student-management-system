@@ -49,4 +49,10 @@ public class GlobalControllerAdvice {
         response.setStatus(HttpStatus.NOT_FOUND.value());
         return "error/404";
     }
+    @ExceptionHandler(org.springframework.web.HttpRequestMethodNotSupportedException.class)
+    public String handleMethodNotAllowed(org.springframework.web.HttpRequestMethodNotSupportedException ex, Model model) {
+        model.addAttribute("statusCode", HttpStatus.METHOD_NOT_ALLOWED.value());
+        model.addAttribute("errorMessage", ex.getMessage());
+        return "error/405";
+    }
 }
