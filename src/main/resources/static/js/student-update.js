@@ -611,7 +611,7 @@
     if (dobInput) {
       const today = new Date();
       const maxDate = new Date();
-      maxDate.setFullYear(today.getFullYear() - 18);
+      maxDate.setFullYear(today.getFullYear() - 0);
       
       const maxDateString = maxDate.toISOString().split('T')[0];
       
@@ -626,7 +626,7 @@
       dobInput.addEventListener('change', function() {
         const selectedDate = new Date(this.value);
         if (selectedDate > maxDate) {
-          alert('18歳以上である必要があります。');
+          alert('生年月日のデータが間違っています。');
           this.value = maxDateString; 
         }
       });
