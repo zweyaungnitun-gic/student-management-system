@@ -172,11 +172,14 @@ public class Student {
     @PrePersist
     protected void onCreate() {
         if (this.studentId == null) {
-            // This will be overwritten by the service if needed
             this.studentId = "TEMP-" + UUID.randomUUID().toString().substring(0, 8);
         }
         this.createdAt = LocalDate.now();
         this.updatedAt = LocalDate.now();
+
+        if (this.enrolledDate == null) {
+            this.enrolledDate = this.createdAt; // Default to same as createdAt
+        }
     }
 
     @PreUpdate

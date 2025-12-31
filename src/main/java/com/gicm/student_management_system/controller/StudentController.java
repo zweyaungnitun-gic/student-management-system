@@ -304,7 +304,7 @@ public class StudentController {
         existingStudent.setPassportNumber(student.getPassportNumber());
         existingStudent.setNationalID(student.getNationalID());
         existingStudent.setUpdatedAt(LocalDate.now());
-        existingStudent.setEnrolledDate(LocalDate.now());
+        // existingStudent.setEnrolledDate(LocalDate.now());
 
         studentService.save(existingStudent);
 
@@ -322,18 +322,13 @@ public class StudentController {
             RedirectAttributes redirectAttributes,
             Model model,
             @RequestParam(value = "nameSearch", defaultValue = "") String nameSearch,
-            // Ensure this comes from the hidden input 'filterStatus'
             @RequestParam(value = "filterStatus", defaultValue = "") String filterStatus) {
 
-        // --- ADD THE DEBUG LINE HERE ---
         System.out.println("DEBUG: Student ID from Path: " + id);
         System.out.println("DEBUG: Status received from Form: " + student.getStatus());
         System.out.println("DEBUG: Has Errors? " + bindingResult.hasErrors());
-        // -------------------------------
 
         if (bindingResult.hasErrors()) {
-            // If validation fails, we must reload the class DTOs for the UI to show the
-            // tabs correctly
             N5ClassDTO n5ClassDTO = n5ClassService.getOrCreateN5ClassDTO(id);
             N4ClassDTO n4ClassDTO = n4ClassService.getOrCreateN4ClassDTO(id);
             InterviewNotesDTO interviewNotesDTO = interviewNotesService.getOrCreateInterviewNotesDTO(id);
@@ -346,11 +341,9 @@ public class StudentController {
         }
 
         try {
-            // 1. Fetch the REAL entity from DB
             Student existingStudent = studentService.findById(id)
                     .orElseThrow(() -> new RuntimeException("Student not found: " + id));
 
-            // 2. Manually map ONLY the status-related fields from the form object
             existingStudent.setStatus(student.getStatus());
             existingStudent.setDesiredJobType(student.getDesiredJobType());
             existingStudent.setOtherDesiredJobType(student.getOtherDesiredJobType());
@@ -371,7 +364,6 @@ public class StudentController {
             existingStudent.setMemoNotes(student.getMemoNotes());
             existingStudent.setUpdatedAt(LocalDate.now());
 
-            // 3. Save the existing entity (which still has the Basic Info attached)
             studentService.save(existingStudent);
 
             redirectAttributes.addFlashAttribute("success", "ステータス情報が正常に更新されました。");

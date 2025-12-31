@@ -33,4 +33,12 @@ public interface StudentRepository extends JpaRepository<Student, Long> {
     String findMaxStudentId();
 
     Optional<Student> findByStudentId(String studentId);
+
+    // Find students with null createdAt (for migration)
+    @Query("SELECT s FROM Student s WHERE s.createdAt IS NULL")
+    List<Student> findByCreatedAtIsNull();
+
+    // Find students with null enrolledDate (for migration)
+    @Query("SELECT s FROM Student s WHERE s.enrolledDate IS NULL")
+    List<Student> findByEnrolledDateIsNull();
 }
