@@ -40,6 +40,7 @@
                         <div class="student-id-badge bg-light border rounded p-3">
                             <i class="bi bi-person-badge-fill me-2 text-primary"></i>
                             <span class="fw-bold">生徒ID:
+                                
                             </span>
                             <span
                                 th:text="${student.studentId != null ? student.studentId : ('STU' + T(java.lang.String).format('%03d', student.id))}">
@@ -137,7 +138,11 @@
                                     </div>
                                     <div class="info-group">
                                         <div class="info-label">現在のJLPT合格ラベル</div>
-                                        <div class="info-value" th:text="${student.currentJapanLevel}"></div>
+                                        <div class="info-value"
+                                            th:text="${student.currentJapanLevel == null or student.currentJapanLevel == '' 
+                                                    ? '' 
+                                                    : (student.currentJapanLevel.toLowerCase() == 'none' ? 'なし' : student.currentJapanLevel)}">
+                                        </div>
                                     </div>
                                 </div>
 
@@ -148,7 +153,11 @@
                                     </div>
                                     <div class="info-group">
                                         <div class="info-label">合格した日本語ラベル</div>
-                                        <div class="info-value" th:text="${student.passedHighestJLPTLevel}"></div>
+                                        <div class="info-value"
+                                            th:text="${student.passedHighestJLPTLevel == null or student.passedHighestJLPTLevel == '' 
+                                                    ? '' 
+                                                    : (student.passedHighestJLPTLevel.toLowerCase() == 'none' ? 'なし' : student.passedHighestJLPTLevel)}">
+                                        </div>
                                     </div>
                                     <div class="info-group">
                                         <div class="info-label">希望職種</div>

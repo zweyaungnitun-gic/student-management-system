@@ -118,26 +118,18 @@ body {
 /* NAV-TABS (Updated to match Student Update Layout)*/
 .nav-tabs {
   display: flex;
-  flex-wrap: nowrap;          
-  overflow-x: auto;           
+  flex-wrap: nowrap;
+  overflow-x: auto;
   white-space: nowrap;
   border-bottom: 2px solid #e9ecef !important;
   gap: 8px;
   -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
 
-/* Tab Link Styles */
 .nav-tabs::-webkit-scrollbar {
-  height: 4px;
-}
-
-.nav-tabs::-webkit-scrollbar-track {
-  background: #f1f1f1;
-}
-
-.nav-tabs::-webkit-scrollbar-thumb {
-  background: #888;
-  border-radius: 2px;
+  display: none;
 }
 
 .nav-tabs .nav-item {
@@ -381,4 +373,3 @@ body {
 .interview-section .mb-4 {
   margin-bottom: 1.5rem !important;
 }
-
