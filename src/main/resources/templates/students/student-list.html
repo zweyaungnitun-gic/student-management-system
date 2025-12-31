@@ -1,5 +1,9 @@
 <!DOCTYPE html>
-<html lang="ja" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<html
+  lang="ja"
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+>
   <head
     th:replace="~{layouts/admin-layout :: head(
     pageTitle=${'生徒情報一覧 | Admin Dashboard'},
@@ -11,97 +15,6 @@
 
   <th:block th:fragment="extraCSS">
     <link rel="stylesheet" href="/css/student-list.css" />
-    <!-- <style>
-      /* Download button container */
-      #studentTable {
-        position: relative;
-      }
- 
-      .download-button-container {
-        position: absolute;
-        top: 0;
-        right: 0;
-        height: 100%;
-        width: 150px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        z-index: 10;
-        gap: 8px;
-      }
- 
-      #downloadBtn {
-        background-color: #0c5ed7;
-        color: white;
-        border: none;
-        padding: 6px 12px;
-        border-radius: 4px;
-        cursor: pointer;
-        font-size: 14px;
-        transition: background-color 0.2s;
-        white-space: nowrap;
-      }
- 
-      #downloadBtn:hover {
-        background-color: #0a4ebd;
-      }
- 
-      #downloadBtn:disabled {
-        background-color: #cccccc;
-        cursor: not-allowed;
-      }
- 
-      #selectedCount {
-        font-size: 12px;
-        min-width: 24px;
-      }
- 
-      /* Filter row */
-      .filter-row th {
-        position: relative;
-      }
- 
-      /* Selection info */
-      .selection-info {
-        font-size: 14px;
-        color: #666;
-        margin-left: 10px;
-        display: none;
-      }
- 
-      /* Responsive adjustments */
-      @media (max-width: 992px) {
-        .download-button-container {
-          position: static;
-          width: auto;
-          margin-top: 10px;
-          justify-content: flex-end;
-          height: auto;
-          margin-right: 1rem;
-        }
- 
-        .filter-control-group.checkbox-group,
-        .filter-control-group {
-          margin-bottom: 5px;
-        }
-      }
- 
-      @media (max-width: 768px) {
-        .filter-control-group {
-          flex: 1 1 100%;
-          margin-bottom: 8px;
-        }
- 
-        #studentStatusFilter {
-          flex: 1 1 100%;
-        }
- 
-        #downloadBtn {
-          font-size: 13px;
-          padding: 5px 10px;
-        }
-      }
-    </style> -->
   </th:block>
 
   <th:block th:fragment="extraJS">
@@ -117,7 +30,8 @@
       let allRows = [];
       let currentPage = 1;
       const rowsPerPage = 10;
-      const userRole = /*[[${#authentication.authorities[0].authority}]]*/ 'ROLE_GUEST';
+      const userRole =
+        /*[[${#authentication.authorities[0].authority}]]*/ "ROLE_GUEST";
 
       // ============ DOCUMENT READY ============
       document.addEventListener("DOMContentLoaded", function () {
@@ -245,9 +159,9 @@
 
         downloadBtn.addEventListener("click", async function () {
           // Check if user has admin role
-          if (userRole !== 'ROLE_ADMIN') {
+          if (userRole !== "ROLE_ADMIN") {
             // Redirect to access denied page for non-admin users
-            window.location.href = '/access-denied';
+            window.location.href = "/access-denied";
             return;
           }
           await handleDownload();
@@ -374,33 +288,41 @@
       async function exportToExcel(data, selectedStudentIds) {
         // Headers
         const headers = [
+          // Student Info page
           "生徒ID",
           "名前",
           "名前(カタカナ)",
           "生年月日",
           "性別",
+          "父親名",
+          "連絡先(TEL,Viber)",
+          "国民ID番号",
+          "パスポート番号",
+          "電話番号",
+          "保護者電話番号",
           "現住所",
           "出身地住所",
-          "連絡先(TEL,Viber)",
-          "父親名",
-          "パスポート番号",
-          "国民ID番号",
-          "現在のJLPT合格レベル",
+
+          // Status page
           "希望職種",
           "その他希望職種",
-          "日本渡航経験",
-          "COE申請経験",
           "宗教",
           "その他宗教",
-          "タバコ",
-          "お酒",
-          "入れ墨",
-          "授業料支払予定日",
-          "寮があれば入りたい",
-          "その他メモ（自由形式）",
-          "授業料支払実績日",
-          "学校登録日",
+          "現在のJLPT合格レベル",
           "生徒の授業ステータス",
+          "在籍状況",
+          "合格済みJLPTレベル",
+          "日本渡航経験",
+          "COE申請経験",
+          "寮があれば入りたい",
+          "お酒",
+          "タバコ",
+          "入れ墨",
+          "学校登録日",
+          "授業料支払予定日",
+          "授業料支払実績日",
+          "その他メモ（自由形式）",
+
           // N5 Class
           "N5クラス名",
           "N5担当教師",
@@ -425,6 +347,7 @@
           "N5会話クラス③出席率",
           "N5会話クラス③テスト結果",
           "N5会話クラス③教師所感",
+
           // N4 Class
           "N4クラス名",
           "N4担当教師",
@@ -449,60 +372,63 @@
           "N4会話クラス③出席率",
           "N4会話クラス③テスト結果",
           "N4会話クラス③教師所感",
-          // Interview
-          "面談クラス名",
-          "面談教師",
-          "面談出席率",
-          "面談テスト結果",
-          "面談教師所感",
-          "合格済みJLPTレベル",
+
           // Interview Notes
           "一回目面接メモ",
           "二回目面接メモ",
           "三回目面接メモ",
+          "メモ／備考",
         ];
 
         // Map data to rows
         const rows = data.map((student) => [
+          // Student Info page
           student.studentId || "",
           student.studentName || "",
           student.nameInJapanese || "",
           formatExportDate(student.dateOfBirth),
           student.gender || "",
+          student.fatherName || "",
+          student.contactViber || "",
+          student.nationalID || "",
+          student.passportNumber || "",
+          student.phoneNumber || "",
+          student.secondaryPhone || "",
           student.currentLivingAddress || "",
           student.homeTownAddress || "",
-          student.contactViber || "",
-          student.fatherName || "",
-          student.passportNumber || "",
-          student.nationalID || "",
-          student.currentJapanLevel || "",
+
+          // Status page
           student.desiredJobType || "",
           student.otherDesiredJobType || "",
-          student.japanTravelExperience || "",
-          student.coeApplicationExperience || "",
           student.religion || "",
           student.otherReligion || "",
-          student.isSmoking === true
-            ? "吸う"
-            : student.isSmoking === false
-            ? "吸わない"
-            : "",
+          student.currentJapanLevel || "",
+          student.attendingClassRelatedStatus || "",
+          student.status || "",
+          student.passedHighestJLPTLevel || "",
+          student.japanTravelExperience || "",
+          student.coeApplicationExperience || "",
+          student.hostelPreference || "",
           student.isAlcoholDrink === true
             ? "飲む"
             : student.isAlcoholDrink === false
             ? "飲まない"
+            : "",
+          student.isSmoking === true
+            ? "吸う"
+            : student.isSmoking === false
+            ? "吸わない"
             : "",
           student.haveTatto === true
             ? "ある"
             : student.haveTatto === false
             ? "ない"
             : "",
-          formatExportDate(student.schedulePaymentTutionDate),
-          student.hostelPreference || "",
-          student.memoNotes || "",
-          formatExportDate(student.actualTutionPaymentDate),
           formatExportDate(student.enrolledDate),
-          student.status || "",
+          formatExportDate(student.schedulePaymentTutionDate),
+          formatExportDate(student.actualTutionPaymentDate),
+          student.memoNotes || "",
+
           // N5 Class data
           student.n5ClassName || "N5クラス",
           student.n5ClassTeacher || "",
@@ -516,17 +442,18 @@
           student.n5Class1Teacher || "",
           student.n5Class1AttendanceRate || "",
           student.n5Class1TestResult || "",
-          student.n5Class1Feedback || "",
+          student.n5Class1TeacherFeedback || "",
           student.n5Class2Name || "N5会話クラス②",
           student.n5Class2Teacher || "",
           student.n5Class2AttendanceRate || "",
           student.n5Class2TestResult || "",
-          student.n5Class2Feedback || "",
+          student.n5Class2TeacherFeedback || "",
           student.n5Class3Name || "N5会話クラス③",
           student.n5Class3Teacher || "",
           student.n5Class3AttendanceRate || "",
           student.n5Class3TestResult || "",
-          student.n5Class3Feedback || "",
+          student.n5Class3TeacherFeedback || "",
+
           // N4 Class data
           student.n4ClassName || "N4クラス",
           student.n4ClassTeacher || "",
@@ -540,28 +467,23 @@
           student.n4Class1Teacher || "",
           student.n4Class1AttendanceRate || "",
           student.n4Class1TestResult || "",
-          student.n4Class1Feedback || "",
+          student.n4Class1TeacherFeedback || "",
           student.n4Class2Name || "N4会話クラス②",
           student.n4Class2Teacher || "",
           student.n4Class2AttendanceRate || "",
           student.n4Class2TestResult || "",
-          student.n4Class2Feedback || "",
+          student.n4Class2TeacherFeedback || "",
           student.n4Class3Name || "N4会話クラス③",
           student.n4Class3Teacher || "",
           student.n4Class3AttendanceRate || "",
           student.n4Class3TestResult || "",
-          student.n4Class3Feedback || "",
-          // Interview data
-          student.interviewClassName || "",
-          student.interviewTeacher || "",
-          student.interviewAttendanceRate || "",
-          student.interviewTestResult || "",
-          student.interviewFeedback || "",
-          student.passedHighestJLPTLevel || "",
+          student.n4Class3TeacherFeedback || "",
+
           // Interview Notes
           student.interview1 || "",
           student.interview2 || "",
           student.interview3 || "",
+          student.otherMemo || "",
         ]);
 
         // Create workbook

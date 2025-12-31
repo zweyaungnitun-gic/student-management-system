@@ -47,6 +47,8 @@ public class StudentExportServiceImpl implements StudentExportService {
         dto.setCurrentLivingAddress(s.getCurrentLivingAddress());
         dto.setHomeTownAddress(s.getHomeTownAddress());
         dto.setContactViber(s.getContactViber());
+        dto.setPhoneNumber(s.getPhoneNumber());
+        dto.setSecondaryPhone(s.getSecondaryPhone());
         dto.setFatherName(s.getFatherName());
         dto.setPassportNumber(s.getPassportNumber());
         dto.setNationalID(s.getNationalID());
@@ -68,6 +70,7 @@ public class StudentExportServiceImpl implements StudentExportService {
                 s.getActualTutionPaymentDate() != null ? s.getActualTutionPaymentDate().toString() : "");
         dto.setEnrolledDate(s.getEnrolledDate() != null ? s.getEnrolledDate().toString() : "");
         dto.setStatus(s.getStatus());
+        dto.setAttendingClassRelatedStatus(s.getAttendingClassRelatedStatus());
         dto.setPassedHighestJLPTLevel(s.getPassedHighestJLPTLevel());
         dto.setContactViber(s.getContactViber());
 
@@ -128,6 +131,7 @@ public class StudentExportServiceImpl implements StudentExportService {
             dto.setInterview1(s.getInterviewNotes().getInterview1());
             dto.setInterview2(s.getInterviewNotes().getInterview2());
             dto.setInterview3(s.getInterviewNotes().getInterview3());
+            dto.setOtherMemo(s.getInterviewNotes().getOtherMemo());
         }
 
         return dto;
