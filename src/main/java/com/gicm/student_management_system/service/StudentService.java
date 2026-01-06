@@ -32,4 +32,5 @@ public interface StudentService {
 
     List<Student> findAllByIds(List<Long> ids);
 
+    boolean isNationalIDDuplicate(String nationalID, Long excludeId);
 }

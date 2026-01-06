@@ -359,38 +359,158 @@
     
     return isValid;
   }
-  
-  const setupFormValidationAndSubmission = () => {
-    document.querySelectorAll('.tab-pane form').forEach(form => {
-      const pane = form.closest('.tab-pane');
-      if (!pane) return;
-      const paneId = pane.id;
+  // ============================================================================
+    async function checkAndSubmitForm(form, studentId) {
+      const nationalIDInput = form.querySelector('input[name="nationalID"]');
+      
+      if (nationalIDInput) {
+          const nationalID = nationalIDInput.value.trim();
+          if (nationalID) {
+              try {
+                  // Pass current student ID to exclude from duplicate check
+                  const isDuplicate = await checkNationalIDDuplicate(nationalID, studentId);
+                  
+                  if (isDuplicate) {
+                      nationalIDInput.classList.add('is-invalid');
+                      
+                      // Show error message
+                      let feedback = nationalIDInput.parentNode.querySelector('.invalid-feedback');
+                      if (!feedback) {
+                          feedback = document.createElement('div');
+                          feedback.className = 'invalid-feedback';
+                          feedback.style.display = 'block';
+                          nationalIDInput.parentNode.appendChild(feedback);
+                      }
+                      feedback.textContent = 'この国民IDは既に使用されています';
+                      
+                      nationalIDInput.focus();
+                      return false;
+                  }
+              } catch (error) {
+                  console.error('Error checking duplicate:', error);
+              }
+          }
+      }
+      
+      return true;
+  }
 
-      form.addEventListener('submit', function(event) {
-        event.preventDefault(); 
+  function showDuplicateMessage(inputElement) {
+      // Check if message already exists
+      let message = inputElement.parentNode.querySelector('.duplicate-message');
+      
+      if (!message) {
+          // Create new message only if it doesn't exist
+          message = document.createElement('div');
+          message.className = 'duplicate-message text-danger small mt-1';
+          message.style.display = 'block';
+          inputElement.parentNode.appendChild(message);
+      }
+      
+      message.textContent = 'この国民IDは既に使用されています';
+  }
 
-        if (validateTab(form)) {          
-          queryAllFieldsInPane(paneId).forEach(f => {
-            f.dataset.originalValue = f.value ?? '';
-            f.classList.remove('changed-field');
-          });
-          changedMap[paneId] = new Set();
-          removeUnsavedBadgeFromNav(paneId);
+  // Remove duplicate message if exists
+  function removeDuplicateMessage(inputElement) {
+      const existingMsg = inputElement.parentNode.querySelector('.duplicate-message');
+      if (existingMsg) {
+          existingMsg.remove();
+      }
+  }
 
-          form.submit(); 
-        } else {
-          const firstInvalid = form.querySelector('.is-invalid');
-          if (firstInvalid) {
-            firstInvalid.focus();
+  // In your validation or duplicate check function:
+  async function checkNationalIDDuplicate(nationalID, excludeId = null) {
+      if (!nationalID || nationalID.trim() === '') {
+          // Remove message if field is empty
+          const nationalIDInput = document.querySelector('input[name="nationalID"]');
+          if (nationalIDInput) {
+              removeDuplicateMessage(nationalIDInput);
+          }
+          return false;
+      }
+      
+      try {
+          let url = `/api/students/check-duplicate-id?nationalID=${encodeURIComponent(nationalID)}`;
+          if (excludeId) {
+              url += `&excludeId=${excludeId}`;
           }
           
-          const invalidCount = form.querySelectorAll('.is-invalid').length;
-          if (invalidCount > 0) {
-            alert('入力内容にエラーがあります。' + invalidCount + '個の項目を修正してください。');
+          const response = await fetch(url);
+          const isDuplicate = await response.json();
+          
+          const nationalIDInput = document.querySelector('input[name="nationalID"]');
+          if (nationalIDInput) {
+              if (isDuplicate) {
+                  showDuplicateMessage(nationalIDInput);
+              } else {
+                  removeDuplicateMessage(nationalIDInput);
+              }
           }
-        }
+          
+          return isDuplicate;
+      } catch (error) {
+          console.error('Error checking duplicate:', error);
+          return false;
+      }
+  }
+
+  // Add real-time check on blur
+  const nationalIDInput = document.querySelector('input[name="nationalID"]');
+  if (nationalIDInput) {
+      nationalIDInput.addEventListener('blur', async function() {
+          if (this.value.trim()) {
+              // Get student ID (for update scenarios)
+              const studentIdInput = document.querySelector('input[name="id"]');
+              const studentId = studentIdInput ? studentIdInput.value : null;
+              
+              await checkNationalIDDuplicate(this.value.trim(), studentId);
+          }
       });
-    });
+  }
+// ============================================================================
+  const setupFormValidationAndSubmission = () => {
+      document.querySelectorAll('.tab-pane form').forEach(form => {
+          form.addEventListener('submit', async function(event) {
+              event.preventDefault();
+              
+              const pane = form.closest('.tab-pane');
+              const paneId = pane.id;
+              
+              // Get student ID from hidden input or URL
+              const studentIdInput = form.querySelector('input[name="id"]');
+              const studentId = studentIdInput ? studentIdInput.value : null;
+              
+              // Check for duplicates first
+              const canProceed = await checkAndSubmitForm(form, studentId);
+              if (!canProceed) {
+                  return;
+              }
+              
+              // Then validate the form
+              if (validateTab(form)) {
+                  // Update original values
+                  queryAllFieldsInPane(paneId).forEach(f => {
+                      f.dataset.originalValue = f.value ?? '';
+                      f.classList.remove('changed-field');
+                  });
+                  changedMap[paneId] = new Set();
+                  removeUnsavedBadgeFromNav(paneId);
+                  
+                  // Submit the form
+                  form.submit();
+              } else {
+                  const firstInvalid = form.querySelector('.is-invalid');
+                  if (firstInvalid) {
+                      firstInvalid.focus();
+                  }
+                  
+                  const invalidCount = form.querySelectorAll('.is-invalid').length;
+                  if (invalidCount > 0) {
+                      alert('入力内容にエラーがあります。' + invalidCount + '個の項目を修正してください。');
+                  }
+              }
+          });
+      });
   };
 
   // Reset fields to original values
@@ -660,10 +780,60 @@
     // National ID field
     const nationalIDInput = document.querySelector('input[name="nationalID"]');
     if (nationalIDInput) {
-      nationalIDInput.addEventListener('blur', function() {
-        if (this.value.trim() === '') return;
-        validateNationalID(this);
-      });
+        let debounceTimer;
+        let lastCheckedValue = '';
+        
+        nationalIDInput.addEventListener('input', function() {
+            clearTimeout(debounceTimer);
+            
+            // Get student ID for exclusion
+            const studentIdInput = document.querySelector('input[name="id"]');
+            const studentId = studentIdInput ? studentIdInput.value : null;
+            
+            const currentValue = this.value.trim();
+            
+            debounceTimer = setTimeout(async () => {
+                if (currentValue === '') {
+                    removeDuplicateMessage(this);
+                    return;
+                }
+                
+                // Don't check if value hasn't changed
+                if (currentValue === lastCheckedValue) {
+                    return;
+                }
+                
+                // First validate format
+                if (!validateNationalID(this)) {
+                    removeDuplicateMessage(this); // Remove duplicate message if format is invalid
+                    return;
+                }
+                
+                // Check for duplicates
+                await checkNationalIDDuplicate(currentValue, studentId);
+                lastCheckedValue = currentValue;
+            }, 500); // 500ms debounce
+        });
+        
+        nationalIDInput.addEventListener('blur', async function() {
+            const currentValue = this.value.trim();
+            if (currentValue === '') {
+                removeDuplicateMessage(this);
+                return;
+            }
+            
+            // Validate format first
+            if (!validateNationalID(this)) {
+                removeDuplicateMessage(this);
+                return;
+            }
+            
+            // Get student ID (for update scenarios)
+            const studentIdInput = document.querySelector('input[name="id"]');
+            const studentId = studentIdInput ? studentIdInput.value : null;
+            
+            await checkNationalIDDuplicate(currentValue, studentId);
+        });
     }
     
     // Real-time validation for required fields

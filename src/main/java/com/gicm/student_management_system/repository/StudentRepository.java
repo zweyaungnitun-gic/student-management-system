@@ -41,4 +41,7 @@ public interface StudentRepository extends JpaRepository<Student, Long> {
     // Find students with null enrolledDate (for migration)
     @Query("SELECT s FROM Student s WHERE s.enrolledDate IS NULL")
     List<Student> findByEnrolledDateIsNull();
+
+    // Finds a student with the same National ID but a different primary ID
+    Optional<Student> findByNationalIDAndIdNot(String nationalID, Long id);
 }

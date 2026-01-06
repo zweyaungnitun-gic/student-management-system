@@ -288,6 +288,16 @@ public class StudentController {
             return "students/student-update.html";
         }
 
+        if (student.getNationalID() != null && !student.getNationalID().isEmpty()) {
+            if (studentService.isNationalIDDuplicate(student.getNationalID(), id)) {
+                bindingResult.rejectValue("nationalID", "error.duplicate", "この国民IDは既に登録されています。");
+            }
+        }
+
+        if (bindingResult.hasErrors()) {
+            return "students/student-update.html";
+        }
+
         Student existingStudent = studentService.findById(id)
                 .orElseThrow(() -> new RuntimeException("Student not found: " + id));
 

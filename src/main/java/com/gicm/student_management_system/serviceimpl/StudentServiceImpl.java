@@ -417,4 +417,9 @@ public class StudentServiceImpl implements StudentService {
 
         return 0;
     }
+
+    @Override
+    public boolean isNationalIDDuplicate(String nationalID, Long excludeId) {
+        return studentRepository.findByNationalIDAndIdNot(nationalID, excludeId).isPresent();
+    }
 }
