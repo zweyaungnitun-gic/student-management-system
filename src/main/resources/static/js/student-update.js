@@ -144,7 +144,7 @@
     });
   }
 
-  // Phone number validation: Must start with 09 and have exactly 11 digits
+  // Phone number validation: Must start with 09 and have 9 ~ 11 digits
   function validatePhoneNumber(input, fieldName) {
     const value = input.value.trim();
     
@@ -158,7 +158,7 @@
       return true;
     }
     
-    const phoneRegex = /^09\d{9}$/;
+    const phoneRegex = /^09\d{7,9}$/;
     
     if (!phoneRegex.test(value)) {
       input.classList.add('is-invalid');
@@ -175,10 +175,12 @@
         feedback.textContent = '電話番号は09から始まる必要があります';
       } else if (!value.startsWith('09')) {
         feedback.textContent = '電話番号は09から始まる必要があります';
-      } else if (value.length !== 11) {
-        feedback.textContent = '電話番号は11桁である必要があります (現在: ' + value.length + '桁)';
+      } else if (value.length < 9) {
+      feedback.textContent = `電話番号は9桁以上である必要があります (現在: ${value.length}桁)`;
+      } else if (value.length > 11) {
+        feedback.textContent = `電話番号は11桁以内である必要があります (現在: ${value.length}桁)`;
       } else {
-        feedback.textContent = `${fieldName}は09から始まる11桁の数字で入力してください`;
+        feedback.textContent = `${fieldName}は09から始まる9~11桁の数字で入力してください`;
       }
       
       feedback.style.display = 'block';
@@ -359,8 +361,8 @@
     
     return isValid;
   }
-  // ============================================================================
-    async function checkAndSubmitForm(form, studentId) {
+
+  async function checkAndSubmitForm(form, studentId) {
       const nationalIDInput = form.querySelector('input[name="nationalID"]');
       
       if (nationalIDInput) {
@@ -418,7 +420,6 @@
       }
   }
 
-  // In your validation or duplicate check function:
   async function checkNationalIDDuplicate(nationalID, excludeId = null) {
       if (!nationalID || nationalID.trim() === '') {
           // Remove message if field is empty
@@ -467,7 +468,7 @@
           }
       });
   }
-// ============================================================================
+
   const setupFormValidationAndSubmission = () => {
       document.querySelectorAll('.tab-pane form').forEach(form => {
           form.addEventListener('submit', async function(event) {
@@ -486,7 +487,6 @@
                   return;
               }
               
-              // Then validate the form
               if (validateTab(form)) {
                   // Update original values
                   queryAllFieldsInPane(paneId).forEach(f => {
@@ -496,7 +496,6 @@
                   changedMap[paneId] = new Set();
                   removeUnsavedBadgeFromNav(paneId);
                   
-                  // Submit the form
                   form.submit();
               } else {
                   const firstInvalid = form.querySelector('.is-invalid');
@@ -574,7 +573,6 @@
           e.stopPropagation();
           e.stopImmediatePropagation(); // Prevent other listeners
           
-          // Store the target tab that was clicked
           pendingPaneId = targetPaneId;
           
           // Update modal content
@@ -694,7 +692,6 @@
       }
   });
 
-  // ======================================================================================
   // Flash message handling
   function closeFlashMessage() {
       const flashOverlay = document.querySelector('.custom-flash-overlay');
@@ -722,7 +719,6 @@
           }
       }
   });
-  // ======================================================================================
 
   // To restrict Date of Birth (must be at least 18 years old)
   const setupDobRestriction = () => {
@@ -758,7 +754,7 @@
     // Phone number fields - real-time formatting and validation
     document.querySelectorAll('input[name="contactViber"], input[name="phoneNumber"], input[name="secondaryPhone"]').forEach(input => {
       input.addEventListener('input', function(e) {
-        this.value = this.value.replace(/[^0-9]/g, '');
+        this.value = this.value.replace(/[^0-9]/g, '').slice(0, 11);
       });
       
       input.addEventListener('blur', function() {
@@ -798,7 +794,6 @@
                     return;
                 }
                 
-                // Don't check if value hasn't changed
                 if (currentValue === lastCheckedValue) {
                     return;
                 }
@@ -822,7 +817,6 @@
                 return;
             }
             
-            // Validate format first
             if (!validateNationalID(this)) {
                 removeDuplicateMessage(this);
                 return;
