@@ -52,6 +52,8 @@ public class SecurityConfig {
                         .permitAll()
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .requestMatchers("/guest/**").hasRole("GUEST")
+                        .requestMatchers("/teachers/**").hasRole("ADMIN")
+                        .requestMatchers("/courses/**").hasRole("ADMIN")
                         .anyRequest().authenticated())
                 .exceptionHandling(exception -> exception
                         .accessDeniedPage("/access-denied"))

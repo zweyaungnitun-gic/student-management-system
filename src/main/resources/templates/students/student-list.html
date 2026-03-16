@@ -763,6 +763,19 @@
                   生徒情報一覧画面
                 </h1>
               </div>
+              <div class="ms-auto">
+                <div class="btn-group" role="group">
+                    <a th:href="@{/teachers}" class="btn btn-outline-primary btn-sm">
+                        <i class="bi bi-people-fill"></i> 教師管理
+                    </a>
+                    <a th:href="@{/courses}" class="btn btn-outline-success btn-sm">
+                        <i class="bi bi-book-fill"></i> コース管理
+                    </a>
+                    <a th:href="@{/users/add}" class="btn btn-outline-warning btn-sm" sec:authorize="hasRole('ADMIN')">
+                        <i class="bi bi-person-plus-fill"></i> ユーザー追加
+                    </a>
+                </div>
+            </div>
             </div>
           </div>
 

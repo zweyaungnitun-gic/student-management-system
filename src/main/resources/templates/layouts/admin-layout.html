@@ -45,6 +45,15 @@
           <i class="bi bi-person-badge"></i><span>Students</span>
           <span class="sidebar-pill" th:if="${currentPage} == 'students'">Now</span>
         </a>
+        <a class="sidebar-link" th:classappend="${currentPage} == 'teachers' ? ' active' : ''" th:href="@{/teachers}">
+          <i class="bi bi-people-fill"></i><span>教師管理</span>
+          <span class="sidebar-pill" th:if="${currentPage} == 'teachers'">New</span>
+        </a>
+        
+        <a class="sidebar-link" th:classappend="${currentPage} == 'courses' ? ' active' : ''" th:href="@{/courses}">
+            <i class="bi bi-book-fill"></i><span>コース管理</span>
+            <span class="sidebar-pill" th:if="${currentPage} == 'courses'">New</span>
+        </a>
         <a class="sidebar-link" th:classappend="${currentPage} == 'users' ? ' active' : ''" th:href="@{/users}" sec:authorize="hasRole('ADMIN')">
           <i class="bi bi-bar-chart"></i><span>Users</span>
           <span class="sidebar-pill" th:if="${currentPage} == 'users'">Now</span>

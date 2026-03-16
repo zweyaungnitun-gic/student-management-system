@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>教師管理 - 生徒情報管理システム</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+    <style>
+        body { background-color: #f8f9fa; }
+        .container-fluid { padding: 20px; }
+        .table thead th { background-color: #0F6CBD; color: white; }
+        .action-icon { cursor: pointer; padding: 0 0.25rem; transition: color 0.2s; }
+        .action-icon.edit { color: #0d6efd; }
+        .action-icon.delete { color: #dc3545; }
+        .action-icon.view { color: #198754; }
+        .action-icon:hover { opacity: 0.8; }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2><i class="bi bi-people-fill me-2"></i>教師管理</h2>
+            <a href="/teachers/add" class="btn btn-primary">
+                <i class="bi bi-plus-circle me-2"></i>新規教師追加
+            </a>
+        </div>
+
+        <!-- Search Form -->
+        <div class="card mb-4">
+            <div class="card-body">
+                <form th:action="@{/teachers}" method="get" class="row g-3">
+                    <div class="col-md-10">
+                        <input type="text" class="form-control" name="search" th:value="${search}" 
+                               placeholder="教師名で検索...">
+                    </div>
+                    <div class="col-md-2">
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="bi bi-search me-2"></i>検索
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Success/Error Messages -->
+        <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="bi bi-check-circle-fill me-2"></i><span th:text="${success}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i><span th:text="${error}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+
+        <!-- Teachers Table -->
+        <div class="card">
+            <div class="card-body p-0">
+                <table class="table table-hover mb-0">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>氏名</th>
+                            <th>メールアドレス</th>
+                            <th>学部/学科</th>
+                            <th>登録日</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="teacher : ${teachers}">
+                            <td th:text="${teacher.teacherId}"></td>
+                            <td th:text="${teacher.name}"></td>
+                            <td th:text="${teacher.email}"></td>
+                            <td th:text="${teacher.department} ?: '-'"></td>
+                            <td th:text="${#temporals.format(teacher.createdAt, 'yyyy-MM-dd HH:mm')}"></td>
+                            <td>
+                                <a th:href="@{'/teachers/edit/' + ${teacher.teacherId}}" class="action-icon edit" title="編集">
+                                    <i class="bi bi-pencil-square"></i>
+                                </a>
+                                <a th:href="@{'/teachers/' + ${teacher.teacherId} + '/courses'}" class="action-icon view" title="担当コース">
+                                    <i class="bi bi-book"></i>
+                                </a>
+                                <a th:href="@{'/teachers/delete/' + ${teacher.teacherId}}" class="action-icon delete" title="削除"
+                                   onclick="return confirm('この教師を削除してもよろしいですか？');">
+                                    <i class="bi bi-trash-fill"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        <tr th:if="${teachers.size() == 0}">
+                            <td colspan="6" class="text-center text-muted py-4">
+                                教師が登録されていません。
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="mt-3">
+            <a href="/students" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left me-2"></i>生徒管理に戻る
+            </a>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
