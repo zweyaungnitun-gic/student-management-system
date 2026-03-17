@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head th:replace="~{layouts/admin-layout :: head(pageTitle='テスト詳細 | 生徒情報管理システム')}">
+</head>
+
+<body>
+    <div class="dashboard-layout">
+        <th:block th:replace="~{layouts/admin-layout :: sidebar(currentPage='tests')}"></th:block>
+
+        <div class="sidebar-overlay d-lg-none" data-sidebar-toggle></div>
+
+        <div class="dashboard-main">
+            <div class="page-wrapper py-4 py-md-5 px-3 px-md-5">
+                <!-- Page Header -->
+                <div class="page-header mb-4">
+                    <div class="d-flex align-items-center gap-3">
+                        <button class="btn btn-light btn-icon d-lg-none" type="button" data-sidebar-toggle>
+                            <i class="bi bi-list fs-4"></i>
+                        </button>
+                        <div>
+                            <h1 class="mb-0" style="color: #0a58a0; font-weight: 600; font-size: 1.8rem;">
+                                テスト詳細
+                            </h1>
+                            <p class="text-muted mb-0" th:text="'テスト: ' + ${test.testName}"></p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="d-flex justify-content-end gap-2 mb-4">
+                    <a href="/tests" class="btn btn-outline-secondary d-flex align-items-center gap-2">
+                        <i class="bi bi-arrow-left"></i>
+                        <span>一覧に戻る</span>
+                    </a>
+                    <a th:href="@{'/tests/edit/' + ${test.testId}}" 
+                       class="btn btn-primary d-flex align-items-center gap-2"
+                       sec:authorize="hasRole('ADMIN') or hasRole('TEACHER')">
+                        <i class="bi bi-pencil-square"></i>
+                        <span>編集</span>
+                    </a>
+                    <a th:href="@{'/results/add/' + ${test.testId}}" 
+                       class="btn btn-success d-flex align-items-center gap-2"
+                       sec:authorize="hasRole('ADMIN') or hasRole('TEACHER')">
+                        <i class="bi bi-plus-circle"></i>
+                        <span>結果追加</span>
+                    </a>
+                </div>
+
+                <!-- Test Information -->
+                <div class="row">
+                    <div class="col-md-6 mb-4">
+                        <div class="card shadow-sm h-100">
+                            <div class="card-header bg-white py-3">
+                                <h5 class="card-title mb-0">
+                                    <i class="bi bi-info-circle me-2 text-primary"></i>
+                                    テスト情報
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <table class="table table-borderless">
+                                    <tr>
+                                        <th class="ps-0 text-muted" style="width: 120px;">テスト名</th>
+                                        <td class="fw-semibold" th:text="${test.testName}"></td>
+                                    </tr>
+                                    <tr>
+                                        <th class="ps-0 text-muted">コース</th>
+                                        <td>
+                                            <span class="badge bg-info bg-opacity-10 text-info px-3 py-2 rounded-pill"
+                                                  th:text="${test.courseName}"></span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th class="ps-0 text-muted">説明</th>
+                                        <td th:text="${test.description} ?: '-'"></td>
+                                    </tr>
+                                    <tr>
+                                        <th class="ps-0 text-muted">総合点</th>
+                                        <td th:text="${test.totalMarks}"></td>
+                                    </tr>
+                                    <tr>
+                                        <th class="ps-0 text-muted">合格点</th>
+                                        <td th:text="${test.passingMarks} ?: '-'"></td>
+                                    </tr>
+                                    <tr>
+                                        <th class="ps-0 text-muted">試験日</th>
+                                        <td th:text="${#temporals.format(test.testDate, 'yyyy年MM月dd日 HH:mm')} ?: '-'"></td>
+                                    </tr>
+                                    <tr>
+                                        <th class="ps-0 text-muted">試験時間</th>
+                                        <td th:text="${test.durationMinutes} ? ${test.durationMinutes + '分'} : '-'"></td>
+                                    </tr>
+                                    <tr>
+                                        <th class="ps-0 text-muted">作成者</th>
+                                        <td th:text="${test.createdByName} ?: '-'"></td>
+                                    </tr>
+                                    <tr>
+                                        <th class="ps-0 text-muted">作成日</th>
+                                        <td th:text="${#temporals.format(test.createdAt, 'yyyy年MM月dd日 HH:mm')}"></td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 mb-4">
+                        <div class="card shadow-sm h-100">
+                            <div class="card-header bg-white py-3">
+                                <h5 class="card-title mb-0">
+                                    <i class="bi bi-graph-up me-2 text-success"></i>
+                                    統計情報
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row g-3">
+                                    <div class="col-6">
+                                        <div class="mini-card p-3 text-center">
+                                            <div class="text-muted small mb-1">受験者数</div>
+                                            <div class="h3 mb-0" th:text="${statistics?.totalStudents ?: 0}">0</div>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="mini-card p-3 text-center">
+                                            <div class="text-muted small mb-1">平均点</div>
+                                            <div class="h3 mb-0" th:text="${statistics?.averageScore ?: '-'}">-</div>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="mini-card p-3 text-center">
+                                            <div class="text-muted small mb-1">合格者</div>
+                                            <div class="h3 mb-0 text-success" th:text="${statistics?.passedCount ?: 0}">0</div>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="mini-card p-3 text-center">
+                                            <div class="text-muted small mb-1">不合格者</div>
+                                            <div class="h3 mb-0 text-danger" th:text="${statistics?.failedCount ?: 0}">0</div>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="mini-card p-3 text-center">
+                                            <div class="text-muted small mb-1">最高点</div>
+                                            <div class="h3 mb-0" th:text="${statistics?.highestScore ?: '-'}">-</div>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="mini-card p-3 text-center">
+                                            <div class="text-muted small mb-1">最低点</div>
+                                            <div class="h3 mb-0" th:text="${statistics?.lowestScore ?: '-'}">-</div>
+                                        </div>
+                                    </div>
+                                    <div class="col-12">
+                                        <div class="mini-card p-3">
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <span class="text-muted">合格率</span>
+                                                <span class="h4 mb-0" th:text="${statistics?.passRate ?: 0} + '%'">0%</span>
+                                            </div>
+                                            <div class="progress mt-2" style="height: 8px;">
+                                                <div class="progress-bar bg-success" 
+                                                     th:style="'width: ' + (${statistics?.passRate ?: 0}) + '%'"
+                                                     th:attr="aria-valuenow=${statistics?.passRate ?: 0}" 
+                                                     aria-valuemin="0" aria-valuemax="100"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Results Table -->
+                <div class="card shadow-sm">
+                    <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+                        <h5 class="card-title mb-0">
+                            <i class="bi bi-table me-2 text-info"></i>
+                            テスト結果一覧
+                        </h5>
+                        <a th:href="@{'/results/test/' + ${test.testId}}" class="btn btn-sm btn-outline-primary">
+                            全て見る
+                        </a>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle mb-0">
+                                <thead class="bg-light">
+                                    <tr>
+                                        <th class="ps-4">生徒ID</th>
+                                        <th>生徒名</th>
+                                        <th>得点</th>
+                                        <th>結果</th>
+                                        <th>評価日</th>
+                                        <th class="text-center">操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="result : ${results}">
+                                        <td class="ps-4">
+                                            <span class="badge bg-primary bg-opacity-10 text-primary px-3 py-2 rounded-pill"
+                                                  th:text="${result.studentId}"></span>
+                                        </td>
+                                        <td th:text="${result.studentName}"></td>
+                                        <td>
+                                            <span th:text="${result.scoreObtained}"></span>
+                                            <small class="text-muted" th:text="'/' + ${result.totalMarks}"></small>
+                                        </td>
+                                        <td>
+                                            <span th:if="${result.result == '合格'}" 
+                                                  class="badge bg-success rounded-pill px-3">合格</span>
+                                            <span th:if="${result.result == '不合格'}" 
+                                                  class="badge bg-danger rounded-pill px-3">不合格</span>
+                                        </td>
+                                        <td th:text="${#temporals.format(result.gradedAt, 'yyyy/MM/dd')}"></td>
+                                        <td class="text-center">
+                                            <a th:href="@{'/results/edit/' + ${result.testResultId}}" 
+                                               class="btn btn-sm btn-outline-primary" title="編集">
+                                                <i class="bi bi-pencil-square"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    <tr th:if="${results == null or results.size() == 0}">
+                                        <td colspan="6" class="text-center text-muted py-4">
+                                            結果がありません
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const layout = document.querySelector(".dashboard-layout");
+            const toggles = document.querySelectorAll("[data-sidebar-toggle]");
+            toggles.forEach((btn) =>
+                btn.addEventListener("click", function (event) {
+                    event.preventDefault();
+                    layout?.classList.toggle("sidebar-open");
+                })
+            );
+        });
+    </script>
+</body>
+</html>
