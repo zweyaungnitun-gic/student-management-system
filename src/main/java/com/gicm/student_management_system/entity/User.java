@@ -32,6 +32,9 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "user_id", unique = true, nullable = false)
+    private String userId;
+
     @NotBlank(message = "ユーザー名は必須です")
     @Size(max = 25, message = "ユーザー名は25文字以内で入力してください")
     @Column(name = "Name", nullable = false)

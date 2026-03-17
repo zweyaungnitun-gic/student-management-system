@@ -80,6 +80,7 @@
 
                 <tr>
                   <th scope="col" class="text-center">ID</th>
+                  <th scope="col" class="text-center">ユーザーID</th>
                   <th scope="col" class="text-center">名前</th>
                   <th scope="col" class="text-center">メール</th>
                   <th scope="col" class="text-center">ロール</th>
@@ -93,6 +94,7 @@
                   <td>
                     <span th:text="${user.id}"></span>
                   </td>
+                  <td th:text="${user.userId}">USR001</td>
                   <td th:text="${user.username}"></td>
                   <td th:text="${user.email}"></td>
                   <td>

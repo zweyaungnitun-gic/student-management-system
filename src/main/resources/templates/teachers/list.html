@@ -15,6 +15,20 @@
         .action-icon.delete { color: #dc3545; }
         .action-icon.view { color: #198754; }
         .action-icon:hover { opacity: 0.8; }
+        
+        /* Pagination styles */
+        .pagination .btn-primary {
+            background-color: #0F6CBD;
+            border-color: #0F6CBD;
+        }
+        .pagination .btn-outline-primary {
+            color: #0F6CBD;
+            border-color: #0F6CBD;
+        }
+        .pagination .btn-outline-primary:hover {
+            background-color: #0F6CBD;
+            color: white;
+        }
     </style>
 </head>
 <body>
@@ -32,7 +46,7 @@
                 <form th:action="@{/teachers}" method="get" class="row g-3">
                     <div class="col-md-10">
                         <input type="text" class="form-control" name="search" th:value="${search}" 
-                               placeholder="教師名で検索...">
+                               placeholder="教師名、メール、教師IDで検索...">
                     </div>
                     <div class="col-md-2">
                         <button type="submit" class="btn btn-primary w-100">
@@ -56,10 +70,11 @@
         <!-- Teachers Table -->
         <div class="card">
             <div class="card-body p-0">
-                <table class="table table-hover mb-0">
+                <table class="table table-hover mb-0" id="teacherTable">
                     <thead>
                         <tr>
                             <th>ID</th>
+                            <th>教師ID</th>
                             <th>氏名</th>
                             <th>メールアドレス</th>
                             <th>学部/学科</th>
@@ -67,9 +82,12 @@
                             <th>操作</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody id="teacherTableBody">
                         <tr th:each="teacher : ${teachers}">
                             <td th:text="${teacher.teacherId}"></td>
+                            <td>
+                                <span class="badge bg-primary" th:text="${teacher.teacherCode}">TCH001</span>
+                            </td>
                             <td th:text="${teacher.name}"></td>
                             <td th:text="${teacher.email}"></td>
                             <td th:text="${teacher.department} ?: '-'"></td>
@@ -88,7 +106,7 @@
                             </td>
                         </tr>
                         <tr th:if="${teachers.size() == 0}">
-                            <td colspan="6" class="text-center text-muted py-4">
+                            <td colspan="7" class="text-center text-muted py-4">
                                 教師が登録されていません。
                             </td>
                         </tr>
@@ -96,6 +114,9 @@
                 </table>
             </div>
         </div>
+
+        <!-- Pagination -->
+        <div id="pagination" class="d-flex justify-content-center mt-3 pagination"></div>
 
         <div class="mt-3">
             <a href="/students" class="btn btn-outline-secondary">
@@ -105,5 +126,74 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Pagination Script -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const rows = Array.from(document.querySelectorAll("#teacherTableBody tr")).filter(
+                r => !r.querySelector("td[colspan]")
+            );
+            
+            const rowsPerPage = 10;
+            let currentPage = 1;
+            
+            function displayPage(page) {
+                currentPage = page;
+                const start = (page - 1) * rowsPerPage;
+                const end = start + rowsPerPage;
+                
+                rows.forEach((row, index) => {
+                    row.style.display = index >= start && index < end ? "" : "none";
+                });
+                
+                renderPagination();
+            }
+            
+            function renderPagination() {
+                const pageCount = Math.ceil(rows.length / rowsPerPage);
+                const paginationDiv = document.getElementById("pagination");
+                
+                paginationDiv.innerHTML = "";
+                
+                // Previous button
+                const prevBtn = document.createElement("button");
+                prevBtn.innerHTML = "&laquo;";
+                prevBtn.className = `btn btn-sm mx-1 ${currentPage === 1 ? 'btn-secondary' : 'btn-outline-primary'}`;
+                prevBtn.disabled = currentPage === 1;
+                prevBtn.addEventListener("click", () => displayPage(currentPage - 1));
+                paginationDiv.appendChild(prevBtn);
+                
+                // Page numbers
+                let startPage = Math.max(1, currentPage - 2);
+                let endPage = Math.min(pageCount, currentPage + 2);
+                
+                if (endPage - startPage < 4) {
+                    if (currentPage < 3) {
+                        endPage = Math.min(pageCount, 5);
+                    } else {
+                        startPage = Math.max(1, pageCount - 4);
+                    }
+                }
+                
+                for (let i = startPage; i <= endPage; i++) {
+                    const btn = document.createElement("button");
+                    btn.textContent = i;
+                    btn.className = `btn btn-sm mx-1 ${i === currentPage ? 'btn-primary' : 'btn-outline-primary'}`;
+                    btn.addEventListener("click", () => displayPage(i));
+                    paginationDiv.appendChild(btn);
+                }
+                
+                // Next button
+                const nextBtn = document.createElement("button");
+                nextBtn.innerHTML = "&raquo;";
+                nextBtn.className = `btn btn-sm mx-1 ${currentPage === pageCount ? 'btn-secondary' : 'btn-outline-primary'}`;
+                nextBtn.disabled = currentPage === pageCount;
+                nextBtn.addEventListener("click", () => displayPage(currentPage + 1));
+                paginationDiv.appendChild(nextBtn);
+            }
+            
+            displayPage(1);
+        });
+    </script>
 </body>
 </html>

@@ -18,6 +18,9 @@ public class Teacher {
     @Column(name = "teacher_id")
     private Long teacherId;
 
+    @Column(name = "teacher_code", unique = true, nullable = false)
+    private String teacherCode; 
+
     @Column(name = "name", nullable = false)
     private String name;
 
@@ -33,5 +36,8 @@ public class Teacher {
     @PrePersist
     public void onCreate() {
         createdAt = OffsetDateTime.now();
+        if (teacherCode == null) {
+            teacherCode = "TCH" + String.format("%03d", System.currentTimeMillis() % 1000);
+        }
     }
 }

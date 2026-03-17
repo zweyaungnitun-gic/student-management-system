@@ -2,6 +2,7 @@ package com.gicm.student_management_system.serviceimpl;
 
 import com.gicm.student_management_system.entity.User;
 import com.gicm.student_management_system.repository.UserRepository;
+import com.gicm.student_management_system.service.UserIdGeneratorService;
 import com.gicm.student_management_system.service.UserService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -16,10 +17,12 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final UserIdGeneratorService userIdGeneratorService;
 
     public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.userIdGeneratorService = null;
     }
 
     @Override
@@ -43,6 +46,11 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public User createUser(User user) {
+        // Generate userId if not provided
+        if (user.getUserId() == null || user.getUserId().isEmpty()) {
+            user.setUserId(userIdGeneratorService.generateUserId());
+        }
+        
         // Encode password before saving
         if (user.getPassword() != null && !user.getPassword().isEmpty()) {
             user.setPassword(passwordEncoder.encode(user.getPassword()));
