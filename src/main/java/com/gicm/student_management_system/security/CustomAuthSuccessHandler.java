@@ -49,10 +49,10 @@ public class CustomAuthSuccessHandler implements AuthenticationSuccessHandler {
         Set<String> roles = AuthorityUtils.authorityListToSet(authentication.getAuthorities());
 
         if (roles.contains("ROLE_ADMIN") || roles.contains("ROLE_GUEST")) {
-            response.sendRedirect("/students");
+            response.sendRedirect("/dashboard");
         } else {
             // Default fallback
-            response.sendRedirect("/students");
+            response.sendRedirect("/dashboard");
         }
     }
 }
