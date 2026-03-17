@@ -5,6 +5,8 @@ import com.gicm.student_management_system.dto.CourseDTO;
 import java.util.List;
 import java.util.Optional;
 
+import org.jspecify.annotations.Nullable;
+
 public interface CourseService {
     List<CourseDTO> getAllCourses();
     List<CourseDTO> getActiveCourses();
@@ -17,4 +19,10 @@ public interface CourseService {
     List<CourseDTO> getCoursesByTeacher(Long teacherId);
     List<CourseDTO> searchCourses(String search);
     boolean existsByCourseCode(String courseCode);
+    @Nullable
+    Object getEnrollmentsByCourseId(Long id);
+    @Nullable
+    Object getTestsByCourseId(Long id);
+    @Nullable
+    Object getAverageScoreByCourseId(Long id);
 }

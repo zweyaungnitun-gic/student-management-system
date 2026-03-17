@@ -146,4 +146,20 @@ public class CourseController {
                 })
                 .orElse("redirect:/teachers");
     }
+
+    @GetMapping("/{id}")
+    public String viewCourseDetails(@PathVariable Long id, Model model, RedirectAttributes redirectAttributes) {
+        return courseService.getCourseById(id)
+                .map(course -> {
+                    model.addAttribute("course", course);
+                    model.addAttribute("enrollments", courseService.getEnrollmentsByCourseId(id));
+                    model.addAttribute("tests", courseService.getTestsByCourseId(id));
+                    model.addAttribute("averageScore", courseService.getAverageScoreByCourseId(id));
+                    return "courses/details";
+                })
+                .orElseGet(() -> {
+                    redirectAttributes.addFlashAttribute("error", "コースが見つかりません");
+                    return "redirect:/courses";
+                });
+    }
 }

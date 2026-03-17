@@ -1,9 +1,17 @@
 package com.gicm.student_management_system.serviceimpl;
 
 import com.gicm.student_management_system.dto.CourseDTO;
+import com.gicm.student_management_system.dto.EnrollmentDTO;
+import com.gicm.student_management_system.dto.TestDTO;
 import com.gicm.student_management_system.entity.Course;
+import com.gicm.student_management_system.entity.Enrollment;
 import com.gicm.student_management_system.entity.Teacher;
+import com.gicm.student_management_system.entity.Test;
+import com.gicm.student_management_system.entity.TestResult;
 import com.gicm.student_management_system.repository.CourseRepository;
+import com.gicm.student_management_system.repository.EnrollmentRepository;
+import com.gicm.student_management_system.repository.TestRepository;
+import com.gicm.student_management_system.repository.TestResultRepository;
 import com.gicm.student_management_system.repository.TeacherRepository;
 import com.gicm.student_management_system.service.CourseService;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +28,9 @@ public class CourseServiceImpl implements CourseService {
 
     private final CourseRepository courseRepository;
     private final TeacherRepository teacherRepository;
+    private final EnrollmentRepository enrollmentRepository;
+    private final TestRepository testRepository;
+    private final TestResultRepository testResultRepository;
 
     private CourseDTO convertToDTO(Course course) {
         if (course == null) return null;
@@ -33,6 +44,42 @@ public class CourseServiceImpl implements CourseService {
                 .teacherName(course.getTeacher() != null ? course.getTeacher().getName() : null)
                 .isActive(course.getIsActive())
                 .createdAt(course.getCreatedAt())
+                .build();
+    }
+
+    private EnrollmentDTO convertToEnrollmentDTO(Enrollment enrollment) {
+        if (enrollment == null) return null;
+        return EnrollmentDTO.builder()
+                .enrollmentId(enrollment.getEnrollmentId())
+                .studentId(enrollment.getStudent().getId())
+                .studentName(enrollment.getStudent().getStudentName())
+                .studentIdNumber(enrollment.getStudent().getStudentId())
+                .courseId(enrollment.getCourse().getCourseId())
+                .courseName(enrollment.getCourse().getCourseName())
+                .semester(enrollment.getSemester())
+                .status(enrollment.getStatus())
+                .initiatedBy(enrollment.getInitiatedBy())
+                .enrollmentRequestDate(enrollment.getEnrollmentRequestDate())
+                .approvedAt(enrollment.getApprovedAt())
+                .completedAt(enrollment.getCompletedAt())
+                .build();
+    }
+
+    private TestDTO convertToTestDTO(Test test) {
+        if (test == null) return null;
+        return TestDTO.builder()
+                .testId(test.getTestId())
+                .courseId(test.getCourse().getCourseId())
+                .courseName(test.getCourse().getCourseName())
+                .testName(test.getTestName())
+                .description(test.getDescription())
+                .totalMarks(test.getTotalMarks())
+                .passingMarks(test.getPassingMarks())
+                .testDate(test.getTestDate())
+                .durationMinutes(test.getDurationMinutes())
+                .createdById(test.getCreatedBy() != null ? test.getCreatedBy().getTeacherId() : null)
+                .createdByName(test.getCreatedBy() != null ? test.getCreatedBy().getName() : null)
+                .createdAt(test.getCreatedAt())
                 .build();
     }
 
@@ -163,5 +210,27 @@ public class CourseServiceImpl implements CourseService {
     @Transactional(readOnly = true)
     public boolean existsByCourseCode(String courseCode) {
         return courseRepository.existsByCourseCode(courseCode);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<EnrollmentDTO> getEnrollmentsByCourseId(Long courseId) {
+        return enrollmentRepository.findByCourseId(courseId).stream()
+                .map(this::convertToEnrollmentDTO)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<TestDTO> getTestsByCourseId(Long courseId) {
+        return testRepository.findByCourseId(courseId).stream()
+                .map(this::convertToTestDTO)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Double getAverageScoreByCourseId(Long courseId) {
+        return testResultRepository.findAverageScoreByCourseId(courseId);
     }
 }

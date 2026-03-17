@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
 import java.time.LocalDateTime;
 
 @Data
@@ -17,12 +18,35 @@ public class EnrollmentDTO {
     private String studentIdNumber;
     private Long courseId;
     private String courseName;
-    private String courseCode;
     private String semester;
-    private String status; // pending, enrolled, completed, dropped, failed
-    private String initiatedBy; // student, admin
+    private String status;
+    private String initiatedBy;
     private LocalDateTime enrollmentRequestDate;
     private LocalDateTime approvedAt;
     private LocalDateTime completedAt;
-    private LocalDateTime enrolledDate;
+    
+    // Helper method to get status in Japanese for display
+    public String getStatus() {
+        if (status == null) return null;
+        
+        switch (status) {
+            case "pending":
+                return "保留中";
+            case "enrolled":
+                return "在校";
+            case "completed":
+                return "卒業";
+            case "dropped":
+                return "退学";
+            case "failed":
+                return "不合格";
+            default:
+                return status;
+        }
+    }
+    
+    // Original status for database operations
+    public String getOriginalStatus() {
+        return status;
+    }
 }

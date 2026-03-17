@@ -29,4 +29,7 @@ public interface TestResultRepository extends JpaRepository<TestResult, Long> {
     
     @Query("SELECT COUNT(tr) FROM TestResult tr WHERE tr.test.testId = :testId AND tr.scoreObtained >= tr.test.passingMarks")
     Long countPassedStudents(@Param("testId") Long testId);
+
+     @Query("SELECT AVG(tr.scoreObtained) FROM TestResult tr WHERE tr.test.course.courseId = :courseId")
+    Double findAverageScoreByCourseId(@Param("courseId") Long courseId);
 }
