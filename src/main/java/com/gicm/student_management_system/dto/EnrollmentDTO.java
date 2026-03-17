@@ -17,6 +17,7 @@ public class EnrollmentDTO {
     private String studentName;
     private String studentIdNumber;
     private Long courseId;
+    private String courseCode;
     private String courseName;
     private String semester;
     private String status;
@@ -24,9 +25,11 @@ public class EnrollmentDTO {
     private LocalDateTime enrollmentRequestDate;
     private LocalDateTime approvedAt;
     private LocalDateTime completedAt;
+    private LocalDateTime enrolledDate;
+    private LocalDateTime enrollmentDate;
     
     // Helper method to get status in Japanese for display
-    public String getStatus() {
+    public String getStatusDisplay() {
         if (status == null) return null;
         
         switch (status) {
