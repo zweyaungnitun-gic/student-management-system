@@ -1,7 +1,9 @@
 package com.gicm.student_management_system.controller;
 
 import com.gicm.student_management_system.dto.TeacherDTO;
+import com.gicm.student_management_system.dto.CourseDTO;
 import com.gicm.student_management_system.service.TeacherService;
+import com.gicm.student_management_system.service.CourseService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -20,6 +22,7 @@ import java.util.List;
 public class TeacherController {
 
     private final TeacherService teacherService;
+    private final CourseService courseService;
 
     @GetMapping
     public String listTeachers(@RequestParam(value = "search", required = false) String search,
@@ -28,6 +31,22 @@ public class TeacherController {
         model.addAttribute("teachers", teachers);
         model.addAttribute("search", search);
         return "teachers/list";
+    }
+
+    @GetMapping("/{id}")
+    public String getTeacherDetails(@PathVariable Long id, Model model, RedirectAttributes redirectAttributes) {
+        return teacherService.getTeacherById(id)
+                .map(teacher -> {
+                    model.addAttribute("teacher", teacher);
+                    // Get courses taught by this teacher
+                    List<CourseDTO> courses = courseService.getCoursesByTeacher(id);
+                    model.addAttribute("courses", courses);
+                    return "teachers/details";
+                })
+                .orElseGet(() -> {
+                    redirectAttributes.addFlashAttribute("error", "教師が見つかりません");
+                    return "redirect:/teachers";
+                });
     }
 
     @GetMapping("/add")
@@ -86,7 +105,7 @@ public class TeacherController {
         try {
             teacherService.updateTeacher(id, teacherDTO);
             redirectAttributes.addFlashAttribute("success", "教師情報が更新されました");
-            return "redirect:/teachers";
+            return "redirect:/teachers/" + id;
         } catch (RuntimeException e) {
             if (e.getMessage().contains("メールアドレス")) {
                 bindingResult.rejectValue("email", "error.teacher", e.getMessage());
@@ -106,19 +125,5 @@ public class TeacherController {
             redirectAttributes.addFlashAttribute("error", "削除に失敗しました: " + e.getMessage());
         }
         return "redirect:/teachers";
-    }
-
-    @GetMapping("/{id}/courses")
-    public String viewTeacherCourses(@PathVariable Long id, Model model, RedirectAttributes redirectAttributes) {
-        return teacherService.getTeacherById(id)
-                .map(teacher -> {
-                    model.addAttribute("teacher", teacher);
-                    // You'll need to add a method to get courses by teacher
-                    return "teachers/courses";
-                })
-                .orElseGet(() -> {
-                    redirectAttributes.addFlashAttribute("error", "教師が見つかりません");
-                    return "redirect:/teachers";
-                });
     }
 }

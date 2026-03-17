@@ -29,7 +29,7 @@
                     </div>
                 </div>
 
-                <!-- Search and Add Section -->
+                <!-- Search, Add, and Back Section -->
                 <div class="d-flex justify-content-between align-items-center mb-4">
                     <form th:action="@{/teachers}" method="get" class="d-flex gap-2 flex-grow-1 me-3">
                         <div class="input-group" style="max-width: 400px;">
@@ -43,9 +43,15 @@
                             <i class="bi bi-search me-2"></i>検索
                         </button>
                     </form>
-                    <a href="/teachers/add" class="btn btn-success" sec:authorize="hasRole('ADMIN')">
-                        <i class="bi bi-plus-circle me-2"></i>新規教師追加
-                    </a>
+                    <div class="d-flex gap-2">
+                        <!-- <a href="/dashboard" class="btn btn-outline-secondary d-flex align-items-center gap-2">
+                            <i class="bi bi-arrow-left"></i>
+                            <span>ダッシュボードに戻る</span>
+                        </a> -->
+                        <a href="/teachers/add" class="btn btn-success" sec:authorize="hasRole('ADMIN')">
+                            <i class="bi bi-plus-circle me-2"></i>新規教師追加
+                        </a>
+                    </div>
                 </div>
 
                 <!-- Success/Error Messages -->
@@ -93,10 +99,10 @@
                                                    sec:authorize="hasRole('ADMIN')">
                                                     <i class="bi bi-pencil-square"></i>
                                                 </a>
-                                                <a th:href="@{'/teachers/' + ${teacher.teacherId} + '/courses'}" 
+                                                <a th:href="@{'/teachers/' + ${teacher.teacherId}}" 
                                                    class="btn btn-sm btn-outline-info" 
-                                                   title="担当コース">
-                                                    <i class="bi bi-book"></i>
+                                                   title="詳細">
+                                                    <i class="bi bi-info-circle"></i>
                                                 </a>
                                                 <a th:href="@{'/teachers/delete/' + ${teacher.teacherId}}" 
                                                    class="btn btn-sm btn-outline-danger" 
@@ -122,13 +128,6 @@
 
                 <!-- Pagination -->
                 <div id="pagination" class="d-flex justify-content-center mt-4 pagination"></div>
-
-                <!-- Back Button -->
-                <div class="mt-4">
-                    <a href="/dashboard" class="btn btn-outline-secondary">
-                        <i class="bi bi-arrow-left me-2"></i>ダッシュボードに戻る
-                    </a>
-                </div>
             </div>
         </div>
     </div>

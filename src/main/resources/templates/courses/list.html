@@ -29,37 +29,49 @@
                     </div>
                 </div>
 
-                <!-- Search and Filter Section -->
+                <!-- Search, Filter, and Action Buttons Section -->
                 <div class="card mb-4 shadow-sm">
                     <div class="card-body">
-                        <form th:action="@{/courses}" method="get" class="row g-3">
-                            <div class="col-md-5">
-                                <div class="input-group">
-                                    <span class="input-group-text bg-white">
-                                        <i class="bi bi-search"></i>
-                                    </span>
-                                    <input type="text" class="form-control" name="search" th:value="${search}"
-                                           placeholder="コース名またはコードで検索...">
+                        <div class="row g-3">
+                            <!-- Search and Filter - Left side -->
+                            <div class="col-md-8">
+                                <form th:action="@{/courses}" method="get" class="row g-3">
+                                    <div class="col-md-7">
+                                        <div class="input-group">
+                                            <span class="input-group-text bg-white">
+                                                <i class="bi bi-search"></i>
+                                            </span>
+                                            <input type="text" class="form-control" name="search" th:value="${search}"
+                                                   placeholder="コース名またはコードで検索...">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="form-check mt-2">
+                                            <input type="checkbox" class="form-check-input" name="activeOnly" 
+                                                   th:checked="${activeOnly}" id="activeOnly">
+                                            <label class="form-check-label" for="activeOnly">アクティブのみ表示</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <button type="submit" class="btn btn-primary w-100">
+                                            <i class="bi bi-search me-2"></i>検索
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                            
+                            <!-- Action Buttons - Right side -->
+                            <div class="col-md-4">
+                                <div class="d-flex gap-2 justify-content-end">
+
+                                    <a href="/courses/add" class="btn btn-success d-flex align-items-center gap-2" 
+                                       sec:authorize="hasRole('ADMIN')">
+                                        <i class="bi bi-plus-circle"></i>
+                                        <span>新規追加</span>
+                                    </a>
                                 </div>
                             </div>
-                            <div class="col-md-3">
-                                <div class="form-check mt-2">
-                                    <input type="checkbox" class="form-check-input" name="activeOnly" 
-                                           th:checked="${activeOnly}" id="activeOnly">
-                                    <label class="form-check-label" for="activeOnly">アクティブのみ表示</label>
-                                </div>
-                            </div>
-                            <div class="col-md-2">
-                                <button type="submit" class="btn btn-primary w-100">
-                                    <i class="bi bi-search me-2"></i>検索
-                                </button>
-                            </div>
-                            <div class="col-md-2 text-end">
-                                <a href="/courses/add" class="btn btn-success w-100" sec:authorize="hasRole('ADMIN')">
-                                    <i class="bi bi-plus-circle me-2"></i>新規追加
-                                </a>
-                            </div>
-                        </form>
+                        </div>
                     </div>
                 </div>
 
@@ -110,12 +122,22 @@
                                         <td class="text-center" th:text="${#temporals.format(course.createdAt, 'yyyy-MM-dd HH:mm')}"></td>
                                         <td class="text-center">
                                             <div class="d-flex gap-2 justify-content-center">
+                                                <!-- Detail Button -->
+                                                <a th:href="@{'/courses/' + ${course.courseId}}" 
+                                                   class="btn btn-sm btn-outline-info" 
+                                                   title="詳細">
+                                                    <i class="bi bi-info-circle"></i>
+                                                </a>
+                                                
+                                                <!-- Edit Button -->
                                                 <a th:href="@{'/courses/edit/' + ${course.courseId}}" 
                                                    class="btn btn-sm btn-outline-primary" 
                                                    title="編集"
                                                    sec:authorize="hasRole('ADMIN')">
                                                     <i class="bi bi-pencil-square"></i>
                                                 </a>
+                                                
+                                                <!-- Toggle Active/Inactive Button -->
                                                 <form th:action="@{'/courses/toggle/' + ${course.courseId}}" 
                                                       method="post" 
                                                       style="display: inline;">
@@ -126,11 +148,8 @@
                                                         <i class="bi bi-arrow-repeat"></i>
                                                     </button>
                                                 </form>
-                                                <a th:href="@{'/tests/course/' + ${course.courseId}}" 
-                                                   class="btn btn-sm btn-outline-info" 
-                                                   title="テスト一覧">
-                                                    <i class="bi bi-file-text"></i>
-                                                </a>
+                                                
+                                                <!-- Delete Button -->
                                                 <a th:href="@{'/courses/delete/' + ${course.courseId}}" 
                                                    class="btn btn-sm btn-outline-danger" 
                                                    title="削除"
@@ -155,13 +174,6 @@
 
                 <!-- Pagination -->
                 <div id="pagination" class="d-flex justify-content-center mt-4 pagination"></div>
-
-                <!-- Back Button -->
-                <div class="mt-4">
-                    <a href="/dashboard" class="btn btn-outline-secondary">
-                        <i class="bi bi-arrow-left me-2"></i>ダッシュボードに戻る
-                    </a>
-                </div>
             </div>
         </div>
     </div>
@@ -246,7 +258,6 @@
                 paginationDiv.appendChild(nextBtn);
             }
             
-            // Initialize with first page
             displayPage(1);
         });
     </script>
