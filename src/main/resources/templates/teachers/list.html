@@ -1,127 +1,135 @@
 <!DOCTYPE html>
-<html lang="ja" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>教師管理 - 生徒情報管理システム</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
-    <style>
-        body { background-color: #f8f9fa; }
-        .container-fluid { padding: 20px; }
-        .table thead th { background-color: #0F6CBD; color: white; }
-        .action-icon { cursor: pointer; padding: 0 0.25rem; transition: color 0.2s; }
-        .action-icon.edit { color: #0d6efd; }
-        .action-icon.delete { color: #dc3545; }
-        .action-icon.view { color: #198754; }
-        .action-icon:hover { opacity: 0.8; }
-        
-        /* Pagination styles */
-        .pagination .btn-primary {
-            background-color: #0F6CBD;
-            border-color: #0F6CBD;
-        }
-        .pagination .btn-outline-primary {
-            color: #0F6CBD;
-            border-color: #0F6CBD;
-        }
-        .pagination .btn-outline-primary:hover {
-            background-color: #0F6CBD;
-            color: white;
-        }
-    </style>
-</head>
-<body>
-    <div class="container-fluid">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h2><i class="bi bi-people-fill me-2"></i>教師管理</h2>
-            <a href="/teachers/add" class="btn btn-primary">
-                <i class="bi bi-plus-circle me-2"></i>新規教師追加
-            </a>
-        </div>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
-        <!-- Search Form -->
-        <div class="card mb-4">
-            <div class="card-body">
-                <form th:action="@{/teachers}" method="get" class="row g-3">
-                    <div class="col-md-10">
-                        <input type="text" class="form-control" name="search" th:value="${search}" 
-                               placeholder="教師名、メール、教師IDで検索...">
+<head th:replace="~{layouts/admin-layout :: head(pageTitle='教師管理 | 生徒情報管理システム')}">
+</head>
+
+<body>
+    <div class="dashboard-layout">
+        <!-- Sidebar -->
+        <th:block th:replace="~{layouts/admin-layout :: sidebar(currentPage='teachers')}"></th:block>
+
+        <div class="sidebar-overlay d-lg-none" data-sidebar-toggle></div>
+
+        <div class="dashboard-main">
+            <div class="page-wrapper py-4 py-md-5 px-3 px-md-5">
+                <!-- Page Header with toggle button -->
+                <div class="page-header mb-4">
+                    <div class="d-flex align-items-center gap-3">
+                        <button class="btn btn-light btn-icon d-lg-none" type="button" aria-label="Toggle sidebar"
+                            data-sidebar-toggle>
+                            <i class="bi bi-list fs-4"></i>
+                        </button>
+                        <div>
+                            <h1 class="mb-0" style="color: #0a58a0; font-weight: 600; font-size: 1.8rem;">
+                                教師管理
+                            </h1>
+                        </div>
                     </div>
-                    <div class="col-md-2">
-                        <button type="submit" class="btn btn-primary w-100">
+                </div>
+
+                <!-- Search and Add Section -->
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <form th:action="@{/teachers}" method="get" class="d-flex gap-2 flex-grow-1 me-3">
+                        <div class="input-group" style="max-width: 400px;">
+                            <span class="input-group-text bg-white border-end-0">
+                                <i class="bi bi-search text-muted"></i>
+                            </span>
+                            <input type="text" class="form-control border-start-0" name="search" th:value="${search}"
+                                   placeholder="教師名、メール、教師IDで検索...">
+                        </div>
+                        <button type="submit" class="btn btn-primary">
                             <i class="bi bi-search me-2"></i>検索
                         </button>
+                    </form>
+                    <a href="/teachers/add" class="btn btn-success" sec:authorize="hasRole('ADMIN')">
+                        <i class="bi bi-plus-circle me-2"></i>新規教師追加
+                    </a>
+                </div>
+
+                <!-- Success/Error Messages -->
+                <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+                    <i class="bi bi-check-circle-fill me-2"></i><span th:text="${success}"></span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+                <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <i class="bi bi-exclamation-triangle-fill me-2"></i><span th:text="${error}"></span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+
+                <!-- Teachers Table -->
+                <div class="card shadow-sm">
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle mb-0" id="teacherTable">
+                                <thead class="bg-primary text-white">
+                                    <tr>
+                                        <th class="text-center">ID</th>
+                                        <th class="text-center">教師ID</th>
+                                        <th class="text-center">氏名</th>
+                                        <th class="text-center">メールアドレス</th>
+                                        <th class="text-center">学部/学科</th>
+                                        <th class="text-center">登録日</th>
+                                        <th class="text-center">操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="teacherTableBody">
+                                    <tr th:each="teacher : ${teachers}">
+                                        <td class="text-center" th:text="${teacher.teacherId}"></td>
+                                        <td class="text-center">
+                                            <span class="badge bg-primary bg-opacity-10 text-primary px-3 py-2 rounded-pill" 
+                                                  th:text="${teacher.teacherCode}">TCH001</span>
+                                        </td>
+                                        <td th:text="${teacher.name}"></td>
+                                        <td th:text="${teacher.email}"></td>
+                                        <td th:text="${teacher.department} ?: '-'"></td>
+                                        <td class="text-center" th:text="${#temporals.format(teacher.createdAt, 'yyyy-MM-dd HH:mm')}"></td>
+                                        <td class="text-center">
+                                            <div class="d-flex gap-2 justify-content-center">
+                                                <a th:href="@{'/teachers/edit/' + ${teacher.teacherId}}" 
+                                                   class="btn btn-sm btn-outline-primary" 
+                                                   title="編集"
+                                                   sec:authorize="hasRole('ADMIN')">
+                                                    <i class="bi bi-pencil-square"></i>
+                                                </a>
+                                                <a th:href="@{'/teachers/' + ${teacher.teacherId} + '/courses'}" 
+                                                   class="btn btn-sm btn-outline-info" 
+                                                   title="担当コース">
+                                                    <i class="bi bi-book"></i>
+                                                </a>
+                                                <a th:href="@{'/teachers/delete/' + ${teacher.teacherId}}" 
+                                                   class="btn btn-sm btn-outline-danger" 
+                                                   title="削除"
+                                                   sec:authorize="hasRole('ADMIN')"
+                                                   onclick="return confirm('この教師を削除してもよろしいですか？');">
+                                                    <i class="bi bi-trash-fill"></i>
+                                                </a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr th:if="${teachers.size() == 0}">
+                                        <td colspan="7" class="text-center text-muted py-5">
+                                            <i class="bi bi-inbox fs-1 d-block mb-3"></i>
+                                            教師が登録されていません。
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
-                </form>
+                </div>
+
+                <!-- Pagination -->
+                <div id="pagination" class="d-flex justify-content-center mt-4 pagination"></div>
+
+                <!-- Back Button -->
+                <div class="mt-4">
+                    <a href="/dashboard" class="btn btn-outline-secondary">
+                        <i class="bi bi-arrow-left me-2"></i>ダッシュボードに戻る
+                    </a>
+                </div>
             </div>
-        </div>
-
-        <!-- Success/Error Messages -->
-        <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
-            <i class="bi bi-check-circle-fill me-2"></i><span th:text="${success}"></span>
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
-        <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
-            <i class="bi bi-exclamation-triangle-fill me-2"></i><span th:text="${error}"></span>
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
-
-        <!-- Teachers Table -->
-        <div class="card">
-            <div class="card-body p-0">
-                <table class="table table-hover mb-0" id="teacherTable">
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>教師ID</th>
-                            <th>氏名</th>
-                            <th>メールアドレス</th>
-                            <th>学部/学科</th>
-                            <th>登録日</th>
-                            <th>操作</th>
-                        </tr>
-                    </thead>
-                    <tbody id="teacherTableBody">
-                        <tr th:each="teacher : ${teachers}">
-                            <td th:text="${teacher.teacherId}"></td>
-                            <td>
-                                <span class="badge bg-primary" th:text="${teacher.teacherCode}">TCH001</span>
-                            </td>
-                            <td th:text="${teacher.name}"></td>
-                            <td th:text="${teacher.email}"></td>
-                            <td th:text="${teacher.department} ?: '-'"></td>
-                            <td th:text="${#temporals.format(teacher.createdAt, 'yyyy-MM-dd HH:mm')}"></td>
-                            <td>
-                                <a th:href="@{'/teachers/edit/' + ${teacher.teacherId}}" class="action-icon edit" title="編集">
-                                    <i class="bi bi-pencil-square"></i>
-                                </a>
-                                <a th:href="@{'/teachers/' + ${teacher.teacherId} + '/courses'}" class="action-icon view" title="担当コース">
-                                    <i class="bi bi-book"></i>
-                                </a>
-                                <a th:href="@{'/teachers/delete/' + ${teacher.teacherId}}" class="action-icon delete" title="削除"
-                                   onclick="return confirm('この教師を削除してもよろしいですか？');">
-                                    <i class="bi bi-trash-fill"></i>
-                                </a>
-                            </td>
-                        </tr>
-                        <tr th:if="${teachers.size() == 0}">
-                            <td colspan="7" class="text-center text-muted py-4">
-                                教師が登録されていません。
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
-        <!-- Pagination -->
-        <div id="pagination" class="d-flex justify-content-center mt-3 pagination"></div>
-
-        <div class="mt-3">
-            <a href="/students" class="btn btn-outline-secondary">
-                <i class="bi bi-arrow-left me-2"></i>生徒管理に戻る
-            </a>
         </div>
     </div>
 
@@ -130,9 +138,22 @@
     <!-- Pagination Script -->
     <script>
         document.addEventListener("DOMContentLoaded", function() {
+            // Sidebar toggle
+            const layout = document.querySelector(".dashboard-layout");
+            const toggles = document.querySelectorAll("[data-sidebar-toggle]");
+            toggles.forEach((btn) =>
+                btn.addEventListener("click", function (event) {
+                    event.preventDefault();
+                    layout?.classList.toggle("sidebar-open");
+                })
+            );
+
+            // Pagination
             const rows = Array.from(document.querySelectorAll("#teacherTableBody tr")).filter(
                 r => !r.querySelector("td[colspan]")
             );
+            
+            if (rows.length === 0) return;
             
             const rowsPerPage = 10;
             let currentPage = 1;

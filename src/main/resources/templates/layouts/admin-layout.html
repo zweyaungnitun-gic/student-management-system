@@ -42,29 +42,43 @@
 
       <nav class="sidebar-nav mt-3">
           <a class="sidebar-link" th:classappend="${currentPage} == 'dashboard' ? ' active' : ''" th:href="@{/dashboard}">
-              <i class="bi bi-speedometer2"></i><span>ダッシュボード</span>
+              <i class="bi bi-speedometer2"></i>
+              <span>ダッシュボード</span>
               <span class="sidebar-pill" th:if="${currentPage} == 'dashboard'">Now</span>
           </a>
+          
           <a class="sidebar-link" th:classappend="${currentPage} == 'students' ? ' active' : ''" th:href="@{/students}">
-              <i class="bi bi-people"></i><span>生徒管理</span>
+              <i class="bi bi-people"></i>
+              <span>生徒管理</span>
               <span class="sidebar-pill" th:if="${currentPage} == 'students'">Now</span>
           </a>
+          
           <a class="sidebar-link" th:classappend="${currentPage} == 'teachers' ? ' active' : ''" th:href="@{/teachers}">
-              <i class="bi bi-person-workspace"></i><span>教師管理</span>
+              <i class="bi bi-person-workspace"></i>
+              <span>教師管理</span>
               <span class="sidebar-pill" th:if="${currentPage} == 'teachers'">Now</span>
           </a>
+          
           <a class="sidebar-link" th:classappend="${currentPage} == 'courses' ? ' active' : ''" th:href="@{/courses}">
-              <i class="bi bi-book"></i><span>コース管理</span>
+              <i class="bi bi-book"></i>
+              <span>コース管理</span>
               <span class="sidebar-pill" th:if="${currentPage} == 'courses'">Now</span>
           </a>
+          
           <a class="sidebar-link" th:classappend="${currentPage} == 'tests' ? ' active' : ''" th:href="@{/tests}">
-              <i class="bi bi-file-text"></i><span>テスト管理</span>
+              <i class="bi bi-file-text"></i>
+              <span>テスト管理</span>
               <span class="sidebar-pill" th:if="${currentPage} == 'tests'">Now</span>
           </a>
+          
           <a class="sidebar-link" th:classappend="${currentPage} == 'users' ? ' active' : ''" th:href="@{/users}" sec:authorize="hasRole('ADMIN')">
-              <i class="bi bi-person-badge"></i><span>ユーザー管理</span>
+              <i class="bi bi-person-badge"></i>
+              <span>ユーザー管理</span>
               <span class="sidebar-pill" th:if="${currentPage} == 'users'">Now</span>
           </a>
+          
+          <div class="sidebar-label mt-3">システム</div>
+          
           <a class="sidebar-link" th:href="@{/logout}">
               <i class="bi bi-box-arrow-right"></i>
               <span>ログアウト</span>
