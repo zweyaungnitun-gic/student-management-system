@@ -44,4 +44,7 @@ public interface StudentRepository extends JpaRepository<Student, Long> {
 
     // Finds a student with the same National ID but a different primary ID
     Optional<Student> findByNationalIDAndIdNot(String nationalID, Long id);
+
+    // Find students by attending class related status (class name)
+    List<Student> findByAttendingClassRelatedStatus(String attendingClassRelatedStatus);
 }

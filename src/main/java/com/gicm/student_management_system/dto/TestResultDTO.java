@@ -18,12 +18,15 @@ public class TestResultDTO {
     @NotNull(message = "テストは必須です")
     private Long testId;
     private String testName;
+    private String testCode;
+    private String courseName;
+    private String courseCode;
 
     @NotNull(message = "受講登録は必須です")
     private Long enrollmentId;
+    private Long studentId;
     private String studentName;
-    private String studentId;
-    private String courseName;
+    private String studentIdNumber;
 
     @NotNull(message = "得点は必須です")
     @DecimalMin(value = "0.0", message = "得点は0以上でなければなりません")
@@ -32,7 +35,10 @@ public class TestResultDTO {
 
     private Integer totalMarks;
     private Integer passingMarks;
+    private String grade; // A, B, C, D, F
+    private BigDecimal gpa; // GPA value (4.0 scale)
     private String result; // Pass/Fail
+    private Double percentage;
 
     @Size(max = 1000, message = "フィードバックは1000文字以内で入力してください")
     private String teacherFeedback;
@@ -41,4 +47,9 @@ public class TestResultDTO {
     private String gradedByName;
     private LocalDateTime gradedAt;
     private LocalDateTime submittedAt;
+    
+    private Integer rankInClass;
+    private BigDecimal classAverage;
+    private BigDecimal highestScore;
+    private BigDecimal lowestScore;
 }

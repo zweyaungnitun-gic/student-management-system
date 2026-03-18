@@ -30,6 +30,18 @@ public class TestResult {
     @Column(name = "score_obtained", precision = 5, scale = 2)
     private BigDecimal scoreObtained;
 
+    @Column(name = "grade", length = 2)
+    private String grade; // A, B, C, D, F
+
+    @Column(name = "gpa", precision = 3, scale = 2)
+    private BigDecimal gpa; // GPA value
+
+    @Column(name = "percentage")
+    private Double percentage; 
+
+    @Column(name = "result", length = 10)
+    private String result; // PASS, FAIL
+
     @Column(name = "submitted_at")
     private LocalDateTime submittedAt;
 
@@ -47,5 +59,51 @@ public class TestResult {
     protected void onCreate() {
         submittedAt = LocalDateTime.now();
         gradedAt = LocalDateTime.now();
+        calculateGradeAndGpa();
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        gradedAt = LocalDateTime.now();
+        calculateGradeAndGpa();
+    }
+
+    private void calculateGradeAndGpa() {
+        if (scoreObtained != null && test != null && test.getTotalMarks() != null && test.getTotalMarks() > 0) {
+            this.percentage = (scoreObtained.doubleValue() / test.getTotalMarks()) * 100;
+            
+            if (test.getPassingMarks() != null) {
+                this.result = scoreObtained.compareTo(BigDecimal.valueOf(test.getPassingMarks())) >= 0 ? "PASS" : "FAIL";
+            }
+            
+            if (percentage >= 90) {
+                this.grade = "A+";
+                this.gpa = BigDecimal.valueOf(4.0);
+            } else if (percentage >= 80) {
+                this.grade = "A";
+                this.gpa = BigDecimal.valueOf(4.0);
+            } else if (percentage >= 75) {
+                this.grade = "B+";
+                this.gpa = BigDecimal.valueOf(3.5);
+            } else if (percentage >= 70) {
+                this.grade = "B";
+                this.gpa = BigDecimal.valueOf(3.0);
+            } else if (percentage >= 65) {
+                this.grade = "C+";
+                this.gpa = BigDecimal.valueOf(2.5);
+            } else if (percentage >= 60) {
+                this.grade = "C";
+                this.gpa = BigDecimal.valueOf(2.0);
+            } else if (percentage >= 55) {
+                this.grade = "D+";
+                this.gpa = BigDecimal.valueOf(1.5);
+            } else if (percentage >= 50) {
+                this.grade = "D";
+                this.gpa = BigDecimal.valueOf(1.0);
+            } else {
+                this.grade = "F";
+                this.gpa = BigDecimal.valueOf(0.0);
+            }
+        }
     }
 }
