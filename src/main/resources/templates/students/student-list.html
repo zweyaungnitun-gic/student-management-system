@@ -756,10 +756,7 @@
                 <i class="bi bi-list fs-4"></i>
               </button>
               <div>
-                <h1
-                  class="mb-0"
-                  style="color: #0a58a0; font-weight: 600; font-size: 1.8rem"
-                >
+                <h1 class="mb-0" style="color: #0a58a0; font-weight: 600; font-size: 1.8rem">
                   生徒情報一覧画面
                 </h1>
               </div>
@@ -781,31 +778,17 @@
 
           <div class="table-wrapper p-1" style="border: 1px solid transparent">
             <div class="table-responsive me-3">
-              <table
-                class="table data-table align-middle border border-radius"
-                id="studentTable"
-              >
+              <table class="table data-table align-middle border border-radius"
+                id="studentTable">
                 <thead>
                   <tr class="filter-row">
                     <th colspan="10" class="p-3">
-                      <form
-                        th:action="@{/students}"
-                        method="get"
-                        id="studentFilterForm"
-                      >
-                        <div
-                          class="d-flex flex-col md:flex-row align-items-center gap-4 flex-wrap"
-                        >
+                      <form th:action="@{/students}" method="get" id="studentFilterForm">
+                        <div class="d-flex flex-col md:flex-row align-items-center gap-4 flex-wrap">
                           <!-- subete -->
-                          <div
-                            class="filter-control-group checkbox-group flex flex-row justify-content-start"
-                          >
+                          <div class="filter-control-group checkbox-group flex flex-row justify-content-start">
                             <div>
-                              <input
-                                type="checkbox"
-                                id="selectAll"
-                                class="form-check-input"
-                              />
+                              <input type="checkbox" id="selectAll" class="form-check-input"/>
                               <span style="font-size: 16px">全て選択</span>
                             </div>
                           </div>
@@ -828,9 +811,7 @@
                           >
                             <div id="studentStatusFilter">
                               <div class="filter-control-group">
-                                <label class="filter-label"
-                                  >生徒ステータス</label
-                                >
+                                <label class="filter-label">生徒ステータス</label>
                                 <div class="multiselect-wrapper">
                                   <input
                                     type="text"
@@ -840,34 +821,17 @@
                                     readonly
                                   />
                                   <span class="dropdown-arrow">▼</span>
-                                  <div
-                                    id="statusDropdownList"
-                                    class="multiselect-dropdown"
-                                  >
-                                    <label
-                                      ><input
-                                        type="checkbox"
-                                        class="status-option"
-                                        value="在校"
-                                      />
-                                      在校</label
-                                    >
-                                    <label
-                                      ><input
-                                        type="checkbox"
-                                        class="status-option"
-                                        value="卒業"
-                                      />
-                                      卒業</label
-                                    >
-                                    <label
-                                      ><input
-                                        type="checkbox"
-                                        class="status-option"
-                                        value="途中退校"
-                                      />
-                                      途中退校</label
-                                    >
+                                  <div id="statusDropdownList"
+                                    class="multiselect-dropdown">
+                                    <label>
+                                      <input type="checkbox" class="status-option" value="在校"/>
+                                      在校</label>
+                                    <label>
+                                      <input type="checkbox" class="status-option" value="卒業"> 卒業
+                                    </label>
+                                    <label>
+                                      <input type="checkbox" class="status-option" value="途中退校"/>  途中退校
+                                    </label>
                                   </div>
                                 </div>
                               </div>
@@ -954,62 +918,43 @@
                       01/01/2025
                     </td>
                     <td data-label="動作機能" class="action-cell">
-                      <div
-                        class="d-flex flex-nowrap justify-content-center gap-2"
-                      >
-                        <!-- Edit Button - Disabled for GUEST -->
-                        <a
-                          th:href="@{/students/student-update/{id}(id=${student.id}, nameSearch=${nameSearch}, status=${status})}"
-                          class="action-icon edit"
-                          title="編集"
-                          disabled
-                          sec:authorize="hasRole('GUEST')"
-                          style="cursor: not-allowed; opacity: 0.6;"
-                          onclick="return false;"
-                        >
-                          <i class="bi bi-pencil-square"></i>
-                        </a>
-                        <!-- Edit Button - Enabled for ADMIN -->
-                        <a
-                          th:href="@{/students/student-update/{id}(id=${student.id}, nameSearch=${nameSearch}, status=${status})}"
-                          class="action-icon edit"
-                          title="編集"
-                          sec:authorize="hasRole('ADMIN')"
-                        >
-                          <i class="bi bi-pencil-square"></i>
-                        </a>
-                        <!-- Detail Button - Always Visible -->
-                        <a
-                          th:href="@{/students/detail/{id}(id=${student.id}, nameSearch=${nameSearch}, status=${status})}"
-                          class="action-icon detail"
-                          title="明細"
-                        >
-                          <i class="bi bi-info-circle-fill"></i> 明細
-                        </a>
-                        <!-- Delete Button - Disabled for GUEST -->
-                        <a
-                          href="#"
-                          class="action-icon delete"
-                          title="削除"
-                          disabled
-                          sec:authorize="hasRole('GUEST')"
-                          style="cursor: not-allowed; opacity: 0.6;"
-                          onclick="return false;"
-                        >
-                          <i class="bi bi-trash-fill"></i>
-                        </a>
-                        <!-- Delete Button - Enabled for ADMIN -->
-                        <a
-                          href="#"
-                          th:onclick="'if(confirm(\'本当に削除しますか？\')) window.location.href=\'/students/delete/' + ${student.id} + '\';'"
-                          class="action-icon delete"
-                          title="削除"
-                          sec:authorize="hasRole('ADMIN')"
-                        >
-                          <i class="bi bi-trash-fill"></i>
-                        </a>
+                      <div class="d-flex flex-nowrap justify-content-center gap-2">
+                          <!-- Detail Button -->
+                          <a th:href="@{/students/detail/{id}(id=${student.id}, nameSearch=${nameSearch}, status=${status})}"
+                            class="text-decoration-none text-info" 
+                            title="詳細"
+                            style="font-size: 1.2rem;">
+                              <i class="bi bi-info-circle"></i>
+                          </a>
+                          
+                          <!-- Edit Button -->
+                          <a th:href="@{/students/student-update/{id}(id=${student.id}, nameSearch=${nameSearch}, status=${status})}"
+                            class="text-decoration-none text-primary" 
+                            title="編集"
+                            sec:authorize="hasRole('ADMIN') or hasRole('TEACHER')"
+                            style="font-size: 1.2rem;">
+                              <i class="bi bi-pencil-square"></i>
+                          </a>
+                          
+                          <!-- Report Card Button -->
+                          <a th:href="@{'/reports/student/' + ${student.id}}" 
+                            class="text-decoration-none text-success" 
+                            title="成績"
+                            style="font-size: 1.2rem;">
+                              <i class="bi bi-bar-chart-fill"></i>
+                          </a>
+                          
+                          <!-- Delete Button -->
+                          <a href="#" 
+                            th:onclick="'if(confirm(\'本当に削除しますか？\')) window.location.href=\'/students/delete/' + ${student.id} + '\';'"
+                            class="text-decoration-none text-danger" 
+                            title="削除"
+                            sec:authorize="hasRole('ADMIN')"
+                            style="font-size: 1.2rem;">
+                              <i class="bi bi-trash-fill"></i>
+                          </a>
                       </div>
-                    </td>
+                  </td>
                   </tr>
                 </tbody>
 

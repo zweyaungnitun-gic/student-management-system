@@ -44,10 +44,6 @@
                         </button>
                     </form>
                     <div class="d-flex gap-2">
-                        <!-- <a href="/dashboard" class="btn btn-outline-secondary d-flex align-items-center gap-2">
-                            <i class="bi bi-arrow-left"></i>
-                            <span>ダッシュボードに戻る</span>
-                        </a> -->
                         <a href="/teachers/add" class="btn btn-success" sec:authorize="hasRole('ADMIN')">
                             <i class="bi bi-plus-circle me-2"></i>新規教師追加
                         </a>
@@ -92,23 +88,26 @@
                                         <td th:text="${teacher.department} ?: '-'"></td>
                                         <td class="text-center" th:text="${#temporals.format(teacher.createdAt, 'yyyy-MM-dd HH:mm')}"></td>
                                         <td class="text-center">
-                                            <div class="d-flex gap-2 justify-content-center">
+                                            <div class="d-flex gap-3 justify-content-center">
                                                 <a th:href="@{'/teachers/edit/' + ${teacher.teacherId}}" 
-                                                   class="btn btn-sm btn-outline-primary" 
-                                                   title="編集"
-                                                   sec:authorize="hasRole('ADMIN')">
+                                                class="text-decoration-none text-primary" 
+                                                title="編集"
+                                                sec:authorize="hasRole('ADMIN')"
+                                                style="font-size: 1.2rem;">
                                                     <i class="bi bi-pencil-square"></i>
                                                 </a>
                                                 <a th:href="@{'/teachers/' + ${teacher.teacherId}}" 
-                                                   class="btn btn-sm btn-outline-info" 
-                                                   title="詳細">
+                                                class="text-decoration-none text-info" 
+                                                title="詳細"
+                                                style="font-size: 1.2rem;">
                                                     <i class="bi bi-info-circle"></i>
                                                 </a>
                                                 <a th:href="@{'/teachers/delete/' + ${teacher.teacherId}}" 
-                                                   class="btn btn-sm btn-outline-danger" 
-                                                   title="削除"
-                                                   sec:authorize="hasRole('ADMIN')"
-                                                   onclick="return confirm('この教師を削除してもよろしいですか？');">
+                                                class="text-decoration-none text-danger" 
+                                                title="削除"
+                                                sec:authorize="hasRole('ADMIN')"
+                                                onclick="return confirm('この教師を削除してもよろしいですか？');"
+                                                style="font-size: 1.2rem;">
                                                     <i class="bi bi-trash-fill"></i>
                                                 </a>
                                             </div>

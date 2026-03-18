@@ -51,6 +51,16 @@
                             class="btn btn-outline-secondary">
                             <i class="bi bi-arrow-left me-2"></i>生徒一覧に戻る
                         </a>
+                         <a th:href="@{'/students/student-update/' + ${student.id}}" class="btn btn-primary">
+                            <i class="bi bi-pencil"></i> 編集
+                        </a>
+                        <!-- Report Card Buttons -->
+                        <a th:href="@{'/reports/student/' + ${student.id}}" class="btn btn-info">
+                            <i class="bi bi-bar-chart"></i> 成績サマリー
+                        </a>
+                        <a th:href="@{'/reports/report-card/' + ${student.id}}" class="btn btn-success">
+                            <i class="bi bi-file-text"></i> 成績表
+                        </a>
                     </div>
 
                     <ul class="nav nav-tabs" id="detailTabs">

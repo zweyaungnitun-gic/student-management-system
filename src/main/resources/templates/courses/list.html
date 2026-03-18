@@ -121,40 +121,44 @@
                                         </td>
                                         <td class="text-center" th:text="${#temporals.format(course.createdAt, 'yyyy-MM-dd HH:mm')}"></td>
                                         <td class="text-center">
-                                            <div class="d-flex gap-2 justify-content-center">
+                                            <div class="d-flex gap-3 justify-content-center align-items-center">
                                                 <!-- Detail Button -->
                                                 <a th:href="@{'/courses/' + ${course.courseId}}" 
-                                                   class="btn btn-sm btn-outline-info" 
-                                                   title="詳細">
+                                                class="text-decoration-none text-info" 
+                                                title="詳細"
+                                                style="font-size: 1.2rem;">
                                                     <i class="bi bi-info-circle"></i>
                                                 </a>
                                                 
                                                 <!-- Edit Button -->
                                                 <a th:href="@{'/courses/edit/' + ${course.courseId}}" 
-                                                   class="btn btn-sm btn-outline-primary" 
-                                                   title="編集"
-                                                   sec:authorize="hasRole('ADMIN')">
+                                                class="text-decoration-none text-primary" 
+                                                title="編集"
+                                                sec:authorize="hasRole('ADMIN')"
+                                                style="font-size: 1.2rem;">
                                                     <i class="bi bi-pencil-square"></i>
                                                 </a>
                                                 
                                                 <!-- Toggle Active/Inactive Button -->
                                                 <form th:action="@{'/courses/toggle/' + ${course.courseId}}" 
-                                                      method="post" 
-                                                      style="display: inline;">
+                                                    method="post" 
+                                                    style="display: inline;">
                                                     <button type="submit" 
-                                                            class="btn btn-sm btn-outline-warning" 
+                                                            class="text-decoration-none text-warning bg-transparent border-0 p-0" 
                                                             th:title="${course.isActive} ? '非アクティブ化' : 'アクティブ化'"
-                                                            sec:authorize="hasRole('ADMIN')">
+                                                            sec:authorize="hasRole('ADMIN')"
+                                                            style="font-size: 1.2rem; cursor: pointer;">
                                                         <i class="bi bi-arrow-repeat"></i>
                                                     </button>
                                                 </form>
                                                 
                                                 <!-- Delete Button -->
                                                 <a th:href="@{'/courses/delete/' + ${course.courseId}}" 
-                                                   class="btn btn-sm btn-outline-danger" 
-                                                   title="削除"
-                                                   sec:authorize="hasRole('ADMIN')"
-                                                   onclick="return confirm('このコースを削除してもよろしいですか？');">
+                                                class="text-decoration-none text-danger" 
+                                                title="削除"
+                                                sec:authorize="hasRole('ADMIN')"
+                                                onclick="return confirm('このコースを削除してもよろしいですか？');"
+                                                style="font-size: 1.2rem;">
                                                     <i class="bi bi-trash-fill"></i>
                                                 </a>
                                             </div>
