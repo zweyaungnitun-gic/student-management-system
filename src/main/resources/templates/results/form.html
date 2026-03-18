@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head th:replace="~{layouts/admin-layout :: head(pageTitle=${result.testResultId == null ? '結果入力' : '結果編集'})}">
+</head>
+
+<body>
+    <div class="dashboard-layout">
+        <th:block th:replace="~{layouts/admin-layout :: sidebar(currentPage='results')}"></th:block>
+
+        <div class="sidebar-overlay d-lg-none" data-sidebar-toggle></div>
+
+        <div class="dashboard-main">
+            <div class="page-wrapper py-4 py-md-5 px-3 px-md-5">
+                <!-- Page Header -->
+                <div class="page-header mb-4">
+                    <div class="d-flex align-items-center gap-3">
+                        <button class="btn btn-light btn-icon d-lg-none" type="button" data-sidebar-toggle>
+                            <i class="bi bi-list fs-4"></i>
+                        </button>
+                        <div>
+                            <h1 class="mb-0" style="color: #0a58a0; font-weight: 600; font-size: 1.8rem;">
+                                <span th:if="${result.testResultId == null}">新規テスト結果入力</span>
+                                <span th:unless="${result.testResultId == null}">テスト結果編集</span>
+                            </h1>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Form Card -->
+                <div class="card shadow-sm">
+                    <div class="card-body p-4">
+                        <form th:action="@{${result.testResultId == null} ? '/results/save' : '/results/update'}" 
+                              th:object="${result}" method="post">
+                            
+                            <input type="hidden" th:field="*{testResultId}" />
+
+                            <div class="row mb-3">
+                                <label class="col-sm-3 col-form-label fw-semibold">テスト <span class="text-danger">*</span></label>
+                                <div class="col-sm-9">
+                                    <select th:field="*{testId}" class="form-select" required
+                                            onchange="updateTestInfo(this.value)">
+                                        <option value="">-- テストを選択 --</option>
+                                        <option th:each="test : ${tests}" 
+                                                th:value="${test.testId}"
+                                                th:text="${test.testName} + ' (' + ${test.courseName} + ' - ' + ${test.totalMarks} + '点)'"
+                                                th:selected="${test.testId == result.testId}">
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <label class="col-sm-3 col-form-label fw-semibold">生徒 <span class="text-danger">*</span></label>
+                                <div class="col-sm-9">
+                                    <select th:field="*{enrollmentId}" class="form-select" required>
+                                        <option value="">-- 生徒を選択 --</option>
+                                        <option th:each="enrollment : ${enrollments}" 
+                                                th:value="${enrollment.enrollmentId}"
+                                                th:text="${enrollment.studentName} + ' (' + ${enrollment.studentIdNumber} + ')'"
+                                                th:selected="${enrollment.enrollmentId == result.enrollmentId}">
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <label class="col-sm-3 col-form-label fw-semibold">得点 <span class="text-danger">*</span></label>
+                                <div class="col-sm-9">
+                                    <input type="number" th:field="*{scoreObtained}" class="form-control" 
+                                           step="0.1" min="0" required>
+                                    <small class="text-muted" id="scoreHint">満点: <span th:text="${selectedTest?.totalMarks}"></span>点</small>
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <label class="col-sm-3 col-form-label fw-semibold">フィードバック</label>
+                                <div class="col-sm-9">
+                                    <textarea th:field="*{teacherFeedback}" class="form-control" rows="4"
+                                              placeholder="教師からのコメント"></textarea>
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <label class="col-sm-3 col-form-label fw-semibold">評価者</label>
+                                <div class="col-sm-9">
+                                    <select th:field="*{gradedById}" class="form-select">
+                                        <option value="">-- 評価者を選択 --</option>
+                                        <option th:each="teacher : ${teachers}" 
+                                                th:value="${teacher.teacherId}"
+                                                th:text="${teacher.name} + ' (' + ${teacher.teacherCode} + ')'"
+                                                th:selected="${teacher.teacherId == result.gradedById}">
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- Preview Section -->
+                            <div th:if="${result.testId != null and result.scoreObtained != null}" 
+                                 class="row mb-3">
+                                <label class="col-sm-3 col-form-label fw-semibold">プレビュー</label>
+                                <div class="col-sm-9">
+                                    <div class="p-3 rounded" 
+                                         th:classappend="${result.scoreObtained >= result.passingMarks} ? 'bg-success bg-opacity-10' : 'bg-danger bg-opacity-10'">
+                                        <div class="row">
+                                            <div class="col-md-3">
+                                                <span class="text-muted">パーセンテージ:</span><br>
+                                                <strong th:text="${#numbers.formatDecimal((result.scoreObtained / result.totalMarks) * 100, 1, 1)} + '%'"></strong>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <span class="text-muted">評価:</span><br>
+                                                <span class="badge" th:classappend="${result.grade == 'A' or result.grade == 'A+' ? 'bg-success' : 
+                                                                                     (result.grade == 'F' ? 'bg-danger' : 'bg-info')}"
+                                                      th:text="${result.grade}"></span>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <span class="text-muted">GPA:</span><br>
+                                                <strong th:text="${result.gpa}"></strong>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <span class="text-muted">結果:</span><br>
+                                                <span class="badge" th:classappend="${result.result == '合格'} ? 'bg-success' : 'bg-danger'"
+                                                      th:text="${result.result}"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row mt-4">
+                                <div class="col-sm-9 offset-sm-3">
+                                    <button type="submit" class="btn btn-primary px-4">
+                                        <i class="bi bi-check-circle me-2"></i>保存
+                                    </button>
+                                    <a href="/results" class="btn btn-outline-secondary px-4 ms-2">
+                                        <i class="bi bi-x-circle me-2"></i>キャンセル
+                                    </a>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const layout = document.querySelector(".dashboard-layout");
+            const toggles = document.querySelectorAll("[data-sidebar-toggle]");
+            toggles.forEach((btn) =>
+                btn.addEventListener("click", function (event) {
+                    event.preventDefault();
+                    layout?.classList.toggle("sidebar-open");
+                })
+            );
+        });
+
+        function updateTestInfo(testId) {
+            if (testId) {
+                // You can implement AJAX call here to get test details
+                console.log("Selected test ID:", testId);
+            }
+        }
+    </script>
+</body>
+</html>

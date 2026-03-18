@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head th:replace="~{layouts/admin-layout :: head(pageTitle='テスト統計 | 生徒情報管理システム')}">
+</head>
+
+<body>
+    <div class="dashboard-layout">
+        <th:block th:replace="~{layouts/admin-layout :: sidebar(currentPage='tests')}"></th:block>
+
+        <div class="sidebar-overlay d-lg-none" data-sidebar-toggle></div>
+
+        <div class="dashboard-main">
+            <div class="page-wrapper py-4 py-md-5 px-3 px-md-5">
+                <!-- Page Header -->
+                <div class="page-header mb-4">
+                    <div class="d-flex align-items-center gap-3">
+                        <button class="btn btn-light btn-icon d-lg-none" type="button" data-sidebar-toggle>
+                            <i class="bi bi-list fs-4"></i>
+                        </button>
+                        <div>
+                            <h1 class="mb-0" style="color: #0a58a0; font-weight: 600; font-size: 1.8rem;">
+                                テスト統計
+                            </h1>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Statistics Dashboard -->
+                <div class="row g-4 mb-4">
+                    <div class="col-md-3">
+                        <div class="mini-card p-4 text-center">
+                            <div class="text-muted small mb-2">受験者数</div>
+                            <div class="h2 mb-0 fw-bold" th:text="${statistics.totalStudents}">0</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="mini-card p-4 text-center">
+                            <div class="text-muted small mb-2">平均点</div>
+                            <div class="h2 mb-0 fw-bold" th:text="${statistics.averageScore}">0</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="mini-card p-4 text-center">
+                            <div class="text-muted small mb-2">平均GPA</div>
+                            <div class="h2 mb-0 fw-bold" th:text="${statistics.averageGpa}">0</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="mini-card p-4 text-center">
+                            <div class="text-muted small mb-2">合格率</div>
+                            <div class="h2 mb-0 fw-bold" th:text="${statistics.passRate} + '%'">0%</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row g-4 mb-4">
+                    <div class="col-md-4">
+                        <div class="mini-card p-4">
+                            <h6 class="mb-3">得点範囲</h6>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>最高点</span>
+                                <span class="fw-bold text-success" th:text="${statistics.highestScore}"></span>
+                            </div>
+                            <div class="d-flex justify-content-between">
+                                <span>最低点</span>
+                                <span class="fw-bold text-danger" th:text="${statistics.lowestScore}"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="mini-card p-4">
+                            <h6 class="mb-3">合格状況</h6>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>合格者</span>
+                                <span class="fw-bold text-success" th:text="${statistics.passedCount}"></span>
+                            </div>
+                            <div class="d-flex justify-content-between">
+                                <span>不合格者</span>
+                                <span class="fw-bold text-danger" th:text="${statistics.failedCount}"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="mini-card p-4">
+                            <h6 class="mb-3">評価分布</h6>
+                            <div th:each="entry : ${statistics.gradeDistribution}" 
+                                 class="d-flex justify-content-between mb-1 small">
+                                <span th:text="${entry.key} + ':'"></span>
+                                <span class="fw-bold" th:text="${entry.value} + '人'"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Results Table -->
+                <div class="glass-panel p-0 overflow-hidden">
+                    <div class="table-responsive">
+                        <table class="table data-table align-middle mb-0">
+                            <thead>
+                                <tr>
+                                    <th>生徒ID</th>
+                                    <th>生徒名</th>
+                                    <th class="text-center">得点</th>
+                                    <th class="text-center">パーセンテージ</th>
+                                    <th class="text-center">評価</th>
+                                    <th class="text-center">GPA</th>
+                                    <th class="text-center">結果</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="result : ${results}">
+                                    <td th:text="${result.studentIdNumber}"></td>
+                                    <td th:text="${result.studentName}"></td>
+                                    <td class="text-center" th:text="${result.scoreObtained} + '/' + ${result.totalMarks}"></td>
+                                    <td class="text-center" th:text="${#numbers.formatDecimal(result.percentage, 1, 1)} + '%'"></td>
+                                    <td class="text-center">
+                                        <span class="badge" th:classappend="${result.grade == 'A' or result.grade == 'A+' ? 'bg-success' : 
+                                                                             (result.grade == 'F' ? 'bg-danger' : 'bg-info')}"
+                                              th:text="${result.grade}"></span>
+                                    </td>
+                                    <td class="text-center" th:text="${result.gpa}"></td>
+                                    <td class="text-center">
+                                        <span th:if="${result.result == '合格'}" class="badge bg-success">合格</span>
+                                        <span th:if="${result.result == '不合格'}" class="badge bg-danger">不合格</span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const layout = document.querySelector(".dashboard-layout");
+            const toggles = document.querySelectorAll("[data-sidebar-toggle]");
+            toggles.forEach((btn) =>
+                btn.addEventListener("click", function (event) {
+                    event.preventDefault();
+                    layout?.classList.toggle("sidebar-open");
+                })
+            );
+        });
+    </script>
+</body>
+</html>

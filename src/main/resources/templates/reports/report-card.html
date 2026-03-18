@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>成績通知表 - 生徒情報管理システム</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Inter', sans-serif;
+            padding: 2rem;
+        }
+        .report-card {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            padding: 2rem;
+        }
+        .header {
+            border-bottom: 3px solid #0a58a0;
+            padding-bottom: 1rem;
+            margin-bottom: 2rem;
+        }
+        .school-name {
+            color: #0a58a0;
+            font-weight: 700;
+            font-size: 1.8rem;
+        }
+        .student-info {
+            background: #f0f7ff;
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        .grade-box {
+            background: #e9ecef;
+            border-radius: 10px;
+            padding: 1rem;
+            text-align: center;
+            height: 100%;
+        }
+        .grade-box h6 {
+            color: #6c757d;
+            margin-bottom: 0.5rem;
+        }
+        .grade-box .value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #0a58a0;
+        }
+        .table th {
+            background-color: #0a58a0;
+            color: white;
+        }
+        .signature-line {
+            border-top: 1px solid #dee2e6;
+            width: 200px;
+            margin-top: 5px;
+        }
+        .remarks {
+            background: #fff9e6;
+            border-left: 4px solid #ffc107;
+            padding: 1rem;
+            border-radius: 10px;
+        }
+        .print-btn {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            z-index: 1000;
+        }
+        @media print {
+            body { background: white; padding: 0; }
+            .report-card { box-shadow: none; padding: 1rem; }
+            .print-btn { display: none; }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="report-card">
+        <!-- Print Button -->
+        <button class="btn btn-primary print-btn" onclick="window.print()">
+            <i class="bi bi-printer me-2"></i>印刷
+        </button>
+
+        <!-- Header -->
+        <div class="header d-flex justify-content-between align-items-center">
+            <div>
+                <h1 class="school-name">GIC Career Gateway</h1>
+                <p class="text-muted mb-0">成績通知表 / Report Card</p>
+            </div>
+            <div class="text-end">
+                <p class="mb-0"><strong>発行日:</strong> <span th:text="${#temporals.format(reportCard.generatedDate, 'yyyy年MM月dd日')}"></span></p>
+                <p class="mb-0"><strong>学年:</strong> <span th:text="${reportCard.academicYear}"></span></p>
+                <p class="mb-0"><strong>学期:</strong> <span th:text="${reportCard.semester}"></span></p>
+            </div>
+        </div>
+
+        <!-- Student Information -->
+        <div class="student-info">
+            <div class="row">
+                <div class="col-md-4">
+                    <p class="mb-1"><strong>生徒ID:</strong> <span th:text="${reportCard.studentIdNumber}"></span></p>
+                    <p class="mb-1"><strong>氏名:</strong> <span th:text="${reportCard.studentName}"></span></p>
+                </div>
+                <div class="col-md-4">
+                    <p class="mb-1"><strong>クラス:</strong> <span th:text="${reportCard.courseResults[0]?.teacherName ?: 'N/A'}"></span></p>
+                    <p class="mb-1"><strong>クラス順位:</strong> <span th:text="${reportCard.classRank} + '/' + ${reportCard.totalStudents}"></span></p>
+                </div>
+                <div class="col-md-4">
+                    <p class="mb-1"><strong>学業状況:</strong> 
+                        <span class="badge" th:classappend="${reportCard.academicStanding == 'Dean\'s List' ? 'bg-success' : 
+                                                              (reportCard.academicStanding == 'Academic Probation' ? 'bg-warning' : 
+                                                               (reportCard.academicStanding == 'Academic Suspension' ? 'bg-danger' : 'bg-info'))}"
+                              th:text="${reportCard.academicStanding}"></span>
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- GPA Summary -->
+        <div class="row g-4 mb-4">
+            <div class="col-md-3">
+                <div class="grade-box">
+                    <h6>学期GPA</h6>
+                    <div class="value" th:text="${reportCard.semesterGPA}">3.5</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="grade-box">
+                    <h6>累積GPA</h6>
+                    <div class="value" th:text="${reportCard.cumulativeGPA}">3.4</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="grade-box">
+                    <h6>取得単位</h6>
+                    <div class="value" th:text="${reportCard.totalCredits}">15</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="grade-box">
+                    <h6>合格/不合格</h6>
+                    <div class="value" th:text="${reportCard.passedCourses} + '/' + ${reportCard.failedCourses}">8/2</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Course Results Table -->
+        <h5 class="mb-3"><i class="bi bi-journal-bookmark-fill me-2 text-primary"></i>科目別成績</h5>
+        <div class="table-responsive mb-4">
+            <table class="table table-bordered table-hover">
+                <thead>
+                    <tr>
+                        <th>コースコード</th>
+                        <th>コース名</th>
+                        <th>単位数</th>
+                        <th class="text-center">テスト結果</th>
+                        <th class="text-center">平均点</th>
+                        <th class="text-center">GPA</th>
+                        <th class="text-center">評価</th>
+                        <th>担当教師</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="course : ${reportCard.courseResults}">
+                        <td th:text="${course.courseCode}"></td>
+                        <td th:text="${course.courseName}"></td>
+                        <td class="text-center" th:text="${course.creditHours}"></td>
+                        <td>
+                            <ul class="list-unstyled mb-0">
+                                <li th:each="test : ${course.testResults}" class="small">
+                                    <span th:text="${test.testName} + ': '"></span>
+                                    <span th:text="${test.scoreObtained} + '/' + ${test.totalMarks}"></span>
+                                    <span class="badge" th:classappend="${test.grade == 'A' or test.grade == 'A+' ? 'bg-success' : 
+                                                                         (test.grade == 'F' ? 'bg-danger' : 'bg-info')}"
+                                          th:text="${test.grade}"></span>
+                                </li>
+                            </ul>
+                        </td>
+                        <td class="text-center align-middle" th:text="${#numbers.formatDecimal(course.averageScore, 1, 1)}"></td>
+                        <td class="text-center align-middle">
+                            <span class="badge bg-primary" th:text="${course.gpa}"></span>
+                        </td>
+                        <td class="text-center align-middle">
+                            <span class="badge" th:classappend="${course.finalGrade == 'A' or course.finalGrade == 'A+' ? 'bg-success' : 
+                                                                  (course.finalGrade == 'F' ? 'bg-danger' : 'bg-info')}"
+                                  th:text="${course.finalGrade}"></span>
+                        </td>
+                        <td th:text="${course.teacherName}"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Grading Scale -->
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <h6><i class="bi bi-info-circle me-2"></i>評価基準</h6>
+                <table class="table table-sm table-bordered">
+                    <thead class="table-light">
+                        <tr>
+                            <th>評価</th>
+                            <th>パーセンテージ</th>
+                            <th>GPA</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="entry : ${reportCard.gradingScale}">
+                            <td th:text="${entry.key}"></td>
+                            <td th:text="${entry.value}"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="col-md-6">
+                <!-- Remarks -->
+                <h6><i class="bi bi-chat-text me-2"></i>所見</h6>
+                <div class="remarks mb-3">
+                    <p class="mb-2"><strong>担任所見:</strong></p>
+                    <p th:text="${reportCard.classTeacherRemarks ?: '特になし'}"></p>
+                </div>
+                <div class="remarks">
+                    <p class="mb-2"><strong>校長所見:</strong></p>
+                    <p th:text="${reportCard.principalRemarks ?: '特になし'}"></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Signatures -->
+        <div class="row mt-5">
+            <div class="col-4 text-center">
+                <div class="signature-line mx-auto"></div>
+                <p class="mb-0 mt-2">担任</p>
+            </div>
+            <div class="col-4 text-center">
+                <div class="signature-line mx-auto"></div>
+                <p class="mb-0 mt-2">教務主任</p>
+            </div>
+            <div class="col-4 text-center">
+                <div class="signature-line mx-auto"></div>
+                <p class="mb-0 mt-2">校長</p>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="text-center mt-4 text-muted small">
+            <p>※ この成績表はGIC Career Gatewayの公式記録です</p>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
