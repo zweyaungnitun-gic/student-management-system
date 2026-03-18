@@ -1,0 +1,87 @@
+package com.gicm.student_management_system.controller;
+
+import com.gicm.student_management_system.dto.GradeCalculationDTO;
+import com.gicm.student_management_system.dto.ReportCardDTO;
+import com.gicm.student_management_system.dto.TestResultDTO;
+import com.gicm.student_management_system.service.TestResultService;
+import com.gicm.student_management_system.service.TestService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Map;
+
+@Controller
+@RequestMapping("/reports")
+@RequiredArgsConstructor
+public class ReportsController {
+
+    private final TestResultService testResultService;
+    private final TestService testService;
+
+    @GetMapping("/dashboard")
+    public String dashboard() {
+        return "reports/dashboard";
+    }
+
+    @GetMapping("/student/{studentId}")
+    public String studentGradeSummary(@PathVariable Long studentId,
+                                      @RequestParam(defaultValue = "2024-2025") String academicYear,
+                                      @RequestParam(defaultValue = "Semester 1") String semester,
+                                      Model model) {
+        GradeCalculationDTO gradeSummary = testResultService.getStudentGradeSummary(studentId, academicYear, semester);
+        model.addAttribute("gradeSummary", gradeSummary);
+        model.addAttribute("academicYear", academicYear);
+        model.addAttribute("semester", semester);
+        model.addAttribute("pageTitle", "成績サマリー");
+        return "reports/grade-summary";
+    }
+
+    @GetMapping("/report-card/{studentId}")
+    public String reportCard(@PathVariable Long studentId,
+                             @RequestParam(defaultValue = "2024-2025") String academicYear,
+                             @RequestParam(defaultValue = "Semester 1") String semester,
+                             Model model) {
+        ReportCardDTO reportCard = testResultService.generateStudentReportCard(studentId, academicYear, semester);
+        model.addAttribute("reportCard", reportCard);
+        model.addAttribute("pageTitle", "成績通知表");
+        return "reports/report-card";
+    }
+
+
+    @GetMapping("/rankings")
+    @PreAuthorize("hasRole('ADMIN')")
+    public String classRankings(@RequestParam String className,
+                                @RequestParam(defaultValue = "2024-2025") String academicYear,
+                                @RequestParam(defaultValue = "Semester 1") String semester,
+                                Model model) {
+        Map<String, Object> rankings = testResultService.getClassRankings(className, academicYear, semester);
+        model.addAttribute("rankings", rankings);
+        model.addAttribute("pageTitle", "クラス順位");
+        return "reports/class-rankings";
+    }
+
+    @GetMapping("/test/{testId}/statistics")
+    public String testStatistics(@PathVariable Long testId, Model model) {
+        Map<String, Object> statistics = testResultService.getTestStatistics(testId);
+        List<TestResultDTO> results = testResultService.getResultsByTest(testId);
+        
+        model.addAttribute("statistics", statistics);
+        model.addAttribute("results", results);
+        model.addAttribute("test", testService.getTestById(testId).orElse(null));
+        model.addAttribute("pageTitle", "テスト統計");
+        
+        return "reports/test-statistics";
+    }
+
+    @GetMapping("/report-card/{studentId}/export")
+    @ResponseBody
+    public String exportReportCard(@PathVariable Long studentId,
+                                   @RequestParam String academicYear,
+                                   @RequestParam String semester) {
+        return "PDF generation would happen here";
+    }
+}

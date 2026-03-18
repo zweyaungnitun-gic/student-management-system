@@ -253,41 +253,57 @@ public class TestResultServiceImpl implements TestResultService {
     @Transactional(readOnly = true)
     public Map<String, Object> getClassRankings(String className, String academicYear, String semester) {
         log.info("Getting class rankings for class: {}, Academic Year: {}, Semester: {}", 
-                 className, academicYear, semester);
+                className, academicYear, semester);
         
         Map<String, Object> rankings = new HashMap<>();
         
         List<Student> students = studentRepository.findByAttendingClassRelatedStatus(className);
         
-        List<GradeCalculationDTO> studentGPAs = students.stream()
-            .map(s -> {
-                try {
-                    return gradeCalculationService.calculateStudentGPA(s.getId(), academicYear, semester);
-                } catch (Exception e) {
-                    log.error("Error calculating GPA for student {}: {}", s.getId(), e.getMessage());
-                    return null;
+        if (students.isEmpty()) {
+            rankings.put("className", className);
+            rankings.put("academicYear", academicYear);
+            rankings.put("semester", semester);
+            rankings.put("totalStudents", 0);
+            rankings.put("averageGpa", "0.00");
+            rankings.put("highestGpa", "0.00");
+            rankings.put("lowestGpa", "0.00");
+            rankings.put("rankings", new ArrayList<>());
+            return rankings;
+        }
+        
+        List<GradeCalculationDTO> studentGPAs = new ArrayList<>();
+        for (Student s : students) {
+            try {
+                GradeCalculationDTO gpa = gradeCalculationService.calculateStudentGPA(s.getId(), academicYear, semester);
+                if (gpa != null) {
+                    studentGPAs.add(gpa);
                 }
-            })
-            .filter(Objects::nonNull)
-            .sorted((a, b) -> b.getOverallGPA().compareTo(a.getOverallGPA()))
-            .collect(Collectors.toList());
+            } catch (Exception e) {
+                log.error("Error calculating GPA for student {}: {}", s.getId(), e.getMessage());
+            }
+        }
+        
+        // Sort by overall GPA descending
+        studentGPAs.sort((a, b) -> b.getOverallGPA().compareTo(a.getOverallGPA()));
+
+        // Calculate statistics
+        double avgGpa = studentGPAs.stream()
+            .mapToDouble(g -> g.getOverallGPA().doubleValue())
+            .average()
+            .orElse(0.0);
+        
+        BigDecimal highestGpa = studentGPAs.isEmpty() ? BigDecimal.ZERO : studentGPAs.get(0).getOverallGPA();
+        BigDecimal lowestGpa = studentGPAs.isEmpty() ? BigDecimal.ZERO : 
+                            studentGPAs.get(studentGPAs.size() - 1).getOverallGPA();
 
         rankings.put("className", className);
         rankings.put("academicYear", academicYear);
         rankings.put("semester", semester);
         rankings.put("totalStudents", students.size());
+        rankings.put("averageGpa", String.format("%.2f", avgGpa));
+        rankings.put("highestGpa", highestGpa);
+        rankings.put("lowestGpa", lowestGpa);
         rankings.put("rankings", studentGPAs);
-        
-        if (!studentGPAs.isEmpty()) {
-            double avgGpa = studentGPAs.stream()
-                .mapToDouble(g -> g.getOverallGPA().doubleValue())
-                .average()
-                .orElse(0.0);
-            
-            rankings.put("averageGpa", String.format("%.2f", avgGpa));
-            rankings.put("highestGpa", studentGPAs.get(0).getOverallGPA());
-            rankings.put("lowestGpa", studentGPAs.get(studentGPAs.size() - 1).getOverallGPA());
-        }
         
         return rankings;
     }

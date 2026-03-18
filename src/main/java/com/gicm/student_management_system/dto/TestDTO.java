@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 import java.time.LocalDateTime;
 
 @Data
@@ -33,6 +34,7 @@ public class TestDTO {
     @Min(value = 0, message = "合格点は0以上でなければなりません")
     private Integer passingMarks;
 
+    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
     private LocalDateTime testDate;
 
     @Min(value = 1, message = "試験時間は1分以上でなければなりません")

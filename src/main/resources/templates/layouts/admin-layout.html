@@ -73,6 +73,19 @@
               <span class="sidebar-pill" th:if="${currentPage} == 'results'">Now</span>
           </a>
 
+          <div class="sidebar-label mt-3">レポート</div>
+          <nav class="sidebar-nav">
+              <a class="sidebar-link" th:classappend="${currentPage} == 'rankings' ? ' active' : ''" th:href="@{/reports/rankings?className=N5}">
+                  <i class="bi bi-trophy"></i>
+                  <span>クラス順位</span>
+                  <span class="sidebar-pill" th:if="${currentPage} == 'rankings'">New</span>
+              </a>
+              <a class="sidebar-link" th:href="@{/reports/dashboard}">
+                  <i class="bi bi-pie-chart"></i>
+                  <span>レポートダッシュボード</span>
+              </a>
+          </nav>
+
           <a class="sidebar-link" th:classappend="${currentPage} == 'users' ? ' active' : ''" th:href="@{/users}" sec:authorize="hasRole('ADMIN')">
               <i class="bi bi-person-badge"></i>
               <span>ユーザー管理</span>

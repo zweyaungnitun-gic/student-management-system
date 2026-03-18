@@ -1,6 +1,7 @@
 package com.gicm.student_management_system.controller;
 
 import com.gicm.student_management_system.dto.TestResultDTO;
+import com.gicm.student_management_system.dto.EnrollmentDTO;
 import com.gicm.student_management_system.service.TestResultService;
 import com.gicm.student_management_system.service.TestService;
 import com.gicm.student_management_system.service.CourseService;
@@ -54,6 +55,7 @@ public class ResultsController {
                     .collect(Collectors.toList());
         }
         
+        // Simple pagination in memory
         int pageSize = 20;
         int start = (page - 1) * pageSize;
         int end = Math.min(start + pageSize, results.size());
@@ -102,7 +104,14 @@ public class ResultsController {
     public String showAddForm(Model model) {
         model.addAttribute("result", new TestResultDTO());
         model.addAttribute("tests", testService.getAllTests());
-        model.addAttribute("enrollments", enrollmentService.getAllEnrollments());
+        
+        List<EnrollmentDTO> enrollments = enrollmentService.getAllEnrollments();
+        model.addAttribute("enrollments", enrollments);
+        
+        if (enrollments.isEmpty()) {
+            model.addAttribute("warning", "受講登録がありません。先に生徒をコースに登録してください。");
+        }
+        
         model.addAttribute("teachers", teacherService.getAllTeachers());
         return "results/form";
     }

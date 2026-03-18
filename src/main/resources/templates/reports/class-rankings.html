@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head th:replace="~{layouts/admin-layout :: head(pageTitle='クラス順位 | 生徒情報管理システム')}">
+</head>
+
+<body>
+    <div class="dashboard-layout">
+        <th:block th:replace="~{layouts/admin-layout :: sidebar(currentPage='reports')}"></th:block>
+
+        <div class="sidebar-overlay d-lg-none" data-sidebar-toggle></div>
+
+        <div class="dashboard-main">
+            <div class="page-wrapper py-4 py-md-5 px-3 px-md-5">
+                <!-- Page Header -->
+                <div class="page-header mb-4">
+                    <div class="d-flex align-items-center gap-3">
+                        <button class="btn btn-light btn-icon d-lg-none" type="button" data-sidebar-toggle>
+                            <i class="bi bi-list fs-4"></i>
+                        </button>
+                        <div>
+                            <h1 class="mb-0" style="color: #0a58a0; font-weight: 600; font-size: 1.8rem;">
+                                クラス順位
+                            </h1>
+                            <p class="text-muted mb-0" th:text="${rankings.className} + ' - ' + ${rankings.academicYear} + ' ' + ${rankings.semester}"></p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Class Selection Form -->
+                <div class="card mb-4 shadow-sm">
+                    <div class="card-body">
+                        <form th:action="@{/reports/rankings}" method="get" class="row g-3">
+                            <div class="col-md-4">
+                                <label class="form-label">クラス選択</label>
+                                <select name="className" class="form-select" required>
+                                    <option value="N5" th:selected="${param.className == 'N5'}">N5クラス</option>
+                                    <option value="N4" th:selected="${param.className == 'N4'}">N4クラス</option>
+                                    <option value="N3" th:selected="${param.className == 'N3'}">N3クラス</option>
+                                    <option value="N2" th:selected="${param.className == 'N2'}">N2クラス</option>
+                                    <option value="N1" th:selected="${param.className == 'N1'}">N1クラス</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">年度</label>
+                                <select name="academicYear" class="form-select">
+                                    <option value="2024-2025" th:selected="${param.academicYear == '2024-2025'}">2024-2025</option>
+                                    <option value="2025-2026" th:selected="${param.academicYear == '2025-2026'}">2025-2026</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">学期</label>
+                                <select name="semester" class="form-select">
+                                    <option value="Semester 1" th:selected="${param.semester == 'Semester 1'}">前期</option>
+                                    <option value="Semester 2" th:selected="${param.semester == 'Semester 2'}">後期</option>
+                                </select>
+                            </div>
+                            <div class="col-md-2 d-flex align-items-end">
+                                <button type="submit" class="btn btn-primary w-100">
+                                    <i class="bi bi-search me-2"></i>表示
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Statistics Cards -->
+                <div class="row g-4 mb-4" th:if="${rankings != null and rankings.totalStudents > 0}">
+                    <div class="col-md-4">
+                        <div class="card shadow-sm border-0 bg-primary bg-opacity-10">
+                            <div class="card-body text-center">
+                                <h6 class="text-muted mb-1">総生徒数</h6>
+                                <h3 class="mb-0 fw-bold" th:text="${rankings.totalStudents}">0</h3>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card shadow-sm border-0 bg-success bg-opacity-10">
+                            <div class="card-body text-center">
+                                <h6 class="text-muted mb-1">平均GPA</h6>
+                                <h3 class="mb-0 fw-bold" th:text="${rankings.averageGpa}">0.00</h3>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card shadow-sm border-0 bg-info bg-opacity-10">
+                            <div class="card-body text-center">
+                                <h6 class="text-muted mb-1">GPA範囲</h6>
+                                <h3 class="mb-0 fw-bold" th:text="${rankings.highestGpa} + ' - ' + ${rankings.lowestGpa}">0.00 - 0.00</h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- No Data Message -->
+                <div th:if="${rankings == null or rankings.totalStudents == 0}" class="alert alert-info text-center">
+                    <i class="bi bi-info-circle me-2"></i>
+                    表示するデータがありません。クラスを選択するか、生徒データを登録してください。
+                </div>
+
+                <!-- Rankings Table -->
+                <div class="card shadow-sm" th:if="${rankings != null and rankings.totalStudents > 0}">
+                    <div class="card-header bg-white py-3">
+                        <h5 class="card-title mb-0">
+                            <i class="bi bi-trophy me-2 text-warning"></i>
+                            クラス内順位
+                        </h5>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle mb-0">
+                                <thead class="bg-primary text-white">
+                                    <tr>
+                                        <th class="text-center" style="width: 80px;">順位</th>
+                                        <th>生徒ID</th>
+                                        <th>生徒名</th>
+                                        <th class="text-center">総テスト数</th>
+                                        <th class="text-center">合格/不合格</th>
+                                        <th class="text-center">総合GPA</th>
+                                        <th class="text-center">総合評価</th>
+                                        <th class="text-center">操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="student, stat : ${rankings.rankings}">
+                                        <td class="text-center">
+                                            <span class="badge" 
+                                                  th:classappend="${stat.index == 0} ? 'bg-warning text-dark' : 
+                                                                   (${stat.index == 1} ? 'bg-secondary text-white' : 
+                                                                    (${stat.index == 2} ? 'bg-info text-white' : 'bg-light text-dark'))"
+                                                  th:text="${stat.index + 1}"></span>
+                                        </td>
+                                        <td th:text="${student.studentIdNumber}"></td>
+                                        <td th:text="${student.studentName}"></td>
+                                        <td class="text-center" th:text="${student.totalTests}">0</td>
+                                        <td class="text-center">
+                                            <span class="text-success" th:text="${student.passedTests}"></span> / 
+                                            <span class="text-danger" th:text="${student.failedTests}"></span>
+                                        </td>
+                                        <td class="text-center">
+                                            <strong th:text="${#numbers.formatDecimal(student.overallGPA, 1, 2)}">0.00</strong>
+                                        </td>
+                                        <td class="text-center">
+                                            <span class="badge" 
+                                                  th:classappend="${student.overallGrade == 'A' or student.overallGrade == 'A+'} ? 'bg-success' : 
+                                                                   (${student.overallGrade == 'F'} ? 'bg-danger' : 'bg-info')"
+                                                  th:text="${student.overallGrade}">-</span>
+                                        </td>
+                                        <td class="text-center">
+                                            <div class="btn-group btn-group-sm">
+                                                <a th:href="@{'/reports/student/' + ${student.studentId}}" 
+                                                   class="btn btn-outline-info" title="成績詳細">
+                                                    <i class="bi bi-bar-chart"></i>
+                                                </a>
+                                                <a th:href="@{'/reports/report-card/' + ${student.studentId}}" 
+                                                   class="btn btn-outline-success" title="成績表">
+                                                    <i class="bi bi-file-text"></i>
+                                                </a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Back Button -->
+                <div class="mt-4">
+                    <a href="/reports/dashboard" class="btn btn-outline-secondary">
+                        <i class="bi bi-arrow-left me-2"></i>レポートダッシュボードに戻る
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const layout = document.querySelector(".dashboard-layout");
+            const toggles = document.querySelectorAll("[data-sidebar-toggle]");
+            toggles.forEach((btn) =>
+                btn.addEventListener("click", function (event) {
+                    event.preventDefault();
+                    layout?.classList.toggle("sidebar-open");
+                })
+            );
+        });
+    </script>
+</body>
+</html>
