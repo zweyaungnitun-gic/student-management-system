@@ -4,54 +4,45 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
 import java.time.LocalDate;
-import com.gicm.student_management_system.validation.*;
-import jakarta.validation.constraints.*;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class StudentDTO {
-
     private Long id;
-
     private String studentId;
-
-    @NotBlank(groups = BasicInfoGroup.class, message = "This field is required")
-    @Size(max = 100, groups = BasicInfoGroup.class)
     private String studentName;
-
-    @NotNull(groups = BasicInfoGroup.class, message = "This field is required")
-    @Past(groups = BasicInfoGroup.class, message = "Date of birth must be in the past")
+    private String nameInJapanese;
     private LocalDate dateOfBirth;
-
-    @NotBlank(groups = BasicInfoGroup.class, message = "This field is required")
     private String gender;
-
-    @NotBlank(groups = BasicInfoGroup.class, message = "This field is required")
-    @Size(max = 255, groups = BasicInfoGroup.class)
     private String currentLivingAddress;
-
-    @NotBlank(groups = BasicInfoGroup.class, message = "This field is required")
     private String homeTownAddress;
-
-    @NotBlank(groups = BasicInfoGroup.class, message = "This field is required")
     private String phoneNumber;
-
-    @NotBlank(groups = BasicInfoGroup.class, message = "This field is required")
+    private String secondaryPhone;
+    private String fatherName;
+    private String passportNumber;
     private String nationalId;
-
-    @NotBlank(groups = BasicInfoGroup.class, message = "This field is required")
+    private String currentJapanLevel;
+    private String desiredJobType;
+    private String otherDesiredJobType;
+    private Boolean japanTravelExperience;
+    private Boolean coeApplicationExperience;
     private String religion;
-
-    @NotNull(groups = BasicInfoGroup.class, message = "This field is required")
+    private String otherReligion;
+    private Boolean isSmoking;
+    private Boolean isAlcoholDrink;
+    private Boolean haveTatto;
+    private LocalDate schedulePaymentTutionDate;
+    private LocalDate actualTutionPaymentDate;
+    private Boolean hostelPreference;
+    private String memoNotes;
     private LocalDate enrolledDate;
-
-    @NotNull
+    private String attendingClassRelatedStatus;
+    private String passedHighestJlptLevel;
+    private String status;
+    private String contactViber;
     private LocalDate createdAt;
-
-    @NotNull
     private LocalDate updatedAt;
 }

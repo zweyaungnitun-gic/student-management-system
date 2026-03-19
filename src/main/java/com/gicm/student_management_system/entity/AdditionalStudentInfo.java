@@ -91,10 +91,12 @@ public class AdditionalStudentInfo {
     @Column(name = "contact_viber")
     private String contactViber;
 
-    // --- Finance dates (from original Student) ---
     @Column(name = "schedule_payment_tution_date")
     private LocalDate schedulePaymentTutionDate;
 
     @Column(name = "actual_tution_payment_date")
     private LocalDate actualTutionPaymentDate;
+    
+    @Column(name = "other_religion")
+    private String otherReligion;
 }

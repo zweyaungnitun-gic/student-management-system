@@ -16,12 +16,12 @@
   <th:block th:fragment="extraCSS">
     <link rel="stylesheet" href="/css/student-list.css" />
   </th:block>
-
+<td data-label="動作機能" class="action-cell">
   <th:block th:fragment="extraJS">
     <script
       src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
     ></script>
-    <script
+    <script 
       src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"
     ></script>
 
@@ -545,70 +545,109 @@
       }
 
       // ============ PAGINATION ============
-      function setupPagination() {
-        displayPage(1);
-      }
+// ============ PAGINATION ============
+function setupPagination() {
+    // Get all rows (excluding header and empty rows)
+    allRows = Array.from(document.querySelectorAll("#studentTableBody tr")).filter(
+        r => !r.querySelector("td[colspan]")
+    );
+    console.log("Total rows found:", allRows.length);
+    
+    if (allRows.length === 0) {
+        document.getElementById("pagination").innerHTML = "";
+        return;
+    }
+    
+    displayPage(1);
+}
 
-      function displayPage(page) {
-        currentPage = page;
-        const start = (page - 1) * rowsPerPage;
-        const end = start + rowsPerPage;
-
-        allRows.forEach((row, index) => {
-          row.style.display = index >= start && index < end ? "" : "none";
-        });
-
-        renderPagination();
-        updateSelectAllCheckbox();
-      }
-
-      function renderPagination() {
-        const pageCount = Math.ceil(allRows.length / rowsPerPage);
-        const paginationDiv = document.getElementById("pagination");
-        if (!paginationDiv) return;
-
-        paginationDiv.innerHTML = "";
-
-        function createBtn(text, page, disabled = false, active = false) {
-          const btn = document.createElement("button");
-          btn.textContent = text;
-          btn.className = `btn btn-sm mx-1 ${
-            active ? "btn-primary" : "btn-outline-primary"
-          }`;
-          btn.disabled = disabled;
-
-          if (!disabled) {
-            btn.addEventListener("click", () => displayPage(page));
-          }
-
-          paginationDiv.appendChild(btn);
+function displayPage(page) {
+    currentPage = page;
+    const start = (page - 1) * rowsPerPage;
+    const end = Math.min(start + rowsPerPage, allRows.length);
+    
+    console.log(`Displaying page ${page}: rows ${start} to ${end-1}`);
+    
+    // First hide all rows
+    allRows.forEach(row => {
+        row.style.display = "none";
+    });
+    
+    // Then show only rows for current page
+    for (let i = start; i < end; i++) {
+        if (allRows[i]) {
+            allRows[i].style.display = "";
         }
+    }
+    
+    renderPagination();
+    updateSelectAllCheckbox();
+}
 
-        // First and Previous buttons
-        createBtn("<<", 1, currentPage === 1);
-        createBtn("<", currentPage - 1, currentPage === 1);
+function renderPagination() {
+    const pageCount = Math.ceil(allRows.length / rowsPerPage);
+    const paginationDiv = document.getElementById("pagination");
+    if (!paginationDiv) return;
+    
+    paginationDiv.innerHTML = "";
+    
+    // Previous button
+    const prevBtn = document.createElement("button");
+    prevBtn.innerHTML = "&laquo;";
+    prevBtn.className = `btn btn-sm mx-1 ${currentPage === 1 ? 'btn-secondary' : 'btn-outline-primary'}`;
+    prevBtn.disabled = currentPage === 1;
+    prevBtn.addEventListener("click", () => displayPage(currentPage - 1));
+    paginationDiv.appendChild(prevBtn);
+    
+    // Page numbers
+    let startPage = Math.max(1, currentPage - 2);
+    let endPage = Math.min(pageCount, currentPage + 2);
+    
+    for (let i = startPage; i <= endPage; i++) {
+        const btn = document.createElement("button");
+        btn.textContent = i;
+        btn.className = `btn btn-sm mx-1 ${i === currentPage ? 'btn-primary' : 'btn-outline-primary'}`;
+        btn.addEventListener("click", () => displayPage(i));
+        paginationDiv.appendChild(btn);
+    }
+    
+    // Next button
+    const nextBtn = document.createElement("button");
+    nextBtn.innerHTML = "&raquo;";
+    nextBtn.className = `btn btn-sm mx-1 ${currentPage === pageCount ? 'btn-secondary' : 'btn-outline-primary'}`;
+    nextBtn.disabled = currentPage === pageCount;
+    nextBtn.addEventListener("click", () => displayPage(currentPage + 1));
+    paginationDiv.appendChild(nextBtn);
+}
 
-        // Page numbers
-        let startPage = Math.max(1, currentPage - 2);
-        let endPage = Math.min(pageCount, currentPage + 2);
-
-        if (endPage - startPage < 4) {
-          if (currentPage < 3) {
-            endPage = Math.min(pageCount, 5);
-          } else {
-            startPage = Math.max(1, pageCount - 4);
-          }
-        }
-
-        for (let i = startPage; i <= endPage; i++) {
-          createBtn(i, i, false, i === currentPage);
-        }
-
-        // Next and Last buttons
-        createBtn(">", currentPage + 1, currentPage === pageCount);
-        createBtn(">>", pageCount, currentPage === pageCount);
-      }
-
+// Initialize pagination after DOM is loaded
+document.addEventListener("DOMContentLoaded", function() {
+    console.log("Initializing student list page...");
+    
+    // Initialize allRows array
+    allRows = Array.from(document.querySelectorAll("#studentTableBody tr")).filter(
+        r => !r.querySelector("td[colspan]")
+    );
+    console.log("Total rows after DOM load:", allRows.length);
+    
+    // Setup pagination
+    setupPagination();
+    
+    // Setup other event listeners
+    setupEventListeners();
+    setupDownloadButton();
+    setupFilterForm();
+    
+    // Sidebar toggle
+    const layout = document.querySelector(".dashboard-layout");
+    const toggles = document.querySelectorAll("[data-sidebar-toggle]");
+    toggles.forEach((btn) =>
+        btn.addEventListener("click", function (event) {
+            event.preventDefault();
+            layout?.classList.toggle("sidebar-open");
+        })
+    );
+});
       // ============ FILTER FORM ============
       function setupFilterForm() {
         const statusInput = document.getElementById("statusFilterInput");
@@ -873,92 +912,61 @@
                   </tr>
                 </thead>
 
-                <tbody
-                  id="studentTableBody"
-                  th:if="${students != null && students.size() > 0}"
-                >
-                  <tr th:each="student : ${students}">
-                    <td data-label="生徒ID" class="id-cell">
-                      <label
-                        class="d-flex align-items-center justify-content-md-center gap-1 m-0"
-                      >
-                        <input
-                          class="form-check-input row-checkbox"
-                          type="checkbox"
-                          th:value="${student.id}"
-                          th:attr="data-student-id=${student.studentId}"
-                        />
-                        <span th:text="${student.studentId}">STU001</span>
-                      </label>
-                    </td>
-                    <td data-label="名前" th:text="${student.studentName}">
-                      山田 太郎
-                    </td>
-                    <td data-label="性別" th:text="${student.gender}">男性</td>
-                    <td data-label="電話番号" th:text="${student.phoneNumber}">
-                      09012345678
-                    </td>
-                    <td
-                      data-label="希望職種"
-                      th:text="${student.desiredJobType}"
-                    >
-                      介護
-                    </td>
-                    <td data-label="ステータス" th:text="${student.status}">
-                      在校
-                    </td>
-                    <td
-                      data-label="支払予定日"
-                      th:text="${student.paymentDueDate != null ? #temporals.format(student.paymentDueDate, 'MM/dd/yyyy') : ''}"
-                    >
-                      01/01/2025
-                    </td>
-
-                    <td
-                      data-label="支払実績日"
-                      th:text="${student.paymentDate != null ? #temporals.format(student.paymentDate, 'MM/dd/yyyy') : ''}"
-                    >
-                      01/01/2025
-                    </td>
-                    <td data-label="動作機能" class="action-cell">
-                      <div class="d-flex flex-nowrap justify-content-center gap-2">
-                          <!-- Detail Button -->
-                          <a th:href="@{/students/detail/{id}(id=${student.id}, nameSearch=${nameSearch}, status=${status})}"
-                            class="text-decoration-none text-info" 
-                            title="詳細"
-                            style="font-size: 1.2rem;">
-                              <i class="bi bi-info-circle"></i>
-                          </a>
-                          
-                          <!-- Edit Button -->
-                          <a th:href="@{/students/student-update/{id}(id=${student.id}, nameSearch=${nameSearch}, status=${status})}"
-                            class="text-decoration-none text-primary" 
-                            title="編集"
-                            sec:authorize="hasRole('ADMIN') or hasRole('TEACHER')"
-                            style="font-size: 1.2rem;">
-                              <i class="bi bi-pencil-square"></i>
-                          </a>
-                          
-                          <!-- Report Card Button -->
-                          <a th:href="@{'/reports/student/' + ${student.id}}" 
-                            class="text-decoration-none text-success" 
-                            title="成績"
-                            style="font-size: 1.2rem;">
-                              <i class="bi bi-bar-chart-fill"></i>
-                          </a>
-                          
-                          <!-- Delete Button -->
-                          <a href="#" 
-                            th:onclick="'if(confirm(\'本当に削除しますか？\')) window.location.href=\'/students/delete/' + ${student.id} + '\';'"
-                            class="text-decoration-none text-danger" 
-                            title="削除"
-                            sec:authorize="hasRole('ADMIN')"
-                            style="font-size: 1.2rem;">
-                              <i class="bi bi-trash-fill"></i>
-                          </a>
-                      </div>
-                  </td>
-                  </tr>
+                <tbody id="studentTableBody" th:if="${students != null && students.size() > 0}">
+                    <tr th:each="student : ${students}">
+                        <td data-label="生徒ID" class="id-cell">
+                            <label class="d-flex align-items-center justify-content-md-center gap-1 m-0">
+                                <input class="form-check-input row-checkbox" type="checkbox" 
+                                      th:value="${student.id}" th:attr="data-student-id=${student.studentId}"/>
+                                <span th:text="${student.studentId}">STU001</span>
+                            </label>
+                        </td>
+                        <td data-label="名前" th:text="${student.studentName}">山田 太郎</td>
+                        <td data-label="性別" th:text="${student.gender}">男性</td>
+                        <td data-label="電話番号" th:text="${student.phoneNumber}">09012345678</td>
+                        <td data-label="希望職種" th:text="${student.desiredJobType ?: '-'}">-</td>
+                        <td data-label="ステータス" th:text="${student.status ?: '-'}">-</td>
+                        <td data-label="支払予定日" th:text="${student.schedulePaymentTutionDate != null ? #temporals.format(student.schedulePaymentTutionDate, 'MM/dd/yyyy') : ''}"></td>
+                        <td data-label="支払実績日" th:text="${student.actualTutionPaymentDate != null ? #temporals.format(student.actualTutionPaymentDate, 'MM/dd/yyyy') : ''}"></td>
+                        <td data-label="動作機能" class="action-cell">
+                            <!-- action buttons  -->
+                        </td>
+                        
+<!-- <td data-label="動作機能" class="action-cell">
+    <div class="d-flex flex-nowrap justify-content-center gap-2">
+        <a th:href="@{/students/detail/{id}(id=${student.id}, nameSearch=${nameSearch}, status=${status})}"
+           class="text-decoration-none text-info" 
+           title="詳細"
+           style="font-size: 1.2rem;">
+            <i class="bi bi-info-circle"></i>
+        </a>
+        
+        <a th:href="@{/students/student-update/{id}(id=${student.id}, nameSearch=${nameSearch}, status=${status})}"
+           class="text-decoration-none text-primary" 
+           title="編集"
+           sec:authorize="hasRole('ADMIN') or hasRole('TEACHER')"
+           style="font-size: 1.2rem;">
+            <i class="bi bi-pencil-square"></i>
+        </a>
+        
+        <a th:href="@{'/reports/student/' + ${student.id}}" 
+           class="text-decoration-none text-success" 
+           title="成績"
+           style="font-size: 1.2rem;">
+            <i class="bi bi-bar-chart-fill"></i>
+        </a>
+        
+        <a href="#" 
+           th:onclick="'if(confirm(\'本当に削除しますか？\')) window.location.href=\'/students/delete/' + ${student.id} + '?nameSearch=' + encodeURIComponent(\'' + ${nameSearch} + '\') + '&status=' + encodeURIComponent(\'' + ${status} + '\');'"
+           class="text-decoration-none text-danger" 
+           title="削除"
+           sec:authorize="hasRole('ADMIN')"
+           style="font-size: 1.2rem;">
+            <i class="bi bi-trash-fill"></i>
+        </a>
+    </div>
+</td> -->
+                    </tr>
                 </tbody>
 
                 <tbody th:if="${students == null || students.size() == 0}">

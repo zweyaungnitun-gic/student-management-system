@@ -1,8 +1,10 @@
 package com.gicm.student_management_system.serviceimpl;
 
 import com.gicm.student_management_system.dto.StudentDTO;
+import com.gicm.student_management_system.entity.AdditionalStudentInfo;
 import com.gicm.student_management_system.entity.RegistrationStatus;
 import com.gicm.student_management_system.entity.Student;
+import com.gicm.student_management_system.repository.AdditionalStudentInfoRepository;
 import com.gicm.student_management_system.repository.StudentRepository;
 import com.gicm.student_management_system.service.StudentIdGeneratorService;
 import com.gicm.student_management_system.service.StudentService;
@@ -21,28 +23,54 @@ public class StudentServiceImpl implements StudentService {
 
     private final StudentRepository studentRepository;
     private final StudentIdGeneratorService idGeneratorService;
+    private final AdditionalStudentInfoRepository additionalStudentInfoRepository;
 
-    public StudentDTO convertToDTO(Student student) {
-        if (student == null) {
-            return null;
-        }
-
-        return StudentDTO.builder()
-                .id(student.getId())
-                .studentId(student.getStudentId())
-                .studentName(student.getStudentName())
-                .dateOfBirth(student.getDateOfBirth())
-                .gender(student.getGender())
-                .religion(student.getReligion())
-                .phoneNumber(student.getPhoneNumber())
-                .currentLivingAddress(student.getCurrentLivingAddress())
-                .homeTownAddress(student.getHomeTownAddress())
-                .enrolledDate(student.getEnrolledDate())
-                .createdAt(student.getCreatedAt())
-                .updatedAt(student.getUpdatedAt())
-                .nationalId(student.getNationalId())
-                .build();
+public StudentDTO convertToDTO(Student student) {
+    if (student == null) {
+        return null;
     }
+    
+    // Get additional info if exists
+    AdditionalStudentInfo additionalInfo = additionalStudentInfoRepository
+        .findByCommonStudent_Id(student.getId()).orElse(null);
+    
+    return StudentDTO.builder()
+        .id(student.getId())
+        .studentId(student.getStudentId())
+        .studentName(student.getStudentName())
+        .nameInJapanese(additionalInfo != null ? additionalInfo.getNameInJapanese() : null)
+        .dateOfBirth(student.getDateOfBirth())
+        .gender(student.getGender())
+        .currentLivingAddress(student.getCurrentLivingAddress())
+        .homeTownAddress(student.getHomeTownAddress())
+        .phoneNumber(student.getPhoneNumber())
+        .secondaryPhone(additionalInfo != null ? additionalInfo.getSecondaryPhone() : null)
+        .fatherName(additionalInfo != null ? additionalInfo.getFatherName() : null)
+        .passportNumber(additionalInfo != null ? additionalInfo.getPassportNumber() : null)
+        .nationalId(student.getNationalId())
+        .currentJapanLevel(additionalInfo != null ? additionalInfo.getCurrentJapanLevel() : null)
+        .desiredJobType(additionalInfo != null ? additionalInfo.getDesiredJobType() : null)
+        .otherDesiredJobType(additionalInfo != null ? additionalInfo.getOtherDesiredJobType() : null)
+        .japanTravelExperience(additionalInfo != null ? additionalInfo.getJapanTravelExperience() : null)
+        .coeApplicationExperience(additionalInfo != null ? additionalInfo.getCoeApplicationExperience() : null)
+        .religion(student.getReligion())
+        .otherReligion(additionalInfo != null ? additionalInfo.getOtherReligion() : null)
+        .isSmoking(additionalInfo != null ? additionalInfo.getIsSmoking() : null)
+        .isAlcoholDrink(additionalInfo != null ? additionalInfo.getIsAlcoholDrink() : null)
+        .haveTatto(additionalInfo != null ? additionalInfo.getHaveTatto() : null)
+        .schedulePaymentTutionDate(additionalInfo != null ? additionalInfo.getSchedulePaymentTutionDate() : null)
+        .actualTutionPaymentDate(additionalInfo != null ? additionalInfo.getActualTutionPaymentDate() : null)
+        .hostelPreference(additionalInfo != null ? additionalInfo.getHostelPreference() : null)
+        .memoNotes(additionalInfo != null ? additionalInfo.getMemoNotes() : null)
+        .enrolledDate(student.getEnrolledDate())
+        .attendingClassRelatedStatus(additionalInfo != null ? additionalInfo.getAttendingClassRelatedStatus() : null)
+        .passedHighestJlptLevel(additionalInfo != null ? additionalInfo.getPassedHighestJlptLevel() : null)
+        .status(additionalInfo != null ? additionalInfo.getAttendingClassRelatedStatus() : null) // Map status from attendingClassRelatedStatus
+        .contactViber(additionalInfo != null ? additionalInfo.getContactViber() : null)
+        .createdAt(student.getCreatedAt())
+        .updatedAt(student.getUpdatedAt())
+        .build();
+}
 
     private Student convertToEntity(StudentDTO dto) {
         return convertToEntity(dto, null);
