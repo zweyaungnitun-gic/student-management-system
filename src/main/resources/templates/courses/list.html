@@ -32,40 +32,46 @@
                 <!-- Search, Filter, and Action Buttons Section -->
                 <div class="card mb-4 shadow-sm">
                     <div class="card-body">
-                        <div class="row g-3">
-                            <!-- Search and Filter - Left side -->
+                        <div class="row g-3 align-items-center">
+                            <!-- Search and Filter-->
                             <div class="col-md-8">
                                 <form th:action="@{/courses}" method="get" class="row g-3">
-                                    <div class="col-md-7">
-                                        <div class="input-group">
-                                            <span class="input-group-text bg-white">
+                                    <div class="col-12">
+                                        <div class="d-flex gap-2">
+                                            <div class="flex-grow-1">
+                                                <div class="input-group">
+                                                    <span class="input-group-text bg-white">
+                                                        <i class="bi bi-search"></i>
+                                                    </span>
+                                                    <input type="text" class="form-control" name="search" th:value="${search}"
+                                                        placeholder="コース名またはコードで検索...">
+                                                </div>
+                                            </div>
+                                            <button type="submit" class="btn btn-primary d-flex align-items-center gap-2 px-3 py-2" style="white-space: nowrap;">
                                                 <i class="bi bi-search"></i>
-                                            </span>
-                                            <input type="text" class="form-control" name="search" th:value="${search}"
-                                                   placeholder="コース名またはコードで検索...">
+                                                <span>検索</span>
+                                            </button>
+                                            <a href="/courses" class="btn btn-outline-secondary d-flex align-items-center gap-2 px-3 py-2" style="white-space: nowrap;">
+                                                <i class="bi bi-arrow-repeat"></i>
+                                                <span>リフレッシュ</span>
+                                            </a>
                                         </div>
                                     </div>
-                                    <div class="col-md-3">
-                                        <div class="form-check mt-2">
+                                    <div class="col-12">
+                                        <div class="form-check">
                                             <input type="checkbox" class="form-check-input" name="activeOnly" 
-                                                   th:checked="${activeOnly}" id="activeOnly">
+                                                th:checked="${activeOnly}" id="activeOnly">
                                             <label class="form-check-label" for="activeOnly">アクティブのみ表示</label>
                                         </div>
-                                    </div>
-                                    <div class="col-md-2">
-                                        <button type="submit" class="btn btn-primary w-100">
-                                            <i class="bi bi-search me-2"></i>検索
-                                        </button>
                                     </div>
                                 </form>
                             </div>
                             
-                            <!-- Action Buttons - Right side -->
+                            <!-- Action Buttons-->
                             <div class="col-md-4">
-                                <div class="d-flex gap-2 justify-content-end">
-
-                                    <a href="/courses/add" class="btn btn-success d-flex align-items-center gap-2" 
-                                       sec:authorize="hasRole('ADMIN')">
+                                <div class="d-flex gap-2 justify-content-md-end">
+                                    <a href="/courses/add" class="btn btn-success d-flex align-items-center gap-2 px-3 py-2" 
+                                    sec:authorize="hasRole('ADMIN')" style="white-space: nowrap;">
                                         <i class="bi bi-plus-circle"></i>
                                         <span>新規追加</span>
                                     </a>

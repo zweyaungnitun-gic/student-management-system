@@ -1,141 +1,224 @@
-<!doctype html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org"
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Student Management System | User Management</title>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" />
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" />
-  <link rel="stylesheet" th:href="@{/css/dashboard.css}" />
-  <link rel="stylesheet" th:href="@{/css/users-list.css}" />
-
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<head th:replace="~{layouts/admin-layout :: head(pageTitle='ユーザー管理 | 生徒情報管理システム')}">
 </head>
 
-
 <body>
-  <div class="dashboard-layout">
-    <!-- Sidebar -->
-    <th:block th:replace="~{layouts/admin-layout :: sidebar(currentPage='users')}"></th:block>
+    <div class="dashboard-layout">
+        <!-- Sidebar -->
+        <th:block th:replace="~{layouts/admin-layout :: sidebar(currentPage='users')}"></th:block>
 
-    <div class="sidebar-overlay d-lg-none" data-sidebar-toggle></div>
+        <div class="sidebar-overlay d-lg-none" data-sidebar-toggle></div>
 
-    <div class="dashboard-main" style="background-color: #f8fcff;">
-      
+        <div class="dashboard-main">
+            <div class="page-wrapper py-4 py-md-5 px-3 px-md-5">
+                <!-- Page Header with toggle button -->
+                <div class="page-header mb-4">
+                    <div class="d-flex align-items-center gap-3">
+                        <button class="btn btn-light btn-icon d-lg-none" type="button" aria-label="Toggle sidebar"
+                            data-sidebar-toggle>
+                            <i class="bi bi-list fs-4"></i>
+                        </button>
+                        <div>
+                            <h1 class="mb-0" style="color: #0a58a0; font-weight: 600; font-size: 1.8rem;">
+                                ユーザー一覧
+                            </h1>
+                        </div>
+                    </div>
+                </div>
 
-      <div class="page-wrapper" style="padding: 0; height: 100%;">
-        
+                <!-- Success/Error Messages -->
+                <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert" style="margin: 1rem 0;">
+                    <i class="bi bi-check-circle-fill me-2"></i>
+                    <span th:text="${success}"></span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
 
-        <section  style="height: 100%; margin: 0; border-radius: 0; padding: 3rem;">
-          <div class="page-header mb-3">
-            <div class="d-flex align-items-center gap-3">
-              <button class="btn btn-light btn-icon d-lg-none" type="button" aria-label="Toggle sidebar"
-                data-sidebar-toggle>
-                <i class="bi bi-list fs-4"></i>
-              </button>
-              <div>
-                <h1 class="mb-0" style="color:#0A58A0;font-weight:600;font-size:1.8rem;">
-                  ユーザー一覧
-                </h1>
-              </div>
-            </div>
-          </div>
-          <!-- Success/Error Messages -->
-        <div th:if="${success}" class="alert alert-success alert-dismissible fade show " role="alert" style="margin: 1rem; margin-bottom: 0;">
-          <i class="bi bi-check-circle-fill me-2"></i>
-          <span th:text="${success}"></span>
-          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
+                <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert" style="margin: 1rem 0;">
+                    <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                    <span th:text="${error}"></span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
 
-        <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert" style="margin: 1rem; margin-bottom: 0;">
-          <i class="bi bi-exclamation-triangle-fill me-2"></i>
-          <span th:text="${error}"></span>
-          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-          <div class="table-wrapper p-1" style="border:1px solid transparent;">
-            <div class="table-responsive me-3">
-              <table class="table data-table align-middle border border-radius" id="userTable">
-                <thead>
-
-                  <tr class="filter-row">
-                    <th colspan="6" class="p-3">
-                      <div style="display: flex; justify-content: space-between; align-items: center; gap: 1rem;">
-                        <form th:action="@{/users}" method="get" id="userFilterForm" style="display: flex; flex-wrap: wrap; align-items: center; gap: 1rem; margin: 0; padding: 0;">
-                          <div class="filter-control-group" style="display: flex; align-items: center; gap: 0.5rem;">
-                            <span style="font-size: 16px; white-space: nowrap;">名前で検索</span>
-                            <input type="text" name="search" th:value="${search}"
-                              class="form-control form-control-sm" id="searchInput" placeholder="名前またはメールで検索" style="min-width: 250px;" />
+                <!-- Users Table -->
+                <div class="card shadow-sm">
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                          <!-- Search and Add User Section-->
+                          <div class="p-3 border-bottom">
+                              <div class="d-flex justify-content-between align-items-center">
+                                  <form th:action="@{/users}" method="get" class="d-flex gap-2">
+                                      <div class="input-group" style="max-width: 400px;">
+                                          <span class="input-group-text bg-white border-end-0">
+                                              <i class="bi bi-search text-muted"></i>
+                                          </span>
+                                          <input type="text" class="form-control border-start-0" name="search" 
+                                                th:value="${search}" placeholder="名前またはメールで検索...">
+                                      </div>
+                                      <button type="submit" class="btn btn-primary px-3 py-2 d-flex align-items-center gap-2" 
+                                              style="white-space: nowrap;">
+                                          <i class="bi bi-search"></i>
+                                          <span>検索</span>
+                                      </button>
+                                      <a href="/users" class="btn btn-outline-secondary px-3 py-2 d-flex align-items-center gap-2" 
+                                        style="white-space: nowrap;">
+                                          <i class="bi bi-arrow-repeat"></i>
+                                          <span>リフレッシュ</span>
+                                      </a>
+                                  </form>
+                                  
+                                  <!-- User Add Button - Right end -->
+                                  <div>
+                                      <a href="/users/add" class="btn btn-success px-3 py-2 d-flex align-items-center gap-2" 
+                                        sec:authorize="hasRole('ADMIN')" style="white-space: nowrap;">
+                                          <i class="bi bi-person-plus-fill"></i>
+                                          <span>ユーザー追加</span>
+                                      </a>
+                                  </div>
+                              </div>
                           </div>
-                          <button type="submit" style="display: none;"></button>
-                        </form>
-                        <a th:href="@{/users/add}" class="btn btn-primary btn-sm d-flex align-items-center gap-2" style="white-space: nowrap; color: white !important; background-color: #0b5ed7; border-color: #0b5ed7;">
-                          <i class="bi bi-plus-lg" style="color: white !important;"></i>
-                          <span class="d-none d-sm-inline" style="color: white !important;">ユーザー追加</span>
-                        </a>
-                      </div>
-                    </th>
-                  </tr>                </tr>
 
-                <tr>
-                  <th scope="col" class="text-center">ID</th>
-                  <th scope="col" class="text-center">ユーザーID</th>
-                  <th scope="col" class="text-center">名前</th>
-                  <th scope="col" class="text-center">メール</th>
-                  <th scope="col" class="text-center">ロール</th>
-                  <th scope="col" class="text-center">作成日</th>
-                  <th scope="col" class="text-center">動作機能</th>
-                </tr>
-              </thead>
+                            <!-- Users Table -->
+                            <table class="table table-hover align-middle mb-0" id="userTable">
+                                <thead class="bg-primary text-white">
+                                    <tr>
+                                        <th class="text-center">ID</th>
+                                        <th class="text-center">ユーザーID</th>
+                                        <th class="text-center">名前</th>
+                                        <th class="text-center">メール</th>
+                                        <th class="text-center">ロール</th>
+                                        <th class="text-center">作成日</th>
+                                        <th class="text-center">操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="userTableBody">
+                                    <tr th:each="user : ${users}">
+                                        <td class="text-center" th:text="${user.id}"></td>
+                                        <td class="text-center">
+                                            <span class="badge bg-primary bg-opacity-10 text-primary px-3 py-2 rounded-pill"
+                                                  th:text="${user.userId}"></span>
+                                        </td>
+                                        <td th:text="${user.username}"></td>
+                                        <td th:text="${user.email}"></td>
+                                        <td class="text-center">
+                                            <span th:if="${user.role.name() == 'ADMIN'}" 
+                                                  class="badge bg-danger bg-opacity-10 text-danger px-3 py-2 rounded-pill">管理者</span>
+                                            <span th:if="${user.role.name() == 'GUEST'}" 
+                                                  class="badge bg-success bg-opacity-10 text-success px-3 py-2 rounded-pill">ゲスト</span>
+                                        </td>
+                                        <td class="text-center" th:text="${#temporals.format(user.createdAt, 'yyyy-MM-dd HH:mm')}"></td>
+                                        <td class="text-center">
+                                            <div class="d-flex gap-3 justify-content-center">
+                                                <a th:href="@{'/users/edit/' + ${user.id}}" 
+                                                   class="text-decoration-none text-primary" 
+                                                   title="編集"
+                                                   style="font-size: 1.2rem;">
+                                                    <i class="bi bi-pencil-square"></i>
+                                                </a>
+                                                <a th:href="@{'/users/delete/' + ${user.id}}" 
+                                                   class="text-decoration-none text-danger" 
+                                                   title="削除"
+                                                   onclick="return confirm('このユーザーを削除してもよろしいですか？');"
+                                                   style="font-size: 1.2rem;">
+                                                    <i class="bi bi-trash-fill"></i>
+                                                </a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr th:if="${users.size() == 0}">
+                                        <td colspan="7" class="text-center text-muted py-5">
+                                            <i class="bi bi-inbox fs-1 d-block mb-3"></i>
+                                            ユーザーが登録されていません。
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
 
-              <tbody id="userTableBody" th:if="${users != null}">
-                <tr th:each="user : ${users}">
-                  <td>
-                    <span th:text="${user.id}"></span>
-                  </td>
-                  <td th:text="${user.userId}">USR001</td>
-                  <td th:text="${user.username}"></td>
-                  <td th:text="${user.email}"></td>
-                  <td>
-                    <span th:if="${user.role.name() == 'ADMIN'}" class="badge text-black">管理者</span>
-                    <span th:if="${user.role.name() == 'GUEST'}" class="badge text-black">ゲスト</span>
-                  </td>
-                  <td th:text="${#temporals.format(user.createdAt, 'yyyy-MM-dd HH:mm')}"></td>
-                  <td>
-                    <form th:action="@{/users/edit}" method="post" style="display: inline;">
-                      <input type="hidden" name="id" th:value="${user.id}" />
-                      <button type="submit" class="action-icon edit" title="編集" style="background: none; border: none; padding: 0; cursor: pointer;">
-                        <i class="bi bi-pencil-square"></i>
-                      </button>
-                    </form>
-                    <a th:href="@{'/users/delete/' + ${user.id}}" class="action-icon delete" title="削除"
-                      onclick="return confirm('本当にこのユーザー情報を削除しますか？');">
-                      <i class="bi bi-trash-fill"></i>
-                    </a>
-                  </td>
-                </tr>
-
-                <tr th:if="${users.size() == 0}">
-                  <td colspan="6" class="text-center text-muted py-5">
-                    ユーザー情報がありません。サーバーからのデータ読み込みを待機しています。
-                  </td>
-                </tr>
-              </tbody>
-
-            </table>
-          </div>
-          <div id="pagination" class="d-flex justify-content-center mt-3"></div>
-        </section>
-      </div>
+                <!-- Pagination -->
+                <div id="pagination" class="d-flex justify-content-center mt-4"></div>
+            </div>
+        </div>
     </div>
-  </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-  <script th:src="@{/js/users-sidebar.js}"></script>
-  <script th:src="@{/js/users-search.js}"></script>
-  <script th:src="@{/js/users-pagination.js}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Pagination Script -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // Sidebar toggle
+            const layout = document.querySelector(".dashboard-layout");
+            const toggles = document.querySelectorAll("[data-sidebar-toggle]");
+            toggles.forEach((btn) =>
+                btn.addEventListener("click", function (event) {
+                    event.preventDefault();
+                    layout?.classList.toggle("sidebar-open");
+                })
+            );
 
+            // Pagination
+            const rows = Array.from(document.querySelectorAll("#userTableBody tr")).filter(
+                r => !r.querySelector("td[colspan]")
+            );
+            
+            if (rows.length === 0) return;
+            
+            const rowsPerPage = 10;
+            let currentPage = 1;
+            
+            function displayPage(page) {
+                currentPage = page;
+                const start = (page - 1) * rowsPerPage;
+                const end = start + rowsPerPage;
+                
+                rows.forEach((row, index) => {
+                    row.style.display = index >= start && index < end ? "" : "none";
+                });
+                
+                renderPagination();
+            }
+            
+            function renderPagination() {
+                const pageCount = Math.ceil(rows.length / rowsPerPage);
+                const paginationDiv = document.getElementById("pagination");
+                
+                paginationDiv.innerHTML = "";
+                
+                // Previous button
+                const prevBtn = document.createElement("button");
+                prevBtn.innerHTML = "&laquo;";
+                prevBtn.className = `btn btn-sm mx-1 ${currentPage === 1 ? 'btn-secondary' : 'btn-outline-primary'}`;
+                prevBtn.disabled = currentPage === 1;
+                prevBtn.addEventListener("click", () => displayPage(currentPage - 1));
+                paginationDiv.appendChild(prevBtn);
+                
+                // Page numbers
+                let startPage = Math.max(1, currentPage - 2);
+                let endPage = Math.min(pageCount, currentPage + 2);
+                
+                for (let i = startPage; i <= endPage; i++) {
+                    const btn = document.createElement("button");
+                    btn.textContent = i;
+                    btn.className = `btn btn-sm mx-1 ${i === currentPage ? 'btn-primary' : 'btn-outline-primary'}`;
+                    btn.addEventListener("click", () => displayPage(i));
+                    paginationDiv.appendChild(btn);
+                }
+                
+                // Next button
+                const nextBtn = document.createElement("button");
+                nextBtn.innerHTML = "&raquo;";
+                nextBtn.className = `btn btn-sm mx-1 ${currentPage === pageCount ? 'btn-secondary' : 'btn-outline-primary'}`;
+                nextBtn.disabled = currentPage === pageCount;
+                nextBtn.addEventListener("click", () => displayPage(currentPage + 1));
+                paginationDiv.appendChild(nextBtn);
+            }
+            
+            displayPage(1);
+        });
+    </script>
 </body>
-
 </html>

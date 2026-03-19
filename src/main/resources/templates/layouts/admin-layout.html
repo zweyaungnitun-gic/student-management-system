@@ -97,12 +97,12 @@
               <span>ユーザー管理</span>
               <span class="sidebar-pill" th:if="${currentPage} == 'users'">Now</span>
           </a>
-          
+                  
           <div class="sidebar-label mt-3">システム</div>
-          
-          <a class="sidebar-link" th:href="@{/logout}">
-              <i class="bi bi-box-arrow-right"></i>
-              <span>ログアウト</span>
+          <a class="sidebar-link text-danger fw-semibold" th:href="@{/logout}" 
+            style="background-color: rgba(220, 53, 69, 0.1); border-radius: 8px;">
+              <i class="bi bi-box-arrow-right text-danger"></i>
+              <span class="text-danger">ログアウト</span>
           </a>
       </nav>
     </aside>
