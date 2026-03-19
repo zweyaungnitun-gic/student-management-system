@@ -32,17 +32,19 @@
                 <div class="glass-panel mb-4 p-4">
                     <div class="row g-3 align-items-center">
                         <div class="col-md-8">
-                            <form th:action="@{/tests}" method="get" class="row g-3">
-                                <div class="col-md-7">
+                            <form th:action="@{/tests}" method="get" class="row g-3 align-items-center">
+                                <div class="col-md-6">
                                     <div class="topbar-search d-flex align-items-center">
                                         <i class="bi bi-search" style="color: var(--primary);"></i>
                                         <input type="text" class="form-control border-0 bg-transparent shadow-none p-0" 
-                                               name="search" th:value="${search}"
-                                               placeholder="テスト名またはコース名で検索...">
+                                            name="search" th:value="${search}"
+                                            placeholder="テスト名またはコース名で検索...">
                                     </div>
                                 </div>
                                 <div class="col-md-3">
-                                    <select class="compact-field w-100" name="courseId">
+                                    <select class="form-select" name="courseId" 
+                                            style="background-image: url('data:image/svg+xml;utf8,<svg xmlns=%27http://www.w3.org/2000/svg%27 width=%2716%27 height=%2716%27 viewBox=%270 0 16 16%27><path fill=%27%23333%27 d=%27M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z%27/></svg>'); 
+                                            background-repeat: no-repeat; background-position: right 0.75rem center; background-size: 16px 12px; -webkit-appearance: none; -moz-appearance: none; appearance: none; padding-right: 2rem;">
                                         <option value="">全てのコース</option>
                                         <option th:each="course : ${courses}"
                                                 th:value="${course.courseId}"
@@ -51,19 +53,24 @@
                                         </option>
                                     </select>
                                 </div>
-                                <div class="col-md-2">
-                                    <button type="submit" class="btn btn-primary w-100 d-flex align-items-center justify-content-center gap-2"
-                                            style="background: var(--primary); border: none;">
+                                <div class="col-md-3 d-flex gap-2">
+                                    <button type="submit" class="btn btn-primary d-flex align-items-center justify-content-center gap-2 px-3 py-2"
+                                            style="background: var(--primary); border: none; white-space: nowrap;">
                                         <i class="bi bi-search"></i>
                                         <span>検索</span>
                                     </button>
+                                    <a href="/tests" class="btn btn-outline-secondary d-flex align-items-center justify-content-center gap-2 px-3 py-2" 
+                                    style="white-space: nowrap;">
+                                        <i class="bi bi-arrow-repeat"></i>
+                                        <span>リフレッシュ</span>
+                                    </a>
                                 </div>
                             </form>
                         </div>
                         <div class="col-md-4">
                             <div class="d-flex gap-2 justify-content-end">
-                                <a href="/tests/add" class="btn btn-success d-flex align-items-center gap-2"
-                                   sec:authorize="hasRole('ADMIN') or hasRole('TEACHER')">
+                                <a href="/tests/add" class="btn btn-success d-flex align-items-center gap-2 px-3 py-2"
+                                sec:authorize="hasRole('ADMIN') or hasRole('TEACHER')">
                                     <i class="bi bi-plus-circle"></i>
                                     <span>新規テスト</span>
                                 </a>

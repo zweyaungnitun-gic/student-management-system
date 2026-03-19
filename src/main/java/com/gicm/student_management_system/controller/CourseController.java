@@ -1,16 +1,25 @@
 package com.gicm.student_management_system.controller;
 
 import com.gicm.student_management_system.dto.CourseDTO;
+import com.gicm.student_management_system.dto.EnrollmentDTO;
 import com.gicm.student_management_system.service.CourseService;
 import com.gicm.student_management_system.service.TeacherService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import java.nio.charset.StandardCharsets;
 
 import java.util.List;
 
@@ -162,4 +171,38 @@ public class CourseController {
                     return "redirect:/courses";
                 });
     }
+
+    @GetMapping("/export/{id}")
+public ResponseEntity<Resource> exportCourseStudents(@PathVariable Long id) {
+    try {
+        CourseDTO course = courseService.getCourseById(id)
+                .orElseThrow(() -> new RuntimeException("コースが見つかりません"));
+        
+        List<EnrollmentDTO> enrollments = courseService.getEnrollmentsByCourseId(id);
+        
+                StringBuilder csv = new StringBuilder();
+        csv.append("生徒ID,氏名,ステータス,入学日\n");
+        
+        for (EnrollmentDTO enrollment : enrollments) {
+            csv.append(enrollment.getStudentId()).append(",")
+               .append(enrollment.getStudentName()).append(",")
+               .append(enrollment.getStatus()).append(",")
+               .append(enrollment.getEnrollmentDate()).append("\n");
+        }
+        
+        byte[] csvBytes = csv.toString().getBytes(StandardCharsets.UTF_8);
+        
+        ByteArrayResource resource = new ByteArrayResource(csvBytes);
+        
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, 
+                       "attachment; filename=\"" + course.getCourseCode() + "_students.csv\"")
+                .contentType(MediaType.parseMediaType("text/csv"))
+                .contentLength(csvBytes.length)
+                .body(resource);
+        
+    } catch (Exception e) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+    }
+}
 }
