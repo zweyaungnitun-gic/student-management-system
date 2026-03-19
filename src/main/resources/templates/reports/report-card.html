@@ -120,10 +120,10 @@
                 <div class="col-md-4">
                     <p class="mb-1"><strong>学業状況:</strong> 
                         <span class="badge" 
-                              th:class="${reportCard.academicStanding == 'Dean\'s List'} ? 'bg-success' : 
-                                       (${reportCard.academicStanding == 'Academic Probation'} ? 'bg-warning' : 
+                            th:class="${reportCard.academicStanding == &quot;Dean's List&quot;} ? 'bg-success' : 
+                                    (${reportCard.academicStanding == 'Academic Probation'} ? 'bg-warning' : 
                                         (${reportCard.academicStanding == 'Academic Suspension'} ? 'bg-danger' : 'bg-info'))"
-                              th:text="${reportCard.academicStanding}"></span>
+                            th:text="${reportCard.academicStanding}"></span>
                     </p>
                 </div>
             </div>
