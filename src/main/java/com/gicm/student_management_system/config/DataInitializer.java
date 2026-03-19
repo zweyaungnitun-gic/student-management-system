@@ -25,44 +25,38 @@ public class DataInitializer implements CommandLineRunner {
         log.info("Starting Data Initialization...");
         log.info("========================================");
 
-        // Initialize Admin User
-        if (!userRepository.existsByEmail("admin@gmail.com")) {
-            User admin = User.builder()
-                    .username("Admin")
-                    .email("admin@gmail.com")
-                    .password(passwordEncoder.encode("admin123"))
-                    .role(Role.ADMIN)
-                    .build();
-            userRepository.save(admin);
-            log.info("✓ Admin user created successfully");
-            log.info("  Email: admin@gmail.com");
-            log.info("  Password: admin123");
-            log.info("  Role: ADMIN");
-        } else {
-            log.info("✓ Admin user already exists");
-        }
+        // Initialize Demo Admin Users (idempotent by email)
+        ensureUser("admin@gmail.com", "Admin", Role.ADMIN, "admin123");
+        ensureUser("admin1@gmail.com", "Admin One", Role.ADMIN, "admin123");
+        ensureUser("admin2@gmail.com", "Admin Two", Role.ADMIN, "admin123");
 
         log.info("----------------------------------------");
 
         // Initialize Guest User
-        if (!userRepository.existsByEmail("guest@gmail.com")) {
-            User guest = User.builder()
-                    .username("Guest")
-                    .email("guest@gmail.com")
-                    .password(passwordEncoder.encode("guest123"))
-                    .role(Role.GUEST)
-                    .build();
-            userRepository.save(guest);
-            log.info("✓ Guest user created successfully");
-            log.info("  Email: guest@gmail.com");
-            log.info("  Password: guest123");
-            log.info("  Role: GUEST");
-        } else {
-            log.info("✓ Guest user already exists");
-        }
+        ensureUser("guest@gmail.com", "Guest", Role.GUEST, "guest123");
 
         log.info("========================================");
         log.info("Data Initialization Completed!");
         log.info("========================================");
+    }
+
+    private void ensureUser(String email, String username, Role role, String rawPassword) {
+        if (userRepository.existsByEmail(email)) {
+            log.info("✓ User already exists: {}", email);
+            return;
+        }
+
+        User user = User.builder()
+                .username(username)
+                .email(email)
+                .password(passwordEncoder.encode(rawPassword))
+                .role(role)
+                .build();
+        userRepository.save(user);
+
+        log.info("✓ User created successfully");
+        log.info("  Email: {}", email);
+        log.info("  Password: {}", rawPassword);
+        log.info("  Role: {}", role.name());
     }
 }

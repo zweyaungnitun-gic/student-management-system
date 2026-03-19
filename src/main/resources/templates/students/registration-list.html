@@ -24,7 +24,7 @@
   <body>
     <div class="dashboard-layout">
       <!-- Sidebar -->
-      <th:block th:replace="~{layouts/admin-layout :: sidebar(currentPage=${'students'})}"></th:block>
+      <th:block th:replace="~{layouts/admin-layout :: sidebar(currentPage=${'registrations'})}"></th:block>
 
       <div class="sidebar-overlay d-lg-none" data-sidebar-toggle></div>
 
@@ -43,7 +43,7 @@
               </button>
               <div>
                 <h1 class="mb-0" style="color: #0a58a0; font-weight: 600; font-size: 1.8rem">
-                  登録申請一覧（PENDING）
+                  登録申請一覧
                 </h1>
                 <div class="text-muted mt-1">学生が登録フォームから送信した申請を承認 / 却下します。</div>
               </div>
@@ -65,6 +65,42 @@
                     <th colspan="7" class="p-3">
                       <form th:action="@{/students/registrations}" method="get" id="registrationFilterForm">
                         <div class="d-flex flex-col md:flex-row align-items-center gap-4 flex-wrap">
+                          <div class="filter-control-group">
+                            <span style="font-size: 16px">ステータス</span>
+                            <div class="d-flex align-items-center gap-3 mt-1">
+                              <label class="form-check form-check-inline mb-0">
+                                <input
+                                  class="form-check-input"
+                                  type="radio"
+                                  name="registrationStatus"
+                                  value="PENDING"
+                                  th:checked="${registrationStatus == 'PENDING'}"
+                                />
+                                <span class="form-check-label">PENDING</span>
+                              </label>
+                              <label class="form-check form-check-inline mb-0">
+                                <input
+                                  class="form-check-input"
+                                  type="radio"
+                                  name="registrationStatus"
+                                  value="ACCEPTED"
+                                  th:checked="${registrationStatus == 'ACCEPTED'}"
+                                />
+                                <span class="form-check-label">ACCEPTED</span>
+                              </label>
+                              <label class="form-check form-check-inline mb-0">
+                                <input
+                                  class="form-check-input"
+                                  type="radio"
+                                  name="registrationStatus"
+                                  value="REJECTED"
+                                  th:checked="${registrationStatus == 'REJECTED'}"
+                                />
+                                <span class="form-check-label">REJECTED</span>
+                              </label>
+                            </div>
+                          </div>
+
                           <div class="filter-control-group">
                             <span style="font-size: 16px">名前で検索</span>
                             <input
@@ -90,39 +126,44 @@
                   </tr>
 
                   <tr>
-                    <th>学生ID</th>
+                    <th>申請ID</th>
                     <th>氏名</th>
                     <th>性別</th>
                     <th>電話番号</th>
                     <th>国民ID</th>
-                    <th>登録日</th>
+                    <th>申請日</th>
                     <th class="text-center">操作</th>
                   </tr>
                 </thead>
 
                 <tbody>
-                  <tr th:if="${#lists.isEmpty(students)}">
+                  <tr th:if="${#lists.isEmpty(registrations)}">
                     <td colspan="7" class="text-center py-4 text-muted">
-                      現在、保留中の登録申請はありません。
+                      該当する登録申請はありません。
                     </td>
                   </tr>
 
-                  <tr th:each="student : ${students}">
-                    <td th:text="${student.studentId}">STU001</td>
-                    <td th:text="${student.studentName}">山田 太郎</td>
-                    <td th:text="${student.gender}">Male</td>
-                    <td th:text="${student.phoneNumber}">090-1234-5678</td>
-                    <td th:text="${student.nationalId}">JP-123456789</td>
-                    <td th:text="${student.createdAt}">2025-01-01</td>
+                  <tr th:each="reg : ${registrations}">
+                    <td>
+                      <div class="fw-semibold">
+                        <a th:href="@{/students/registrations/{id}(id=${reg.id})}" th:text="${reg.registrationCode}">REG-000001</a>
+                      </div>
+                      <div class="small text-muted" th:text="${reg.registrationStatus}">PENDING</div>
+                    </td>
+                    <td th:text="${reg.englishName}">山田 太郎</td>
+                    <td th:text="${reg.gender}">Male</td>
+                    <td th:text="${reg.phoneNumber}">090-1234-5678</td>
+                    <td th:text="${reg.nationalIdNumber}">12/ThaPhaYa(N)111111</td>
+                    <td th:text="${reg.submittedAt}">2025-01-01</td>
                     <td class="text-center">
-                      <div class="btn-group btn-group-sm" role="group">
-                        <form th:action="@{/students/registrations/{id}/accept(id=${student.id})}" method="post">
+                      <div class="btn-group btn-group-sm" role="group" th:if="${reg.registrationStatus.name() == 'PENDING'}">
+                        <form th:action="@{/students/registrations/{id}/accept(id=${reg.id})}" method="post">
                           <button type="submit" class="btn btn-success">
                             <i class="bi bi-check-lg"></i> 承認
                           </button>
                         </form>
                         <form
-                          th:action="@{/students/registrations/{id}/reject(id=${student.id})}"
+                          th:action="@{/students/registrations/{id}/reject(id=${reg.id})}"
                           method="post"
                           class="ms-1"
                         >
@@ -130,6 +171,16 @@
                             <i class="bi bi-x-lg"></i> 却下
                           </button>
                         </form>
+                      </div>
+
+                      <div th:if="${reg.registrationStatus.name() != 'PENDING'}" class="small text-muted">
+                        <div th:if="${reg.registrationStatus.name() == 'ACCEPTED'}">
+                          <span class="fw-semibold">承認済</span>
+                          <span th:if="${reg.acceptedStudentId != null}" th:text="${'（学生ID: ' + reg.acceptedStudentId + '）'}"></span>
+                        </div>
+                        <div th:if="${reg.registrationStatus.name() == 'REJECTED'}">
+                          <span class="fw-semibold">却下済</span>
+                        </div>
                       </div>
                     </td>
                   </tr>

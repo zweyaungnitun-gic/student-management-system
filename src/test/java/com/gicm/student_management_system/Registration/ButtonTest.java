@@ -107,7 +107,7 @@ public class ButtonTest {
 		MockMvc mockMvc = buildMockMvc(mockService);
 
 		MockHttpSession session = new MockHttpSession();
-		session.setAttribute("registeredStudentId", "STU001");
+		session.setAttribute("registrationCode", "REG-000001");
 		session.setAttribute("registeredStudentName", "John Doe");
 
 		mockMvc.perform(get("/register/success").session(session))
@@ -154,11 +154,11 @@ public class ButtonTest {
 		RegistrationController controller = new RegistrationController(mockService);
 		MockMvc mockMvc = MockMvcBuilders.standaloneSetup(controller).build();
 
-		// Mock the service to return a valid Student
-		com.gicm.student_management_system.entity.Student student = new com.gicm.student_management_system.entity.Student();
-		student.setStudentId("STU001");
-		student.setStudentName("John Doe");
-		when(mockService.registerStudent(any())).thenReturn(student);
+		// Mock the service to return a valid registration
+		com.gicm.student_management_system.entity.StudentRegistration registration = new com.gicm.student_management_system.entity.StudentRegistration();
+		registration.setRegistrationCode("REG-000001");
+		registration.setEnglishName("John Doe");
+		when(mockService.registerStudent(any())).thenReturn(registration);
 
 		MockHttpSession session = new MockHttpSession();
 		// Simulate session with completed data

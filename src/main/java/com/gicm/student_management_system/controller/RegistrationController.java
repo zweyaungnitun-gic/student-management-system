@@ -12,7 +12,7 @@ import com.gicm.student_management_system.dto.StudentRegistrationDTO;
 import com.gicm.student_management_system.dto.validation.FirstPageValidation;
 import com.gicm.student_management_system.dto.validation.SecondPageValidation;
 import com.gicm.student_management_system.dto.validation.ThirdPageValidation;
-import com.gicm.student_management_system.entity.Student;
+import com.gicm.student_management_system.entity.StudentRegistration;
 import com.gicm.student_management_system.service.RegisterStudentService;
 
 import jakarta.servlet.http.HttpSession;
@@ -210,11 +210,11 @@ public class RegistrationController {
             }
 
             // Save to database
-            Student savedStudent = registerStudentService.registerStudent(studentData);
+            StudentRegistration savedRegistration = registerStudentService.registerStudent(studentData);
             
-            // Store student info in session for success page
-            session.setAttribute("registeredStudentId", savedStudent.getStudentId());
-            session.setAttribute("registeredStudentName", savedStudent.getStudentName());
+            // Store registration info in session for success page
+            session.setAttribute("registrationCode", savedRegistration.getRegistrationCode());
+            session.setAttribute("registeredStudentName", savedRegistration.getEnglishName());
             
             // Clear registration data
             session.removeAttribute("studentData");
@@ -232,15 +232,15 @@ public class RegistrationController {
 
     @GetMapping("/success")
     public String successPage(HttpSession session, Model model) {
-        String studentId = (String) session.getAttribute("registeredStudentId");
+        String registrationCode = (String) session.getAttribute("registrationCode");
         String studentName = (String) session.getAttribute("registeredStudentName");
         
         // Add to model for display
-        model.addAttribute("studentId", studentId);
+        model.addAttribute("registrationCode", registrationCode);
         model.addAttribute("studentName", studentName);
         
         // Clear these attributes after displaying
-        session.removeAttribute("registeredStudentId");
+        session.removeAttribute("registrationCode");
         session.removeAttribute("registeredStudentName");
         
         return "register/success";

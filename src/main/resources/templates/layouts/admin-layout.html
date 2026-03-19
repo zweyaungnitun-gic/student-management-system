@@ -48,6 +48,12 @@
               <span>生徒管理</span>
               <span class="sidebar-pill" th:if="${currentPage} == 'students'">Now</span>
           </a>
+
+          <a class="sidebar-link" th:classappend="${currentPage} == 'registrations' ? ' active' : ''" th:href="@{/students/registrations}">
+              <i class="bi bi-inbox"></i>
+              <span>登録申請</span>
+              <span class="sidebar-pill" th:if="${currentPage} == 'registrations'">Now</span>
+          </a>
           
           <a class="sidebar-link" th:classappend="${currentPage} == 'teachers' ? ' active' : ''" th:href="@{/teachers}">
               <i class="bi bi-person-workspace"></i>

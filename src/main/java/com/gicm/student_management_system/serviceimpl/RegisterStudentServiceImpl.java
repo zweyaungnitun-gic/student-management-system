@@ -1,6 +1,5 @@
 package com.gicm.student_management_system.serviceimpl;
 
-import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
 import org.springframework.stereotype.Service;
@@ -8,70 +7,73 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.gicm.student_management_system.dto.StudentRegistrationDTO;
 import com.gicm.student_management_system.entity.RegistrationStatus;
-import com.gicm.student_management_system.entity.Student;
-import com.gicm.student_management_system.repository.RegisterStudentRepository;
+import com.gicm.student_management_system.entity.StudentRegistration;
+import com.gicm.student_management_system.repository.StudentRegistrationRepository;
 import com.gicm.student_management_system.service.RegisterStudentService;
 
 @Service
 public class RegisterStudentServiceImpl implements RegisterStudentService {
 
-    private final RegisterStudentRepository registerStudentRepository;
+    private final StudentRegistrationRepository studentRegistrationRepository;
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
-    public RegisterStudentServiceImpl(RegisterStudentRepository registerStudentRepository) {
-        this.registerStudentRepository = registerStudentRepository;
+    public RegisterStudentServiceImpl(StudentRegistrationRepository studentRegistrationRepository) {
+        this.studentRegistrationRepository = studentRegistrationRepository;
     }
 
     @Override
     @Transactional
-    public Student registerStudent(StudentRegistrationDTO dto) {
+    public StudentRegistration registerStudent(StudentRegistrationDTO dto) {
         // National ID is still required and must be unique
-        if (registerStudentRepository.existsByNationalId(dto.getNationalIdNumber())) {
+        if (studentRegistrationRepository.existsByNationalIdNumber(dto.getNationalIdNumber())) {
             throw new RuntimeException("この国民ID番号は既に登録されています");
         }
 
-        // Generate unique student ID
-        String studentId = generateStudentId();
-
         // Map DTO to Entity
-        Student student = Student.builder()
-            .studentId(studentId)
-            .studentName(dto.getEnglishName())
-            .dateOfBirth(LocalDate.parse(dto.getDob(), DATE_FORMATTER))
-            .gender(dto.getGender())
-            .currentLivingAddress(dto.getCurrentAddress())
-            .homeTownAddress(dto.getHometownAddress())
-            .phoneNumber(dto.getPhoneNumber())
-            .religion(dto.getReligion())
-            .nationalId(dto.getNationalIdNumber())
-            .enrolledDate(LocalDate.now()) // Add this line - same as createdAt
-            .registrationStatus(RegistrationStatus.PENDING)
-            .build();
+        StudentRegistration registration = StudentRegistration.builder()
+                .registrationCode(generateRegistrationCode())
+                .registrationStatus(RegistrationStatus.PENDING)
+                .englishName(dto.getEnglishName())
+                .katakanaName(dto.getKatakanaName())
+                .dateOfBirth(dto.getDob() == null || dto.getDob().isBlank() ? null
+                        : java.time.LocalDate.parse(dto.getDob(), DATE_FORMATTER))
+                .gender(dto.getGender())
+                .currentAddress(dto.getCurrentAddress())
+                .hometownAddress(dto.getHometownAddress())
+                .phoneNumber(dto.getPhoneNumber())
+                .guardianPhoneNumber(dto.getGuardianPhoneNumber())
+                .fatherName(dto.getFatherName())
+                .passportNumber(dto.getPassportNumber())
+                .nationalIdNumber(dto.getNationalIdNumber())
+                .jlptLevel(dto.getJlptLevel())
+                .desiredOccupation(dto.getDesiredOccupation())
+                .otherOccupation(dto.getOtherOccupation())
+                .japanTravelExperience(dto.getJapanTravelExperience())
+                .coeApplicationExperience(dto.getCoeApplicationExperience())
+                .religion(dto.getReligion())
+                .otherReligion(dto.getOtherReligion())
+                .smoking(dto.getSmoking())
+                .alcohol(dto.getAlcohol())
+                .tattoo(dto.getTattoo())
+                .tuitionPaymentDate(dto.getTuitionPaymentDate() == null || dto.getTuitionPaymentDate().isBlank() ? null
+                        : java.time.LocalDate.parse(dto.getTuitionPaymentDate(), DATE_FORMATTER))
+                .wantDorm(dto.getWantDorm())
+                .otherMemo(dto.getOtherMemo())
+                .submittedAt(java.time.LocalDate.now())
+                .build();
 
         // Save to database
-        return registerStudentRepository.save(student);
+        return studentRegistrationRepository.save(registration);
     }
 
-    @Override
-    public String generateStudentId() {
-        // Format: STUXXX (e.g., STU001, STU002)
-        String prefix = "STU";
-
-        // Get the total count of students + 1
-        long count = registerStudentRepository.count() + 1;
-        String sequence = String.format("%03d", count);
-
-        String newStudentId = prefix + sequence;
-
-        // if deleted IDs exist, not reuse them, always increment
-        while (registerStudentRepository.existsByStudentId(newStudentId)) {
+    private String generateRegistrationCode() {
+        String prefix = "REG-";
+        long count = studentRegistrationRepository.count() + 1;
+        String code = prefix + String.format("%06d", count);
+        while (studentRegistrationRepository.existsByRegistrationCode(code)) {
             count++;
-            sequence = String.format("%03d", count);
-            newStudentId = prefix + sequence;
+            code = prefix + String.format("%06d", count);
         }
-
-        return newStudentId;
+        return code;
     }
-
-    // No longer needed: convertToBoolean for boolean fields
 }

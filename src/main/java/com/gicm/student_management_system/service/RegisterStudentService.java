@@ -1,9 +1,8 @@
 package com.gicm.student_management_system.service;
 
 import com.gicm.student_management_system.dto.StudentRegistrationDTO;
-import com.gicm.student_management_system.entity.Student;
+import com.gicm.student_management_system.entity.StudentRegistration;
 
 public interface RegisterStudentService {
-    Student registerStudent(StudentRegistrationDTO dto);
-    String generateStudentId();
+    StudentRegistration registerStudent(StudentRegistrationDTO dto);
 }

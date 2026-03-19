@@ -22,12 +22,12 @@
                     </svg>
                 </div>
                 <h2 class="text-success mb-3">登録完了しました！</h2>
-                <p class="text-muted mb-4">生徒情報が正常に登録されました。</p>
-                <!-- Display Student ID and Name -->
-                <div class="alert alert-info mb-4 col-md-8 mx-auto" th:if="${studentId != null}">
+                <p class="text-muted mb-4">登録申請を受け付けました。管理者の承認後に正式な学生データとして登録されます。</p>
+                <!-- Display Registration Code and Name -->
+                <div class="alert alert-info mb-4 col-md-8 mx-auto" th:if="${registrationCode != null}">
                     <div class="mb-2">
-                        <strong>学生 ID : </strong>
-                        <span class="fs-5 text-primary" th:text="${studentId}">STU-20251211-0001</span>
+                        <strong>申請 ID : </strong>
+                        <span class="fs-5 text-primary" th:text="${registrationCode}">REG-000001</span>
                     </div>
                     <div>
                         <strong>氏名 : </strong>

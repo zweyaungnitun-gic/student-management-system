@@ -23,15 +23,19 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.gicm.student_management_system.dto.InterviewNotesDTO;
 import com.gicm.student_management_system.dto.StudentDTO;
 import com.gicm.student_management_system.dto.StudentFullExportDTO;
+import com.gicm.student_management_system.dto.StudentRegistrationDTO;
 import com.gicm.student_management_system.entity.RegistrationStatus;
 import com.gicm.student_management_system.entity.Student;
+import com.gicm.student_management_system.entity.StudentRegistration;
 import com.gicm.student_management_system.enums.Religion;
 import com.gicm.student_management_system.service.InterviewNotesService;
+import com.gicm.student_management_system.service.StudentRegistrationService;
 import com.gicm.student_management_system.service.StudentExportService;
 import com.gicm.student_management_system.service.StudentService;
 import com.gicm.student_management_system.validation.BasicInfoGroup;
 
 import jakarta.servlet.http.HttpServletRequest;
+import java.security.Principal;
 import lombok.RequiredArgsConstructor;
 
 @Controller
@@ -42,6 +46,7 @@ public class StudentController {
     private final StudentService studentService;
     private final StudentExportService studentExportService;
     private final InterviewNotesService interviewNotesService;
+    private final StudentRegistrationService studentRegistrationService;
 
     // ---- UI METHODS ----
     @GetMapping
@@ -338,32 +343,102 @@ public class StudentController {
     @GetMapping("/registrations")
     public String listRegistrations(
             @RequestParam(value = "nameSearch", defaultValue = "") String nameSearch,
+            @RequestParam(value = "registrationStatus", defaultValue = "PENDING") String registrationStatus,
             Model model) {
-        List<Student> pendingStudents = studentService.findByRegistrationStatus(RegistrationStatus.PENDING, nameSearch);
-        model.addAttribute("students", pendingStudents);
+        RegistrationStatus status = RegistrationStatus.valueOf(registrationStatus);
+        List<StudentRegistration> registrations = studentRegistrationService.listRegistrations(status, nameSearch);
+        model.addAttribute("registrations", registrations);
         model.addAttribute("nameSearch", nameSearch);
+        model.addAttribute("registrationStatus", status.name());
         return "students/registration-list";
     }
 
     @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/registrations/{id}")
+    public String registrationDetail(@PathVariable Long id, Model model) {
+        StudentRegistration reg = studentRegistrationService.getRegistration(id);
+        model.addAttribute("reg", reg);
+        return "students/registration-detail";
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/registrations/{id}/edit")
+    public String registrationEdit(@PathVariable Long id, Model model, RedirectAttributes redirectAttributes) {
+        StudentRegistration reg = studentRegistrationService.getRegistration(id);
+        if (reg.getRegistrationStatus() != RegistrationStatus.PENDING) {
+            redirectAttributes.addFlashAttribute("error", "処理済みの申請は編集できません");
+            return "redirect:/students/registrations/" + id;
+        }
+
+        StudentRegistrationDTO dto = new StudentRegistrationDTO();
+        dto.setEnglishName(reg.getEnglishName());
+        dto.setKatakanaName(reg.getKatakanaName());
+        dto.setDob(reg.getDateOfBirth() == null ? null : reg.getDateOfBirth().toString());
+        dto.setGender(reg.getGender());
+        dto.setCurrentAddress(reg.getCurrentAddress());
+        dto.setHometownAddress(reg.getHometownAddress());
+        dto.setPhoneNumber(reg.getPhoneNumber());
+        dto.setGuardianPhoneNumber(reg.getGuardianPhoneNumber());
+        dto.setFatherName(reg.getFatherName());
+        dto.setPassportNumber(reg.getPassportNumber());
+        dto.setNationalIdNumber(reg.getNationalIdNumber());
+        dto.setJlptLevel(reg.getJlptLevel());
+        dto.setDesiredOccupation(reg.getDesiredOccupation());
+        dto.setOtherOccupation(reg.getOtherOccupation());
+        dto.setJapanTravelExperience(reg.getJapanTravelExperience());
+        dto.setCoeApplicationExperience(reg.getCoeApplicationExperience());
+        dto.setReligion(reg.getReligion());
+        dto.setOtherReligion(reg.getOtherReligion());
+        dto.setSmoking(reg.getSmoking());
+        dto.setAlcohol(reg.getAlcohol());
+        dto.setTattoo(reg.getTattoo());
+        dto.setTuitionPaymentDate(reg.getTuitionPaymentDate() == null ? null : reg.getTuitionPaymentDate().toString());
+        dto.setWantDorm(reg.getWantDorm());
+        dto.setOtherMemo(reg.getOtherMemo());
+
+        model.addAttribute("reg", reg);
+        model.addAttribute("registration", dto);
+        return "students/registration-edit";
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping("/registrations/{id}/update")
+    public String registrationUpdate(
+            @PathVariable Long id,
+            @ModelAttribute("registration") StudentRegistrationDTO dto,
+            RedirectAttributes redirectAttributes) {
+        studentRegistrationService.updateRegistration(id, dto);
+        redirectAttributes.addFlashAttribute("success", "申請内容を更新しました。");
+        return "redirect:/students/registrations/" + id;
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping("/registrations/{id}/delete")
+    public String registrationDelete(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+        studentRegistrationService.deleteRegistration(id);
+        redirectAttributes.addFlashAttribute("success", "申請を削除しました。");
+        return "redirect:/students/registrations?registrationStatus=PENDING";
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/registrations/{id}/accept")
-    public String acceptRegistration(@PathVariable Long id, RedirectAttributes redirectAttributes) {
-        Student student = studentService.findById(id)
-                .orElseThrow(() -> new RuntimeException("Student not found: " + id));
-        student.setRegistrationStatus(RegistrationStatus.ACCEPTED);
-        studentService.save(student);
+    public String acceptRegistration(
+            @PathVariable Long id,
+            Principal principal,
+            RedirectAttributes redirectAttributes) {
+        studentRegistrationService.acceptRegistration(id, principal != null ? principal.getName() : "admin");
         redirectAttributes.addFlashAttribute("success", "登録を承認しました。");
-        return "redirect:/students/registrations";
+        return "redirect:/students/registrations?registrationStatus=PENDING";
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/registrations/{id}/reject")
-    public String rejectRegistration(@PathVariable Long id, RedirectAttributes redirectAttributes) {
-        Student student = studentService.findById(id)
-                .orElseThrow(() -> new RuntimeException("Student not found: " + id));
-        student.setRegistrationStatus(RegistrationStatus.REJECTED);
-        studentService.save(student);
+    public String rejectRegistration(
+            @PathVariable Long id,
+            Principal principal,
+            RedirectAttributes redirectAttributes) {
+        studentRegistrationService.rejectRegistration(id, principal != null ? principal.getName() : "admin");
         redirectAttributes.addFlashAttribute("success", "登録を却下しました。");
-        return "redirect:/students/registrations";
+        return "redirect:/students/registrations?registrationStatus=PENDING";
     }
 }

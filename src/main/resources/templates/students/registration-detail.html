@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+  <head th:replace="~{layouts/admin-layout :: head(pageTitle=${'登録申請詳細 | Admin Dashboard'})}"></head>
+
+  <body>
+    <div class="dashboard-layout">
+      <th:block th:replace="~{layouts/admin-layout :: sidebar(currentPage=${'registrations'})}"></th:block>
+      <div class="sidebar-overlay d-lg-none" data-sidebar-toggle></div>
+
+      <div class="dashboard-main">
+        <div class="page-wrapper py-4 py-md-5 px-3 px-md-5">
+          <div class="d-flex align-items-center gap-3 mb-3">
+            <button class="btn btn-light btn-icon d-lg-none" type="button" aria-label="Toggle sidebar" data-sidebar-toggle>
+              <i class="bi bi-list fs-4"></i>
+            </button>
+            <div>
+              <h1 class="mb-0" style="color: #0a58a0; font-weight: 600; font-size: 1.8rem">登録申請詳細</h1>
+              <div class="text-muted mt-1">
+                <span class="fw-semibold" th:text="${reg.registrationCode}">REG-000001</span>
+                <span class="ms-2 badge"
+                      th:classappend="${reg.registrationStatus.name() == 'PENDING' ? 'bg-warning text-dark' : (reg.registrationStatus.name() == 'ACCEPTED' ? 'bg-success' : 'bg-secondary')}"
+                      th:text="${reg.registrationStatus}">PENDING</span>
+              </div>
+            </div>
+            <div class="ms-auto d-flex gap-2">
+              <a th:href="@{/students/registrations(registrationStatus=${reg.registrationStatus.name()})}" class="btn btn-outline-secondary btn-sm">
+                <i class="bi bi-arrow-left"></i> 一覧へ戻る
+              </a>
+
+              <a th:if="${reg.registrationStatus.name() == 'PENDING'}"
+                 th:href="@{/students/registrations/{id}/edit(id=${reg.id})}"
+                 class="btn btn-outline-primary btn-sm">
+                <i class="bi bi-pencil-square"></i> 編集
+              </a>
+            </div>
+          </div>
+
+          <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+          <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+
+          <div class="row g-4">
+            <div class="col-lg-8">
+              <div class="card shadow-sm border-0">
+                <div class="card-header bg-white py-3">
+                  <h5 class="mb-0"><i class="bi bi-person-vcard me-2 text-primary"></i>申請内容</h5>
+                </div>
+                <div class="card-body">
+                  <div class="row g-3">
+                    <div class="col-md-6">
+                      <div class="text-muted small">氏名（英語）</div>
+                      <div class="fw-semibold" th:text="${reg.englishName}">John Doe</div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="text-muted small">氏名（カタカナ）</div>
+                      <div class="fw-semibold" th:text="${reg.katakanaName}">ジョンドウ</div>
+                    </div>
+                    <div class="col-md-4">
+                      <div class="text-muted small">生年月日</div>
+                      <div class="fw-semibold" th:text="${reg.dateOfBirth}">2000-01-01</div>
+                    </div>
+                    <div class="col-md-4">
+                      <div class="text-muted small">性別</div>
+                      <div class="fw-semibold" th:text="${reg.gender}">男性</div>
+                    </div>
+                    <div class="col-md-4">
+                      <div class="text-muted small">国民ID</div>
+                      <div class="fw-semibold" th:text="${reg.nationalIdNumber}">xxxx</div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="text-muted small">電話番号</div>
+                      <div class="fw-semibold" th:text="${reg.phoneNumber}">090...</div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="text-muted small">保護者電話番号</div>
+                      <div class="fw-semibold" th:text="${reg.guardianPhoneNumber}">090...</div>
+                    </div>
+
+                    <div class="col-12">
+                      <hr class="my-2"/>
+                    </div>
+
+                    <div class="col-12">
+                      <div class="text-muted small">現在所</div>
+                      <div class="fw-semibold" th:text="${reg.currentAddress}">...</div>
+                    </div>
+                    <div class="col-12">
+                      <div class="text-muted small">出身地住所</div>
+                      <div class="fw-semibold" th:text="${reg.hometownAddress}">...</div>
+                    </div>
+
+                    <div class="col-12">
+                      <hr class="my-2"/>
+                    </div>
+
+                    <div class="col-md-6">
+                      <div class="text-muted small">父の名前</div>
+                      <div class="fw-semibold" th:text="${reg.fatherName}">...</div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="text-muted small">パスポート番号</div>
+                      <div class="fw-semibold" th:text="${reg.passportNumber}">...</div>
+                    </div>
+                    <div class="col-md-4">
+                      <div class="text-muted small">JLPT</div>
+                      <div class="fw-semibold" th:text="${reg.jlptLevel}">N4</div>
+                    </div>
+                    <div class="col-md-4">
+                      <div class="text-muted small">希望職種</div>
+                      <div class="fw-semibold" th:text="${reg.desiredOccupation}">...</div>
+                    </div>
+                    <div class="col-md-4">
+                      <div class="text-muted small">その他職種</div>
+                      <div class="fw-semibold" th:text="${reg.otherOccupation}">...</div>
+                    </div>
+
+                    <div class="col-md-6">
+                      <div class="text-muted small">日本渡航経験</div>
+                      <div class="fw-semibold" th:text="${reg.japanTravelExperience}">false</div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="text-muted small">COE申請経験</div>
+                      <div class="fw-semibold" th:text="${reg.coeApplicationExperience}">false</div>
+                    </div>
+
+                    <div class="col-12">
+                      <hr class="my-2"/>
+                    </div>
+
+                    <div class="col-md-4">
+                      <div class="text-muted small">宗教</div>
+                      <div class="fw-semibold" th:text="${reg.religion}">...</div>
+                    </div>
+                    <div class="col-md-4">
+                      <div class="text-muted small">その他宗教</div>
+                      <div class="fw-semibold" th:text="${reg.otherReligion}">...</div>
+                    </div>
+                    <div class="col-md-4">
+                      <div class="text-muted small">寮希望</div>
+                      <div class="fw-semibold" th:text="${reg.wantDorm}">false</div>
+                    </div>
+                    <div class="col-md-4">
+                      <div class="text-muted small">喫煙</div>
+                      <div class="fw-semibold" th:text="${reg.smoking}">false</div>
+                    </div>
+                    <div class="col-md-4">
+                      <div class="text-muted small">飲酒</div>
+                      <div class="fw-semibold" th:text="${reg.alcohol}">false</div>
+                    </div>
+                    <div class="col-md-4">
+                      <div class="text-muted small">タトゥー</div>
+                      <div class="fw-semibold" th:text="${reg.tattoo}">false</div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="text-muted small">学費支払予定日</div>
+                      <div class="fw-semibold" th:text="${reg.tuitionPaymentDate}">2025-01-01</div>
+                    </div>
+                    <div class="col-12">
+                      <div class="text-muted small">メモ</div>
+                      <div class="fw-semibold" th:text="${reg.otherMemo}">...</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-lg-4">
+              <div class="card shadow-sm border-0 mb-4">
+                <div class="card-header bg-white py-3">
+                  <h5 class="mb-0"><i class="bi bi-clipboard-check me-2 text-success"></i>処理</h5>
+                </div>
+                <div class="card-body">
+                  <div class="mb-2 small text-muted">申請日</div>
+                  <div class="fw-semibold mb-3" th:text="${reg.submittedAt}">2025-01-01</div>
+
+                  <div th:if="${reg.decidedAt != null}">
+                    <div class="mb-2 small text-muted">処理日</div>
+                    <div class="fw-semibold mb-3" th:text="${reg.decidedAt}">2025-01-02</div>
+                  </div>
+                  <div th:if="${reg.decidedBy != null}">
+                    <div class="mb-2 small text-muted">処理者</div>
+                    <div class="fw-semibold mb-3" th:text="${reg.decidedBy}">admin</div>
+                  </div>
+
+                  <div th:if="${reg.registrationStatus.name() == 'ACCEPTED' and reg.acceptedStudentId != null}">
+                    <div class="mb-2 small text-muted">作成された学生ID</div>
+                    <div class="fw-semibold mb-3" th:text="${reg.acceptedStudentId}">STU001</div>
+                  </div>
+
+                  <div th:if="${reg.registrationStatus.name() == 'PENDING'}" class="d-grid gap-2">
+                    <form th:action="@{/students/registrations/{id}/accept(id=${reg.id})}" method="post">
+                      <button type="submit" class="btn btn-success">
+                        <i class="bi bi-check-lg"></i> 承認（学生作成）
+                      </button>
+                    </form>
+                    <form th:action="@{/students/registrations/{id}/reject(id=${reg.id})}" method="post">
+                      <button type="submit" class="btn btn-outline-danger">
+                        <i class="bi bi-x-lg"></i> 却下
+                      </button>
+                    </form>
+                    <form th:action="@{/students/registrations/{id}/delete(id=${reg.id})}" method="post"
+                          onsubmit="return confirm('この申請を削除しますか？');">
+                      <button type="submit" class="btn btn-outline-secondary">
+                        <i class="bi bi-trash"></i> 削除
+                      </button>
+                    </form>
+                  </div>
+
+                  <div th:if="${reg.registrationStatus.name() != 'PENDING'}" class="alert alert-light mb-0">
+                    処理済みのため、承認/却下/削除はできません。
+                  </div>
+                </div>
+              </div>
+
+              <div class="card shadow-sm border-0">
+                <div class="card-header bg-white py-3">
+                  <h5 class="mb-0"><i class="bi bi-link-45deg me-2 text-primary"></i>関連</h5>
+                </div>
+                <div class="card-body d-grid gap-2">
+                  <a class="btn btn-outline-primary btn-sm" th:href="@{/students/registrations(registrationStatus='PENDING')}">
+                    <i class="bi bi-inbox"></i> PENDING一覧
+                  </a>
+                  <a class="btn btn-outline-success btn-sm" th:href="@{/students/registrations(registrationStatus='ACCEPTED')}">
+                    <i class="bi bi-check2-circle"></i> ACCEPTED一覧
+                  </a>
+                  <a class="btn btn-outline-secondary btn-sm" th:href="@{/students}">
+                    <i class="bi bi-people"></i> 生徒管理
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
+
