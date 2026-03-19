@@ -1,9 +1,7 @@
 package com.gicm.student_management_system.serviceimpl;
 
 import com.gicm.student_management_system.dto.StudentDTO;
-import com.gicm.student_management_system.entity.InterviewNotes;
-import com.gicm.student_management_system.entity.N4Class;
-import com.gicm.student_management_system.entity.N5Class;
+import com.gicm.student_management_system.entity.RegistrationStatus;
 import com.gicm.student_management_system.entity.Student;
 import com.gicm.student_management_system.repository.StudentRepository;
 import com.gicm.student_management_system.service.StudentIdGeneratorService;
@@ -29,48 +27,20 @@ public class StudentServiceImpl implements StudentService {
             return null;
         }
 
-        N5Class n5Class = student.getN5Class();
-        N4Class n4Class = student.getN4Class();
-        InterviewNotes interviewNotes = student.getInterviewNotes();
-
         return StudentDTO.builder()
                 .id(student.getId())
                 .studentId(student.getStudentId())
                 .studentName(student.getStudentName())
-                .nameInJapanese(student.getNameInJapanese())
                 .dateOfBirth(student.getDateOfBirth())
                 .gender(student.getGender())
                 .religion(student.getReligion())
-                .otherReligion(student.getOtherReligion())
-                .nationalID(student.getNationalID())
-                .passportNumber(student.getPassportNumber())
-                .fatherName(student.getFatherName())
-                .currentJapanLevel(student.getCurrentJapanLevel())
-                .passedHighestJLPTLevel(student.getPassedHighestJLPTLevel())
-                .attendingClassRelatedStatus(student.getAttendingClassRelatedStatus())
-                .desiredJobType(student.getDesiredJobType())
-                .otherDesiredJobType(student.getOtherDesiredJobType())
-                .isSmoking(student.getIsSmoking())
-                .isAlcoholDrink(student.getIsAlcoholDrink())
-                .haveTatto(student.getHaveTatto())
-                .hostelPreference(student.getHostelPreference())
-                .japanTravelExperience(student.getJapanTravelExperience())
-                .coeApplicationExperience(student.getCoeApplicationExperience())
-                .memoNotes(student.getMemoNotes())
                 .phoneNumber(student.getPhoneNumber())
-                .secondaryPhone(student.getSecondaryPhone())
-                .contactViber(student.getContactViber())
                 .currentLivingAddress(student.getCurrentLivingAddress())
                 .homeTownAddress(student.getHomeTownAddress())
-                .status(student.getStatus())
                 .enrolledDate(student.getEnrolledDate())
-                .schedulePaymentTutionDate(student.getSchedulePaymentTutionDate())
-                .actualTutionPaymentDate(student.getActualTutionPaymentDate())
-                .paymentDueDate(student.getSchedulePaymentTutionDate())
-                .paymentDate(student.getActualTutionPaymentDate())
                 .createdAt(student.getCreatedAt())
                 .updatedAt(student.getUpdatedAt())
-                .interviewNotes(interviewNotes)
+                .nationalId(student.getNationalId())
                 .build();
     }
 
@@ -91,9 +61,6 @@ public class StudentServiceImpl implements StudentService {
         if (dto.getStudentName() != null) {
             student.setStudentName(dto.getStudentName());
         }
-        if (dto.getNameInJapanese() != null) {
-            student.setNameInJapanese(dto.getNameInJapanese());
-        }
         if (dto.getDateOfBirth() != null) {
             student.setDateOfBirth(dto.getDateOfBirth());
         }
@@ -104,12 +71,6 @@ public class StudentServiceImpl implements StudentService {
         if (dto.getPhoneNumber() != null) {
             student.setPhoneNumber(dto.getPhoneNumber());
         }
-        if (dto.getSecondaryPhone() != null) {
-            student.setSecondaryPhone(dto.getSecondaryPhone());
-        }
-        if (dto.getContactViber() != null) {
-            student.setContactViber(dto.getContactViber());
-        }
         if (dto.getCurrentLivingAddress() != null) {
             student.setCurrentLivingAddress(dto.getCurrentLivingAddress());
         }
@@ -117,83 +78,15 @@ public class StudentServiceImpl implements StudentService {
             student.setHomeTownAddress(dto.getHomeTownAddress());
         }
 
-        if (dto.getFatherName() != null) {
-            student.setFatherName(dto.getFatherName());
-        }
-        if (dto.getPassportNumber() != null) {
-            student.setPassportNumber(dto.getPassportNumber());
-        }
-        if (dto.getNationalID() != null) {
-            student.setNationalID(dto.getNationalID());
-        }
-
-        if (dto.getCurrentJapanLevel() != null) {
-            student.setCurrentJapanLevel(dto.getCurrentJapanLevel());
-        }
-        if (dto.getPassedHighestJLPTLevel() != null) {
-            student.setPassedHighestJLPTLevel(dto.getPassedHighestJLPTLevel());
-        }
-        if (dto.getAttendingClassRelatedStatus() != null) {
-            student.setAttendingClassRelatedStatus(dto.getAttendingClassRelatedStatus());
-        }
-
-        if (dto.getDesiredJobType() != null) {
-            student.setDesiredJobType(dto.getDesiredJobType());
-        }
-        if (dto.getOtherDesiredJobType() != null) {
-            student.setOtherDesiredJobType(dto.getOtherDesiredJobType());
-        }
-
-        if (dto.getJapanTravelExperience() != null) {
-            student.setJapanTravelExperience(dto.getJapanTravelExperience()); // Boolean
-        }
-
-        if (dto.getCoeApplicationExperience() != null) {
-            student.setCoeApplicationExperience(dto.getCoeApplicationExperience()); // Boolean
-        }
-
         if (dto.getReligion() != null) {
             student.setReligion(dto.getReligion());
-        }
-        if (dto.getOtherReligion() != null) {
-            student.setOtherReligion(dto.getOtherReligion());
-        }
-
-        if (dto.getIsSmoking() != null) {
-            student.setIsSmoking(dto.getIsSmoking());
-        }
-        if (dto.getIsAlcoholDrink() != null) {
-            student.setIsAlcoholDrink(dto.getIsAlcoholDrink());
-        }
-        if (dto.getHaveTatto() != null) {
-            student.setHaveTatto(dto.getHaveTatto());
-        }
-
-        if (dto.getAttendingClassRelatedStatus() != null) {
-            student.setAttendingClassRelatedStatus(dto.getAttendingClassRelatedStatus());
-        }
-
-        if (dto.getHostelPreference() != null) {
-            student.setHostelPreference(dto.getHostelPreference()); // Boolean
-        }
-
-        if (dto.getSchedulePaymentTutionDate() != null) {
-            student.setSchedulePaymentTutionDate(dto.getSchedulePaymentTutionDate());
-        }
-        if (dto.getActualTutionPaymentDate() != null) {
-            student.setActualTutionPaymentDate(dto.getActualTutionPaymentDate());
-        }
-
-        if (dto.getMemoNotes() != null) {
-            student.setMemoNotes(dto.getMemoNotes());
         }
 
         if (dto.getEnrolledDate() != null) {
             student.setEnrolledDate(dto.getEnrolledDate());
         }
-
-        if (dto.getStatus() != null) {
-            student.setStatus(dto.getStatus());
+        if (dto.getNationalId() != null) {
+            student.setNationalId(dto.getNationalId());
         }
 
         if (existing == null) {
@@ -212,17 +105,12 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
-    public List<StudentDTO> getStudentsByFilter(String nameSearch, String status) {
+    public List<StudentDTO> getStudentsByFilter(String nameSearch) {
         List<Student> students;
         boolean hasName = nameSearch != null && !nameSearch.isBlank();
-        boolean hasStatus = status != null && !status.isBlank();
 
-        if (hasName && hasStatus) {
-            students = studentRepository.findByStudentNameIgnoreCaseContainingAndStatus(nameSearch, status);
-        } else if (hasName) {
+        if (hasName) {
             students = studentRepository.findByStudentNameIgnoreCaseContaining(nameSearch);
-        } else if (hasStatus) {
-            students = studentRepository.findByStatus(status);
         } else {
             students = studentRepository.findAll();
         }
@@ -286,21 +174,8 @@ public class StudentServiceImpl implements StudentService {
         if (dto.getPhoneNumber() != null) {
             existing.setPhoneNumber(dto.getPhoneNumber());
         }
-
-        if (dto.getDesiredJobType() != null) {
-            existing.setDesiredJobType(dto.getDesiredJobType());
-        }
-
-        if (dto.getStatus() != null) {
-            existing.setStatus(dto.getStatus());
-        }
-
-        if (dto.getPaymentDueDate() != null) {
-            existing.setSchedulePaymentTutionDate(dto.getPaymentDueDate());
-        }
-
-        if (dto.getPaymentDate() != null) {
-            existing.setActualTutionPaymentDate(dto.getPaymentDate());
+        if (dto.getNationalId() != null) {
+            existing.setNationalId(dto.getNationalId());
         }
 
         existing.setUpdatedAt(LocalDate.now());
@@ -343,83 +218,26 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
-    public List<Student> getStudentsByFilterFull(String nameSearch, String status) {
+    public List<Student> getStudentsByFilterFull(String nameSearch) {
         boolean hasName = nameSearch != null && !nameSearch.isBlank();
-        boolean hasStatus = status != null && !status.isBlank();
 
-        if (hasName && hasStatus) {
-            return studentRepository.findByStudentNameIgnoreCaseContainingAndStatus(nameSearch, status);
-        } else if (hasName) {
+        if (hasName) {
             return studentRepository.findByStudentNameIgnoreCaseContaining(nameSearch);
-        } else if (hasStatus) {
-            return studentRepository.findByStatus(status);
         } else {
             return studentRepository.findAll();
         }
     }
 
     @Override
-    public List<StudentDTO> getStudentsByStatuses(String nameSearch, List<String> statuses) {
-        List<Student> students;
-        boolean hasName = nameSearch != null && !nameSearch.isBlank();
-        boolean hasStatuses = statuses != null && !statuses.isEmpty();
-
-        if (hasName && hasStatuses) {
-            students = studentRepository.findByStudentNameIgnoreCaseContainingAndStatusIn(nameSearch, statuses);
-        } else if (hasName) {
-            students = studentRepository.findByStudentNameIgnoreCaseContaining(nameSearch);
-        } else if (hasStatuses) {
-            students = studentRepository.findByStatusIn(statuses);
-        } else {
-            students = studentRepository.findAll();
-        }
-
-        students.sort((s1, s2) -> {
-            String id1 = s1.getStudentId();
-            String id2 = s2.getStudentId();
-
-            if (id1 == null && id2 == null)
-                return 0;
-            if (id1 == null)
-                return 1;
-            if (id2 == null)
-                return -1;
-
-            try {
-                String num1 = id1.replaceAll("[^0-9]", "");
-                String num2 = id2.replaceAll("[^0-9]", "");
-                if (!num1.isEmpty() && !num2.isEmpty()) {
-                    return Integer.compare(Integer.parseInt(num1), Integer.parseInt(num2));
-                }
-            } catch (Exception e) {
-                // Fallback to string comparison
-            }
-            return id1.compareTo(id2);
-        });
-
-        return students.stream()
-                .map(this::convertToDTO)
-                .collect(Collectors.toList());
-    }
-
-    private Integer extractNumberFromStudentId(String studentId) {
-        if (studentId == null || studentId.isEmpty()) {
-            return 0;
-        }
-
-        try {
-            String numericPart = studentId.replaceAll("[^0-9]", "");
-            if (!numericPart.isEmpty()) {
-                return Integer.parseInt(numericPart);
-            }
-        } catch (NumberFormatException e) {
-        }
-
-        return 0;
+    public boolean isNationalIdDuplicate(String nationalId, Long excludeId) {
+        return studentRepository.findByNationalIdAndIdNot(nationalId, excludeId).isPresent();
     }
 
     @Override
-    public boolean isNationalIDDuplicate(String nationalID, Long excludeId) {
-        return studentRepository.findByNationalIDAndIdNot(nationalID, excludeId).isPresent();
+    public List<Student> findByRegistrationStatus(RegistrationStatus status, String nameSearch) {
+        if (nameSearch == null || nameSearch.isBlank()) {
+            return studentRepository.findByRegistrationStatus(status);
+        }
+        return studentRepository.findByRegistrationStatusAndStudentNameIgnoreCaseContaining(status, nameSearch);
     }
 }

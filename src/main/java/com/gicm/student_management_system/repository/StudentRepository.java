@@ -1,5 +1,6 @@
 package com.gicm.student_management_system.repository;
 
+import com.gicm.student_management_system.entity.RegistrationStatus;
 import com.gicm.student_management_system.entity.Student;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -7,25 +8,12 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.Collection;
 
 @Repository
 public interface StudentRepository extends JpaRepository<Student, Long> {
 
-    // Case-insensitive search by name + exact status
-    List<Student> findByStudentNameIgnoreCaseContainingAndStatus(String studentName, String status);
-
     // Case-insensitive search by name only
     List<Student> findByStudentNameIgnoreCaseContaining(String studentName);
-
-    // Search by status only
-    List<Student> findByStatus(String status);
-
-    // Case-insensitive search by name + status in multiple statuses
-    List<Student> findByStudentNameIgnoreCaseContainingAndStatusIn(String studentName, Collection<String> statuses);
-
-    // Search by status in multiple statuses
-    List<Student> findByStatusIn(Collection<String> statuses);
 
     Student findTopByOrderByIdDesc();
 
@@ -43,8 +31,11 @@ public interface StudentRepository extends JpaRepository<Student, Long> {
     List<Student> findByEnrolledDateIsNull();
 
     // Finds a student with the same National ID but a different primary ID
-    Optional<Student> findByNationalIDAndIdNot(String nationalID, Long id);
+    Optional<Student> findByNationalIdAndIdNot(String nationalId, Long id);
 
-    // Find students by attending class related status (class name)
-    List<Student> findByAttendingClassRelatedStatus(String attendingClassRelatedStatus);
+    // Find students by registration status
+    List<Student> findByRegistrationStatus(RegistrationStatus registrationStatus);
+
+    List<Student> findByRegistrationStatusAndStudentNameIgnoreCaseContaining(RegistrationStatus registrationStatus,
+            String studentName);
 }

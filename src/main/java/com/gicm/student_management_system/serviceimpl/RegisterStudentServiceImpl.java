@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.gicm.student_management_system.dto.StudentRegistrationDTO;
+import com.gicm.student_management_system.entity.RegistrationStatus;
 import com.gicm.student_management_system.entity.Student;
 import com.gicm.student_management_system.repository.RegisterStudentRepository;
 import com.gicm.student_management_system.service.RegisterStudentService;
@@ -25,15 +26,8 @@ public class RegisterStudentServiceImpl implements RegisterStudentService {
     @Transactional
     public Student registerStudent(StudentRegistrationDTO dto) {
         // National ID is still required and must be unique
-        if (registerStudentRepository.existsByNationalID(dto.getNationalIdNumber())) {
+        if (registerStudentRepository.existsByNationalId(dto.getNationalIdNumber())) {
             throw new RuntimeException("この国民ID番号は既に登録されています");
-        }
-
-        // Check passport only if provided (now optional)
-        if (dto.getPassportNumber() != null && !dto.getPassportNumber().trim().isEmpty()) {
-            if (registerStudentRepository.existsByPassportNumber(dto.getPassportNumber())) {
-                throw new RuntimeException("このパスポート番号は既に登録されています");
-            }
         }
 
         // Generate unique student ID
@@ -43,35 +37,15 @@ public class RegisterStudentServiceImpl implements RegisterStudentService {
         Student student = Student.builder()
             .studentId(studentId)
             .studentName(dto.getEnglishName())
-            .nameInJapanese(dto.getKatakanaName())
             .dateOfBirth(LocalDate.parse(dto.getDob(), DATE_FORMATTER))
             .gender(dto.getGender())
             .currentLivingAddress(dto.getCurrentAddress())
             .homeTownAddress(dto.getHometownAddress())
             .phoneNumber(dto.getPhoneNumber())
-            .secondaryPhone(dto.getGuardianPhoneNumber())
-            .fatherName(dto.getFatherName())
-            .passportNumber(dto.getPassportNumber())
-            .nationalID(dto.getNationalIdNumber())
-            .currentJapanLevel(dto.getJlptLevel())
-            .desiredJobType(dto.getDesiredOccupation())
-            .otherDesiredJobType(dto.getOtherOccupation())
-            .japanTravelExperience(dto.getJapanTravelExperience())
-            .coeApplicationExperience(dto.getCoeApplicationExperience())
             .religion(dto.getReligion())
-            .otherReligion(dto.getOtherReligion())
-            .isSmoking(dto.getSmoking())
-            .isAlcoholDrink(dto.getAlcohol())
-            .haveTatto(dto.getTattoo())
-            .schedulePaymentTutionDate(
-                dto.getTuitionPaymentDate() != null && !dto.getTuitionPaymentDate().isEmpty()
-                    ? LocalDate.parse(dto.getTuitionPaymentDate(), DATE_FORMATTER)
-                    : null)
-            .hostelPreference(dto.getWantDorm())
-            .memoNotes(dto.getOtherMemo())
-            .status("在校") // Default status: enrolled
-            .contactViber(dto.getPhoneNumber())
+            .nationalId(dto.getNationalIdNumber())
             .enrolledDate(LocalDate.now()) // Add this line - same as createdAt
+            .registrationStatus(RegistrationStatus.PENDING)
             .build();
 
         // Save to database

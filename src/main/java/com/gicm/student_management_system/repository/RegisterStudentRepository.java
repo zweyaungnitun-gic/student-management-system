@@ -9,9 +9,7 @@ import java.util.Optional;
 @Repository
 public interface RegisterStudentRepository extends JpaRepository<Student, Long> {
     Optional<Student> findByStudentId(String studentId);
-    Optional<Student> findByPassportNumber(String passportNumber);
-    Optional<Student> findByNationalID(String nationalID);
+    Optional<Student> findByNationalId(String nationalId);
     boolean existsByStudentId(String studentId);
-    boolean existsByPassportNumber(String passportNumber);
-    boolean existsByNationalID(String nationalID);
+    boolean existsByNationalId(String nationalId);
 }

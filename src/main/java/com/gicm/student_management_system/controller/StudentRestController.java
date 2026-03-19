@@ -15,8 +15,8 @@ public class StudentRestController {
 
     @GetMapping("/check-duplicate-id")
     public boolean checkDuplicate(
-            @RequestParam String nationalID,
+            @RequestParam String nationalId,
             @RequestParam(required = false) Long excludeId) {
-        return studentService.isNationalIDDuplicate(nationalID, excludeId);
+        return studentService.isNationalIdDuplicate(nationalId, excludeId);
     }
 }

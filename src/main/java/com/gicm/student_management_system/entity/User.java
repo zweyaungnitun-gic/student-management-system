@@ -1,5 +1,6 @@
 package com.gicm.student_management_system.entity;
 import java.time.OffsetDateTime;
+import java.util.UUID;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -60,6 +61,9 @@ public class User {
     @PrePersist
     public void onCreate() {
         createdAt = OffsetDateTime.now();
+        if (userId == null || userId.isBlank()) {
+            userId = "USR-" + UUID.randomUUID().toString().substring(0, 8);
+        }
         if (role == null) {
             role = Role.GUEST; // Default role
         }

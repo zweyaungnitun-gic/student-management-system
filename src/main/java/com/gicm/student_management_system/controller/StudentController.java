@@ -4,7 +4,6 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -22,20 +21,15 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.gicm.student_management_system.dto.InterviewNotesDTO;
-import com.gicm.student_management_system.dto.N4ClassDTO;
-import com.gicm.student_management_system.dto.N5ClassDTO;
 import com.gicm.student_management_system.dto.StudentDTO;
 import com.gicm.student_management_system.dto.StudentFullExportDTO;
+import com.gicm.student_management_system.entity.RegistrationStatus;
 import com.gicm.student_management_system.entity.Student;
-import com.gicm.student_management_system.enums.YesNoDisplay;
 import com.gicm.student_management_system.enums.Religion;
 import com.gicm.student_management_system.service.InterviewNotesService;
-import com.gicm.student_management_system.service.N4ClassService;
-import com.gicm.student_management_system.service.N5ClassService;
 import com.gicm.student_management_system.service.StudentExportService;
 import com.gicm.student_management_system.service.StudentService;
 import com.gicm.student_management_system.validation.BasicInfoGroup;
-import com.gicm.student_management_system.validation.StatusGroup;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -47,8 +41,6 @@ public class StudentController {
 
     private final StudentService studentService;
     private final StudentExportService studentExportService;
-    private final N5ClassService n5ClassService;
-    private final N4ClassService n4ClassService;
     private final InterviewNotesService interviewNotesService;
 
     // ---- UI METHODS ----
@@ -59,17 +51,11 @@ public class StudentController {
 
         List<StudentDTO> students;
 
-        // CHECK: If both are empty, it's the "Original Display" (Home) view
-        if (nameSearch.isBlank() && status.isBlank()) {
-            // Fetch everyone without filters
+        // Student no longer has a 'status' column; keep name search only.
+        if (nameSearch.isBlank()) {
             students = studentService.getAllStudents();
         } else {
-            // Fetch based on filters
-            List<String> statuses = new ArrayList<>();
-            if (!status.isBlank()) {
-                statuses = Arrays.asList(status.split(","));
-            }
-            students = studentService.getStudentsByStatuses(nameSearch, statuses);
+            students = studentService.getStudentsByFilter(nameSearch);
         }
 
         // --- Keep your sorting logic exactly as it is ---
@@ -161,37 +147,14 @@ public class StudentController {
         // Fetch Student DTO via Studentservice
         StudentDTO studentDTO = studentService.getStudentById(id);
 
-        // Fetch N5 and N4 DTOs using the services
-        N5ClassDTO n5Class = n5ClassService.getOrCreateN5ClassDTO(id);
-        N4ClassDTO n4Class = n4ClassService.getOrCreateN4ClassDTO(id);
-
         InterviewNotesDTO interviewNotes = interviewNotesService.getOrCreateInterviewNotesDTO(id);
 
-        model.addAttribute("japanTravelExperienceDisplay",
-                YesNoDisplay.from(studentDTO.getJapanTravelExperience()));
-
-        model.addAttribute("coeApplicationExperienceDisplay",
-                YesNoDisplay.from(studentDTO.getCoeApplicationExperience()));
-
-        model.addAttribute("isSmokingDisplay",
-                YesNoDisplay.from(studentDTO.getIsSmoking()));
-
-        model.addAttribute("isAlcoholDrinkDisplay",
-                YesNoDisplay.from(studentDTO.getIsAlcoholDrink()));
-
-        model.addAttribute("haveTattoDisplay",
-                YesNoDisplay.from(studentDTO.getHaveTatto()));
-
-        model.addAttribute("hostelPreferenceDisplay",
-                YesNoDisplay.from(studentDTO.getHostelPreference()));
         String religionLabel = Religion.getLabelFromValue(studentDTO.getReligion());
         model.addAttribute("religionDisplay", religionLabel);
 
         // Map InterviewNotes Entity to InterviewNotesDTO for the view
         // Add attributes to model so details.html can display them
         model.addAttribute("student", studentDTO);
-        model.addAttribute("n5Class", n5Class);
-        model.addAttribute("n4Class", n4Class);
         model.addAttribute("interviewNotes", interviewNotes);
         model.addAttribute("nameSearch", nameSearch);
         model.addAttribute("status", filterStatus);
@@ -235,12 +198,6 @@ public class StudentController {
         Student student = studentService.findById(id)
                 .orElseThrow(() -> new RuntimeException("生徒が見つかりません: ID " + id));
 
-        N5ClassDTO n5ClassDTO = n5ClassService.getOrCreateN5ClassDTO(id);
-        model.addAttribute("n5Class", n5ClassDTO);
-
-        N4ClassDTO n4ClassDTO = n4ClassService.getOrCreateN4ClassDTO(id);
-        model.addAttribute("n4Class", n4ClassDTO);
-
         InterviewNotesDTO interviewNotesDTO = interviewNotesService.getOrCreateInterviewNotesDTO(id);
         model.addAttribute("interviewNotes", interviewNotesDTO);
 
@@ -266,15 +223,6 @@ public class StudentController {
             HttpServletRequest request) {
 
         if (bindingResult.hasErrors()) {
-            Student existingStudent = studentService.findById(id)
-                    .orElseThrow(() -> new RuntimeException("Student not found: " + id));
-
-            N5ClassDTO n5ClassDTO = n5ClassService.getOrCreateN5ClassDTO(id);
-            model.addAttribute("n5Class", n5ClassDTO);
-
-            N4ClassDTO n4ClassDTO = n4ClassService.getOrCreateN4ClassDTO(id);
-            model.addAttribute("n4Class", n4ClassDTO);
-
             InterviewNotesDTO interviewNotesDTO = interviewNotesService.getOrCreateInterviewNotesDTO(id);
             model.addAttribute("interviewNotes", interviewNotesDTO);
 
@@ -288,9 +236,9 @@ public class StudentController {
             return "students/student-update.html";
         }
 
-        if (student.getNationalID() != null && !student.getNationalID().isEmpty()) {
-            if (studentService.isNationalIDDuplicate(student.getNationalID(), id)) {
-                bindingResult.rejectValue("nationalID", "error.duplicate", "この国民IDは既に登録されています。");
+        if (student.getNationalId() != null && !student.getNationalId().isEmpty()) {
+            if (studentService.isNationalIdDuplicate(student.getNationalId(), id)) {
+                bindingResult.rejectValue("nationalId", "error.duplicate", "この国民IDは既に登録されています。");
             }
         }
 
@@ -302,17 +250,14 @@ public class StudentController {
                 .orElseThrow(() -> new RuntimeException("Student not found: " + id));
 
         existingStudent.setStudentName(student.getStudentName());
-        existingStudent.setNameInJapanese(student.getNameInJapanese());
         existingStudent.setDateOfBirth(student.getDateOfBirth());
         existingStudent.setGender(student.getGender());
         existingStudent.setCurrentLivingAddress(student.getCurrentLivingAddress());
         existingStudent.setHomeTownAddress(student.getHomeTownAddress());
         existingStudent.setPhoneNumber(student.getPhoneNumber());
-        existingStudent.setSecondaryPhone(student.getSecondaryPhone());
-        existingStudent.setFatherName(student.getFatherName());
-        existingStudent.setContactViber(student.getContactViber());
-        existingStudent.setPassportNumber(student.getPassportNumber());
-        existingStudent.setNationalID(student.getNationalID());
+        existingStudent.setNationalId(student.getNationalId());
+        existingStudent.setReligion(student.getReligion());
+        existingStudent.setEnrolledDate(student.getEnrolledDate());
         existingStudent.setUpdatedAt(LocalDate.now());
         // existingStudent.setEnrolledDate(LocalDate.now());
 
@@ -321,99 +266,6 @@ public class StudentController {
         redirectAttributes.addFlashAttribute("success", "基本情報が正常に更新されました。");
 
         return buildUpdateRedirectUrl(id, "basic", nameSearch, status);
-    }
-
-    @PreAuthorize("hasRole('ADMIN')")
-    @PostMapping("/update-status/{id}")
-    public String updateStatusInfo(
-            @PathVariable Long id,
-            @Validated(StatusGroup.class) @ModelAttribute("student") Student student,
-            BindingResult bindingResult,
-            RedirectAttributes redirectAttributes,
-            Model model,
-            @RequestParam(value = "nameSearch", defaultValue = "") String nameSearch,
-            @RequestParam(value = "filterStatus", defaultValue = "") String filterStatus) {
-
-        System.out.println("DEBUG: Student ID from Path: " + id);
-        System.out.println("DEBUG: Status received from Form: " + student.getStatus());
-        System.out.println("DEBUG: Has Errors? " + bindingResult.hasErrors());
-
-        if (bindingResult.hasErrors()) {
-            N5ClassDTO n5ClassDTO = n5ClassService.getOrCreateN5ClassDTO(id);
-            N4ClassDTO n4ClassDTO = n4ClassService.getOrCreateN4ClassDTO(id);
-            InterviewNotesDTO interviewNotesDTO = interviewNotesService.getOrCreateInterviewNotesDTO(id);
-
-            model.addAttribute("n5Class", n5ClassDTO);
-            model.addAttribute("n4Class", n4ClassDTO);
-            model.addAttribute("interviewNotes", interviewNotesDTO);
-            model.addAttribute("activeTab", "status");
-            return "students/student-update.html";
-        }
-
-        try {
-            Student existingStudent = studentService.findById(id)
-                    .orElseThrow(() -> new RuntimeException("Student not found: " + id));
-
-            existingStudent.setStatus(student.getStatus());
-            existingStudent.setDesiredJobType(student.getDesiredJobType());
-            existingStudent.setOtherDesiredJobType(student.getOtherDesiredJobType());
-            existingStudent.setReligion(student.getReligion());
-            existingStudent.setOtherReligion(student.getOtherReligion());
-            existingStudent.setCurrentJapanLevel(student.getCurrentJapanLevel());
-            existingStudent.setAttendingClassRelatedStatus(student.getAttendingClassRelatedStatus());
-            existingStudent.setPassedHighestJLPTLevel(student.getPassedHighestJLPTLevel());
-            existingStudent.setJapanTravelExperience(student.getJapanTravelExperience());
-            existingStudent.setCoeApplicationExperience(student.getCoeApplicationExperience());
-            existingStudent.setHostelPreference(student.getHostelPreference());
-            existingStudent.setIsAlcoholDrink(student.getIsAlcoholDrink());
-            existingStudent.setIsSmoking(student.getIsSmoking());
-            existingStudent.setHaveTatto(student.getHaveTatto());
-            existingStudent.setEnrolledDate(student.getEnrolledDate());
-            existingStudent.setSchedulePaymentTutionDate(student.getSchedulePaymentTutionDate());
-            existingStudent.setActualTutionPaymentDate(student.getActualTutionPaymentDate());
-            existingStudent.setMemoNotes(student.getMemoNotes());
-            existingStudent.setUpdatedAt(LocalDate.now());
-
-            studentService.save(existingStudent);
-
-            redirectAttributes.addFlashAttribute("success", "ステータス情報が正常に更新されました。");
-        } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("error", "更新に失敗しました: " + e.getMessage());
-        }
-
-        return buildUpdateRedirectUrl(id, "status", nameSearch, filterStatus);
-    }
-
-    @PreAuthorize("hasRole('ADMIN')")
-    @PostMapping("/update-n5/{id}")
-    public String updateN5ClassInfo(@PathVariable Long id,
-            @ModelAttribute("n5Class") N5ClassDTO n5ClassDTO,
-            @RequestParam(value = "nameSearch", defaultValue = "") String nameSearch,
-            @RequestParam(value = "status", defaultValue = "") String status,
-            RedirectAttributes redirectAttributes) {
-        try {
-            n5ClassService.saveN5ClassDTO(id, n5ClassDTO);
-            redirectAttributes.addFlashAttribute("success", "N5クラス情報が正常に更新されました。");
-        } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("error", "更新に失敗しました: " + e.getMessage());
-        }
-        return buildUpdateRedirectUrl(id, "n5", nameSearch, status);
-    }
-
-    @PreAuthorize("hasRole('ADMIN')")
-    @PostMapping("/update-n4/{id}")
-    public String updateN4ClassInfo(@PathVariable Long id,
-            @ModelAttribute("n4Class") N4ClassDTO n4ClassDTO,
-            @RequestParam(value = "nameSearch", defaultValue = "") String nameSearch,
-            @RequestParam(value = "status", defaultValue = "") String status,
-            RedirectAttributes redirectAttributes) {
-        try {
-            n4ClassService.saveN4ClassDTO(id, n4ClassDTO);
-            redirectAttributes.addFlashAttribute("success", "N4クラス情報が正常に更新されました。");
-        } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("error", "更新に失敗しました。");
-        }
-        return buildUpdateRedirectUrl(id, "n4", nameSearch, status);
     }
 
     @PreAuthorize("hasRole('ADMIN')")
@@ -445,7 +297,7 @@ public class StudentController {
         if (ids != null && !ids.isEmpty()) {
             return studentExportService.getStudentsByIds(ids);
         }
-        return studentExportService.getAllStudentsFull(nameSearch, status);
+        return studentExportService.getAllStudentsFull(nameSearch);
     }
 
     // Helper method to build redirect URL with proper encoding for Japanese
@@ -477,5 +329,41 @@ public class StudentController {
         } catch (Exception e) {
             return "redirect:/students/student-update/" + id + "?tab=" + tab;
         }
+    }
+
+    // ----------------------------------------------------------------------------------------
+    // Registration List (Admin) - Accept / Reject
+    // ----------------------------------------------------------------------------------------
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/registrations")
+    public String listRegistrations(
+            @RequestParam(value = "nameSearch", defaultValue = "") String nameSearch,
+            Model model) {
+        List<Student> pendingStudents = studentService.findByRegistrationStatus(RegistrationStatus.PENDING, nameSearch);
+        model.addAttribute("students", pendingStudents);
+        model.addAttribute("nameSearch", nameSearch);
+        return "students/registration-list";
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping("/registrations/{id}/accept")
+    public String acceptRegistration(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+        Student student = studentService.findById(id)
+                .orElseThrow(() -> new RuntimeException("Student not found: " + id));
+        student.setRegistrationStatus(RegistrationStatus.ACCEPTED);
+        studentService.save(student);
+        redirectAttributes.addFlashAttribute("success", "登録を承認しました。");
+        return "redirect:/students/registrations";
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping("/registrations/{id}/reject")
+    public String rejectRegistration(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+        Student student = studentService.findById(id)
+                .orElseThrow(() -> new RuntimeException("Student not found: " + id));
+        student.setRegistrationStatus(RegistrationStatus.REJECTED);
+        studentService.save(student);
+        redirectAttributes.addFlashAttribute("success", "登録を却下しました。");
+        return "redirect:/students/registrations";
     }
 }

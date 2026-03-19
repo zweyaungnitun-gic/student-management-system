@@ -762,6 +762,9 @@
               </div>
               <div class="ms-auto">
                 <div class="btn-group" role="group">
+                    <a th:href="@{/admin/students/create/step1}" class="btn btn-primary btn-sm" sec:authorize="hasRole('ADMIN')">
+                        <i class="bi bi-person-plus-fill"></i> 生徒追加
+                    </a>
                     <a th:href="@{/teachers}" class="btn btn-outline-primary btn-sm">
                         <i class="bi bi-people-fill"></i> 教師管理
                     </a>

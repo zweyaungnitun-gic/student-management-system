@@ -31,7 +31,7 @@ public class TestResultServiceImpl implements TestResultService {
     private final TestRepository testRepository;
     private final EnrollmentRepository enrollmentRepository;
     private final TeacherRepository teacherRepository;
-    private final StudentRepository studentRepository;
+    private final AdditionalStudentInfoRepository additionalStudentInfoRepository;
     private final GradeCalculationService gradeCalculationService;
 
     private TestResultDTO convertToDTO(TestResult result) {
@@ -257,7 +257,10 @@ public class TestResultServiceImpl implements TestResultService {
         
         Map<String, Object> rankings = new HashMap<>();
         
-        List<Student> students = studentRepository.findByAttendingClassRelatedStatus(className);
+        List<Student> students = additionalStudentInfoRepository.findByAttendingClassRelatedStatus(className).stream()
+            .map(AdditionalStudentInfo::getCommonStudent)
+            .filter(Objects::nonNull)
+            .collect(Collectors.toList());
         
         if (students.isEmpty()) {
             rankings.put("className", className);

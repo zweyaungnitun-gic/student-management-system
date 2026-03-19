@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html
+  lang="ja"
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+>
+  <head
+    th:replace="~{layouts/admin-layout :: head(
+    pageTitle=${'登録申請一覧 | Admin Dashboard'},
+    extraHead=~{::extraCSS},
+    extraJS=~{::extraJS}
+)}"
+  >
+  </head>
+
+  <th:block th:fragment="extraCSS">
+    <link rel="stylesheet" href="/css/student-list.css" />
+  </th:block>
+
+  <th:block th:fragment="extraJS">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  </th:block>
+
+  <body>
+    <div class="dashboard-layout">
+      <!-- Sidebar -->
+      <th:block th:replace="~{layouts/admin-layout :: sidebar(currentPage=${'students'})}"></th:block>
+
+      <div class="sidebar-overlay d-lg-none" data-sidebar-toggle></div>
+
+      <!-- Main -->
+      <div class="dashboard-main">
+        <div class="page-wrapper py-4 py-md-5 px-3 px-md-5">
+          <div class="page-header mb-3">
+            <div class="d-flex align-items-center gap-3">
+              <button
+                class="btn btn-light btn-icon d-lg-none"
+                type="button"
+                aria-label="Toggle sidebar"
+                data-sidebar-toggle
+              >
+                <i class="bi bi-list fs-4"></i>
+              </button>
+              <div>
+                <h1 class="mb-0" style="color: #0a58a0; font-weight: 600; font-size: 1.8rem">
+                  登録申請一覧（PENDING）
+                </h1>
+                <div class="text-muted mt-1">学生が登録フォームから送信した申請を承認 / 却下します。</div>
+              </div>
+              <div class="ms-auto">
+                <div class="btn-group" role="group">
+                  <a th:href="@{/students}" class="btn btn-outline-secondary btn-sm">
+                    <i class="bi bi-arrow-left"></i> 生徒一覧へ戻る
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="table-wrapper p-1" style="border: 1px solid transparent">
+            <div class="table-responsive me-3">
+              <table class="table data-table align-middle border border-radius">
+                <thead>
+                  <tr class="filter-row">
+                    <th colspan="7" class="p-3">
+                      <form th:action="@{/students/registrations}" method="get" id="registrationFilterForm">
+                        <div class="d-flex flex-col md:flex-row align-items-center gap-4 flex-wrap">
+                          <div class="filter-control-group">
+                            <span style="font-size: 16px">名前で検索</span>
+                            <input
+                              type="text"
+                              name="nameSearch"
+                              th:value="${nameSearch}"
+                              class="form-control form-control-sm"
+                              placeholder="名前検索"
+                            />
+                          </div>
+
+                          <div class="ms-auto d-flex gap-2">
+                            <button type="submit" class="btn btn-outline-primary btn-sm">
+                              <i class="bi bi-search"></i> 検索
+                            </button>
+                            <a th:href="@{/students/registrations}" class="btn btn-outline-secondary btn-sm">
+                              <i class="bi bi-x-circle"></i> クリア
+                            </a>
+                          </div>
+                        </div>
+                      </form>
+                    </th>
+                  </tr>
+
+                  <tr>
+                    <th>学生ID</th>
+                    <th>氏名</th>
+                    <th>性別</th>
+                    <th>電話番号</th>
+                    <th>国民ID</th>
+                    <th>登録日</th>
+                    <th class="text-center">操作</th>
+                  </tr>
+                </thead>
+
+                <tbody>
+                  <tr th:if="${#lists.isEmpty(students)}">
+                    <td colspan="7" class="text-center py-4 text-muted">
+                      現在、保留中の登録申請はありません。
+                    </td>
+                  </tr>
+
+                  <tr th:each="student : ${students}">
+                    <td th:text="${student.studentId}">STU001</td>
+                    <td th:text="${student.studentName}">山田 太郎</td>
+                    <td th:text="${student.gender}">Male</td>
+                    <td th:text="${student.phoneNumber}">090-1234-5678</td>
+                    <td th:text="${student.nationalId}">JP-123456789</td>
+                    <td th:text="${student.createdAt}">2025-01-01</td>
+                    <td class="text-center">
+                      <div class="btn-group btn-group-sm" role="group">
+                        <form th:action="@{/students/registrations/{id}/accept(id=${student.id})}" method="post">
+                          <button type="submit" class="btn btn-success">
+                            <i class="bi bi-check-lg"></i> 承認
+                          </button>
+                        </form>
+                        <form
+                          th:action="@{/students/registrations/{id}/reject(id=${student.id})}"
+                          method="post"
+                          class="ms-1"
+                        >
+                          <button type="submit" class="btn btn-outline-danger">
+                            <i class="bi bi-x-lg"></i> 却下
+                          </button>
+                        </form>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
+

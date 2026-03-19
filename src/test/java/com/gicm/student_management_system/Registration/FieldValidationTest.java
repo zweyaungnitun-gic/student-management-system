@@ -161,7 +161,7 @@ public class FieldValidationTest {
         dto.setAlcohol(false);
         dto.setTattoo(false);
         dto.setTuitionPaymentDate("2026-01-01");
-        dto.setWantDorm(true    );
+        dto.setWantDorm(true);
         return dto;
     }
 }

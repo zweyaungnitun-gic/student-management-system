@@ -4,13 +4,14 @@ import java.util.List;
 import java.util.Optional;
 
 import com.gicm.student_management_system.dto.StudentDTO;
+import com.gicm.student_management_system.entity.RegistrationStatus;
 import com.gicm.student_management_system.entity.Student;
 
 public interface StudentService {
 
     List<StudentDTO> getAllStudents();
 
-    List<StudentDTO> getStudentsByFilter(String nameSearch, String status);
+    List<StudentDTO> getStudentsByFilter(String nameSearch);
 
     StudentDTO getStudentById(Long id);
 
@@ -24,13 +25,13 @@ public interface StudentService {
 
     Optional<Student> findById(Long id);
 
-    List<Student> getStudentsByFilterFull(String nameSearch, String status);
+    List<Student> getStudentsByFilterFull(String nameSearch);
 
     Student save(Student student);
 
-    List<StudentDTO> getStudentsByStatuses(String nameSearch, List<String> statuses);
-
     List<Student> findAllByIds(List<Long> ids);
 
-    boolean isNationalIDDuplicate(String nationalID, Long excludeId);
+    boolean isNationalIdDuplicate(String nationalId, Long excludeId);
+
+    List<Student> findByRegistrationStatus(RegistrationStatus status, String nameSearch);
 }

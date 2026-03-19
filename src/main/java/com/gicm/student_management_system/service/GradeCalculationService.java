@@ -27,6 +27,7 @@ public class GradeCalculationService {
     private final EnrollmentRepository enrollmentRepository;
     private final ReportCardRepository reportCardRepository;
     private final StudentRepository studentRepository;
+    private final AdditionalStudentInfoRepository additionalStudentInfoRepository;
     private final ObjectMapper objectMapper;
 
     // Calculate GPA for a student in a specific semester
@@ -132,7 +133,7 @@ public class GradeCalculationService {
 
         // Get class rank
         Integer classRank = calculateClassRank(studentId, academicYear, semester);
-        Integer totalStudents = getTotalStudentsInClass(student.getAttendingClassRelatedStatus());
+        Integer totalStudents = getTotalStudentsInClass(getStudentClassName(studentId));
 
         String academicStanding = determineAcademicStanding(semesterGPA);
 
@@ -239,13 +240,13 @@ public class GradeCalculationService {
     }
 
     private Integer calculateClassRank(Long studentId, String academicYear, String semester) {
-        Student student = studentRepository.findById(studentId).orElse(null);
-        if (student == null || student.getAttendingClassRelatedStatus() == null) {
-            return null;
-        }
+        String className = getStudentClassName(studentId);
+        if (className == null || className.isBlank()) return null;
 
-        List<Student> classmates = studentRepository.findByAttendingClassRelatedStatus(
-            student.getAttendingClassRelatedStatus());
+        List<Student> classmates = additionalStudentInfoRepository.findByAttendingClassRelatedStatus(className).stream()
+            .map(AdditionalStudentInfo::getCommonStudent)
+            .filter(Objects::nonNull)
+            .collect(Collectors.toList());
 
         // Calculate GPA for each student and sort
         List<GradeCalculationDTO> classGPAs = new ArrayList<>();
@@ -271,8 +272,15 @@ public class GradeCalculationService {
     }
 
     private Integer getTotalStudentsInClass(String className) {
-        if (className == null) return 0;
-        return studentRepository.findByAttendingClassRelatedStatus(className).size();
+        if (className == null || className.isBlank()) return 0;
+        return additionalStudentInfoRepository.findByAttendingClassRelatedStatus(className).size();
+    }
+
+    private String getStudentClassName(Long studentId) {
+        if (studentId == null) return null;
+        return additionalStudentInfoRepository.findByCommonStudent_Id(studentId)
+            .map(AdditionalStudentInfo::getAttendingClassRelatedStatus)
+            .orElse(null);
     }
 
     private String determineAcademicStanding(BigDecimal gpa) {
