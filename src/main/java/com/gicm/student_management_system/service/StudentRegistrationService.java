@@ -25,4 +25,3 @@ public interface StudentRegistrationService {
 
     List<StudentRegistration> listRecentAccepted(int limit);
 }
-

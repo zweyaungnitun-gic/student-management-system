@@ -16,4 +16,3 @@ public interface AdditionalStudentInfoRepository extends JpaRepository<Additiona
 
     List<AdditionalStudentInfo> findByAttendingClassRelatedStatus(String attendingClassRelatedStatus);
 }
-

@@ -8,7 +8,6 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 
-// KZT
 public class StudentFullExportDTO {
 
     // データベース上のユニークなID

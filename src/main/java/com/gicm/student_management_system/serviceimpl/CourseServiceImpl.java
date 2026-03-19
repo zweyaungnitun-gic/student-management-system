@@ -7,7 +7,6 @@ import com.gicm.student_management_system.entity.Course;
 import com.gicm.student_management_system.entity.Enrollment;
 import com.gicm.student_management_system.entity.Teacher;
 import com.gicm.student_management_system.entity.Test;
-import com.gicm.student_management_system.entity.TestResult;
 import com.gicm.student_management_system.repository.CourseRepository;
 import com.gicm.student_management_system.repository.EnrollmentRepository;
 import com.gicm.student_management_system.repository.TestRepository;

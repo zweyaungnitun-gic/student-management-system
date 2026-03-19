@@ -98,4 +98,3 @@ public class AdditionalStudentInfo {
     @Column(name = "actual_tution_payment_date")
     private LocalDate actualTutionPaymentDate;
 }
-

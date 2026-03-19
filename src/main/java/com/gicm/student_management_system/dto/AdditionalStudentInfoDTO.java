@@ -32,4 +32,3 @@ public class AdditionalStudentInfoDTO {
     private LocalDate schedulePaymentTutionDate;
     private LocalDate actualTutionPaymentDate;
 }
-

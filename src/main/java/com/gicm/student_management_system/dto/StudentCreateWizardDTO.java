@@ -13,4 +13,3 @@ public class StudentCreateWizardDTO {
     private StudentDTO student;
     private AdditionalStudentInfoDTO additional;
 }
-
