@@ -129,9 +129,33 @@ public class CourseController {
     public String deleteCourse(@PathVariable Long id, RedirectAttributes redirectAttributes) {
         try {
             courseService.deleteCourse(id);
-            redirectAttributes.addFlashAttribute("success", "コースが削除されました");
+            redirectAttributes.addFlashAttribute("success", "コースを非アクティブ状態にしました");
+        } catch (RuntimeException e) {
+            redirectAttributes.addFlashAttribute("warning", e.getMessage());
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", "削除に失敗しました: " + e.getMessage());
+        }
+        return "redirect:/courses";
+    }
+
+    @GetMapping("/deactivate/{id}")
+    public String deactivateCourse(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+        try {
+            courseService.deactivateCourse(id);
+            redirectAttributes.addFlashAttribute("success", "コースを非アクティブ状態にしました");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "処理に失敗しました: " + e.getMessage());
+        }
+        return "redirect:/courses";
+    }
+
+    @GetMapping("/activate/{id}")
+    public String activateCourse(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+        try {
+            courseService.activateCourse(id);
+            redirectAttributes.addFlashAttribute("success", "コースをアクティブ状態にしました");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "処理に失敗しました: " + e.getMessage());
         }
         return "redirect:/courses";
     }
@@ -176,36 +200,36 @@ public class CourseController {
     }
 
     @GetMapping("/export/{id}")
-public ResponseEntity<Resource> exportCourseStudents(@PathVariable Long id) {
-    try {
-        CourseDTO course = courseService.getCourseById(id)
-                .orElseThrow(() -> new RuntimeException("コースが見つかりません"));
-        
-        List<EnrollmentDTO> enrollments = courseService.getEnrollmentsByCourseId(id);
-        
-                StringBuilder csv = new StringBuilder();
-        csv.append("生徒ID,氏名,ステータス,入学日\n");
-        
-        for (EnrollmentDTO enrollment : enrollments) {
-            csv.append(enrollment.getStudentId()).append(",")
-               .append(enrollment.getStudentName()).append(",")
-               .append(enrollment.getStatus()).append(",")
-               .append(enrollment.getEnrollmentDate()).append("\n");
+    public ResponseEntity<Resource> exportCourseStudents(@PathVariable Long id) {
+        try {
+            CourseDTO course = courseService.getCourseById(id)
+                    .orElseThrow(() -> new RuntimeException("コースが見つかりません"));
+            
+            List<EnrollmentDTO> enrollments = courseService.getEnrollmentsByCourseId(id);
+            
+                    StringBuilder csv = new StringBuilder();
+            csv.append("生徒ID,氏名,ステータス,入学日\n");
+            
+            for (EnrollmentDTO enrollment : enrollments) {
+                csv.append(enrollment.getStudentId()).append(",")
+                .append(enrollment.getStudentName()).append(",")
+                .append(enrollment.getStatus()).append(",")
+                .append(enrollment.getEnrollmentDate()).append("\n");
+            }
+            
+            byte[] csvBytes = csv.toString().getBytes(StandardCharsets.UTF_8);
+            
+            ByteArrayResource resource = new ByteArrayResource(csvBytes);
+            
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.CONTENT_DISPOSITION, 
+                        "attachment; filename=\"" + course.getCourseCode() + "_students.csv\"")
+                    .contentType(MediaType.parseMediaType("text/csv"))
+                    .contentLength(csvBytes.length)
+                    .body(resource);
+            
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
-        
-        byte[] csvBytes = csv.toString().getBytes(StandardCharsets.UTF_8);
-        
-        ByteArrayResource resource = new ByteArrayResource(csvBytes);
-        
-        return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION, 
-                       "attachment; filename=\"" + course.getCourseCode() + "_students.csv\"")
-                .contentType(MediaType.parseMediaType("text/csv"))
-                .contentLength(csvBytes.length)
-                .body(resource);
-        
-    } catch (Exception e) {
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
     }
-}
 }

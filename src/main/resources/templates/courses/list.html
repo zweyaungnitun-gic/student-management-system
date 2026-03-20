@@ -123,8 +123,8 @@
                                             <span th:unless="${course.teacherName}" class="text-muted fst-italic">未割当</span>
                                         </td>
                                         <td class="text-center">
-                                            <span th:if="${course.isActive}" class="badge bg-success rounded-pill px-3">アクティブ</span>
-                                            <span th:unless="${course.isActive}" class="badge bg-danger rounded-pill px-3">非アクティブ</span>
+                                            <span th:if="${course.isActive == true}" class="badge bg-success rounded-pill px-3">アクティブ</span>
+                                            <span th:if="${course.isActive == false}" class="badge bg-danger rounded-pill px-3">非アクティブ</span>
                                         </td>
                                         <td class="text-center" th:text="${#temporals.format(course.createdAt, 'yyyy-MM-dd HH:mm')}"></td>
                                         <td class="text-center">
@@ -146,25 +146,33 @@
                                                     <i class="bi bi-pencil-square"></i>
                                                 </a>
                                                 
-                                                <!-- Toggle Active/Inactive Button -->
-                                                <form th:action="@{'/courses/toggle/' + ${course.courseId}}" 
-                                                    method="post" 
-                                                    style="display: inline;">
-                                                    <button type="submit" 
-                                                            class="text-decoration-none text-warning bg-transparent border-0 p-0" 
-                                                            th:title="${course.isActive} ? '非アクティブ化' : 'アクティブ化'"
-                                                            sec:authorize="hasRole('ADMIN')"
-                                                            style="font-size: 1.2rem; cursor: pointer;">
-                                                        <i class="bi bi-arrow-repeat"></i>
-                                                    </button>
-                                                </form>
+                                                <!-- Activate/Deactivate Button -->
+                                                <a th:if="${course.isActive == true}" 
+                                                th:href="@{'/courses/deactivate/' + ${course.courseId}}" 
+                                                class="text-decoration-none text-warning" 
+                                                title="非アクティブ化"
+                                                sec:authorize="hasRole('ADMIN')"
+                                                onclick="return confirm('このコースを非アクティブにしてもよろしいですか？');"
+                                                style="font-size: 1.2rem;">
+                                                    <i class="bi bi-pause-circle"></i>
+                                                </a>
+                                                <a th:if="${course.isActive == false}" 
+                                                th:href="@{'/courses/activate/' + ${course.courseId}}" 
+                                                class="text-decoration-none text-success" 
+                                                title="アクティブ化"
+                                                sec:authorize="hasRole('ADMIN')"
+                                                onclick="return confirm('このコースをアクティブにしてもよろしいですか？');"
+                                                style="font-size: 1.2rem;">
+                                                    <i class="bi bi-play-circle"></i>
+                                                </a>
                                                 
                                                 <!-- Delete Button -->
                                                 <a th:href="@{'/courses/delete/' + ${course.courseId}}" 
                                                 class="text-decoration-none text-danger" 
                                                 title="削除"
                                                 sec:authorize="hasRole('ADMIN')"
-                                                onclick="return confirm('このコースを削除してもよろしいですか？');"
+                                                th:classappend="${course.isActive == true} ? 'opacity-50' : ''"
+                                                th:onclick="${course.isActive == true} ? 'return confirm(\'このコースはアクティブです。削除する代わりに非アクティブ化することをお勧めします。本当に削除しますか？\');' : 'return confirm(\'このコースを完全に削除してもよろしいですか？\');'"
                                                 style="font-size: 1.2rem;">
                                                     <i class="bi bi-trash-fill"></i>
                                                 </a>

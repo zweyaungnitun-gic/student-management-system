@@ -168,10 +168,42 @@ public class CourseServiceImpl implements CourseService {
     @Override
     @Transactional
     public void deleteCourse(Long id) {
-        if (!courseRepository.existsById(id)) {
-            throw new RuntimeException("コースが見つかりません: " + id);
+        Course course = courseRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("コースが見つかりません: " + id));
+        
+        // Check if course has any enrollments
+        List<Enrollment> enrollments = enrollmentRepository.findByCourseId(id);
+        if (!enrollments.isEmpty()) {
+            course.setIsActive(false);
+            courseRepository.save(course);
+            
+            throw new RuntimeException(
+                "このコースには受講生徒がいるため削除できません。コースを非アクティブ状態にしました。"
+            );
         }
-        courseRepository.deleteById(id);
+        
+        course.setIsActive(false);
+        courseRepository.save(course);
+    }
+
+    @Override
+    @Transactional
+    public void deactivateCourse(Long id) {
+        Course course = courseRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("コースが見つかりません: " + id));
+        
+        course.setIsActive(false);
+        courseRepository.save(course);
+    }
+
+    @Override
+    @Transactional
+    public void activateCourse(Long id) {
+        Course course = courseRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("コースが見つかりません: " + id));
+        
+        course.setIsActive(true);
+        courseRepository.save(course);
     }
 
     @Override

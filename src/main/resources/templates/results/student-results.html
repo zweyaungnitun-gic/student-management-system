@@ -29,22 +29,30 @@
                 </div>
 
                 <!-- Action Buttons -->
-                <div class="d-flex justify-content-end gap-2 mb-4">
-                    <a href="javascript:history.back()" class="btn btn-outline-secondary">
-                        <i class="bi bi-arrow-left me-2"></i>戻る
-                    </a>
-                    <a th:href="@{'/results/add?studentId=' + ${student.id}}" 
-                       class="btn btn-success"
-                       sec:authorize="hasRole('ADMIN') or hasRole('TEACHER')">
-                        <i class="bi bi-plus-circle me-2"></i>結果追加
-                    </a>
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <div>
+                        <a href="javascript:history.back()" class="btn btn-outline-secondary">
+                            <i class="bi bi-arrow-left me-2"></i>戻る
+                        </a>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <!-- Excel Download Button -->
+                        <button type="button" id="excelDownloadBtn" class="btn btn-success" onclick="exportToExcel()">
+                            <i class="bi bi-file-earmark-excel me-2"></i>Excelダウンロード
+                        </button>
+                        <a th:href="@{'/results/add?studentId=' + ${student.id}}" 
+                           class="btn btn-primary"
+                           sec:authorize="hasRole('ADMIN') or hasRole('TEACHER')">
+                            <i class="bi bi-plus-circle me-2"></i>結果追加
+                        </a>
+                    </div>
                 </div>
 
                 <!-- Results Table -->
                 <div class="card shadow-sm">
                     <div class="card-body p-0">
                         <div class="table-responsive">
-                            <table class="table table-hover align-middle mb-0">
+                            <table class="table table-hover align-middle mb-0" id="resultsTable">
                                 <thead class="bg-primary text-white">
                                     <tr>
                                         <th>テスト名</th>
@@ -57,21 +65,28 @@
                                         <th class="text-center">操作</th>
                                     </tr>
                                 </thead>
-                                <tbody>
+                                <tbody id="resultsTableBody">
                                     <tr th:each="result : ${results}">
                                         <td th:text="${result.testName}"></td>
                                         <td th:text="${result.courseName}"></td>
                                         <td class="text-center" th:text="${result.scoreObtained} + '/' + ${result.totalMarks}"></td>
-                                        <td class="text-center" th:text="${#numbers.formatDecimal(result.percentage, 1, 1)} + '%'"></td>
                                         <td class="text-center">
-                                            <span class="badge" th:classappend="${result.grade == 'A' or result.grade == 'A+' ? 'bg-success' : 
-                                                                                 (result.grade == 'F' ? 'bg-danger' : 'bg-info')}"
-                                                  th:text="${result.grade}"></span>
+                                            <span th:if="${result.percentage != null}" 
+                                                th:text="${#numbers.formatDecimal(result.percentage, 1, 1)} + '%'"></span>
+                                            <span th:if="${result.percentage == null}">-</span>
                                         </td>
-                                        <td class="text-center" th:text="${result.gpa}"></td>
+                                        <td class="text-center">
+                                            <span class="badge" 
+                                                th:classappend="${result.grade == 'A' or result.grade == 'A+' ? 'bg-success' : 
+                                                                (result.grade == 'F' ? 'bg-danger' : 
+                                                                    (result.grade != null ? 'bg-info' : 'bg-secondary'))}"
+                                                th:text="${result.grade != null ? result.grade : '-'}"></span>
+                                        </td>
+                                        <td class="text-center" th:text="${result.gpa != null ? result.gpa : '-'}"></td>
                                         <td class="text-center">
                                             <span th:if="${result.result == '合格'}" class="badge bg-success">合格</span>
                                             <span th:if="${result.result == '不合格'}" class="badge bg-danger">不合格</span>
+                                            <span th:if="${result.result == null}" class="badge bg-secondary">-</span>
                                         </td>
                                         <td class="text-center">
                                             <a th:href="@{'/results/edit/' + ${result.testResultId}}" 
@@ -91,13 +106,24 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- Pagination -->
+                <div id="pagination" class="d-flex justify-content-center mt-4"></div>
+                
+                <!-- Results count info -->
+                <div class="text-center text-muted small mt-2" id="resultsCountInfo"></div>
             </div>
         </div>
     </div>
 
+    <!-- Include SheetJS for Excel export -->
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
+    
+    <script th:inline="javascript">
         document.addEventListener("DOMContentLoaded", function() {
+            // Sidebar toggle
             const layout = document.querySelector(".dashboard-layout");
             const toggles = document.querySelectorAll("[data-sidebar-toggle]");
             toggles.forEach((btn) =>
@@ -106,6 +132,142 @@
                     layout?.classList.toggle("sidebar-open");
                 })
             );
+
+           // ============ PAGINATION ============
+            const rows = Array.from(document.querySelectorAll("#resultsTable tbody tr")).filter(
+                r => !r.querySelector("td[colspan]")
+            );
+
+            const rowsPerPage = 10;
+            let currentPage = 1;
+
+            function displayPage(page) {
+                currentPage = page;
+                const start = (page - 1) * rowsPerPage;
+                const end = Math.min(start + rowsPerPage, rows.length);
+                
+                // Hide all rows first
+                rows.forEach(row => {
+                    row.style.display = "none";
+                });
+                
+                // Show only current page rows
+                for (let i = start; i < end; i++) {
+                    if (rows[i]) {
+                        rows[i].style.display = "";
+                    }
+                }
+                
+                renderPagination();
+                updateResultsCount(start, end);
+            }
+
+            function renderPagination() {
+                const pageCount = Math.ceil(rows.length / rowsPerPage);
+                const paginationDiv = document.getElementById("pagination");
+                if (!paginationDiv) return;
+                
+                paginationDiv.innerHTML = "";
+                
+                if (rows.length <= rowsPerPage) {
+                    return;
+                }
+                
+                // Previous button
+                const prevBtn = document.createElement("button");
+                prevBtn.innerHTML = "&laquo;";
+                prevBtn.className = `btn btn-sm mx-1 ${currentPage === 1 ? 'btn-secondary' : 'btn-outline-primary'}`;
+                prevBtn.disabled = currentPage === 1;
+                prevBtn.addEventListener("click", () => displayPage(currentPage - 1));
+                paginationDiv.appendChild(prevBtn);
+                
+                // Page numbers
+                let startPage = Math.max(1, currentPage - 2);
+                let endPage = Math.min(pageCount, currentPage + 2);
+                
+                for (let i = startPage; i <= endPage; i++) {
+                    const btn = document.createElement("button");
+                    btn.textContent = i;
+                    btn.className = `btn btn-sm mx-1 ${i === currentPage ? 'btn-primary' : 'btn-outline-primary'}`;
+                    btn.addEventListener("click", () => displayPage(i));
+                    paginationDiv.appendChild(btn);
+                }
+                
+                // Next button
+                const nextBtn = document.createElement("button");
+                nextBtn.innerHTML = "&raquo;";
+                nextBtn.className = `btn btn-sm mx-1 ${currentPage === pageCount ? 'btn-secondary' : 'btn-outline-primary'}`;
+                nextBtn.disabled = currentPage === pageCount;
+                nextBtn.addEventListener("click", () => displayPage(currentPage + 1));
+                paginationDiv.appendChild(nextBtn);
+            }
+
+            function updateResultsCount(start, end) {
+                const countInfo = document.getElementById("resultsCountInfo");
+                if (countInfo) {
+                    countInfo.textContent = `表示: ${start + 1}-${Math.min(end, rows.length)}件 / 全${rows.length}件`;
+                }
+            }
+
+            // Initialize pagination
+            if (rows.length > 0) {
+                displayPage(1);
+            } else {
+                document.getElementById("pagination").innerHTML = "";
+                const countInfo = document.getElementById("resultsCountInfo");
+                if (countInfo) countInfo.innerHTML = "全0件";
+            }
+            // ============ EXCEL DOWNLOAD ============
+            function exportToExcel() {
+                const table = document.getElementById("resultsTable");
+                const rows = table.querySelectorAll("tbody tr");
+                
+                if (rows.length === 0 || (rows.length === 1 && rows[0].querySelector("td[colspan]"))) {
+                    alert("エクスポートするデータがありません。");
+                    return;
+                }
+                
+                const studentNameElement = document.querySelector(".text-muted.mb-0");
+                const studentName = studentNameElement ? studentNameElement.textContent.split('(')[0].trim() : "学生";
+                
+                const excelData = [];
+                
+                excelData.push(["テスト名", "コース", "得点", "満点", "パーセンテージ", "評価", "GPA", "結果", "フィードバック"]);
+                
+                rows.forEach(function(row) {
+                    if (row.querySelector("td[colspan]")) return;
+                    
+                    const cells = row.querySelectorAll("td");
+                    if (cells.length >= 8) {
+                        const testName = cells[0].textContent.trim();
+                        const courseName = cells[1].textContent.trim();
+                        const scoreText = cells[2].textContent.trim().split('/');
+                        const score = scoreText[0] || "";
+                        const totalMarks = scoreText[1] || "";
+                        const percentage = cells[3].textContent.trim().replace('%', '');
+                        const grade = cells[4].textContent.trim();
+                        const gpa = cells[5].textContent.trim();
+                        const result = cells[6].textContent.trim();
+                        const feedback = ""; 
+                        excelData.push([testName, courseName, score, totalMarks, percentage, grade, gpa, result, feedback]);
+                    }
+                });
+                
+                const wb = XLSX.utils.book_new();
+                const ws = XLSX.utils.aoa_to_sheet(excelData);
+                
+                ws['!cols'] = [
+                    { wch: 30 }, { wch: 25 }, { wch: 10 }, { wch: 10 }, 
+                    { wch: 15 }, { wch: 10 }, { wch: 10 }, { wch: 10 }, { wch: 40 }
+                ];
+                
+                XLSX.utils.book_append_sheet(wb, ws, "テスト結果");
+                
+                const timestamp = new Date().toISOString().slice(0, 10).replace(/-/g, "");
+                const filename = `テスト結果_${studentName}_${timestamp}.xlsx`;
+                
+                XLSX.writeFile(wb, filename);
+            }
         });
     </script>
 </body>

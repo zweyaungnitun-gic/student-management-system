@@ -34,52 +34,59 @@ public class TestResultServiceImpl implements TestResultService {
     private final AdditionalStudentInfoRepository additionalStudentInfoRepository;
     private final GradeCalculationService gradeCalculationService;
 
-    private TestResultDTO convertToDTO(TestResult result) {
-        if (result == null) return null;
+private TestResultDTO convertToDTO(TestResult result) {
+    if (result == null) return null;
 
-        String resultStatus = "不合格";
-        if (result.getScoreObtained() != null && result.getTest() != null && 
-            result.getTest().getPassingMarks() != null) {
-            resultStatus = result.getScoreObtained().compareTo(
-                BigDecimal.valueOf(result.getTest().getPassingMarks())) >= 0 ? "合格" : "不合格";
-        }
-
-        Long studentId = null;
-        if (result.getEnrollment() != null && result.getEnrollment().getStudent() != null) {
-            studentId = result.getEnrollment().getStudent().getId();
-        }
-
-        String studentIdNumber = null;
-        if (result.getEnrollment() != null && result.getEnrollment().getStudent() != null) {
-            studentIdNumber = result.getEnrollment().getStudent().getStudentId();
-        }
-
-        String courseName = null;
-        if (result.getTest() != null && result.getTest().getCourse() != null) {
-            courseName = result.getTest().getCourse().getCourseName();
-        }
-
-        return TestResultDTO.builder()
-                .testResultId(result.getTestResultId())
-                .testId(result.getTest() != null ? result.getTest().getTestId() : null)
-                .testName(result.getTest() != null ? result.getTest().getTestName() : null)
-                .enrollmentId(result.getEnrollment() != null ? result.getEnrollment().getEnrollmentId() : null)
-                .studentName(result.getEnrollment() != null && result.getEnrollment().getStudent() != null ? 
-                        result.getEnrollment().getStudent().getStudentName() : null)
-                .studentIdNumber(studentIdNumber)
-                .studentId(studentId)
-                .courseName(courseName)
-                .scoreObtained(result.getScoreObtained())
-                .totalMarks(result.getTest() != null ? result.getTest().getTotalMarks() : null)
-                .passingMarks(result.getTest() != null ? result.getTest().getPassingMarks() : null)
-                .result(resultStatus)
-                .teacherFeedback(result.getTeacherFeedback())
-                .gradedById(result.getGradedBy() != null ? result.getGradedBy().getTeacherId() : null)
-                .gradedByName(result.getGradedBy() != null ? result.getGradedBy().getName() : null)
-                .gradedAt(result.getGradedAt())
-                .submittedAt(result.getSubmittedAt())
-                .build();
+    String resultStatus = "不合格";
+    if (result.getScoreObtained() != null && result.getTest() != null && 
+        result.getTest().getPassingMarks() != null) {
+        resultStatus = result.getScoreObtained().compareTo(
+            BigDecimal.valueOf(result.getTest().getPassingMarks())) >= 0 ? "合格" : "不合格";
     }
+
+    Long studentId = null;
+    if (result.getEnrollment() != null && result.getEnrollment().getStudent() != null) {
+        studentId = result.getEnrollment().getStudent().getId();
+    }
+
+    String studentIdNumber = null;
+    if (result.getEnrollment() != null && result.getEnrollment().getStudent() != null) {
+        studentIdNumber = result.getEnrollment().getStudent().getStudentId();
+    }
+
+    String courseName = null;
+    if (result.getTest() != null && result.getTest().getCourse() != null) {
+        courseName = result.getTest().getCourse().getCourseName();
+    }
+
+    return TestResultDTO.builder()
+            .testResultId(result.getTestResultId())
+            .testId(result.getTest() != null ? result.getTest().getTestId() : null)
+            .testName(result.getTest() != null ? result.getTest().getTestName() : null)
+            .enrollmentId(result.getEnrollment() != null ? result.getEnrollment().getEnrollmentId() : null)
+            .studentName(result.getEnrollment() != null && result.getEnrollment().getStudent() != null ? 
+                    result.getEnrollment().getStudent().getStudentName() : null)
+            .studentIdNumber(studentIdNumber)
+            .studentId(studentId)
+            .courseName(courseName)
+            .scoreObtained(result.getScoreObtained())
+            .totalMarks(result.getTest() != null ? result.getTest().getTotalMarks() : null)
+            .passingMarks(result.getTest() != null ? result.getTest().getPassingMarks() : null)
+            .percentage(result.getPercentage()) 
+            .grade(result.getGrade())            
+            .gpa(result.getGpa())              
+            .result(resultStatus)
+            .teacherFeedback(result.getTeacherFeedback())
+            .gradedById(result.getGradedBy() != null ? result.getGradedBy().getTeacherId() : null)
+            .gradedByName(result.getGradedBy() != null ? result.getGradedBy().getName() : null)
+            .gradedAt(result.getGradedAt())
+            .submittedAt(result.getSubmittedAt())
+            .rankInClass(null)
+            .classAverage(null)
+            .highestScore(null)
+            .lowestScore(null)
+            .build();
+}
 
     private TestResult convertToEntity(TestResultDTO dto) {
         return convertToEntity(dto, null);
@@ -232,7 +239,6 @@ public class TestResultServiceImpl implements TestResultService {
     }
 
     //  REPORT CARD METHODS 
-
     @Override
     @Transactional(readOnly = true)
     public GradeCalculationDTO getStudentGradeSummary(Long studentId, String academicYear, String semester) {

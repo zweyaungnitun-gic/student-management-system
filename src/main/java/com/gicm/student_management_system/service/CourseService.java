@@ -21,5 +21,7 @@ public interface CourseService {
     boolean existsByCourseCode(String courseCode);
     List<EnrollmentDTO> getEnrollmentsByCourseId(Long id);  
     List<TestDTO> getTestsByCourseId(Long id);              
-    Double getAverageScoreByCourseId(Long id);              
+    Double getAverageScoreByCourseId(Long id);   
+    void deactivateCourse(Long id);
+    void activateCourse(Long id);           
 }
