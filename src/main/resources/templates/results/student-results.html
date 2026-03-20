@@ -29,23 +29,23 @@
                 </div>
 
                 <!-- Action Buttons -->
-                <div class="d-flex justify-content-between align-items-center mb-4">
-                    <div>
-                        <a href="javascript:history.back()" class="btn btn-outline-secondary">
-                            <i class="bi bi-arrow-left me-2"></i>戻る
-                        </a>
-                    </div>
-                    <div class="d-flex gap-2">
-                        <!-- Excel Download Button -->
-                        <button type="button" id="excelDownloadBtn" class="btn btn-success" onclick="exportToExcel()">
-                            <i class="bi bi-file-earmark-excel me-2"></i>Excelダウンロード
-                        </button>
-                        <a th:href="@{'/results/add?studentId=' + ${student.id}}" 
-                           class="btn btn-primary"
-                           sec:authorize="hasRole('ADMIN') or hasRole('TEACHER')">
-                            <i class="bi bi-plus-circle me-2"></i>結果追加
-                        </a>
-                    </div>
+                <div class="d-flex justify-content-end align-items-center mb-4 gap-2">
+                    <!-- Back Button -->
+                    <a href="javascript:history.back()" class="btn btn-outline-secondary">
+                        <i class="bi bi-arrow-left me-2"></i>戻る
+                    </a>
+                    
+                    <!-- Excel Download Button -->
+                    <button type="button" id="excelDownloadBtn" class="btn btn-success" onclick="exportToExcel()">
+                        <i class="bi bi-file-earmark-excel me-2"></i>Excelダウンロード
+                    </button>
+                    
+                    <!-- Add Result Button -->
+                    <a th:href="@{'/results/add?studentId=' + ${student.id}}" 
+                    class="btn btn-primary"
+                    sec:authorize="hasRole('ADMIN') or hasRole('TEACHER')">
+                        <i class="bi bi-plus-circle me-2"></i>結果追加
+                    </a>
                 </div>
 
                 <!-- Results Table -->
