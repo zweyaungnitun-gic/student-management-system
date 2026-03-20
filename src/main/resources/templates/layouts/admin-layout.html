@@ -9,103 +9,137 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"/>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"/>
   <link rel="stylesheet" th:href="@{/css/dashboard.css}"/>
+  <style>
+    .transition-icon {
+      transition: transform 0.3s ease;
+    }
+    [aria-expanded="true"] .transition-icon {
+        transform: rotate(180deg);
+    }
+    .sidebar-nav .collapse {
+        border-left: 1px solid rgba(255, 255, 255, 0.1);
+        margin-left: 1.25rem;
+    }
+    </style>
 </head>
 
 <body>
   <!-- Sidebar fragment -->
   <th:block th:fragment="sidebar(currentPage)">
     <aside class="dashboard-sidebar glass-panel">
-      <div class="sidebar-brand gap-3">
-        <div class="brand-badge bg-white shadow-sm">
-          <img th:src="@{/images/gic-logo.png}" alt="GIC logo"/>
-        </div>
-        <div class="flex-grow-1">
-          <p class="text-uppercase text-muted small fw-semibold mb-0 text-nowrap">生徒情報管理システム</p>
-          <!-- <h5 class="mb-0">生徒情報管理システム</h5> -->
-        </div>
+  <div class="sidebar-brand gap-3">
+    <div class="brand-badge bg-white shadow-sm">
+      <img th:src="@{/images/gic-logo.png}" alt="GIC logo"/>
+    </div>
+    <div class="flex-grow-1">
+      <p class="text-uppercase text-muted small fw-semibold mb-0 text-nowrap">生徒情報管理システム</p>
+    </div>
+  </div>
+
+  <div class="sidebar-user">
+    <div class="d-flex align-items-center gap-3">
+      <img class="user-avatar" th:src="@{/images/profile.png}" alt="Admin avatar"/>
+      <div>
+        <p class="mb-0 fw-semibold" th:text="${userName} ?: 'Admin'">Admin</p>
+        <p class="mb-0 small text-muted" th:text="${userRole} ?: 'Role'">Role</p>
       </div>
+    </div>
+  </div>
 
-      <div class="sidebar-user">
-        <div class="d-flex align-items-center gap-3">
-          <img class="user-avatar" th:src="@{/images/profile.png}" alt="Admin avatar"/>
-          <div>
-            <p class="mb-0 fw-semibold" th:text="${userName} ?: 'Admin'">Admin</p>
-            <p class="mb-0 small text-muted" th:text="${userRole} ?: 'Role'">Role</p>
-          </div>
-        </div>
-        <div class="badge badge-muted fw-medium mt-3 w-100 text-center">Verified Account</div>
+  <nav class="sidebar-nav mt-3">
+    <a class="sidebar-link" th:classappend="${currentPage == 'dashboard' ? ' active' : ''}" th:href="@{/dashboard}">
+      <i class="bi bi-speedometer2"></i>
+      <span>ダッシュボード</span>
+      <span class="badge rounded-pill bg-primary ms-auto" style="font-size: 0.7rem;" th:if="${currentPage} == 'dashboard'">New</span>
+    </a>
+
+    <a class="sidebar-link" th:classappend="${currentPage == 'registrations' ? ' active' : ''}" th:href="@{/students/registrations}">
+      <i class="bi bi-inbox"></i>
+      <span>登録申請</span>
+      <span class="badge rounded-pill bg-primary ms-auto" style="font-size: 0.7rem;" th:if="${currentPage} == 'registrations'">New</span>
+    </a>
+
+    <div class="sidebar-label mt-3">管理</div>
+
+    <div class="nav-item">
+      <a class="sidebar-link d-flex align-items-center" 
+          data-bs-toggle="collapse" 
+          href="#managementCollapse" 
+          role="button" 
+          th:aria-expanded="${currentPage == 'students' or currentPage == 'teachers' or currentPage == 'courses' ? 'true' : 'false'}"
+          onclick="return false;">
+        <i class="bi bi-hdd-stack"></i>
+        <span>マスタ管理</span>
+        <i class="bi bi-chevron-down ms-auto small transition-icon"></i>
+      </a>
+      <div class="collapse" id="managementCollapse" th:classappend="${currentPage == 'students' or currentPage == 'teachers' or currentPage == 'courses' ? ' show' : ''}">
+        <nav class="sidebar-nav ps-3">
+          <a class="sidebar-link" th:classappend="${currentPage == 'students' ? ' active' : ''}" th:href="@{/students}">
+            <i class="bi bi-people"></i> <span>生徒管理</span>
+            <span class="badge rounded-pill bg-primary ms-auto" style="font-size: 0.7rem;" th:if="${currentPage} == 'students'">New</span>
+          </a>
+          <a class="sidebar-link" th:classappend="${currentPage == 'teachers' ? ' active' : ''}" th:href="@{/teachers}">
+            <i class="bi bi-person-workspace"></i> <span>教師管理</span>
+            <span class="badge rounded-pill bg-primary ms-auto" style="font-size: 0.7rem;" th:if="${currentPage} == 'teachers'">New</span>
+          </a>
+          <a class="sidebar-link" th:classappend="${currentPage == 'courses' ? ' active' : ''}" th:href="@{/courses}">
+            <i class="bi bi-book"></i> <span>コース管理</span>
+            <span class="badge rounded-pill bg-primary ms-auto" style="font-size: 0.7rem;" th:if="${currentPage} == 'courses'">New</span>
+          </a>
+        </nav>
       </div>
+    </div>
 
-      <nav class="sidebar-nav mt-3">
-          <a class="sidebar-link" th:classappend="${currentPage} == 'dashboard' ? ' active' : ''" th:href="@{/dashboard}">
-              <i class="bi bi-speedometer2"></i>
-              <span>ダッシュボード</span>
-              <span class="sidebar-pill" th:if="${currentPage} == 'dashboard'">Now</span>
+    <div class="nav-item">
+    <a class="sidebar-link d-flex align-items-center" 
+      data-bs-toggle="collapse" 
+      href="#academicCollapse" 
+      role="button" 
+      th:aria-expanded="${currentPage == 'tests' or currentPage == 'results' or currentPage == 'rankings' ? 'true' : 'false'}"
+      onclick="return false;">
+        <i class="bi bi-mortarboard"></i>
+        <span>教務管理</span>
+        <i class="bi bi-chevron-down ms-auto small transition-icon"></i>
+      </a>
+      <div class="collapse" id="academicCollapse" th:classappend="${currentPage == 'tests' or currentPage == 'results' or currentPage == 'rankings' ? ' show' : ''}">
+        <nav class="sidebar-nav ps-3">
+          <a class="sidebar-link" th:classappend="${currentPage == 'tests' ? ' active' : ''}" th:href="@{/tests}">
+            <i class="bi bi-file-text"></i> <span>テスト管理</span>
+            <span class="badge rounded-pill bg-primary ms-auto" style="font-size: 0.7rem;" th:if="${currentPage} == 'tests'">New</span>
           </a>
-          
-          <a class="sidebar-link" th:classappend="${currentPage} == 'students' ? ' active' : ''" th:href="@{/students}">
-              <i class="bi bi-people"></i>
-              <span>生徒管理</span>
-              <span class="sidebar-pill" th:if="${currentPage} == 'students'">Now</span>
+          <a class="sidebar-link" th:classappend="${currentPage == 'results' ? ' active' : ''}" th:href="@{/results}">
+            <i class="bi bi-bar-chart"></i> <span>テスト結果</span>
+            <span class="badge rounded-pill bg-primary ms-auto" style="font-size: 0.7rem;" th:if="${currentPage} == 'results'">New</span>
           </a>
+          <a class="sidebar-link" th:classappend="${currentPage == 'rankings' ? ' active' : ''}" th:href="@{/reports/rankings?className=N5}">
+            <i class="bi bi-trophy"></i> <span>クラス順位</span>
+            <span class="badge rounded-pill bg-primary ms-auto" style="font-size: 0.7rem;" th:if="${currentPage} == 'reports/rankings?className=N5'">New</span>
+          </a>
+        </nav>
+      </div>
+    </div>
 
-          <a class="sidebar-link" th:classappend="${currentPage} == 'registrations' ? ' active' : ''" th:href="@{/students/registrations}">
-              <i class="bi bi-inbox"></i>
-              <span>登録申請</span>
-              <span class="sidebar-pill" th:if="${currentPage} == 'registrations'">Now</span>
-          </a>
-          
-          <a class="sidebar-link" th:classappend="${currentPage} == 'teachers' ? ' active' : ''" th:href="@{/teachers}">
-              <i class="bi bi-person-workspace"></i>
-              <span>教師管理</span>
-              <span class="sidebar-pill" th:if="${currentPage} == 'teachers'">Now</span>
-          </a>
-          
-          <a class="sidebar-link" th:classappend="${currentPage} == 'courses' ? ' active' : ''" th:href="@{/courses}">
-              <i class="bi bi-book"></i>
-              <span>コース管理</span>
-              <span class="sidebar-pill" th:if="${currentPage} == 'courses'">Now</span>
-          </a>
-          
-          <a class="sidebar-link" th:classappend="${currentPage} == 'tests' ? ' active' : ''" th:href="@{/tests}">
-              <i class="bi bi-file-text"></i>
-              <span>テスト管理</span>
-              <span class="sidebar-pill" th:if="${currentPage} == 'tests'">Now</span>
-          </a>
-          
-          <a class="sidebar-link" th:classappend="${currentPage} == 'results' ? ' active' : ''" th:href="@{/results}">
-              <i class="bi bi-bar-chart"></i>
-              <span>テスト結果</span>
-              <span class="sidebar-pill" th:if="${currentPage} == 'results'">Now</span>
-          </a>
+    <div class="sidebar-label mt-3">分析</div>
+    <a class="sidebar-link" th:classappend="${currentPage == 'report-dashboard' ? ' active' : ''}" th:href="@{/reports/dashboard}">
+      <i class="bi bi-pie-chart"></i>
+      <span>レポートダッシュボード</span>
+      <span class="badge rounded-pill bg-primary ms-auto" style="font-size: 0.7rem;" th:if="${currentPage} == 'report-dashboard'">New</span>
+    </a>
 
-          <div class="sidebar-label mt-3">レポート</div>
-          <nav class="sidebar-nav">
-              <a class="sidebar-link" th:classappend="${currentPage} == 'rankings' ? ' active' : ''" th:href="@{/reports/rankings?className=N5}">
-                  <i class="bi bi-trophy"></i>
-                  <span>クラス順位</span>
-                  <span class="sidebar-pill" th:if="${currentPage} == 'rankings'">New</span>
-              </a>
-              <a class="sidebar-link" th:href="@{/reports/dashboard}">
-                  <i class="bi bi-pie-chart"></i>
-                  <span>レポートダッシュボード</span>
-              </a>
-          </nav>
+    <hr class="my-3 mx-3" style="opacity: 0.1; color: white;">
+    <a class="sidebar-link" th:classappend="${currentPage == 'users' ? ' active' : ''}" th:href="@{/users}" sec:authorize="hasRole('ADMIN')">
+      <i class="bi bi-person-badge"></i>
+      <span>ユーザー管理</span>
+      <span class="badge rounded-pill bg-primary ms-auto" style="font-size: 0.7rem;" th:if="${currentPage} == 'users'">New</span>
+    </a>
 
-          <a class="sidebar-link" th:classappend="${currentPage} == 'users' ? ' active' : ''" th:href="@{/users}" sec:authorize="hasRole('ADMIN')">
-              <i class="bi bi-person-badge"></i>
-              <span>ユーザー管理</span>
-              <span class="sidebar-pill" th:if="${currentPage} == 'users'">Now</span>
-          </a>
-                  
-          <div class="sidebar-label mt-3">システム</div>
-          <a class="sidebar-link text-danger fw-semibold" th:href="@{/logout}" 
-            style="background-color: rgba(220, 53, 69, 0.1); border-radius: 8px;">
-              <i class="bi bi-box-arrow-right text-danger"></i>
-              <span class="text-danger">ログアウト</span>
-          </a>
-      </nav>
-    </aside>
+    <a class="sidebar-link text-danger fw-semibold mt-auto" th:href="@{/logout}">
+      <i class="bi bi-box-arrow-right"></i>
+      <span>ログアウト</span>
+    </a>
+  </nav>
+</aside>
+
   </th:block>
 
   <!-- Topbar fragment-->
@@ -148,18 +182,20 @@
   </th:block>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-  <script th:inline="javascript">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
     document.addEventListener("DOMContentLoaded", function () {
-      const layout = document.querySelector(".dashboard-layout");
-      const toggles = document.querySelectorAll("[data-sidebar-toggle]");
-      toggles.forEach(function (btn) {
-        btn.addEventListener("click", function (e) {
-          e.preventDefault();
-          layout?.classList.toggle("sidebar-open");
+        // Sidebar toggle for mobile
+        const layout = document.querySelector(".dashboard-layout");
+        const toggles = document.querySelectorAll("[data-sidebar-toggle]");
+        toggles.forEach(function (btn) {
+            btn.addEventListener("click", function (e) {
+                e.preventDefault();
+                layout?.classList.toggle("sidebar-open");
+            });
         });
-      });
     });
-  </script>
+</script>
 
   <th:block th:if="${pageJs != null}" th:replace="${pageJs}"></th:block>
 
