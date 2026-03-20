@@ -60,7 +60,8 @@
                                     <div class="col-12">
                                         <div class="form-check">
                                             <input type="checkbox" class="form-check-input" name="activeOnly" 
-                                                th:checked="${activeOnly}" id="activeOnly">
+                                                value="true" th:checked="${activeOnly}" id="activeOnly">
+                                            <input type="hidden" name="_activeOnly" value="on"/>
                                             <label class="form-check-label" for="activeOnly">アクティブのみ表示</label>
                                         </div>
                                     </div>

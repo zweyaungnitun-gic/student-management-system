@@ -34,10 +34,13 @@ public class CourseController {
 
     @GetMapping
     public String listCourses(@RequestParam(value = "search", required = false) String search,
-                             @RequestParam(value = "active", required = false) Boolean activeOnly,
-                             Model model) {
+                            @RequestParam(value = "activeOnly", required = false) Boolean activeOnly,
+                            Model model) {
         List<CourseDTO> courses;
-        if (activeOnly != null && activeOnly) {
+        
+        boolean showActiveOnly = activeOnly != null && activeOnly;
+        
+        if (showActiveOnly) {
             courses = courseService.getActiveCourses();
         } else {
             courses = courseService.searchCourses(search);
@@ -45,7 +48,7 @@ public class CourseController {
         
         model.addAttribute("courses", courses);
         model.addAttribute("search", search);
-        model.addAttribute("activeOnly", activeOnly);
+        model.addAttribute("activeOnly", showActiveOnly);
         return "courses/list";
     }
 
