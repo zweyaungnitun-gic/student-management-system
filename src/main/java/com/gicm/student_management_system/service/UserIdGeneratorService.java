@@ -11,13 +11,16 @@ public class UserIdGeneratorService {
     private final UserRepository userRepository;
 
     public String generateUserId() {
-        // Format: USRXXX (e.g., USR001, USR002)
         String prefix = "USR";
+        long count = 1;
+        String userId;
         
-        // Get the total count of users + 1
-        long count = userRepository.count() + 1;
-        String sequence = String.format("%03d", count);
+        do {
+            String sequence = String.format("%03d", count);
+            userId = prefix + sequence;
+            count++;
+        } while (userRepository.existsByUserId(userId));
         
-        return prefix + sequence;
+        return userId;
     }
 }

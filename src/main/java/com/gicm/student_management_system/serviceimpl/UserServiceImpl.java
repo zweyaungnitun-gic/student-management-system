@@ -19,10 +19,11 @@ public class UserServiceImpl implements UserService {
     private final PasswordEncoder passwordEncoder;
     private final UserIdGeneratorService userIdGeneratorService;
 
-    public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder, 
+                        UserIdGeneratorService userIdGeneratorService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
-        this.userIdGeneratorService = null;
+        this.userIdGeneratorService = userIdGeneratorService;
     }
 
     @Override

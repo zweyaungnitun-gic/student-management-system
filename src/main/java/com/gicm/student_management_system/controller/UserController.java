@@ -85,20 +85,6 @@ public class UserController {
         return "redirect:/users";
     }
 
-    @PostMapping("/edit")
-    public String editUserFormPost(@RequestParam Long id, Model model, RedirectAttributes redirectAttributes) {
-        User user = userService.getUserById(id).orElse(null);
-
-        if (user == null) {
-            redirectAttributes.addFlashAttribute("error", "ユーザーが見つかりません");
-            return "redirect:/users";
-        }
-
-        model.addAttribute("user", user);
-        model.addAttribute("roles", Role.values());
-        return "users/edit";
-    }
-
     @PostMapping("/edit/{id}")
     public String updateUser(@PathVariable Long id,
             @Valid @ModelAttribute User userForm,
@@ -107,18 +93,15 @@ public class UserController {
             Model model,
             RedirectAttributes redirectAttributes) {
         
-        // Fetch the original user to preserve immutable fields
         User originalUser = userService.getUserById(id).orElse(null);
         if (originalUser == null) {
             redirectAttributes.addFlashAttribute("error", "ユーザーが見つかりません");
             return "redirect:/users";
         }
 
-        // Preserve immutable fields (id, createdAt) in the form object
         userForm.setId(originalUser.getId());
         userForm.setCreatedAt(originalUser.getCreatedAt());
         
-        // Check for validation errors
         if (bindingResult.hasErrors()) {
             model.addAttribute("roles", Role.values());
             model.addAttribute("newPassword", newPassword); // Preserve password field
@@ -160,5 +143,19 @@ public class UserController {
             redirectAttributes.addFlashAttribute("error", "ユーザーが見つかりません");
             return "redirect:/users";
         }
+    }
+
+    @GetMapping("/edit/{id}")
+    public String showEditForm(@PathVariable Long id, Model model, RedirectAttributes redirectAttributes) {
+        User user = userService.getUserById(id).orElse(null);
+        
+        if (user == null) {
+            redirectAttributes.addFlashAttribute("error", "ユーザーが見つかりません");
+            return "redirect:/users";
+        }
+        
+        model.addAttribute("user", user);
+        model.addAttribute("roles", Role.values());
+        return "users/edit";
     }
 }
