@@ -2,10 +2,12 @@ package com.gicm.student_management_system.controller;
 
 import com.gicm.student_management_system.dto.TestResultDTO;
 import com.gicm.student_management_system.dto.EnrollmentDTO;
+import com.gicm.student_management_system.dto.StudentDTO;
 import com.gicm.student_management_system.service.TestResultService;
 import com.gicm.student_management_system.service.TestService;
 import com.gicm.student_management_system.service.CourseService;
 import com.gicm.student_management_system.service.EnrollmentService;
+import com.gicm.student_management_system.service.StudentService;
 import com.gicm.student_management_system.service.TeacherService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -27,6 +29,7 @@ public class ResultsController {
     private final CourseService courseService;
     private final EnrollmentService enrollmentService;
     private final TeacherService teacherService;
+    private final StudentService studentService;
 
     @GetMapping
     public String listResults(
@@ -46,7 +49,6 @@ public class ResultsController {
             results = testResultService.getAllResults();
         }
         
-        // Filter by student name if provided
         if (studentName != null && !studentName.isEmpty()) {
             String searchLower = studentName.toLowerCase();
             results = results.stream()
@@ -55,7 +57,6 @@ public class ResultsController {
                     .collect(Collectors.toList());
         }
         
-        // Simple pagination in memory
         int pageSize = 20;
         int start = (page - 1) * pageSize;
         int end = Math.min(start + pageSize, results.size());
@@ -181,5 +182,45 @@ public class ResultsController {
         model.addAttribute("test", testService.getTestById(testId).orElse(null));
         
         return "results/test-results";
+    }
+
+    @GetMapping("/student/{studentId}")
+    public String viewStudentResults(@PathVariable Long studentId, Model model) {
+        List<TestResultDTO> results = testResultService.getResultsByStudent(studentId);
+        
+        // Get student info
+        StudentDTO student = studentService.getStudentById(studentId);
+        
+        model.addAttribute("results", results);
+        model.addAttribute("student", student);
+        model.addAttribute("pageTitle", "学生のテスト結果");
+        
+        return "results/student-results";
+    }
+
+    @GetMapping("/add/{testId}")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('TEACHER')")
+    public String showAddFormWithTest(@PathVariable Long testId, Model model) {
+        TestResultDTO resultDTO = new TestResultDTO();
+        resultDTO.setTestId(testId);
+        
+        // Get test details to display
+        testService.getTestById(testId).ifPresent(test -> {
+            model.addAttribute("testName", test.getTestName());
+            model.addAttribute("courseName", test.getCourseName());
+            model.addAttribute("totalMarks", test.getTotalMarks());
+        });
+        
+        model.addAttribute("result", resultDTO);
+        model.addAttribute("tests", testService.getAllTests());
+        
+        testService.getTestById(testId).ifPresent(test -> {
+            List<EnrollmentDTO> enrollments = enrollmentService.getEnrollmentsByCourse(test.getCourseId());
+            model.addAttribute("enrollments", enrollments);
+        });
+        
+        model.addAttribute("teachers", teacherService.getAllTeachers());
+        
+        return "results/form";
     }
 }
