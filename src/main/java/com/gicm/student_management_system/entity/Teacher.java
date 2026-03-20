@@ -29,6 +29,10 @@ public class Teacher {
 
     @Column(name = "department")
     private String department;
+    
+    @Column(name = "is_active")
+    @Builder.Default
+    private Boolean isActive = true;
 
     @Column(name = "created_at", nullable = false)
     private OffsetDateTime createdAt;
@@ -38,6 +42,9 @@ public class Teacher {
         createdAt = OffsetDateTime.now();
         if (teacherCode == null) {
             teacherCode = "TCH" + String.format("%03d", System.currentTimeMillis() % 1000);
+        }
+        if (isActive == null) {
+            isActive = true;
         }
     }
 }

@@ -14,4 +14,7 @@ public interface TeacherService {
     void deleteTeacher(Long id);
     boolean existsByEmail(String email);
     List<TeacherDTO> searchTeachers(String search);
+    
+    void deactivateTeacher(Long id);
+    void activateTeacher(Long id);
 }

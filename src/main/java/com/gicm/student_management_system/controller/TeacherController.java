@@ -38,7 +38,6 @@ public class TeacherController {
         return teacherService.getTeacherById(id)
                 .map(teacher -> {
                     model.addAttribute("teacher", teacher);
-                    // Get courses taught by this teacher
                     List<CourseDTO> courses = courseService.getCoursesByTeacher(id);
                     model.addAttribute("courses", courses);
                     return "teachers/details";
@@ -120,9 +119,34 @@ public class TeacherController {
     public String deleteTeacher(@PathVariable Long id, RedirectAttributes redirectAttributes) {
         try {
             teacherService.deleteTeacher(id);
-            redirectAttributes.addFlashAttribute("success", "教師が削除されました");
+            redirectAttributes.addFlashAttribute("success", "教師を非アクティブ状態にしました");
+        } catch (RuntimeException e) {
+            redirectAttributes.addFlashAttribute("warning", e.getMessage());
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("error", "削除に失敗しました: " + e.getMessage());
+            redirectAttributes.addFlashAttribute("error", "処理に失敗しました: " + e.getMessage());
+        }
+        return "redirect:/teachers";
+    }
+
+    // for manual activate/deactivate
+    @GetMapping("/deactivate/{id}")
+    public String deactivateTeacher(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+        try {
+            teacherService.deactivateTeacher(id);
+            redirectAttributes.addFlashAttribute("success", "教師を非アクティブ状態にしました");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "処理に失敗しました: " + e.getMessage());
+        }
+        return "redirect:/teachers";
+    }
+
+    @GetMapping("/activate/{id}")
+    public String activateTeacher(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+        try {
+            teacherService.activateTeacher(id);
+            redirectAttributes.addFlashAttribute("success", "教師をアクティブ状態にしました");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "処理に失敗しました: " + e.getMessage());
         }
         return "redirect:/teachers";
     }

@@ -16,7 +16,6 @@ import java.time.OffsetDateTime;
 @AllArgsConstructor
 public class TeacherDTO {
     private Long teacherId;
-    
     private String teacherCode; 
 
     @NotBlank(message = "氏名は必須です")
@@ -30,6 +29,7 @@ public class TeacherDTO {
 
     @Size(max = 100, message = "学部/学科は100文字以内で入力してください")
     private String department;
-
+    
+    private Boolean isActive;
     private OffsetDateTime createdAt;
 }

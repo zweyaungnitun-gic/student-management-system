@@ -42,7 +42,6 @@
                         <button type="submit" class="btn btn-primary">
                             <i class="bi bi-search me-2"></i>検索
                         </button>
-                        <!-- Refresh Button -->
                         <a href="/teachers" class="btn btn-outline-secondary">
                             <i class="bi bi-arrow-repeat me-2"></i>リフレッシュ
                         </a>
@@ -76,6 +75,7 @@
                                         <th class="text-center">氏名</th>
                                         <th class="text-center">メールアドレス</th>
                                         <th class="text-center">学部/学科</th>
+                                        <th class="text-center">ステータス</th>  <!-- New column -->
                                         <th class="text-center">登録日</th>
                                         <th class="text-center">操作</th>
                                     </tr>
@@ -85,14 +85,22 @@
                                         <td class="text-center" th:text="${teacher.teacherId}"></td>
                                         <td class="text-center">
                                             <span class="badge bg-primary bg-opacity-10 text-primary px-3 py-2 rounded-pill" 
-                                                  th:text="${teacher.teacherCode}">TCH001</span>
+                                                th:text="${teacher.teacherCode}">TCH001</span>
                                         </td>
                                         <td th:text="${teacher.name}"></td>
                                         <td th:text="${teacher.email}"></td>
                                         <td th:text="${teacher.department} ?: '-'"></td>
+                                        <td class="text-center">
+                                            <!-- Status badge -->
+                                            <span th:if="${teacher.isActive == true}" 
+                                                class="badge bg-success rounded-pill px-3">アクティブ</span>
+                                            <span th:if="${teacher.isActive == false}" 
+                                                class="badge bg-danger rounded-pill px-3">非アクティブ</span>
+                                        </td>
                                         <td class="text-center" th:text="${#temporals.format(teacher.createdAt, 'yyyy-MM-dd HH:mm')}"></td>
                                         <td class="text-center">
                                             <div class="d-flex gap-3 justify-content-center">
+                                                <!-- Edit Button -->
                                                 <a th:href="@{'/teachers/edit/' + ${teacher.teacherId}}" 
                                                 class="text-decoration-none text-primary" 
                                                 title="編集"
@@ -100,17 +108,42 @@
                                                 style="font-size: 1.2rem;">
                                                     <i class="bi bi-pencil-square"></i>
                                                 </a>
+                                                
+                                                <!-- Detail Button -->
                                                 <a th:href="@{'/teachers/' + ${teacher.teacherId}}" 
                                                 class="text-decoration-none text-info" 
                                                 title="詳細"
                                                 style="font-size: 1.2rem;">
                                                     <i class="bi bi-info-circle"></i>
                                                 </a>
+                                                
+                                                <!-- Activate/Deactivate Button -->
+                                                <a th:if="${teacher.isActive == true}" 
+                                                th:href="@{'/teachers/deactivate/' + ${teacher.teacherId}}" 
+                                                class="text-decoration-none text-warning" 
+                                                title="非アクティブ化"
+                                                sec:authorize="hasRole('ADMIN')"
+                                                onclick="return confirm('この教師を非アクティブにしてもよろしいですか？');"
+                                                style="font-size: 1.2rem;">
+                                                    <i class="bi bi-pause-circle"></i>
+                                                </a>
+                                                <a th:if="${teacher.isActive == false}" 
+                                                th:href="@{'/teachers/activate/' + ${teacher.teacherId}}" 
+                                                class="text-decoration-none text-success" 
+                                                title="アクティブ化"
+                                                sec:authorize="hasRole('ADMIN')"
+                                                onclick="return confirm('この教師をアクティブにしてもよろしいですか？');"
+                                                style="font-size: 1.2rem;">
+                                                    <i class="bi bi-play-circle"></i>
+                                                </a>
+                                                
+                                                <!-- Delete Button (only show for inactive teachers or with warning) -->
                                                 <a th:href="@{'/teachers/delete/' + ${teacher.teacherId}}" 
                                                 class="text-decoration-none text-danger" 
                                                 title="削除"
                                                 sec:authorize="hasRole('ADMIN')"
-                                                onclick="return confirm('この教師を削除してもよろしいですか？');"
+                                                th:classappend="${teacher.isActive == true} ? 'opacity-50' : ''"
+                                                th:onclick="${teacher.isActive == true} ? 'return confirm(\'この教師はアクティブです。削除する代わりに非アクティブ化することをお勧めします。本当に削除しますか？\');' : 'return confirm(\'この教師を完全に削除してもよろしいですか？\');'"
                                                 style="font-size: 1.2rem;">
                                                     <i class="bi bi-trash-fill"></i>
                                                 </a>
@@ -118,7 +151,7 @@
                                         </td>
                                     </tr>
                                     <tr th:if="${teachers.size() == 0}">
-                                        <td colspan="7" class="text-center text-muted py-5">
+                                        <td colspan="8" class="text-center text-muted py-5">
                                             <i class="bi bi-inbox fs-1 d-block mb-3"></i>
                                             教師が登録されていません。
                                         </td>
