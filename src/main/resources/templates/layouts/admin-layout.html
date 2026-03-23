@@ -102,33 +102,35 @@
         <i class="bi bi-chevron-down ms-auto small transition-icon"></i>
       </a>
       <div class="collapse" id="academicCollapse" th:classappend="${currentPage == 'tests' or currentPage == 'results' or currentPage == 'rankings' ? ' show' : ''}">
-        <nav class="sidebar-nav ps-3">
-          <a class="sidebar-link" th:classappend="${currentPage == 'tests' ? ' active' : ''}" th:href="@{/tests}">
+    <nav class="sidebar-nav ps-3">
+        <a class="sidebar-link" th:classappend="${currentPage == 'tests' ? ' active' : ''}" th:href="@{/tests}">
             <i class="bi bi-file-text"></i> <span>テスト管理</span>
-            <span class="badge rounded-pill bg-primary ms-auto" style="font-size: 0.7rem;" th:if="${currentPage} == 'tests'">Now</span>
-          </a>
-          <a class="sidebar-link" th:classappend="${currentPage == 'results' ? ' active' : ''}" th:href="@{/results}">
+            <span class="badge rounded-pill bg-primary ms-auto" style="font-size: 0.7rem;" th:if="${currentPage == 'tests'}">Now</span>
+        </a>
+        <a class="sidebar-link" th:classappend="${currentPage == 'results' ? ' active' : ''}" th:href="@{/results}">
             <i class="bi bi-bar-chart"></i> <span>テスト結果</span>
-            <span class="badge rounded-pill bg-primary ms-auto" style="font-size: 0.7rem;" th:if="${currentPage} == 'results'">Now</span>
-          </a>
-          <a class="sidebar-link" th:classappend="${currentPage == 'rankings' ? ' active' : ''}" th:href="@{/reports/rankings?className=N5}">
+            <span class="badge rounded-pill bg-primary ms-auto" style="font-size: 0.7rem;" th:if="${currentPage == 'results'}">Now</span>
+        </a>
+        <a class="sidebar-link" th:classappend="${currentPage == 'rankings' ? ' active' : ''}" th:href="@{/reports/rankings?className=N5}">
             <i class="bi bi-trophy"></i> <span>クラス順位</span>
-            <span class="badge rounded-pill bg-primary ms-auto" style="font-size: 0.7rem;" th:if="${currentPage} == 'reports/rankings?className=N5'">Now</span>
-          </a>
-        </nav>
-      </div>
+            <span class="badge rounded-pill bg-primary ms-auto" style="font-size: 0.7rem;" th:if="${currentPage == 'rankings'}">Now</span>
+        </a>
+    </nav>
+</div>
     </div>
 
-    <hr class="my-3 mx-3" style="opacity: 0.1; color: white;">
+    <div class="sidebar-label mt-3">管理</div>
     <a class="sidebar-link" th:classappend="${currentPage == 'users' ? ' active' : ''}" th:href="@{/users}" sec:authorize="hasRole('ADMIN')">
-      <i class="bi bi-person-badge"></i>
-      <span>ユーザー管理</span>
-      <span class="badge rounded-pill bg-primary ms-auto" style="font-size: 0.7rem;" th:if="${currentPage} == 'users'">Now</span>
+        <i class="bi bi-person-badge"></i>
+        <span>ユーザー管理</span>
+        <span class="badge rounded-pill bg-primary ms-auto" style="font-size: 0.7rem;" th:if="${currentPage} == 'users'">New</span>
     </a>
 
+    <!-- <hr class="my-3 mx-3" style="opacity: 0.1; color: white;"> -->
+
     <a class="sidebar-link text-danger fw-semibold mt-auto" th:href="@{/logout}">
-      <i class="bi bi-box-arrow-right"></i>
-      <span>ログアウト</span>
+        <i class="bi bi-box-arrow-right"></i>
+        <span>ログアウト</span>
     </a>
   </nav>
 </aside>
