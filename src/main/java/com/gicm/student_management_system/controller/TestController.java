@@ -1,9 +1,12 @@
 package com.gicm.student_management_system.controller;
 
 import com.gicm.student_management_system.dto.TestDTO;
+import com.gicm.student_management_system.dto.TestResultDTO;
 import com.gicm.student_management_system.service.TestService;
 import com.gicm.student_management_system.service.CourseService;
 import com.gicm.student_management_system.service.TeacherService;
+import com.gicm.student_management_system.service.TestResultService;
+
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -14,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/tests")
@@ -23,6 +27,7 @@ public class TestController {
     private final TestService testService;
     private final CourseService courseService;
     private final TeacherService teacherService;
+    private final TestResultService testResultService;  
 
     @GetMapping
     public String listTests(@RequestParam(value = "search", required = false) String search,
@@ -49,6 +54,11 @@ public class TestController {
         return testService.getTestById(id)
                 .map(test -> {
                     model.addAttribute("test", test);
+                    // Fetch statistics and results for this test
+                    Map<String, Object> statistics = testResultService.getTestStatistics(id);
+                    List<TestResultDTO> results = testResultService.getResultsByTest(id);
+                    model.addAttribute("statistics", statistics);
+                    model.addAttribute("results", results);
                     return "tests/details";
                 })
                 .orElseGet(() -> {

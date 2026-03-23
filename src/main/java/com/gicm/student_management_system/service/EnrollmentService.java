@@ -15,4 +15,5 @@ public interface EnrollmentService {
     EnrollmentDTO updateEnrollment(Long id, EnrollmentDTO enrollmentDTO);
     void deleteEnrollment(Long id);
     Long countActiveEnrollmentsByCourse(Long courseId);
+    Optional<EnrollmentDTO> getActiveEnrollmentByStudentAndCourse(Long studentId, Long courseId);
 }

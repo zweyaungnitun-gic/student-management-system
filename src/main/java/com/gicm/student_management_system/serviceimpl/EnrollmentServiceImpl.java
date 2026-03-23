@@ -155,4 +155,20 @@ public class EnrollmentServiceImpl implements EnrollmentService {
     public Long countActiveEnrollmentsByCourse(Long courseId) {
         return enrollmentRepository.countActiveEnrollmentsByCourse(courseId);
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Optional<EnrollmentDTO> getActiveEnrollmentByStudentAndCourse(Long studentId, Long courseId) {
+        List<Enrollment> enrollments = enrollmentRepository.findByStudentId(studentId)
+            .stream()
+            .filter(e -> e.getCourse().getCourseId().equals(courseId))
+            .filter(e -> "enrolled".equals(e.getStatus()) || "pending".equals(e.getStatus()))
+            .sorted((e1, e2) -> e2.getEnrollmentRequestDate().compareTo(e1.getEnrollmentRequestDate()))
+            .collect(Collectors.toList());
+        
+        if (enrollments.isEmpty()) {
+            return Optional.empty();
+        }
+        return Optional.of(convertToDTO(enrollments.get(0)));
+    }
 }

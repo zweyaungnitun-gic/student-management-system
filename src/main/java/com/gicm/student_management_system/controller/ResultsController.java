@@ -1,10 +1,13 @@
 package com.gicm.student_management_system.controller;
 
 import com.gicm.student_management_system.dto.TestResultDTO;
+import com.gicm.student_management_system.entity.Student;
 import com.gicm.student_management_system.dto.EnrollmentDTO;
 import com.gicm.student_management_system.dto.StudentDTO;
+import com.gicm.student_management_system.dto.TestDTO;
 import com.gicm.student_management_system.service.TestResultService;
 import com.gicm.student_management_system.service.TestService;
+
 import com.gicm.student_management_system.service.CourseService;
 import com.gicm.student_management_system.service.EnrollmentService;
 import com.gicm.student_management_system.service.StudentService;
@@ -14,8 +17,11 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -238,5 +244,110 @@ public class ResultsController {
         model.addAttribute("teachers", teacherService.getAllTeachers());
         
         return "results/form";
+    }
+
+    @GetMapping("/bulk-upload")
+    @PreAuthorize("hasRole('ADMIN')")
+    public String showBulkUploadForm(Model model) {
+        model.addAttribute("tests", testService.getAllTests());
+        return "results/bulk-upload";
+    }
+
+    @PostMapping("/bulk-upload")
+    @PreAuthorize("hasRole('ADMIN')")
+    public String processBulkUpload(@RequestParam("file") MultipartFile file,
+                                    @RequestParam("testId") Long testId,
+                                    RedirectAttributes redirectAttributes) {
+        try {
+            List<TestResultDTO> results = parseExcelFile(file, testId);
+            testResultService.addBulkResults(results);
+            redirectAttributes.addFlashAttribute("success", results.size() + "件の結果が正常にアップロードされました");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "アップロードに失敗しました: " + e.getMessage());
+        }
+        return "redirect:/results";
+    }
+
+    private List<TestResultDTO> parseExcelFile(MultipartFile file, Long testId) throws IOException {
+        List<TestResultDTO> results = new ArrayList<>();
+        
+        org.apache.poi.ss.usermodel.Workbook workbook = org.apache.poi.ss.usermodel.WorkbookFactory.create(file.getInputStream());
+        org.apache.poi.ss.usermodel.Sheet sheet = workbook.getSheetAt(0);
+        
+        for (int i = 1; i <= sheet.getLastRowNum(); i++) {
+            org.apache.poi.ss.usermodel.Row row = sheet.getRow(i);
+            if (row == null) continue;
+            
+            TestResultDTO dto = new TestResultDTO();
+            dto.setTestId(testId);
+            
+            org.apache.poi.ss.usermodel.Cell studentIdCell = row.getCell(0);
+            String studentId = getCellValueAsString(studentIdCell);
+            if (studentId == null || studentId.isEmpty()) continue;
+            
+            Long enrollmentId = findEnrollmentIdByStudentIdAndTestId(studentId, testId);
+            if (enrollmentId == null) {
+                continue;
+            }
+            dto.setEnrollmentId(enrollmentId);
+            
+            org.apache.poi.ss.usermodel.Cell scoreCell = row.getCell(1);
+            dto.setScoreObtained(BigDecimal.valueOf(getCellValueAsDouble(scoreCell)));
+            
+            org.apache.poi.ss.usermodel.Cell feedbackCell = row.getCell(2);
+            dto.setTeacherFeedback(getCellValueAsString(feedbackCell));
+            
+            results.add(dto);
+        }
+        
+        workbook.close();
+        return results;
+    }
+
+    private String getCellValueAsString(org.apache.poi.ss.usermodel.Cell cell) {
+        if (cell == null) return null;
+        switch (cell.getCellType()) {
+            case STRING:
+                return cell.getStringCellValue();
+            case NUMERIC:
+                return String.valueOf((long) cell.getNumericCellValue());
+            default:
+                return null;
+        }
+    }
+
+    private double getCellValueAsDouble(org.apache.poi.ss.usermodel.Cell cell) {
+        if (cell == null) return 0;
+        switch (cell.getCellType()) {
+            case NUMERIC:
+                return cell.getNumericCellValue();
+            case STRING:
+                try {
+                    return Double.parseDouble(cell.getStringCellValue());
+                } catch (NumberFormatException e) {
+                    return 0;
+                }
+            default:
+                return 0;
+        }
+    }
+
+    private Long findEnrollmentIdByStudentIdAndTestId(String studentId, Long testId) {
+        Optional<TestDTO> testOpt = testService.getTestById(testId);
+        if (testOpt.isEmpty()) {
+            return null;
+        }
+        
+        Long courseId = testOpt.get().getCourseId();
+        
+        Optional<Student> studentOpt = studentService.findByStudentId(studentId);
+        if (studentOpt.isEmpty()) {
+            return null;
+        }
+        
+        Optional<EnrollmentDTO> enrollmentOpt = enrollmentService.getActiveEnrollmentByStudentAndCourse(
+            studentOpt.get().getId(), courseId);
+        
+        return enrollmentOpt.map(EnrollmentDTO::getEnrollmentId).orElse(null);
     }
 }

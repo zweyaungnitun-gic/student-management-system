@@ -34,4 +34,6 @@ public interface StudentService {
     boolean isNationalIdDuplicate(String nationalId, Long excludeId);
 
     List<Student> findByRegistrationStatus(RegistrationStatus status, String nameSearch);
+
+    Optional<Student> findByStudentId(String studentId);
 }

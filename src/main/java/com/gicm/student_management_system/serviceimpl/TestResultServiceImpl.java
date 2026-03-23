@@ -179,8 +179,10 @@ public class TestResultServiceImpl implements TestResultService {
     @Override
     @Transactional(readOnly = true)
     public List<TestResultDTO> getResultsByTest(Long testId) {
+        log.debug("Fetching results for test ID: {}", testId);
         return testResultRepository.findByTestId(testId).stream()
                 .map(this::convertToDTO)
+                .filter(Objects::nonNull) 
                 .collect(Collectors.toList());
     }
 

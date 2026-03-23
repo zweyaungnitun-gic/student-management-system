@@ -160,9 +160,9 @@ public StudentDTO convertToDTO(Student student) {
         return studentRepository.findById(id);
     }
 
-    public Student findByStudentId(String studentId) {
-        return studentRepository.findByStudentId(studentId)
-                .orElse(null);
+    @Override
+    public Optional<Student> findByStudentId(String studentId) {
+        return studentRepository.findByStudentId(studentId);
     }
 
     @Override
