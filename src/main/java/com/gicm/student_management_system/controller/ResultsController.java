@@ -87,6 +87,7 @@ public class ResultsController {
         long passed = allResults.stream().filter(r -> "合格".equals(r.getResult())).count();
         long failed = allResults.stream().filter(r -> "不合格".equals(r.getResult())).count();
         double avgScore = allResults.stream()
+                .filter(r -> r.getScoreObtained() != null)
                 .mapToDouble(r -> r.getScoreObtained().doubleValue())
                 .average()
                 .orElse(0);
@@ -185,16 +186,18 @@ public class ResultsController {
     }
 
     @GetMapping("/student/{studentId}")
-    public String viewStudentResults(@PathVariable Long studentId, Model model) {
-        List<TestResultDTO> results = testResultService.getResultsByStudent(studentId);
-        
-        // Get student info
+    public String viewStudentResults(@PathVariable Long studentId, Model model, RedirectAttributes redirectAttributes) {
         StudentDTO student = studentService.getStudentById(studentId);
-        
+        if (student == null) {
+            redirectAttributes.addFlashAttribute("error", "生徒が見つかりません");
+            return "redirect:/results";
+        }
+
+        List<TestResultDTO> results = testResultService.getResultsByStudent(studentId);
         model.addAttribute("results", results);
         model.addAttribute("student", student);
         model.addAttribute("pageTitle", "学生のテスト結果");
-        
+
         return "results/student-results";
     }
 

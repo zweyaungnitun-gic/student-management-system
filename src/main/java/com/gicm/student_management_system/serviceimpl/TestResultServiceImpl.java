@@ -34,59 +34,111 @@ public class TestResultServiceImpl implements TestResultService {
     private final AdditionalStudentInfoRepository additionalStudentInfoRepository;
     private final GradeCalculationService gradeCalculationService;
 
-private TestResultDTO convertToDTO(TestResult result) {
-    if (result == null) return null;
-
-    String resultStatus = "不合格";
-    if (result.getScoreObtained() != null && result.getTest() != null && 
-        result.getTest().getPassingMarks() != null) {
-        resultStatus = result.getScoreObtained().compareTo(
-            BigDecimal.valueOf(result.getTest().getPassingMarks())) >= 0 ? "合格" : "不合格";
+    private TestResultDTO convertToDTO(TestResult result) {
+        if (result == null) {
+            log.warn("TestResult is null");
+            return null;
+        }
+        
+        try {
+            // Safely get test data
+            Test test = result.getTest();
+            if (test == null) {
+                log.warn("Test is null for test result ID: {}", result.getTestResultId());
+                return null;
+            }
+            
+            Course course = test.getCourse();
+            if (course == null) {
+                log.warn("Course is null for test ID: {}", test.getTestId());
+                return null;
+            }
+            
+            Enrollment enrollment = result.getEnrollment();
+            if (enrollment == null) {
+                log.warn("Enrollment is null for test result ID: {}", result.getTestResultId());
+                return null;
+            }
+            
+            Student student = enrollment.getStudent();
+            if (student == null) {
+                log.warn("Student is null for enrollment ID: {}", enrollment.getEnrollmentId());
+                return null;
+            }
+            
+            // Calculate result status
+            String resultStatus = "不合格";
+            if (result.getScoreObtained() != null && test.getPassingMarks() != null) {
+                resultStatus = result.getScoreObtained().compareTo(
+                    BigDecimal.valueOf(test.getPassingMarks())) >= 0 ? "合格" : "不合格";
+            }
+            
+            // Calculate percentage if not already set
+            Double percentage = result.getPercentage();
+            if (percentage == null && result.getScoreObtained() != null && test.getTotalMarks() != null) {
+                percentage = (result.getScoreObtained().doubleValue() / test.getTotalMarks()) * 100;
+            }
+            
+            // Get grade from entity if set, otherwise calculate
+            String grade = result.getGrade();
+            if (grade == null && percentage != null) {
+                if (percentage >= 90) grade = "A+";
+                else if (percentage >= 80) grade = "A";
+                else if (percentage >= 75) grade = "B+";
+                else if (percentage >= 70) grade = "B";
+                else if (percentage >= 65) grade = "C+";
+                else if (percentage >= 60) grade = "C";
+                else if (percentage >= 55) grade = "D+";
+                else if (percentage >= 50) grade = "D";
+                else grade = "F";
+            }
+            
+            // Get GPA from entity if set, otherwise calculate
+            BigDecimal gpa = result.getGpa();
+            if (gpa == null && percentage != null) {
+                if (percentage >= 80) gpa = BigDecimal.valueOf(4.0);
+                else if (percentage >= 75) gpa = BigDecimal.valueOf(3.5);
+                else if (percentage >= 70) gpa = BigDecimal.valueOf(3.0);
+                else if (percentage >= 65) gpa = BigDecimal.valueOf(2.5);
+                else if (percentage >= 60) gpa = BigDecimal.valueOf(2.0);
+                else if (percentage >= 55) gpa = BigDecimal.valueOf(1.5);
+                else if (percentage >= 50) gpa = BigDecimal.valueOf(1.0);
+                else gpa = BigDecimal.valueOf(0.0);
+            }
+            
+            return TestResultDTO.builder()
+                    .testResultId(result.getTestResultId())
+                    .testId(test.getTestId())
+                    .testName(test.getTestName())
+                    .enrollmentId(enrollment.getEnrollmentId())
+                    .studentName(student.getStudentName())
+                    .studentIdNumber(student.getStudentId())
+                    .studentId(student.getId())
+                    .courseName(course.getCourseName())
+                    .courseCode(course.getCourseCode())
+                    .scoreObtained(result.getScoreObtained())
+                    .totalMarks(test.getTotalMarks())
+                    .passingMarks(test.getPassingMarks())
+                    .percentage(percentage)
+                    .grade(grade)
+                    .gpa(gpa)
+                    .result(resultStatus)
+                    .teacherFeedback(result.getTeacherFeedback())
+                    .gradedById(result.getGradedBy() != null ? result.getGradedBy().getTeacherId() : null)
+                    .gradedByName(result.getGradedBy() != null ? result.getGradedBy().getName() : null)
+                    .gradedAt(result.getGradedAt())
+                    .submittedAt(result.getSubmittedAt())
+                    .rankInClass(null)
+                    .classAverage(null)
+                    .highestScore(null)
+                    .lowestScore(null)
+                    .build();
+                    
+        } catch (Exception e) {
+            log.error("Error converting TestResult to DTO for ID: {}", result.getTestResultId(), e);
+            return null;
+        }
     }
-
-    Long studentId = null;
-    if (result.getEnrollment() != null && result.getEnrollment().getStudent() != null) {
-        studentId = result.getEnrollment().getStudent().getId();
-    }
-
-    String studentIdNumber = null;
-    if (result.getEnrollment() != null && result.getEnrollment().getStudent() != null) {
-        studentIdNumber = result.getEnrollment().getStudent().getStudentId();
-    }
-
-    String courseName = null;
-    if (result.getTest() != null && result.getTest().getCourse() != null) {
-        courseName = result.getTest().getCourse().getCourseName();
-    }
-
-    return TestResultDTO.builder()
-            .testResultId(result.getTestResultId())
-            .testId(result.getTest() != null ? result.getTest().getTestId() : null)
-            .testName(result.getTest() != null ? result.getTest().getTestName() : null)
-            .enrollmentId(result.getEnrollment() != null ? result.getEnrollment().getEnrollmentId() : null)
-            .studentName(result.getEnrollment() != null && result.getEnrollment().getStudent() != null ? 
-                    result.getEnrollment().getStudent().getStudentName() : null)
-            .studentIdNumber(studentIdNumber)
-            .studentId(studentId)
-            .courseName(courseName)
-            .scoreObtained(result.getScoreObtained())
-            .totalMarks(result.getTest() != null ? result.getTest().getTotalMarks() : null)
-            .passingMarks(result.getTest() != null ? result.getTest().getPassingMarks() : null)
-            .percentage(result.getPercentage()) 
-            .grade(result.getGrade())            
-            .gpa(result.getGpa())              
-            .result(resultStatus)
-            .teacherFeedback(result.getTeacherFeedback())
-            .gradedById(result.getGradedBy() != null ? result.getGradedBy().getTeacherId() : null)
-            .gradedByName(result.getGradedBy() != null ? result.getGradedBy().getName() : null)
-            .gradedAt(result.getGradedAt())
-            .submittedAt(result.getSubmittedAt())
-            .rankInClass(null)
-            .classAverage(null)
-            .highestScore(null)
-            .lowestScore(null)
-            .build();
-}
 
     private TestResult convertToEntity(TestResultDTO dto) {
         return convertToEntity(dto, null);
@@ -292,10 +344,8 @@ private TestResultDTO convertToDTO(TestResult result) {
             }
         }
         
-        // Sort by overall GPA descending
         studentGPAs.sort((a, b) -> b.getOverallGPA().compareTo(a.getOverallGPA()));
 
-        // Calculate statistics
         double avgGpa = studentGPAs.stream()
             .mapToDouble(g -> g.getOverallGPA().doubleValue())
             .average()
@@ -328,9 +378,14 @@ private TestResultDTO convertToDTO(TestResult result) {
     @Transactional(readOnly = true)
     public List<TestResultDTO> getAllResults() {
         log.debug("Fetching all test results");
-        return testResultRepository.findAll(Sort.by(Sort.Direction.DESC, "submittedAt")).stream()
+        List<TestResultDTO> results = testResultRepository.findAll(Sort.by(Sort.Direction.DESC, "submittedAt"))
+                .stream()
                 .map(this::convertToDTO)
+                .filter(Objects::nonNull) 
                 .collect(Collectors.toList());
+        
+        log.debug("Found {} valid test results", results.size());
+        return results;
     }
 
     @Override

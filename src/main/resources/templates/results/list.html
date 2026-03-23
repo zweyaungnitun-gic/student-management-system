@@ -37,7 +37,7 @@
                                     <option value="">全てのテスト</option>
                                     <option th:each="test : ${tests}" 
                                             th:value="${test.testId}"
-                                            th:text="${test.testName} + ' (' + ${test.courseName} + ')'"
+                                            th:text="${test.testName + ' (' + test.courseName + ')'}"
                                             th:selected="${param.testId == test.testId}">
                                     </option>
                                 </select>
@@ -111,7 +111,27 @@
                                 </thead>
                                 <tbody id="resultsTableBody">
                                     <tr th:each="result : ${results}">
-                                        <!-- existing row content -->
+                                        <td th:text="${result.testResultId}"></td>
+                                        <td th:text="${result.testName}"></td>
+                                        <td th:text="${result.studentName}"></td>
+                                        <td th:text="${result.courseName}"></td>
+                                        <td class="text-center" th:text="${result.scoreObtained != null and result.totalMarks != null} ? (result.scoreObtained + '/' + result.totalMarks) : '-'"></td>
+                                        <td class="text-center" th:text="${result.percentage != null ? #numbers.formatDecimal(result.percentage, 1, 1) + '%' : '-'}"></td>
+                                        <td class="text-center">
+                                            <span class="badge" th:if="${result.grade != null}" th:classappend="${result.grade == 'A' or result.grade == 'A+' ? 'bg-success' : (result.grade == 'F' ? 'bg-danger' : 'bg-info')}" th:text="${result.grade}"></span>
+                                            <span th:if="${result.grade == null}">-</span>
+                                        </td>
+                                        <td class="text-center" th:text="${result.gpa != null} ? ${result.gpa} : '-'"></td>
+                                        <td class="text-center">
+                                            <span th:if="${result.result == '合格'}" class="badge bg-success">合格</span>
+                                            <span th:if="${result.result == '不合格'}" class="badge bg-danger">不合格</span>
+                                            <span th:if="${result.result != '合格' and result.result != '不合格'}">-</span>
+                                        </td>
+                                        <td class="text-center">
+                                            <a th:href="@{'/results/edit/' + ${result.testResultId}}" class="btn btn-sm btn-outline-primary" title="編集" sec:authorize="hasRole('ADMIN') or hasRole('TEACHER')">
+                                                <i class="bi bi-pencil"></i>
+                                            </a>
+                                        </td>
                                     </tr>
                                     <tr th:if="${results == null or results.size() == 0}">
                                         <td colspan="10" class="text-center text-muted py-5">

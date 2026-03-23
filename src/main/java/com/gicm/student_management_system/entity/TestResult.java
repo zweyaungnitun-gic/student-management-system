@@ -31,19 +31,16 @@ public class TestResult {
     private BigDecimal scoreObtained;
 
     @Column(name = "grade", length = 2)
-    private String grade; // A, B, C, D, F
+    private String grade;
 
     @Column(name = "gpa", precision = 3, scale = 2)
-    private BigDecimal gpa; // GPA value
+    private BigDecimal gpa;
 
     @Column(name = "percentage")
-    private Double percentage; 
+    private Double percentage;
 
     @Column(name = "result", length = 10)
-    private String result; // PASS, FAIL
-
-    @Column(name = "submitted_at")
-    private LocalDateTime submittedAt;
+    private String result;
 
     @Column(name = "teacher_feedback", length = 1000)
     private String teacherFeedback;
@@ -52,30 +49,25 @@ public class TestResult {
     @JoinColumn(name = "graded_by", referencedColumnName = "teacher_id")
     private Teacher gradedBy;
 
+    @Column(name = "submitted_at")
+    private LocalDateTime submittedAt;
+
     @Column(name = "graded_at")
     private LocalDateTime gradedAt;
 
     @PrePersist
-    protected void onCreate() {
-        submittedAt = LocalDateTime.now();
-        gradedAt = LocalDateTime.now();
-        calculateGradeAndGpa();
-    }
-
     @PreUpdate
-    protected void onUpdate() {
-        gradedAt = LocalDateTime.now();
-        calculateGradeAndGpa();
-    }
-
-    private void calculateGradeAndGpa() {
+    protected void calculateGradeAndGpa() {
         if (scoreObtained != null && test != null && test.getTotalMarks() != null && test.getTotalMarks() > 0) {
+            // Calculate percentage
             this.percentage = (scoreObtained.doubleValue() / test.getTotalMarks()) * 100;
             
+            // Set result based on passing marks
             if (test.getPassingMarks() != null) {
                 this.result = scoreObtained.compareTo(BigDecimal.valueOf(test.getPassingMarks())) >= 0 ? "PASS" : "FAIL";
             }
             
+            // Calculate grade and GPA based on percentage
             if (percentage >= 90) {
                 this.grade = "A+";
                 this.gpa = BigDecimal.valueOf(4.0);
