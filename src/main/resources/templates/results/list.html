@@ -37,15 +37,16 @@
                                     <option value="">全てのテスト</option>
                                     <option th:each="test : ${tests}" 
                                             th:value="${test.testId}"
-                                            th:text="${test.testName + ' (' + test.courseName + ')'}"
-                                            th:selected="${param.testId == test.testId}">
+                                            th:text="${test.testName} + ' (' + ${test.courseName} + ')'"
+                                            th:selected="${param.testId != null and param.testId[0] == test.testId.toString()}">
                                     </option>
                                 </select>
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label">生徒名検索</label>
                                 <input type="text" class="form-control" name="studentName" 
-                                       th:value="${param.studentName}" placeholder="生徒名で検索">
+                                    th:value="${param.studentName != null ? param.studentName[0] : ''}" 
+                                    placeholder="生徒名で検索">
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label">コース</label>
@@ -54,7 +55,7 @@
                                     <option th:each="course : ${courses}" 
                                             th:value="${course.courseId}"
                                             th:text="${course.courseName}"
-                                            th:selected="${param.courseId == course.courseId}">
+                                            th:selected="${param.courseId != null and param.courseId[0] == course.courseId.toString()}">
                                     </option>
                                 </select>
                             </div>
@@ -115,7 +116,7 @@
                                         <td th:text="${result.testName}"></td>
                                         <td th:text="${result.studentName}"></td>
                                         <td th:text="${result.courseName}"></td>
-                                        <td class="text-center" th:text="${result.scoreObtained != null and result.totalMarks != null} ? (result.scoreObtained + '/' + result.totalMarks) : '-'"></td>
+                                        <td class="text-center" th:text="${result.scoreObtained != null and result.totalMarks != null ? result.scoreObtained + '/' + result.totalMarks : '-'}"></td>
                                         <td class="text-center" th:text="${result.percentage != null ? #numbers.formatDecimal(result.percentage, 1, 1) + '%' : '-'}"></td>
                                         <td class="text-center">
                                             <span class="badge" th:if="${result.grade != null}" th:classappend="${result.grade == 'A' or result.grade == 'A+' ? 'bg-success' : (result.grade == 'F' ? 'bg-danger' : 'bg-info')}" th:text="${result.grade}"></span>
