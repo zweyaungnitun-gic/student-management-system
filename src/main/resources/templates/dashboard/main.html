@@ -98,144 +98,165 @@
                 </div>
 
                 <!-- Recent Students and Active Courses -->
-                <div class="row g-4">
-                    <!-- Recent Students -->
-                    <div class="col-lg-6">
-                        <div class="card border-0 shadow-sm">
-                            <div class="card-header bg-white py-3">
-                                <h5 class="card-title mb-0">
-                                    <i class="bi bi-clock-history me-2 text-primary"></i>
-                                    最近登録された生徒
-                                </h5>
-                            </div>
-                            <div class="card-body p-0">
-                                <div class="list-group list-group-flush">
-                                    <div th:each="student : ${recentStudents}" 
-                                         class="list-group-item d-flex justify-content-between align-items-center">
-                                        <div>
-                                            <h6 class="mb-1" th:text="${student.studentName}">山田 太郎</h6>
-                                            <small class="text-muted" th:text="${student.studentId}">STU001</small>
-                                        </div>
-                                        <span class="badge bg-primary rounded-pill" th:text="${student.status}">在校</span>
-                                    </div>
-                                    <div th:if="${recentStudents.isEmpty()}" class="list-group-item text-center text-muted py-4">
-                                        最近登録された生徒はいません
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="card-footer bg-white text-end">
-                                <a href="/students" class="btn btn-sm btn-outline-primary">
-                                    すべての生徒を見る <i class="bi bi-arrow-right ms-1"></i>
-                                </a>
-                            </div>
+<!-- Recent Students and Active Courses -->
+<div class="row g-4">
+    <!-- Left Column: Recent Students + Recent Accepted Registrations -->
+    <div class="col-lg-6">
+        <!-- Recent Students -->
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-header bg-white py-3">
+                <h5 class="card-title mb-0">
+                    <i class="bi bi-clock-history me-2 text-primary"></i>
+                    最近登録された生徒
+                </h5>
+            </div>
+            <div class="card-body p-0">
+                <div class="list-group list-group-flush">
+                    <div th:each="student : ${recentStudents}" 
+                         class="list-group-item d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="mb-1" th:text="${student.studentName}">山田 太郎</h6>
+                            <small class="text-muted" th:text="${student.studentId}">STU001</small>
                         </div>
+                        <span class="badge bg-primary rounded-pill" th:text="${student.status}">在校</span>
                     </div>
-
-                    <!-- Recent Accepted Registrations -->
-                    <div class="col-lg-6">
-                        <div class="card border-0 shadow-sm mb-4">
-                            <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
-                                <h5 class="card-title mb-0">
-                                    <i class="bi bi-check2-circle me-2 text-success"></i>
-                                    最近承認された登録申請
-                                </h5>
-                                <a href="/students/registrations?registrationStatus=ACCEPTED" class="btn btn-sm btn-outline-success">
-                                    すべて見る
-                                </a>
-                            </div>
-                            <div class="card-body p-0">
-                                <div class="list-group list-group-flush">
-                                    <a th:each="reg : ${recentAcceptedRegistrations}"
-                                       th:href="@{/students/registrations/{id}(id=${reg.id})}"
-                                       class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
-                                        <div>
-                                            <h6 class="mb-1" th:text="${reg.englishName}">John Doe</h6>
-                                            <small class="text-muted">
-                                                <span th:text="${reg.registrationCode}">REG-000001</span>
-                                                <span th:if="${reg.acceptedStudentId != null}" th:text="${' ・ 学生ID: ' + reg.acceptedStudentId}"></span>
-                                            </small>
-                                        </div>
-                                        <span class="badge bg-success rounded-pill">ACCEPTED</span>
-                                    </a>
-                                    <div th:if="${recentAcceptedRegistrations == null or recentAcceptedRegistrations.isEmpty()}"
-                                         class="list-group-item text-center text-muted py-4">
-                                        最近承認された申請はありません
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="card-footer bg-white text-end">
-                                <a href="/students/registrations?registrationStatus=PENDING" class="btn btn-sm btn-outline-primary">
-                                    PENDING申請を見る <i class="bi bi-arrow-right ms-1"></i>
-                                </a>
-                            </div>
-                        </div>
-
-                        <div class="card border-0 shadow-sm">
-                            <div class="card-header bg-white py-3">
-                                <h5 class="card-title mb-0">
-                                    <i class="bi bi-bookmark-star me-2 text-success"></i>
-                                    アクティブなコース
-                                </h5>
-                            </div>
-                            <div class="card-body p-0">
-                                <div class="list-group list-group-flush">
-                                    <div th:each="course : ${activeCourses}"
-                                         class="list-group-item d-flex justify-content-between align-items-center">
-                                        <div>
-                                            <h6 class="mb-1" th:text="${course.courseName}">Java Programming</h6>
-                                            <small class="text-muted" th:text="${course.courseCode}">JAVA101</small>
-                                        </div>
-                                        <span class="badge bg-success rounded-pill">
-                                            <span th:text="${course.creditHours}">3</span> 単位
-                                        </span>
-                                    </div>
-                                    <div th:if="${activeCourses.isEmpty()}" class="list-group-item text-center text-muted py-4">
-                                        アクティブなコースはありません
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="card-footer bg-white text-end">
-                                <a href="/courses" class="btn btn-sm btn-outline-success">
-                                    すべてのコースを見る <i class="bi bi-arrow-right ms-1"></i>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Active Courses -->
-                    <div class="col-lg-6 d-none">
-                        <div class="card border-0 shadow-sm">
-                            <div class="card-header bg-white py-3">
-                                <h5 class="card-title mb-0">
-                                    <i class="bi bi-bookmark-star me-2 text-success"></i>
-                                    アクティブなコース
-                                </h5>
-                            </div>
-                            <div class="card-body p-0">
-                                <div class="list-group list-group-flush">
-                                    <div th:each="course : ${activeCourses}" 
-                                         class="list-group-item d-flex justify-content-between align-items-center">
-                                        <div>
-                                            <h6 class="mb-1" th:text="${course.courseName}">Java Programming</h6>
-                                            <small class="text-muted" th:text="${course.courseCode}">JAVA101</small>
-                                        </div>
-                                        <span class="badge bg-success rounded-pill">
-                                            <span th:text="${course.creditHours}">3</span> 単位
-                                        </span>
-                                    </div>
-                                    <div th:if="${activeCourses.isEmpty()}" class="list-group-item text-center text-muted py-4">
-                                        アクティブなコースはありません
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="card-footer bg-white text-end">
-                                <a href="/courses" class="btn btn-sm btn-outline-success">
-                                    すべてのコースを見る <i class="bi bi-arrow-right ms-1"></i>
-                                </a>
-                            </div>
-                        </div>
+                    <div th:if="${recentStudents.isEmpty()}" class="list-group-item text-center text-muted py-4">
+                        最近登録された生徒はいません
                     </div>
                 </div>
+            </div>
+            <div class="card-footer bg-white text-end">
+                <a href="/students" class="btn btn-sm btn-outline-primary">
+                    すべての生徒を見る <i class="bi bi-arrow-right ms-1"></i>
+                </a>
+            </div>
+        </div>
+        
+        <!-- Recent Accepted Registrations -->
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+                <h5 class="card-title mb-0">
+                    <i class="bi bi-check2-circle me-2 text-success"></i>
+                    最近承認された登録申請
+                </h5>
+                <a href="/students/registrations?registrationStatus=ACCEPTED" class="btn btn-sm btn-outline-success">
+                    すべて見る
+                </a>
+            </div>
+            <div class="card-body p-0">
+                <div class="list-group list-group-flush">
+                    <a th:each="reg : ${recentAcceptedRegistrations}"
+                       th:href="@{/students/registrations/{id}(id=${reg.id})}"
+                       class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="mb-1" th:text="${reg.englishName}">John Doe</h6>
+                            <small class="text-muted">
+                                <span th:text="${reg.registrationCode}">REG-000001</span>
+                                <span th:if="${reg.acceptedStudentId != null}" th:text="${' ・ 学生ID: ' + reg.acceptedStudentId}"></span>
+                            </small>
+                        </div>
+                        <span class="badge bg-success rounded-pill">ACCEPTED</span>
+                    </a>
+                    <div th:if="${recentAcceptedRegistrations == null or recentAcceptedRegistrations.isEmpty()}"
+                         class="list-group-item text-center text-muted py-4">
+                        最近承認された申請はありません
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer bg-white text-end">
+                <a href="/students/registrations?registrationStatus=PENDING" class="btn btn-sm btn-outline-primary">
+                    PENDING申請を見る <i class="bi bi-arrow-right ms-1"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Right Column: 3 Report Cards + Active Courses -->
+    <div class="col-lg-6">
+        <!-- 3 Report Cards in a row -->
+        <div class="row g-4 mb-4">
+            <!-- 成績サマリー Card -->
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body text-center">
+                        <i class="bi bi-bar-chart-line fs-1 text-primary mb-3"></i>
+                        <h6 class="card-title mb-2">成績サマリー</h6>
+                        <p class="card-text text-muted small mb-3">学生ごとの成績サマリーを表示</p>
+                        <form class="d-flex" onsubmit="window.location.href='/reports/student/' + document.getElementById('studentId').value; return false;">
+                            <input type="number" id="studentId" class="form-control form-control-sm me-1" placeholder="学生ID" style="width: 80px;">
+                            <button type="submit" class="btn btn-sm btn-primary">表示</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 成績表 Card -->
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body text-center">
+                        <i class="bi bi-file-text fs-1 text-success mb-3"></i>
+                        <h6 class="card-title mb-2">成績表</h6>
+                        <p class="card-text text-muted small mb-3">PDF形式の成績表を表示</p>
+                        <form class="d-flex" onsubmit="window.location.href='/reports/report-card/' + document.getElementById('reportStudentId').value; return false;">
+                            <input type="number" id="reportStudentId" class="form-control form-control-sm me-1" placeholder="学生ID" style="width: 80px;">
+                            <button type="submit" class="btn btn-sm btn-success">表示</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- クラス順位 Card -->
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body text-center">
+                        <i class="bi bi-trophy fs-1 text-warning mb-3"></i>
+                        <h6 class="card-title mb-2">クラス順位</h6>
+                        <p class="card-text text-muted small mb-3">クラス内の順位を表示</p>
+                        <select id="className" class="form-select form-select-sm mb-2">
+                            <option value="N5">N5クラス</option>
+                            <option value="N4">N4クラス</option>
+                        </select>
+                        <button class="btn btn-sm btn-warning w-100" onclick="window.location.href='/reports/rankings?className=' + document.getElementById('className').value">
+                            表示
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Active Courses -->
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white py-3">
+                <h5 class="card-title mb-0">
+                    <i class="bi bi-bookmark-star me-2 text-success"></i>
+                    アクティブなコース
+                </h5>
+            </div>
+            <div class="card-body p-0">
+                <div class="list-group list-group-flush">
+                    <div th:each="course : ${activeCourses}"
+                         class="list-group-item d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="mb-1" th:text="${course.courseName}">Java Programming</h6>
+                            <small class="text-muted" th:text="${course.courseCode}">JAVA101</small>
+                        </div>
+                        <span class="badge bg-success rounded-pill">
+                            <span th:text="${course.creditHours}">3</span> 単位
+                        </span>
+                    </div>
+                    <div th:if="${activeCourses.isEmpty()}" class="list-group-item text-center text-muted py-4">
+                        アクティブなコースはありません
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer bg-white text-end">
+                <a href="/courses" class="btn btn-sm btn-outline-success">
+                    すべてのコースを見る <i class="bi bi-arrow-right ms-1"></i>
+                </a>
+              </div>
+        </div>
+    </div>
+</div>
 
                 <!-- Quick Actions -->
                 <div class="row mt-4">
