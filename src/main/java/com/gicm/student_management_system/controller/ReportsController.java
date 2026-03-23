@@ -11,6 +11,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -27,18 +28,42 @@ public class ReportsController {
         return "reports/dashboard";
     }
 
-    @GetMapping("/student/{studentId}")
-    public String studentGradeSummary(@PathVariable Long studentId,
-                                      @RequestParam(defaultValue = "2024-2025") String academicYear,
-                                      @RequestParam(defaultValue = "Semester 1") String semester,
-                                      Model model) {
-        GradeCalculationDTO gradeSummary = testResultService.getStudentGradeSummary(studentId, academicYear, semester);
-        model.addAttribute("gradeSummary", gradeSummary);
-        model.addAttribute("academicYear", academicYear);
-        model.addAttribute("semester", semester);
-        model.addAttribute("pageTitle", "成績サマリー");
-        return "reports/grade-summary";
+@GetMapping("/student/{studentId}")
+public String studentGradeSummary(@PathVariable Long studentId,
+                                  @RequestParam(defaultValue = "2024-2025") String academicYear,
+                                  @RequestParam(defaultValue = "Semester 1") String semester,
+                                  @RequestParam(defaultValue = "1") int page,
+                                  @RequestParam(defaultValue = "10") int size,
+                                  Model model) {
+    GradeCalculationDTO gradeSummary = testResultService.getStudentGradeSummary(studentId, academicYear, semester);
+    
+    // Get test results and apply pagination
+    List<TestResultDTO> allResults = gradeSummary.getTestResults();
+    if (allResults == null) {
+        allResults = new ArrayList<>();
     }
+    
+    int totalResults = allResults.size();
+    int totalPages = (int) Math.ceil((double) totalResults / size);
+    int start = (page - 1) * size;
+    int end = Math.min(start + size, totalResults);
+    
+    List<TestResultDTO> paginatedResults = start < totalResults ? 
+            allResults.subList(start, end) : new ArrayList<>();
+    
+    // Update gradeSummary with paginated results
+    gradeSummary.setTestResults(paginatedResults);
+    
+    model.addAttribute("gradeSummary", gradeSummary);
+    model.addAttribute("academicYear", academicYear);
+    model.addAttribute("semester", semester);
+    model.addAttribute("currentPage", page);
+    model.addAttribute("totalPages", totalPages);
+    model.addAttribute("totalResults", totalResults);
+    model.addAttribute("pageTitle", "成績サマリー");
+    
+    return "reports/grade-summary";
+}
 
     @GetMapping("/report-card/{studentId}")
     public String reportCard(@PathVariable Long studentId,

@@ -108,10 +108,46 @@
                 </div>
 
                 <!-- Pagination -->
-                <div id="pagination" class="d-flex justify-content-center mt-4"></div>
-                
+                <div th:if="${totalPages > 1}" class="d-flex justify-content-center mt-4">
+                    <nav aria-label="Page navigation">
+                        <ul class="pagination">
+                            <!-- Previous button -->
+                            <li class="page-item" th:classappend="${currentPage == 1} ? 'disabled' : ''">
+                                <a class="page-link" th:href="@{/results/student/{studentId}(studentId=${studentId}, page=${currentPage - 1})}" 
+                                th:unless="${currentPage == 1}">
+                                    <i class="bi bi-chevron-left"></i> 前へ
+                                </a>
+                                <span class="page-link" th:if="${currentPage == 1}">
+                                    <i class="bi bi-chevron-left"></i> 前へ
+                                </span>
+                            </li>
+                            
+                            <!-- Page numbers - show only up to 5 pages -->
+                            <li class="page-item" th:each="pageNum : ${#numbers.sequence(1, totalPages)}" 
+                                th:if="${pageNum >= currentPage - 2 and pageNum <= currentPage + 2}"
+                                th:classappend="${pageNum == currentPage} ? 'active' : ''">
+                                <a class="page-link" th:href="@{/results/student/{studentId}(studentId=${studentId}, page=${pageNum})}" 
+                                th:text="${pageNum}"></a>
+                            </li>
+                            
+                            <!-- Next button -->
+                            <li class="page-item" th:classappend="${currentPage == totalPages} ? 'disabled' : ''">
+                                <a class="page-link" th:href="@{/results/student/{studentId}(studentId=${studentId}, page=${currentPage + 1})}" 
+                                th:unless="${currentPage == totalPages}">
+                                    次へ <i class="bi bi-chevron-right"></i>
+                                </a>
+                                <span class="page-link" th:if="${currentPage == totalPages}">
+                                    次へ <i class="bi bi-chevron-right"></i>
+                                </span>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+
                 <!-- Results count info -->
-                <div class="text-center text-muted small mt-2" id="resultsCountInfo"></div>
+                <div class="text-center text-muted small mt-2" th:if="${totalResults > 0}">
+                    表示: <span th:text="${results.size()}"></span>件 / 全<span th:text="${totalResults}"></span>件
+                </div>
             </div>
         </div>
     </div>

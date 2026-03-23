@@ -57,7 +57,7 @@ public class ResultsController {
                     .collect(Collectors.toList());
         }
         
-        int pageSize = 20;
+        int pageSize = 10;
         int start = (page - 1) * pageSize;
         int end = Math.min(start + pageSize, results.size());
         
@@ -186,18 +186,31 @@ public class ResultsController {
     }
 
     @GetMapping("/student/{studentId}")
-    public String viewStudentResults(@PathVariable Long studentId, Model model, RedirectAttributes redirectAttributes) {
+    public String viewStudentResults(@PathVariable Long studentId, 
+                                    @RequestParam(defaultValue = "1") int page,
+                                    @RequestParam(defaultValue = "10") int size,
+                                    Model model) {
+        List<TestResultDTO> allResults = testResultService.getResultsByStudent(studentId);
+        
+        // Pagination logic
+        int totalResults = allResults.size();
+        int totalPages = (int) Math.ceil((double) totalResults / size);
+        int start = (page - 1) * size;
+        int end = Math.min(start + size, totalResults);
+        
+        List<TestResultDTO> paginatedResults = start < totalResults ? 
+                allResults.subList(start, end) : new ArrayList<>();
+        
         StudentDTO student = studentService.getStudentById(studentId);
-        if (student == null) {
-            redirectAttributes.addFlashAttribute("error", "生徒が見つかりません");
-            return "redirect:/results";
-        }
-
-        List<TestResultDTO> results = testResultService.getResultsByStudent(studentId);
-        model.addAttribute("results", results);
+        
+        model.addAttribute("results", paginatedResults);
         model.addAttribute("student", student);
+        model.addAttribute("studentId", studentId);
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", totalPages);
+        model.addAttribute("totalResults", totalResults);
         model.addAttribute("pageTitle", "学生のテスト結果");
-
+        
         return "results/student-results";
     }
 
