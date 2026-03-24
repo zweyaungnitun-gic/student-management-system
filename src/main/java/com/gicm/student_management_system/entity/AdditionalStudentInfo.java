@@ -96,7 +96,8 @@ public class AdditionalStudentInfo {
 
     @Column(name = "actual_tution_payment_date")
     private LocalDate actualTutionPaymentDate;
-    
+
     @Column(name = "other_religion")
     private String otherReligion;
+    
 }

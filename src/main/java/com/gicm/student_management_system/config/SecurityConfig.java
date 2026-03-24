@@ -23,24 +23,24 @@ import com.gicm.student_management_system.security.SessionJwtAuthenticationFilte
 @EnableMethodSecurity(prePostEnabled = true)
 public class SecurityConfig {
 
-    @Autowired
-    private CustomUserDetailsService customUserDetailsService;
+        @Autowired
+        private CustomUserDetailsService customUserDetailsService;
 
-    @Autowired
-    private SessionJwtAuthenticationFilter sessionJwtAuthenticationFilter;
+        @Autowired
+        private SessionJwtAuthenticationFilter sessionJwtAuthenticationFilter;
 
-    @Autowired
-    private CustomAuthSuccessHandler customAuthSuccessHandler;
+        @Autowired
+        private CustomAuthSuccessHandler customAuthSuccessHandler;
 
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
+        @Bean
+        public PasswordEncoder passwordEncoder() {
+                return new BCryptPasswordEncoder();
+        }
 
-    @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig) throws Exception {
-        return authConfig.getAuthenticationManager();
-    }
+        @Bean
+        public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig) throws Exception {
+                return authConfig.getAuthenticationManager();
+        }
 
 @Bean
 public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -89,8 +89,11 @@ public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
                     .maxSessionsPreventsLogin(false))
             .userDetailsService(customUserDetailsService);
 
+                // Add Session JWT filter for form-based authentication with JWT stored in Redis
+                // session
+                http.addFilterAfter(sessionJwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
     http.addFilterAfter(sessionJwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
-    return http.build();
-}
-}
+                return http.build();
+        }return http.build();
+}}

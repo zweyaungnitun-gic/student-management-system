@@ -795,24 +795,18 @@ document.addEventListener("DOMContentLoaded", function() {
                 <i class="bi bi-list fs-4"></i>
               </button>
               <div>
-                <h1 class="mb-0" style="color: #0a58a0; font-weight: 600; font-size: 1.8rem">
-                  生徒情報一覧画面
-                </h1>
+                <h1 class="mb-0" style="color: #0a58a0; font-weight: 600; font-size: 1.8rem" th:text="#{students.student-list.auto_1e0b}">生徒情報一覧画面</h1>
               </div>
               <div class="ms-auto">
                 <div class="btn-group" role="group">
                     <a th:href="@{/admin/students/create/step1}" class="btn btn-primary btn-sm" sec:authorize="hasRole('ADMIN')">
-                        <i class="bi bi-person-plus-fill"></i> 生徒追加
-                    </a>
+                        <i class="bi bi-person-plus-fill"></i><th:block th:text="#{students.student-list.auto_0fd0}">生徒追加</th:block></a>
                     <a th:href="@{/teachers}" class="btn btn-outline-primary btn-sm">
-                        <i class="bi bi-people-fill"></i> 教師管理
-                    </a>
+                        <i class="bi bi-people-fill"></i><th:block th:text="#{students.student-list.auto_5d7c}">教師管理</th:block></a>
                     <a th:href="@{/courses}" class="btn btn-outline-success btn-sm">
-                        <i class="bi bi-book-fill"></i> コース管理
-                    </a>
+                        <i class="bi bi-book-fill"></i><th:block th:text="#{students.student-list.auto_5b1d}">コース管理</th:block></a>
                     <a th:href="@{/users/add}" class="btn btn-outline-warning btn-sm" sec:authorize="hasRole('ADMIN')">
-                        <i class="bi bi-person-plus-fill"></i> ユーザー追加
-                    </a>
+                        <i class="bi bi-person-plus-fill"></i><th:block th:text="#{students.student-list.auto_4f12}">ユーザー追加</th:block></a>
                 </div>
             </div>
             </div>
@@ -831,19 +825,19 @@ document.addEventListener("DOMContentLoaded", function() {
                           <div class="filter-control-group checkbox-group flex flex-row justify-content-start">
                             <div>
                               <input type="checkbox" id="selectAll" class="form-check-input"/>
-                              <span style="font-size: 16px">全て選択</span>
+                              <span style="font-size: 16px" th:text="#{students.student-list.auto_5172}">全て選択</span>
                             </div>
                           </div>
                           <!-- name search -->
                           <div class="filter-control-group">
-                            <span style="font-size: 16px">名前で検索</span>
+                            <span style="font-size: 16px" th:text="#{students.student-list.auto_91a0}">名前で検索</span>
                             <input
                               type="text"
                               name="nameSearch"
                               th:value="${nameSearch}"
                               class="form-control form-control-sm"
                               id="nameSearchInput"
-                              placeholder="名前検索"
+                              th:placeholder="#{placeholder.student.search.name}"
                             />
                           </div>
                           <!-- status filter -->
@@ -853,7 +847,7 @@ document.addEventListener("DOMContentLoaded", function() {
                           >
                             <div id="studentStatusFilter">
                               <div class="filter-control-group">
-                                <label class="filter-label">生徒ステータス</label>
+                                <label class="filter-label" th:text="#{students.student-list.auto_2c3e}">生徒ステータス</label>
                                 <div class="multiselect-wrapper">
                                   <input
                                     type="text"
@@ -866,14 +860,11 @@ document.addEventListener("DOMContentLoaded", function() {
                                   <div id="statusDropdownList"
                                     class="multiselect-dropdown">
                                     <label>
-                                      <input type="checkbox" class="status-option" value="在校"/>
-                                      在校</label>
+                                      <input type="checkbox" class="status-option" value="在校" th:text="#{students.student-list.auto_ed9f}"/>在校</label>
                                     <label>
-                                      <input type="checkbox" class="status-option" value="卒業"> 卒業
-                                    </label>
+                                      <input type="checkbox" class="status-option" value="卒業" th:text="#{students.student-list.auto_bff7}">卒業</label>
                                     <label>
-                                      <input type="checkbox" class="status-option" value="途中退校"/>  途中退校
-                                    </label>
+                                      <input type="checkbox" class="status-option" value="途中退校" th:text="#{students.student-list.auto_b541}"/>途中退校</label>
                                   </div>
                                 </div>
                               </div>
@@ -884,13 +875,9 @@ document.addEventListener("DOMContentLoaded", function() {
                             class="download-button-container flex flex-row justify-content-start"
                           >
                             <button type="button" id="downloadBtn" 
-                              sec:authorize="hasRole('GUEST')" disabled style="cursor: not-allowed; opacity: 0.6;">
-                              ↓ダウンロード
-                            </button>
+                              sec:authorize="hasRole('GUEST')" disabled style="cursor: not-allowed; opacity: 0.6;" th:text="#{students.student-list.auto_3151}">↓ダウンロード</button>
                             <button type="button" id="downloadBtn" 
-                              sec:authorize="hasRole('ADMIN')">
-                              ↓ダウンロード
-                            </button>
+                              sec:authorize="hasRole('ADMIN')" th:text="#{students.student-list.auto_3151}">↓ダウンロード</button>
                           </div>
                         </div>
                         <button type="submit" style="display: none"></button>
@@ -900,15 +887,15 @@ document.addEventListener("DOMContentLoaded", function() {
                   </tr>
 
                   <tr>
-                    <th scope="col" style="width: 50px">生徒ID</th>
-                    <th scope="col" style="width: 100px">名前</th>
-                    <th scope="col" style="width: 80px">性別</th>
-                    <th scope="col" style="width: 100px">電話番号</th>
-                    <th scope="col" style="width: 100px">希望職種</th>
-                    <th scope="col" style="width: 80px">ステータス</th>
-                    <th scope="col" style="width: 100px">支払予定日</th>
-                    <th scope="col" style="width: 100px">支払実績日</th>
-                    <th scope="col" style="width: 120px">動作機能</th>
+                    <th scope="col" style="width: 50px" th:text="#{students.student-list.auto_7ea9}">生徒ID</th>
+                    <th scope="col" style="width: 100px" th:text="#{students.student-list.auto_5b9e}">名前</th>
+                    <th scope="col" style="width: 80px" th:text="#{students.student-list.auto_4288}">性別</th>
+                    <th scope="col" style="width: 100px" th:text="#{students.student-list.auto_f32c}">電話番号</th>
+                    <th scope="col" style="width: 100px" th:text="#{students.student-list.auto_fe09}">希望職種</th>
+                    <th scope="col" style="width: 80px" th:text="#{students.student-list.auto_54dd}">ステータス</th>
+                    <th scope="col" style="width: 100px" th:text="#{students.student-list.auto_9141}">支払予定日</th>
+                    <th scope="col" style="width: 100px" th:text="#{students.student-list.auto_74f7}">支払実績日</th>
+                    <th scope="col" style="width: 120px" th:text="#{students.student-list.auto_22f0}">動作機能</th>
                   </tr>
                 </thead>
 
@@ -971,9 +958,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
                 <tbody th:if="${students == null || students.size() == 0}">
                   <tr>
-                    <td colspan="10" class="text-center text-muted py-5">
-                      生徒情報がありません。
-                    </td>
+                    <td colspan="10" class="text-center text-muted py-5" th:text="#{students.student-list.auto_0a90}">生徒情報がありません。</td>
                   </tr>
                 </tbody>
               </table>

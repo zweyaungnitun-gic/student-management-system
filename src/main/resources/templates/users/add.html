@@ -45,12 +45,12 @@
                   <i class="bi bi-list fs-4"></i>
                 </button>
                 <div>
-                  <h4 class="mb-0" style="color: #0A58A0; font-weight: 600; font-size: 1.8rem;">新しいユーザー追加</h4>
+                  <h4 class="mb-0" style="color: #0A58A0; font-weight: 600; font-size: 1.8rem;" th:text="#{users.add.auto_dd0b}">新しいユーザー追加</h4>
                 </div>
               </div>
               <a th:href="@{/users}" class="btn btn-outline-secondary d-flex align-items-center gap-2">
                 <i class="bi bi-arrow-left"></i>
-                <span>戻る</span>
+                <span th:text="#{users.add.auto_4a62}">戻る</span>
               </a>
             </div>
 
@@ -59,18 +59,18 @@
                 <!-- Row 1 -->
                 <div class="row mb-4">
                   <div class="col-6 pe-4">
-                    <label class="form-label required-field">ユーザー名</label>
+                    <label class="form-label required-field" th:text="#{users.add.auto_b9e8}">ユーザー名</label>
                     <input type="text" class="form-control" th:field="*{username}" 
                            th:classappend="${#fields.hasErrors('username')} ? 'is-invalid' : ''"
-                           placeholder="ユーザー名を入力" maxlength="25">
+                           th:placeholder="#{placeholder.user.name}" maxlength="25">
                     <div class="invalid-feedback" th:if="${#fields.hasErrors('username')}" 
                          th:errors="*{username}" ></div>
                   </div>
                   <div class="col-6 ps-4">
-                    <label class="form-label required-field">メールアドレス</label>
+                    <label class="form-label required-field" th:text="#{users.add.auto_0e21}">メールアドレス</label>
                     <input type="text" class="form-control" th:field="*{email}" 
                            th:classappend="${#fields.hasErrors('email')} ? 'is-invalid' : ''"
-                           placeholder="email@example.com" maxlength="25">
+                           th:placeholder="#{placeholder.user.email}" maxlength="25">
                     <div class="invalid-feedback" th:if="${#fields.hasErrors('email')}" 
                          th:errors="*{email}" ></div>
                   </div>
@@ -79,23 +79,23 @@
                 <!-- Row 2 -->
                 <div class="row mb-4">
                   <div class="col-6 pe-4">
-                    <label class="form-label required-field">ロール</label>
+                    <label class="form-label required-field" th:text="#{users.add.auto_2683}">ロール</label>
                     <select class="form-select" th:field="*{role}"
                             th:classappend="${#fields.hasErrors('role')} ? 'is-invalid' : ''">
-                      <option value="ADMIN">管理者</option>
-                      <option value="GUEST">ゲスト</option>
+                      <option value="ADMIN" th:text="#{users.add.auto_5093}">管理者</option>
+                      <option value="GUEST" th:text="#{users.add.auto_95f0}">ゲスト</option>
                     </select>
                     <div class="invalid-feedback" th:if="${#fields.hasErrors('role')}" 
                          th:errors="*{role}" ></div>
                   </div>
                   <div class="col-6 ps-4">
-                      <label class="form-label required-field">パスワード</label>
+                      <label class="form-label required-field" th:text="#{users.add.auto_4bdf}">パスワード</label>
                       <div class="input-group">
                           <input type="password" class="form-control" name="password" 
                                 id="password"
                                 th:value="${submittedPassword}"
                                 th:classappend="${#fields.hasErrors('password')} ? 'is-invalid' : ''"
-                                placeholder="パスワードを入力" maxlength="25">
+                                th:placeholder="#{placeholder.user.password.add}" maxlength="25">
                           <button class="btn btn-outline-secondary" type="button" id="togglePassword">
                               <i class="bi bi-eye-slash" id="toggleIcon"></i>
                           </button>
@@ -110,13 +110,9 @@
                   <div class="col-12">
                     <div class="d-flex gap-2 justify-content-center">
                       <a th:href="@{/users}" class="btn btn-secondary">
-                        <i class="bi bi-x-circle me-1"></i>
-                        キャンセル
-                      </a>
+                        <i class="bi bi-x-circle me-1"></i><th:block th:text="#{users.add.auto_6ef3}">キャンセル</th:block></a>
                       <button type="submit" class="btn btn-primary">
-                        <i class="bi bi-check-circle me-1"></i>
-                        追加
-                      </button>
+                        <i class="bi bi-check-circle me-1"></i><th:block th:text="#{users.add.auto_7dc3}">追加</th:block></button>
                     </div>
                   </div>
                 </div>

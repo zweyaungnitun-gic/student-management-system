@@ -1,9 +1,7 @@
 <section class="app-card" th:fragment="supportCard">
   <p class="section-title mb-2">Support</p>
-  <h4>技術サポートに連絡</h4>
-  <p class="mb-4 text-muted">
-    ご不明点は以下のメールアドレスまでお問い合わせください。
-  </p>
+  <h4 th:text="#{fragments.dashboard.support-card.auto_ac03}">技術サポートに連絡</h4>
+  <p class="mb-4 text-muted" th:text="#{fragments.dashboard.support-card.auto_04ff}">ご不明点は以下のメールアドレスまでお問い合わせください。</p>
   <div class="glass-panel p-3 mb-3">
     <p class="mb-1 text-muted">Support desk</p>
     <a th:href="'mailto:' + (${supportEmail} ?: 'giconlinetestsystemsupport@gicjp.com')"

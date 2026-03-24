@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Language Selector</title>
+</head>
+<body>
+    <div class="language-selector">
+        <span th:text="#{app.language}">Language:</span>
+        <a href="?lang=en" class="language-link" th:classappend="${#locale.language == 'en'} ? 'active' : ''">
+            <img src="/images/flags/us.png" alt="English" /> English
+        </a>
+        <a href="?lang=ja" class="language-link" th:classappend="${#locale.language == 'ja'} ? 'active' : ''">
+            <img src="/images/flags/jp.png" alt="日本語"  th:text="#{fragments.ui.language-selector.auto_0011}"/>日本語</a>
+    </div>
+</body>
+</html>

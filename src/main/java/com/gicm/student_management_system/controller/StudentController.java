@@ -2,10 +2,12 @@ package com.gicm.student_management_system.controller;
 
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.security.Principal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.context.MessageSource;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -20,22 +22,25 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.gicm.student_management_system.dto.CourseEnrollmentResultsDTO;
+import com.gicm.student_management_system.dto.EnrollmentDTO;
 import com.gicm.student_management_system.dto.InterviewNotesDTO;
 import com.gicm.student_management_system.dto.StudentDTO;
 import com.gicm.student_management_system.dto.StudentFullExportDTO;
 import com.gicm.student_management_system.dto.StudentRegistrationDTO;
+import com.gicm.student_management_system.dto.TestResultDTO;
 import com.gicm.student_management_system.entity.RegistrationStatus;
 import com.gicm.student_management_system.entity.Student;
 import com.gicm.student_management_system.entity.StudentRegistration;
-import com.gicm.student_management_system.enums.Religion;
+import com.gicm.student_management_system.service.EnrollmentService;
 import com.gicm.student_management_system.service.InterviewNotesService;
-import com.gicm.student_management_system.service.StudentRegistrationService;
 import com.gicm.student_management_system.service.StudentExportService;
+import com.gicm.student_management_system.service.StudentRegistrationService;
 import com.gicm.student_management_system.service.StudentService;
+import com.gicm.student_management_system.service.TestResultService;
 import com.gicm.student_management_system.validation.BasicInfoGroup;
 
 import jakarta.servlet.http.HttpServletRequest;
-import java.security.Principal;
 import lombok.RequiredArgsConstructor;
 
 @Controller
@@ -47,6 +52,9 @@ public class StudentController {
     private final StudentExportService studentExportService;
     private final InterviewNotesService interviewNotesService;
     private final StudentRegistrationService studentRegistrationService;
+    private final EnrollmentService enrollmentService;
+    private final TestResultService testResultService;
+    private final MessageSource messageSource;
 
     // ---- UI METHODS ----
     @GetMapping
@@ -138,37 +146,80 @@ public class StudentController {
     // METHOD FOR DETAILS
     @GetMapping("/detail/{id}")
     public String showStudentDetails(@PathVariable Long id,
-            @RequestParam(required = false, defaultValue = "personal") String tab,
+            @RequestParam(required = false, defaultValue = "courses") String tab,
             @RequestParam(required = false) String subTab,
             @RequestParam(value = "nameSearch", defaultValue = "") String nameSearch,
             // Rename this to filterStatus in the method signature
             @RequestParam(value = "status", defaultValue = "") String filterStatus,
             Model model) {
 
-        Student student = studentService.findById(id)
+        studentService.findById(id)
                 .orElseThrow(() -> new RuntimeException("Student not found: " + id));
 
-        model.addAttribute("student", student);
-        // Fetch Student DTO via Studentservice
+        // Fetch Student DTO via Studentservice (template expects DTO fields)
         StudentDTO studentDTO = studentService.getStudentById(id);
+        model.addAttribute("student", studentDTO);
 
         InterviewNotesDTO interviewNotes = interviewNotesService.getOrCreateInterviewNotesDTO(id);
 
-        String religionLabel = Religion.getLabelFromValue(studentDTO.getReligion());
-        model.addAttribute("religionDisplay", religionLabel);
-
-        // Map InterviewNotes Entity to InterviewNotesDTO for the view
-        // Add attributes to model so details.html can display them
-        model.addAttribute("student", studentDTO);
         model.addAttribute("interviewNotes", interviewNotes);
         model.addAttribute("nameSearch", nameSearch);
         model.addAttribute("status", filterStatus);
 
         // model.addAttribute("student", student);
-        model.addAttribute("currentTab", tab);
-        model.addAttribute("currentSubTab", subTab);
+        // Courses + results view for any tab value for now (new layout)
 
-        return "students/student-details";
+        List<EnrollmentDTO> enrollments = enrollmentService.getEnrollmentsByStudent(id);
+        // Group by (courseId + semester) so we don't mix different semesters
+        java.util.Map<String, CourseEnrollmentResultsDTO> grouped = new java.util.LinkedHashMap<>();
+
+        // Fetch results per enrollment and attach to each group
+        for (EnrollmentDTO en : enrollments) {
+            if (en == null) continue;
+
+            String key = (en.getCourseId() != null ? en.getCourseId() : 0) + ":" + (en.getSemester() != null ? en.getSemester() : "");
+
+            CourseEnrollmentResultsDTO group = grouped.get(key);
+            if (group == null) {
+                group = CourseEnrollmentResultsDTO.builder()
+                        .enrollmentId(en.getEnrollmentId())
+                        .courseId(en.getCourseId())
+                        .courseCode(en.getCourseCode())
+                        .courseName(en.getCourseName())
+                        .semester(en.getSemester())
+                        .enrollmentStatus(en.getStatusDisplay())
+                        .results(new java.util.ArrayList<>())
+                        .build();
+                grouped.put(key, group);
+            }
+
+            List<TestResultDTO> results = testResultService.getResultsByEnrollment(en.getEnrollmentId());
+            if (results != null && !results.isEmpty()) {
+                // Sort newest first for better display
+                results.sort((a, b) -> {
+                    if (a == null || a.getSubmittedAt() == null) return 1;
+                    if (b == null || b.getSubmittedAt() == null) return -1;
+                    return b.getSubmittedAt().compareTo(a.getSubmittedAt());
+                });
+                group.getResults().addAll(results);
+            }
+        }
+
+        // Final sort per group (in case multiple enrollments were merged into one group)
+        List<CourseEnrollmentResultsDTO> studentCourseEnrollments = new java.util.ArrayList<>(grouped.values());
+        for (CourseEnrollmentResultsDTO g : studentCourseEnrollments) {
+            if (g.getResults() != null && !g.getResults().isEmpty()) {
+                g.getResults().sort((a, b) -> {
+                    if (a == null || a.getSubmittedAt() == null) return 1;
+                    if (b == null || b.getSubmittedAt() == null) return -1;
+                    return b.getSubmittedAt().compareTo(a.getSubmittedAt());
+                });
+            }
+        }
+
+        model.addAttribute("studentCourseEnrollments", studentCourseEnrollments);
+
+        return "students/student-details-courses";
     }
 
     // ----------------------------------------------------------------------------------------
@@ -189,7 +240,7 @@ public class StudentController {
         StudentDTO created = studentService.createStudent(studentDTO);
 
         redirectAttributes.addFlashAttribute("success",
-                "生徒が作成されました。生徒ID: " + created.getStudentId());
+                messageSource.getMessage("student.create.success", new Object[]{created.getStudentId()}, java.util.Locale.getDefault()));
 
         return "redirect:/students";
     }
@@ -201,7 +252,7 @@ public class StudentController {
             @RequestParam(value = "status", defaultValue = "") String status,
             Model model) {
         Student student = studentService.findById(id)
-                .orElseThrow(() -> new RuntimeException("生徒が見つかりません: ID " + id));
+                .orElseThrow(() -> new RuntimeException(messageSource.getMessage("student.not.found", null, java.util.Locale.getDefault()) + ": ID " + id));
 
         InterviewNotesDTO interviewNotesDTO = interviewNotesService.getOrCreateInterviewNotesDTO(id);
         model.addAttribute("interviewNotes", interviewNotesDTO);
@@ -243,7 +294,7 @@ public class StudentController {
 
         if (student.getNationalId() != null && !student.getNationalId().isEmpty()) {
             if (studentService.isNationalIdDuplicate(student.getNationalId(), id)) {
-                bindingResult.rejectValue("nationalId", "error.duplicate", "この国民IDは既に登録されています。");
+                bindingResult.rejectValue("nationalId", "error.duplicate", messageSource.getMessage("student.duplicate.national.id", null, java.util.Locale.getDefault()));
             }
         }
 
@@ -268,7 +319,7 @@ public class StudentController {
 
         studentService.save(existingStudent);
 
-        redirectAttributes.addFlashAttribute("success", "基本情報が正常に更新されました。");
+        redirectAttributes.addFlashAttribute("success", messageSource.getMessage("success.update", null, java.util.Locale.getDefault()));
 
         return buildUpdateRedirectUrl(id, "basic", nameSearch, status);
     }
@@ -282,9 +333,9 @@ public class StudentController {
             RedirectAttributes redirectAttributes) {
         try {
             interviewNotesService.saveInterviewNotesDTO(id, interviewNotesDTO);
-            redirectAttributes.addFlashAttribute("success", "面談情報が正常に更新されました。");
+            redirectAttributes.addFlashAttribute("success", messageSource.getMessage("interview.update.success", null, java.util.Locale.getDefault()));
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("error", "更新に失敗しました。");
+            redirectAttributes.addFlashAttribute("error", messageSource.getMessage("error.update", null, java.util.Locale.getDefault()));
         }
         return buildUpdateRedirectUrl(id, "interview", nameSearch, status);
     }
@@ -366,7 +417,7 @@ public class StudentController {
     public String registrationEdit(@PathVariable Long id, Model model, RedirectAttributes redirectAttributes) {
         StudentRegistration reg = studentRegistrationService.getRegistration(id);
         if (reg.getRegistrationStatus() != RegistrationStatus.PENDING) {
-            redirectAttributes.addFlashAttribute("error", "処理済みの申請は編集できません");
+            redirectAttributes.addFlashAttribute("error", messageSource.getMessage("registration.processed.error", null, java.util.Locale.getDefault()));
             return "redirect:/students/registrations/" + id;
         }
 
@@ -408,7 +459,7 @@ public class StudentController {
             @ModelAttribute("registration") StudentRegistrationDTO dto,
             RedirectAttributes redirectAttributes) {
         studentRegistrationService.updateRegistration(id, dto);
-        redirectAttributes.addFlashAttribute("success", "申請内容を更新しました。");
+        redirectAttributes.addFlashAttribute("success", messageSource.getMessage("registration.update.success", null, java.util.Locale.getDefault()));
         return "redirect:/students/registrations/" + id;
     }
 
@@ -416,7 +467,7 @@ public class StudentController {
     @PostMapping("/registrations/{id}/delete")
     public String registrationDelete(@PathVariable Long id, RedirectAttributes redirectAttributes) {
         studentRegistrationService.deleteRegistration(id);
-        redirectAttributes.addFlashAttribute("success", "申請を削除しました。");
+        redirectAttributes.addFlashAttribute("success", messageSource.getMessage("registration.delete.success", null, java.util.Locale.getDefault()));
         return "redirect:/students/registrations?registrationStatus=PENDING";
     }
 
@@ -427,7 +478,7 @@ public class StudentController {
             Principal principal,
             RedirectAttributes redirectAttributes) {
         studentRegistrationService.acceptRegistration(id, principal != null ? principal.getName() : "admin");
-        redirectAttributes.addFlashAttribute("success", "登録を承認しました。");
+        redirectAttributes.addFlashAttribute("success", messageSource.getMessage("registration.approve.success", null, java.util.Locale.getDefault()));
         return "redirect:/students/registrations?registrationStatus=PENDING";
     }
 
@@ -438,7 +489,7 @@ public class StudentController {
             Principal principal,
             RedirectAttributes redirectAttributes) {
         studentRegistrationService.rejectRegistration(id, principal != null ? principal.getName() : "admin");
-        redirectAttributes.addFlashAttribute("success", "登録を却下しました。");
+        redirectAttributes.addFlashAttribute("success", messageSource.getMessage("registration.reject.success", null, java.util.Locale.getDefault()));
         return "redirect:/students/registrations?registrationStatus=PENDING";
     }
 }

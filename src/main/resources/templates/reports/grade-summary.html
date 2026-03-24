@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html lang="ja" xmlns:th="http://www.thymeleaf.org"
+<html xmlns:th="http://www.thymeleaf.org" th:lang="${#locale.language}"
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
-<head th:replace="~{layouts/admin-layout :: head(pageTitle='成績サマリー | 生徒情報管理システム')}">
+<head th:replace="~{layouts/admin-layout :: head(pageTitle=#{report.grade.summary} + ' | ' + #{app.title})}">
 </head>
 
 <body>
@@ -21,7 +21,7 @@
                             <i class="bi bi-list fs-4"></i>
                         </button>
                         <div>
-                            <h1 class="mb-0" style="color: #0a58a0; font-weight: 600; font-size: 1.8rem;">
+                            <h1 class="mb-0" style="color: #0a58a0; font-weight: 600; font-size: 1.8rem;" th:text="#{report.grade.summary}">
                                 成績サマリー
                             </h1>
                             <p class="text-muted mb-0" th:text="${gradeSummary.studentName} + ' (' + ${gradeSummary.studentIdNumber} + ')'"></p>
@@ -39,7 +39,7 @@
                                         <i class="bi bi-trophy fs-2 text-primary"></i>
                                     </div>
                                     <div class="flex-grow-1 ms-3">
-                                        <h6 class="text-muted mb-1">総合GPA</h6>
+                                        <h6 class="text-muted mb-1" th:text="#{reports.grade-summary.auto_330a}">総合GPA</h6>
                                         <h3 class="mb-0 fw-bold" th:text="${gradeSummary.overallGPA}">3.5</h3>
                                     </div>
                                 </div>
@@ -55,7 +55,7 @@
                                         <i class="bi bi-award fs-2 text-success"></i>
                                     </div>
                                     <div class="flex-grow-1 ms-3">
-                                        <h6 class="text-muted mb-1">総合評価</h6>
+                                        <h6 class="text-muted mb-1" th:text="#{reports.grade-summary.auto_28c8}">総合評価</h6>
                                         <h3 class="mb-0 fw-bold" th:text="${gradeSummary.overallGrade}">A</h3>
                                     </div>
                                 </div>
@@ -71,7 +71,7 @@
                                         <i class="bi bi-check-circle fs-2 text-info"></i>
                                     </div>
                                     <div class="flex-grow-1 ms-3">
-                                        <h6 class="text-muted mb-1">合格/不合格</h6>
+                                        <h6 class="text-muted mb-1" th:text="#{reports.grade-summary.auto_8492}">合格/不合格</h6>
                                         <h3 class="mb-0 fw-bold" th:text="${gradeSummary.passedTests} + '/' + ${gradeSummary.failedTests}">8/2</h3>
                                     </div>
                                 </div>
@@ -87,7 +87,7 @@
                                         <i class="bi bi-bar-chart fs-2 text-warning"></i>
                                     </div>
                                     <div class="flex-grow-1 ms-3">
-                                        <h6 class="text-muted mb-1">総テスト数</h6>
+                                        <h6 class="text-muted mb-1" th:text="#{reports.grade-summary.auto_523c}">総テスト数</h6>
                                         <h3 class="mb-0 fw-bold" th:text="${gradeSummary.totalTests}">10</h3>
                                     </div>
                                 </div>
@@ -100,18 +100,16 @@
                 <div class="card shadow-sm mb-4">
                     <div class="card-header bg-white py-3">
                         <h5 class="card-title mb-0">
-                            <i class="bi bi-book me-2 text-primary"></i>
-                            コース別成績
-                        </h5>
+                            <i class="bi bi-book me-2 text-primary"></i><th:block th:text="#{reports.grade-summary.auto_7222}">コース別成績</th:block></h5>
                     </div>
                     <div class="card-body p-0">
                         <div class="table-responsive">
                             <table class="table table-hover align-middle mb-0">
                                 <thead class="bg-light">
                                     <tr>
-                                        <th class="ps-4">コース</th>
+                                        <th class="ps-4" th:text="#{reports.grade-summary.auto_107b}">コース</th>
                                         <th class="text-center">GPA</th>
-                                        <th class="text-center">評価</th>
+                                        <th class="text-center" th:text="#{reports.grade-summary.auto_6745}">評価</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -136,25 +134,22 @@
                 <div class="card shadow-sm">
                     <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
                         <h5 class="card-title mb-0">
-                            <i class="bi bi-list-check me-2 text-success"></i>
-                            テスト結果詳細
-                        </h5>
+                            <i class="bi bi-list-check me-2 text-success"></i><th:block th:text="#{reports.grade-summary.auto_f121}">テスト結果詳細</th:block></h5>
                         <a th:href="@{'/reports/report-card/' + ${gradeSummary.studentId}}" 
                            class="btn btn-sm btn-primary">
-                            <i class="bi bi-file-text me-2"></i>成績表を表示
-                        </a>
+                            <i class="bi bi-file-text me-2"></i><th:block th:text="#{reports.grade-summary.auto_a0a4}">成績表を表示</th:block></a>
                     </div>
                     <div class="card-body p-0">
                         <div class="table-responsive">
                             <table class="table table-hover align-middle mb-0">
                                 <thead class="bg-light">
                                     <tr>
-                                        <th class="ps-4">テスト名</th>
-                                        <th class="text-center">得点/満点</th>
-                                        <th class="text-center">パーセンテージ</th>
-                                        <th class="text-center">評価</th>
+                                        <th class="ps-4" th:text="#{reports.grade-summary.auto_0355}">テスト名</th>
+                                        <th class="text-center" th:text="#{reports.grade-summary.auto_d05f}">得点/満点</th>
+                                        <th class="text-center" th:text="#{reports.grade-summary.auto_874c}">パーセンテージ</th>
+                                        <th class="text-center" th:text="#{reports.grade-summary.auto_6745}">評価</th>
                                         <th class="text-center">GPA</th>
-                                        <th class="text-center">結果</th>
+                                        <th class="text-center" th:text="#{reports.grade-summary.auto_54b7}">結果</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -173,9 +168,9 @@
                                         <td class="text-center" th:text="${result.gpa}"></td>
                                         <td class="text-center">
                                             <span th:if="${result.result == '合格'}" 
-                                                  class="badge bg-success">合格</span>
+                                                  class="badge bg-success" th:text="#{reports.grade-summary.auto_86f7}">合格</span>
                                             <span th:if="${result.result == '不合格'}" 
-                                                  class="badge bg-danger">不合格</span>
+                                                  class="badge bg-danger" th:text="#{reports.grade-summary.auto_6e5a}">不合格</span>
                                         </td>
                                     </tr>
                                 </tbody>
@@ -222,8 +217,7 @@
                 <div class="mt-4 d-flex justify-content-end gap-2">
                     <a th:href="@{'/students/detail/' + ${gradeSummary.studentId}}" 
                        class="btn btn-outline-secondary">
-                        <i class="bi bi-arrow-left me-2"></i>生徒詳細に戻る
-                    </a>
+                        <i class="bi bi-arrow-left me-2"></i><th:block th:text="#{reports.grade-summary.auto_d4be}">生徒詳細に戻る</th:block></a>
                 </div>
             </div>
         </div>

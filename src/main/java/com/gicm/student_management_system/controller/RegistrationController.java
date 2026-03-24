@@ -1,12 +1,21 @@
 package com.gicm.student_management_system.controller;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.gicm.student_management_system.dto.StudentRegistrationDTO;
 import com.gicm.student_management_system.dto.validation.FirstPageValidation;
@@ -16,17 +25,17 @@ import com.gicm.student_management_system.entity.StudentRegistration;
 import com.gicm.student_management_system.service.RegisterStudentService;
 
 import jakarta.servlet.http.HttpSession;
-import java.util.HashMap;
-import java.util.Map;
 
 @Controller
 @RequestMapping("/register")
 public class RegistrationController {
 
     private final RegisterStudentService registerStudentService;
+    private final MessageSource messageSource;
 
-    public RegistrationController(RegisterStudentService registerStudentService) {
+    public RegistrationController(RegisterStudentService registerStudentService, MessageSource messageSource) {
         this.registerStudentService = registerStudentService;
+        this.messageSource = messageSource;
     }
 
     @GetMapping
@@ -140,7 +149,8 @@ public class RegistrationController {
 
         if (existingData == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(Map.of("status", "error", "message", "セッションが無効です"));
+                    .body(Map.of("status", "error", "message", 
+                        messageSource.getMessage("error.session.invalid", null, LocaleContextHolder.getLocale())));
         }
 
         existingData.setFatherName(secondPageData.getFatherName());

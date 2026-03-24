@@ -8,7 +8,7 @@
         id="examTitle"
         type="text"
         class="form-control compact-field"
-        placeholder="冬季採用 一次試験"
+        th:placeholder="#{placeholder.exam.name}"
         th:value="${form.examTitle}"
       />
     </div>
@@ -18,7 +18,7 @@
       </label>
       <select id="jobCategory" class="form-select compact-field">
         <option th:each="cat : ${form.categories}" th:value="${cat}" th:text="${cat}">エンジニア</option>
-        <option th:if="${form.categories == null}">エンジニア</option>
+        <option th:if="${form.categories == null}" th:text="#{fragments.ui.exam-form.auto_00e9}">エンジニア</option>
       </select>
     </div>
     <div class="col-12 col-md-6">
@@ -35,7 +35,7 @@
         id="notes"
         class="form-control compact-field"
         rows="3"
-        placeholder="出題範囲、注意事項など"
+        th:placeholder="#{placeholder.exam.scope}"
         th:text="${form.notes}"
       ></textarea>
     </div>

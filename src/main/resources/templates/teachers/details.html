@@ -22,9 +22,7 @@
                             <i class="bi bi-list fs-4"></i>
                         </button>
                         <div>
-                            <h1 class="mb-0" style="color: #0a58a0; font-weight: 600; font-size: 1.8rem;">
-                                教師詳細
-                            </h1>
+                            <h1 class="mb-0" style="color: #0a58a0; font-weight: 600; font-size: 1.8rem;" th:text="#{teachers.details.auto_0bfb}">教師詳細</h1>
                             <p class="text-muted mb-0" th:text="'教師ID: ' + ${teacher.teacherCode}"></p>
                         </div>
                     </div>
@@ -34,13 +32,13 @@
                 <div class="d-flex justify-content-end gap-2 mb-4">
                     <a href="/teachers" class="btn btn-outline-secondary d-flex align-items-center gap-2">
                         <i class="bi bi-arrow-left"></i>
-                        <span>一覧に戻る</span>
+                        <span th:text="#{teachers.details.auto_68e3}">一覧に戻る</span>
                     </a>
                     <a th:href="@{'/teachers/edit/' + ${teacher.teacherId}}" 
                        class="btn btn-primary d-flex align-items-center gap-2"
                        sec:authorize="hasRole('ADMIN')">
                         <i class="bi bi-pencil-square"></i>
-                        <span>編集</span>
+                        <span th:text="#{teachers.details.auto_7578}">編集</span>
                     </a>
                 </div>
 
@@ -50,33 +48,31 @@
                         <div class="card shadow-sm h-100">
                             <div class="card-header bg-white py-3">
                                 <h5 class="card-title mb-0">
-                                    <i class="bi bi-person-badge me-2 text-primary"></i>
-                                    基本情報
-                                </h5>
+                                    <i class="bi bi-person-badge me-2 text-primary"></i><th:block th:text="#{teachers.details.auto_1ea1}">基本情報</th:block></h5>
                             </div>
                             <div class="card-body">
                                 <table class="table table-borderless">
                                     <tr>
-                                        <th class="ps-0 text-muted" style="width: 120px;">教師ID</th>
+                                        <th class="ps-0 text-muted" style="width: 120px;" th:text="#{teachers.details.auto_1740}">教師ID</th>
                                         <td class="fw-semibold">
                                             <span class="badge bg-primary bg-opacity-10 text-primary px-3 py-2 rounded-pill"
                                                   th:text="${teacher.teacherCode}"></span>
                                         </td>
                                     </tr>
                                     <tr>
-                                        <th class="ps-0 text-muted">氏名</th>
+                                        <th class="ps-0 text-muted" th:text="#{teachers.details.auto_08b8}">氏名</th>
                                         <td th:text="${teacher.name}"></td>
                                     </tr>
                                     <tr>
-                                        <th class="ps-0 text-muted">メール</th>
+                                        <th class="ps-0 text-muted" th:text="#{teachers.details.auto_97a7}">メール</th>
                                         <td th:text="${teacher.email}"></td>
                                     </tr>
                                     <tr>
-                                        <th class="ps-0 text-muted">学部/学科</th>
+                                        <th class="ps-0 text-muted" th:text="#{teachers.details.auto_a4c2}">学部/学科</th>
                                         <td th:text="${teacher.department} ?: '-'"></td>
                                     </tr>
                                     <tr>
-                                        <th class="ps-0 text-muted">登録日</th>
+                                        <th class="ps-0 text-muted" th:text="#{teachers.details.auto_2f22}">登録日</th>
                                         <td th:text="${#temporals.format(teacher.createdAt, 'yyyy年MM月dd日 HH:mm')}"></td>
                                     </tr>
                                 </table>
@@ -88,9 +84,7 @@
                         <div class="card shadow-sm h-100">
                             <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
                                 <h5 class="card-title mb-0">
-                                    <i class="bi bi-book me-2 text-success"></i>
-                                    担当コース一覧
-                                </h5>
+                                    <i class="bi bi-book me-2 text-success"></i><th:block th:text="#{teachers.details.auto_512a}">担当コース一覧</th:block></h5>
                                 <span class="badge bg-success rounded-pill" th:text="${courses.size()} + '件'"></span>
                             </div>
                             <div class="card-body p-0">
@@ -98,11 +92,11 @@
                                     <table class="table table-hover align-middle mb-0">
                                         <thead class="bg-light">
                                             <tr>
-                                                <th class="ps-4">コースコード</th>
-                                                <th>コース名</th>
-                                                <th>単位数</th>
-                                                <th>ステータス</th>
-                                                <th class="text-center">操作</th>
+                                                <th class="ps-4" th:text="#{teachers.details.auto_9068}">コースコード</th>
+                                                <th th:text="#{teachers.details.auto_abf1}">コース名</th>
+                                                <th th:text="#{teachers.details.auto_91f9}">単位数</th>
+                                                <th th:text="#{teachers.details.auto_54dd}">ステータス</th>
+                                                <th class="text-center" th:text="#{teachers.details.auto_2b6b}">操作</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -118,13 +112,9 @@
                                                 </td>
                                                 <td>
                                                     <span th:if="${course.isActive}" 
-                                                          class="badge bg-success bg-opacity-10 text-success rounded-pill px-3">
-                                                        アクティブ
-                                                    </span>
+                                                          class="badge bg-success bg-opacity-10 text-success rounded-pill px-3" th:text="#{teachers.details.auto_0277}">アクティブ</span>
                                                     <span th:unless="${course.isActive}" 
-                                                          class="badge bg-danger bg-opacity-10 text-danger rounded-pill px-3">
-                                                        非アクティブ
-                                                    </span>
+                                                          class="badge bg-danger bg-opacity-10 text-danger rounded-pill px-3" th:text="#{teachers.details.auto_f32a}">非アクティブ</span>
                                                 </td>
                                                 <td class="text-center">
                                                     <a th:href="@{'/courses/edit/' + ${course.courseId}}" 
@@ -141,9 +131,7 @@
                                             </tr>
                                             <tr th:if="${courses.size() == 0}">
                                                 <td colspan="5" class="text-center text-muted py-4">
-                                                    <i class="bi bi-inbox fs-2 d-block mb-2"></i>
-                                                    担当しているコースはありません
-                                                </td>
+                                                    <i class="bi bi-inbox fs-2 d-block mb-2"></i><th:block th:text="#{teachers.details.auto_561b}">担当しているコースはありません</th:block></td>
                                             </tr>
                                         </tbody>
                                     </table>
@@ -163,7 +151,7 @@
                                         <i class="bi bi-book fs-2 text-primary"></i>
                                     </div>
                                     <div class="flex-grow-1 ms-3">
-                                        <h6 class="text-muted mb-1">担当コース数</h6>
+                                        <h6 class="text-muted mb-1" th:text="#{teachers.details.auto_572e}">担当コース数</h6>
                                         <h3 class="mb-0 fw-bold" th:text="${courses.size()}">0</h3>
                                     </div>
                                 </div>
@@ -179,7 +167,7 @@
                                         <i class="bi bi-check-circle fs-2 text-success"></i>
                                     </div>
                                     <div class="flex-grow-1 ms-3">
-                                        <h6 class="text-muted mb-1">アクティブなコース</h6>
+                                        <h6 class="text-muted mb-1" th:text="#{teachers.details.auto_f42d}">アクティブなコース</h6>
                                         <h3 class="mb-0 fw-bold" 
                                             th:text="${#aggregates.sum(courses.![isActive ? 1 : 0])}">0</h3>
                                     </div>
@@ -196,7 +184,7 @@
                                         <i class="bi bi-clock-history fs-2 text-info"></i>
                                     </div>
                                     <div class="flex-grow-1 ms-3">
-                                        <h6 class="text-muted mb-1">総単位数</h6>
+                                        <h6 class="text-muted mb-1" th:text="#{teachers.details.auto_a80b}">総単位数</h6>
                                         <h3 class="mb-0 fw-bold" 
                                             th:text="${#aggregates.sum(courses.![creditHours])}">0</h3>
                                     </div>

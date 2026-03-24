@@ -1,11 +1,11 @@
 
 
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" th:lang="${#locale.language}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Page Not Found - GIC</title>
+    <title th:text="#{error.405} + ' - GIC'">Page Not Found - GIC</title>
 
     <!-- Bootstrap 5 -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -20,25 +20,25 @@
                 <i class="bi bi-exclamation-triangle"></i>
             </div>
             <div class="error-code">405</div>
-            <h1 class="error-title">Method Not Allowed</h1>
-            <p class="error-message">
+            <h1 class="error-title" th:text="#{error.405}">Method Not Allowed</h1>
+            <p class="error-message" th:text="#{error.405.message}">
                 Oops! The method you used is not allowed for this page.
             </p>
             <div class="d-flex gap-3 justify-content-center mb-4">
                 <a href="javascript:history.back()" class="btn btn-outline-secondary">
-                    <i class="bi bi-arrow-left me-2"></i>Go Back
+                    <i class="bi bi-arrow-left me-2"></i><span th:text="#{app.go.back}">Go Back</span>
                 </a>
                 <a href="/dashboard" class="btn btn-primary">
-                    <i class="bi bi-house-door me-2"></i>Go to Home
+                    <i class="bi bi-house-door me-2"></i><span th:text="#{app.go.home}">Go to Home</span>
                 </a>
             </div>
             <div class="info-box">
-                <h6><i class="bi bi-info-circle me-2"></i>What can you do?</h6>
+                <h6><i class="bi bi-info-circle me-2"></i><span th:text="#{error.what.can.you.do}">What can you do?</span></h6>
                 <ul>
-                    <li>Check the URL and method</li>
-                    <li>Go back to the previous page</li>
-                    <li>Return to the homepage</li>
-                    <li>Contact support if you believe this is an error</li>
+                    <li th:text="#{error.suggestion.check.url}">Check the URL and method</li>
+                    <li th:text="#{error.suggestion.go.back}">Go back to the previous page</li>
+                    <li th:text="#{error.suggestion.go.home}">Return to the homepage</li>
+                    <li th:text="#{error.suggestion.contact.support}">Contact support if you believe this is an error</li>
                 </ul>
             </div>
         </div>

@@ -3,6 +3,7 @@ package com.gicm.student_management_system.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.OffsetDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "courses")
@@ -45,4 +46,8 @@ public class Course {
     public void onCreate() {
         createdAt = OffsetDateTime.now();
     }
+
+    // Reverse relationship (Enrollment -> Course)
+    @OneToMany(mappedBy = "course", fetch = FetchType.LAZY)
+    private List<Enrollment> enrollments;
 }

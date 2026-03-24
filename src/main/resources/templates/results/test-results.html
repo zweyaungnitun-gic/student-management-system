@@ -20,9 +20,7 @@
                             <i class="bi bi-list fs-4"></i>
                         </button>
                         <div>
-                            <h1 class="mb-0" style="color: #0a58a0; font-weight: 600; font-size: 1.8rem;">
-                                テスト別結果
-                            </h1>
+                            <h1 class="mb-0" style="color: #0a58a0; font-weight: 600; font-size: 1.8rem;" th:text="#{results.test-results.auto_5166}">テスト別結果</h1>
                             <p class="text-muted mb-0" th:if="${test != null}" th:text="${test.testName}"></p>
                         </div>
                     </div>
@@ -33,7 +31,7 @@
                     <div class="col-md-2">
                         <div class="card shadow-sm border-0 bg-primary bg-opacity-10">
                             <div class="card-body text-center">
-                                <h6 class="text-muted mb-1">受験者数</h6>
+                                <h6 class="text-muted mb-1" th:text="#{results.test-results.auto_b101}">受験者数</h6>
                                 <h3 class="mb-0 fw-bold" th:text="${statistics.totalStudents}">0</h3>
                             </div>
                         </div>
@@ -41,7 +39,7 @@
                     <div class="col-md-2">
                         <div class="card shadow-sm border-0 bg-success bg-opacity-10">
                             <div class="card-body text-center">
-                                <h6 class="text-muted mb-1">平均点</h6>
+                                <h6 class="text-muted mb-1" th:text="#{results.test-results.auto_6314}">平均点</h6>
                                 <h3 class="mb-0 fw-bold" th:text="${statistics.averageScore}">0</h3>
                             </div>
                         </div>
@@ -49,7 +47,7 @@
                     <div class="col-md-2">
                         <div class="card shadow-sm border-0 bg-info bg-opacity-10">
                             <div class="card-body text-center">
-                                <h6 class="text-muted mb-1">最高点</h6>
+                                <h6 class="text-muted mb-1" th:text="#{results.test-results.auto_4b38}">最高点</h6>
                                 <h3 class="mb-0 fw-bold" th:text="${statistics.highestScore}">0</h3>
                             </div>
                         </div>
@@ -57,7 +55,7 @@
                     <div class="col-md-2">
                         <div class="card shadow-sm border-0 bg-warning bg-opacity-10">
                             <div class="card-body text-center">
-                                <h6 class="text-muted mb-1">最低点</h6>
+                                <h6 class="text-muted mb-1" th:text="#{results.test-results.auto_952a}">最低点</h6>
                                 <h3 class="mb-0 fw-bold" th:text="${statistics.lowestScore}">0</h3>
                             </div>
                         </div>
@@ -65,7 +63,7 @@
                     <div class="col-md-2">
                         <div class="card shadow-sm border-0 bg-success bg-opacity-10">
                             <div class="card-body text-center">
-                                <h6 class="text-muted mb-1">合格者</h6>
+                                <h6 class="text-muted mb-1" th:text="#{results.test-results.auto_23e5}">合格者</h6>
                                 <h3 class="mb-0 fw-bold" th:text="${statistics.passedCount}">0</h3>
                             </div>
                         </div>
@@ -73,7 +71,7 @@
                     <div class="col-md-2">
                         <div class="card shadow-sm border-0 bg-danger bg-opacity-10">
                             <div class="card-body text-center">
-                                <h6 class="text-muted mb-1">不合格者</h6>
+                                <h6 class="text-muted mb-1" th:text="#{results.test-results.auto_ac05}">不合格者</h6>
                                 <h3 class="mb-0 fw-bold" th:text="${statistics.failedCount}">0</h3>
                             </div>
                         </div>
@@ -83,12 +81,10 @@
                 <!-- Action Buttons -->
                 <div class="d-flex justify-content-end gap-2 mb-4">
                     <a href="/results" class="btn btn-outline-secondary">
-                        <i class="bi bi-arrow-left me-2"></i>結果一覧に戻る
-                    </a>
+                        <i class="bi bi-arrow-left me-2"></i><th:block th:text="#{results.test-results.auto_e479}">結果一覧に戻る</th:block></a>
                     <a th:href="@{'/results/add?testId=' + ${test?.testId}}" class="btn btn-success" 
                        sec:authorize="hasRole('ADMIN') or hasRole('TEACHER')">
-                        <i class="bi bi-plus-circle me-2"></i>結果追加
-                    </a>
+                        <i class="bi bi-plus-circle me-2"></i><th:block th:text="#{results.test-results.auto_3f98}">結果追加</th:block></a>
                 </div>
 
                 <!-- Results Table -->
@@ -98,14 +94,14 @@
                             <table class="table table-hover align-middle mb-0">
                                 <thead class="bg-primary text-white">
                                     <tr>
-                                        <th>生徒ID</th>
-                                        <th>生徒名</th>
-                                        <th class="text-center">得点/満点</th>
+                                        <th th:text="#{results.test-results.auto_7ea9}">生徒ID</th>
+                                        <th th:text="#{results.test-results.auto_8a42}">生徒名</th>
+                                        <th class="text-center" th:text="#{results.test-results.auto_d05f}">得点/満点</th>
                                         <th class="text-center">%</th>
-                                        <th class="text-center">評価</th>
+                                        <th class="text-center" th:text="#{results.test-results.auto_6745}">評価</th>
                                         <th class="text-center">GPA</th>
-                                        <th class="text-center">結果</th>
-                                        <th class="text-center">操作</th>
+                                        <th class="text-center" th:text="#{results.test-results.auto_54b7}">結果</th>
+                                        <th class="text-center" th:text="#{results.test-results.auto_2b6b}">操作</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -121,8 +117,8 @@
                                         </td>
                                         <td class="text-center" th:text="${result.gpa}"></td>
                                         <td class="text-center">
-                                            <span th:if="${result.result == '合格'}" class="badge bg-success">合格</span>
-                                            <span th:if="${result.result == '不合格'}" class="badge bg-danger">不合格</span>
+                                            <span th:if="${result.result == '合格'}" class="badge bg-success" th:text="#{results.test-results.auto_86f7}">合格</span>
+                                            <span th:if="${result.result == '不合格'}" class="badge bg-danger" th:text="#{results.test-results.auto_6e5a}">不合格</span>
                                         </td>
                                         <td class="text-center">
                                             <a th:href="@{'/results/edit/' + ${result.testResultId}}" 
@@ -133,9 +129,7 @@
                                     </tr>
                                     <tr th:if="${results == null or results.size() == 0}">
                                         <td colspan="8" class="text-center text-muted py-5">
-                                            <i class="bi bi-inbox fs-1 d-block mb-3"></i>
-                                            このテストの結果はまだありません。
-                                        </td>
+                                            <i class="bi bi-inbox fs-1 d-block mb-3"></i><th:block th:text="#{results.test-results.auto_1177}">このテストの結果はまだありません。</th:block></td>
                                     </tr>
                                 </tbody>
                             </table>

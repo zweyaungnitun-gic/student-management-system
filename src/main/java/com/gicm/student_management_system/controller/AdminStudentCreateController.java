@@ -47,7 +47,7 @@ public class AdminStudentCreateController {
         if (wizard.getStudent() == null) {
             wizard.setStudent(new StudentDTO());
         }
-        return "students/admin-student-create-step1";
+        return "register/register";
     }
 
     @PostMapping("/step1")
@@ -56,21 +56,13 @@ public class AdminStudentCreateController {
             BindingResult bindingResult) {
 
         if (bindingResult.hasErrors()) {
-            return "students/admin-student-create-step1";
+            return "register/register";
         }
-        return "redirect:/admin/students/create/step2";
+        return "redirect:/admin/students/create/second-page";
     }
 
-    @GetMapping("/step2")
-    public String showStep2(@ModelAttribute("studentCreateWizard") StudentCreateWizardDTO wizard) {
-        if (wizard.getAdditional() == null) {
-            wizard.setAdditional(new AdditionalStudentInfoDTO());
-        }
-        return "students/admin-student-create-step2";
-    }
-
-    @PostMapping("/step2")
-    public String submitStep2(
+    @PostMapping("/second-page")
+    public String submitSecondPage(
             @ModelAttribute("studentCreateWizard") StudentCreateWizardDTO wizard,
             BindingResult bindingResult,
             RedirectAttributes redirectAttributes,
@@ -78,7 +70,7 @@ public class AdminStudentCreateController {
             Model model) {
 
         if (bindingResult.hasErrors()) {
-            return "students/admin-student-create-step2";
+            return "register/second-page";
         }
 
         StudentDTO created = studentService.createStudent(wizard.getStudent());
@@ -108,6 +100,7 @@ public class AdminStudentCreateController {
                     .contactViber(add.getContactViber())
                     .schedulePaymentTutionDate(add.getSchedulePaymentTutionDate())
                     .actualTutionPaymentDate(add.getActualTutionPaymentDate())
+                    .otherReligion(add.getOtherReligion())
                     .build();
             additionalStudentInfoRepository.save(entity);
         }

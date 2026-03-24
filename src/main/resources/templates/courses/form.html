@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title th:if="${course.courseId == null}">新規コース追加</title>
-    <title th:unless="${course.courseId == null}">コース編集</title>
+    <title th:if="${course.courseId == null}" th:text="#{courses.form.auto_d800}">新規コース追加</title>
+    <title th:unless="${course.courseId == null}" th:text="#{courses.form.auto_a7c9}">コース編集</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
     <style>
@@ -49,8 +49,8 @@
             <div class="card-header bg-primary text-white">
                 <h4 class="mb-0">
                     <i class="bi bi-journal-plus me-2"></i>
-                    <span th:if="${course.courseId == null}">新規コース追加</span>
-                    <span th:unless="${course.courseId == null}">コース編集</span>
+                    <span th:if="${course.courseId == null}" th:text="#{courses.form.auto_d800}">新規コース追加</span>
+                    <span th:unless="${course.courseId == null}" th:text="#{courses.form.auto_a7c9}">コース編集</span>
                 </h4>
             </div>
             <div class="card-body">
@@ -66,7 +66,7 @@
                             <input type="text" th:field="*{courseCode}" class="form-control" 
                                    th:classappend="${#fields.hasErrors('courseCode')} ? 'is-invalid'" required>
                             <div class="invalid-feedback" th:if="${#fields.hasErrors('courseCode')}" 
-                                 th:errors="*{courseCode}">エラー</div>
+                                 th:errors="*{courseCode}" th:text="#{courses.form.auto_a5d1}">エラー</div>
                         </div>
                     </div>
 
@@ -76,17 +76,17 @@
                             <input type="text" th:field="*{courseName}" class="form-control" 
                                    th:classappend="${#fields.hasErrors('courseName')} ? 'is-invalid'" required>
                             <div class="invalid-feedback" th:if="${#fields.hasErrors('courseName')}" 
-                                 th:errors="*{courseName}">エラー</div>
+                                 th:errors="*{courseName}" th:text="#{courses.form.auto_a5d1}">エラー</div>
                         </div>
                     </div>
 
                     <div class="row">
-                        <label class="col-sm-3 col-form-label">説明</label>
+                        <label class="col-sm-3 col-form-label" th:text="#{courses.form.auto_d59c}">説明</label>
                         <div class="col-sm-9">
                             <textarea th:field="*{description}" class="form-control" rows="2"
                                       th:classappend="${#fields.hasErrors('description')} ? 'is-invalid'"></textarea>
                             <div class="invalid-feedback" th:if="${#fields.hasErrors('description')}" 
-                                 th:errors="*{description}">エラー</div>
+                                 th:errors="*{description}" th:text="#{courses.form.auto_a5d1}">エラー</div>
                         </div>
                     </div>
 
@@ -96,16 +96,16 @@
                             <input type="number" th:field="*{creditHours}" class="form-control" min="1"
                                    th:classappend="${#fields.hasErrors('creditHours')} ? 'is-invalid'" required>
                             <div class="invalid-feedback" th:if="${#fields.hasErrors('creditHours')}" 
-                                 th:errors="*{creditHours}">エラー</div>
+                                 th:errors="*{creditHours}" th:text="#{courses.form.auto_a5d1}">エラー</div>
                         </div>
                     </div>
 
                     <div class="row">
-                        <label class="col-sm-3 col-form-label">担当教師</label>
+                        <label class="col-sm-3 col-form-label" th:text="#{courses.form.auto_f98a}">担当教師</label>
                         <div class="col-sm-9">
                             <select th:field="*{teacherId}" class="form-select"
                                     th:classappend="${#fields.hasErrors('teacherId')} ? 'is-invalid'">
-                                <option value="">-- 選択してください --</option>
+                                <option value="" th:text="#{courses.form.auto_ec5d}">-- 選択してください --</option>
                                 <option th:each="teacher : ${teachers}" 
                                         th:value="${teacher.teacherId}"
                                         th:text="${teacher.name} + ' (' + ${teacher.email} + ')'"
@@ -113,16 +113,16 @@
                                 </option>
                             </select>
                             <div class="invalid-feedback" th:if="${#fields.hasErrors('teacherId')}" 
-                                 th:errors="*{teacherId}">エラー</div>
+                                 th:errors="*{teacherId}" th:text="#{courses.form.auto_a5d1}">エラー</div>
                         </div>
                     </div>
 
                     <div class="row" th:if="${course.courseId != null}">
-                        <label class="col-sm-3 col-form-label">ステータス</label>
+                        <label class="col-sm-3 col-form-label" th:text="#{courses.form.auto_54dd}">ステータス</label>
                         <div class="col-sm-9">
                             <div class="form-check form-switch">
                                 <input type="checkbox" th:field="*{isActive}" class="form-check-input" id="isActive">
-                                <label class="form-check-label" for="isActive">アクティブ</label>
+                                <label class="form-check-label" for="isActive" th:text="#{courses.form.auto_0277}">アクティブ</label>
                             </div>
                         </div>
                     </div>
@@ -130,11 +130,9 @@
                     <div class="row mt-4">
                         <div class="col-sm-9 offset-sm-3">
                             <a href="/courses" class="btn btn-outline-secondary px-4 ms-2">
-                                <i class="bi bi-x-circle me-2"></i>キャンセル
-                            </a>
+                                <i class="bi bi-x-circle me-2"></i><th:block th:text="#{courses.form.auto_6ef3}">キャンセル</th:block></a>
                             <button type="submit" class="btn btn-primary px-4">
-                                <i class="bi bi-check-circle me-2"></i>保存
-                            </button>
+                                <i class="bi bi-check-circle me-2"></i><th:block th:text="#{courses.form.auto_be5f}">保存</th:block></button>
                         </div>
                     </div>
                 </form>

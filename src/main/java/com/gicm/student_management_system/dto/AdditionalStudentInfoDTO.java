@@ -31,4 +31,5 @@ public class AdditionalStudentInfoDTO {
     private String contactViber;
     private LocalDate schedulePaymentTutionDate;
     private LocalDate actualTutionPaymentDate;
+    private String otherReligion;
 }

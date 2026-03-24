@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html lang="ja" xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<html xmlns:th="http://www.thymeleaf.org" th:lang="${#locale.language}"
+    xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
-<head th:replace="~{layouts/admin-layout :: head(pageTitle='テスト結果一覧 | 生徒情報管理システム')}">
+<head th:replace="~{layouts/admin-layout :: head(pageTitle=#{result.list.title} + ' | ' + #{app.title})}">
 </head>
 
 <body>
@@ -20,7 +20,8 @@
                             <i class="bi bi-list fs-4"></i>
                         </button>
                         <div>
-                            <h1 class="mb-0" style="color: #0a58a0; font-weight: 600; font-size: 1.8rem;">
+                            <h1 class="mb-0" style="color: #0a58a0; font-weight: 600; font-size: 1.8rem;"
+                                th:text="#{result.list.title}">
                                 テスト結果一覧
                             </h1>
                         </div>
@@ -32,39 +33,36 @@
                     <div class="card-body">
                         <form th:action="@{/results}" method="get" class="row g-3">
                             <div class="col-md-4">
-                                <label class="form-label">テスト選択</label>
+                                <label class="form-label" th:text="#{test.select}">テスト選択</label>
                                 <select name="testId" class="form-select">
-                                    <option value="">全てのテスト</option>
-                                    <option th:each="test : ${tests}" 
-                                            th:value="${test.testId}"
-                                            th:text="${test.testName} + ' (' + ${test.courseName} + ')'"
-                                            th:selected="${param.testId != null and param.testId[0] == test.testId.toString()}">
+                                    <option value="" th:text="#{test.all}">全てのテスト</option>
+                                    <option th:each="test : ${tests}" th:value="${test.testId}"
+                                        th:text="${test.testName} + ' (' + ${test.courseName} + ')'"
+                                        th:selected="${param.testId != null and param.testId[0] == test.testId.toString()}">
                                     </option>
                                 </select>
                             </div>
                             <div class="col-md-4">
-                                <label class="form-label">生徒名検索</label>
-                                <input type="text" class="form-control" name="studentName" 
-                                    th:value="${param.studentName != null ? param.studentName[0] : ''}" 
-                                    placeholder="生徒名で検索">
+                                <label class="form-label" th:text="#{student.name.search}">生徒名検索</label>
+                                <input type="text" class="form-control" name="studentName"
+                                    th:value="${param.studentName}" th:placeholder="#{student.search.placeholder}">
                             </div>
                             <div class="col-md-4">
-                                <label class="form-label">コース</label>
+                                <label class="form-label" th:text="#{course.course}">コース</label>
                                 <select name="courseId" class="form-select">
-                                    <option value="">全てのコース</option>
-                                    <option th:each="course : ${courses}" 
-                                            th:value="${course.courseId}"
-                                            th:text="${course.courseName}"
-                                            th:selected="${param.courseId != null and param.courseId[0] == course.courseId.toString()}">
+                                    <option value="" th:text="#{course.all}">全てのコース</option>
+                                    <option th:each="course : ${courses}" th:value="${course.courseId}"
+                                        th:text="${course.courseName}"
+                                        th:selected="${param.courseId != null and param.courseId[0] == course.courseId.toString()}">
                                     </option>
                                 </select>
                             </div>
                             <div class="col-12 text-end">
                                 <button type="submit" class="btn btn-primary">
-                                    <i class="bi bi-search me-2"></i>検索
+                                    <i class="bi bi-search me-2"></i><span th:text="#{app.search}">検索</span>
                                 </button>
                                 <a href="/results" class="btn btn-outline-secondary">
-                                    <i class="bi bi-arrow-repeat me-2"></i>クリア
+                                    <i class="bi bi-arrow-repeat me-2"></i><span th:text="#{app.clear}">クリア</span>
                                 </a>
                             </div>
                         </form>
@@ -73,11 +71,12 @@
 
                 <!-- Action Buttons -->
                 <div class="d-flex justify-content-end gap-2 mb-4">
-                    <a href="/results/add" class="btn btn-success" sec:authorize="hasRole('ADMIN') or hasRole('TEACHER')">
-                        <i class="bi bi-plus-circle me-2"></i>新規結果入力
+                    <a href="/results/add" class="btn btn-success"
+                        sec:authorize="hasRole('ADMIN') or hasRole('TEACHER')">
+                        <i class="bi bi-plus-circle me-2"></i><span th:text="#{result.new.entry}">新規結果入力</span>
                     </a>
                     <a href="/results/bulk-upload" class="btn btn-info" sec:authorize="hasRole('ADMIN')">
-                        <i class="bi bi-file-spreadsheet me-2"></i>一括アップロード
+                        <i class="bi bi-file-spreadsheet me-2"></i><span th:text="#{result.bulk.upload}">一括アップロード</span>
                     </a>
                 </div>
 
@@ -99,15 +98,15 @@
                                 <thead class="bg-primary text-white">
                                     <tr>
                                         <th>ID</th>
-                                        <th>テスト名</th>
-                                        <th>生徒名</th>
-                                        <th>コース</th>
-                                        <th class="text-center">得点/満点</th>
+                                        <th th:text="#{test.name}">テスト名</th>
+                                        <th th:text="#{student.name}">生徒名</th>
+                                        <th th:text="#{course.course}">コース</th>
+                                        <th class="text-center" th:text="#{test.score.full}">得点/満点</th>
                                         <th class="text-center">%</th>
-                                        <th class="text-center">評価</th>
+                                        <th class="text-center" th:text="#{test.evaluation.short}">評価</th>
                                         <th class="text-center">GPA</th>
-                                        <th class="text-center">結果</th>
-                                        <th class="text-center">操作</th>
+                                        <th class="text-center" th:text="#{test.result.short}">結果</th>
+                                        <th class="text-center" th:text="#{test.actions}">操作</th>
                                     </tr>
                                 </thead>
                                 <tbody id="resultsTableBody">
@@ -116,20 +115,29 @@
                                         <td th:text="${result.testName}"></td>
                                         <td th:text="${result.studentName}"></td>
                                         <td th:text="${result.courseName}"></td>
-                                        <td class="text-center" th:text="${result.scoreObtained != null and result.totalMarks != null ? result.scoreObtained + '/' + result.totalMarks : '-'}"></td>
-                                        <td class="text-center" th:text="${result.percentage != null ? #numbers.formatDecimal(result.percentage, 1, 1) + '%' : '-'}"></td>
+                                        <td class="text-center"
+                                            th:text="${result.scoreObtained != null and result.totalMarks != null ? result.scoreObtained + '/' + result.totalMarks : '-'}">
+                                        </td>
+                                        <td class="text-center"
+                                            th:text="${result.percentage != null ? #numbers.formatDecimal(result.percentage, 1, 1) + '%' : '-'}">
+                                        </td>
                                         <td class="text-center">
-                                            <span class="badge" th:if="${result.grade != null}" th:classappend="${result.grade == 'A' or result.grade == 'A+' ? 'bg-success' : (result.grade == 'F' ? 'bg-danger' : 'bg-info')}" th:text="${result.grade}"></span>
+                                            <span class="badge" th:if="${result.grade != null}"
+                                                th:classappend="${result.grade == 'A' or result.grade == 'A+' ? 'bg-success' : (result.grade == 'F' ? 'bg-danger' : 'bg-info')}"
+                                                th:text="${result.grade}"></span>
                                             <span th:if="${result.grade == null}">-</span>
                                         </td>
-                                        <td class="text-center" th:text="${result.gpa != null} ? ${result.gpa} : '-'"></td>
+                                        <td class="text-center" th:text="${result.gpa != null} ? ${result.gpa} : '-'">
+                                        </td>
                                         <td class="text-center">
                                             <span th:if="${result.result == '合格'}" class="badge bg-success">合格</span>
                                             <span th:if="${result.result == '不合格'}" class="badge bg-danger">不合格</span>
                                             <span th:if="${result.result != '合格' and result.result != '不合格'}">-</span>
                                         </td>
                                         <td class="text-center">
-                                            <a th:href="@{'/results/edit/' + ${result.testResultId}}" class="btn btn-sm btn-outline-primary" title="編集" sec:authorize="hasRole('ADMIN') or hasRole('TEACHER')">
+                                            <a th:href="@{'/results/edit/' + ${result.testResultId}}"
+                                                class="btn btn-sm btn-outline-primary" title="編集"
+                                                sec:authorize="hasRole('ADMIN') or hasRole('TEACHER')">
                                                 <i class="bi bi-pencil"></i>
                                             </a>
                                         </td>
@@ -137,7 +145,7 @@
                                     <tr th:if="${results == null or results.size() == 0}">
                                         <td colspan="10" class="text-center text-muted py-5">
                                             <i class="bi bi-inbox fs-1 d-block mb-3"></i>
-                                            テスト結果がありません。
+                                            <span th:text="#{result.no.data}">テスト結果がありません。</span>
                                         </td>
                                     </tr>
                                 </tbody>
@@ -148,89 +156,90 @@
 
                 <!-- Pagination - Updated to 10 rows per page -->
                 <div id="pagination" class="d-flex justify-content-center mt-4"></div>
+            </div>
         </div>
-    </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            // Sidebar toggle
-            const layout = document.querySelector(".dashboard-layout");
-            const toggles = document.querySelectorAll("[data-sidebar-toggle]");
-            toggles.forEach((btn) =>
-                btn.addEventListener("click", function (event) {
-                    event.preventDefault();
-                    layout?.classList.toggle("sidebar-open");
-                })
-            );
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                // Sidebar toggle
+                const layout = document.querySelector(".dashboard-layout");
+                const toggles = document.querySelectorAll("[data-sidebar-toggle]");
+                toggles.forEach((btn) =>
+                    btn.addEventListener("click", function (event) {
+                        event.preventDefault();
+                        layout?.classList.toggle("sidebar-open");
+                    })
+                );
 
-            // Pagination - Set to 10 rows per page
-            const rows = Array.from(document.querySelectorAll("#resultsTableBody tr")).filter(
-                r => !r.querySelector("td[colspan]")
-            );
-            
-            if (rows.length === 0) return;
-            
-            const rowsPerPage = 10; 
-            let currentPage = 1;
-            
-            function displayPage(page) {
-                currentPage = page;
-                const start = (page - 1) * rowsPerPage;
-                const end = start + rowsPerPage;
-                
-                rows.forEach((row, index) => {
-                    row.style.display = index >= start && index < end ? "" : "none";
-                });
-                
-                renderPagination();
-            }
-            
-            function renderPagination() {
-                const pageCount = Math.ceil(rows.length / rowsPerPage);
-                const paginationDiv = document.getElementById("pagination");
-                
-                paginationDiv.innerHTML = "";
-                
-                // Previous button
-                const prevBtn = document.createElement("button");
-                prevBtn.innerHTML = "&laquo;";
-                prevBtn.className = `btn btn-sm mx-1 ${currentPage === 1 ? 'btn-secondary' : 'btn-outline-primary'}`;
-                prevBtn.disabled = currentPage === 1;
-                prevBtn.addEventListener("click", () => displayPage(currentPage - 1));
-                paginationDiv.appendChild(prevBtn);
-                
-                // Page numbers
-                let startPage = Math.max(1, currentPage - 2);
-                let endPage = Math.min(pageCount, currentPage + 2);
-                
-                if (endPage - startPage < 4) {
-                    if (currentPage < 3) {
-                        endPage = Math.min(pageCount, 5);
-                    } else {
-                        startPage = Math.max(1, pageCount - 4);
+                // Pagination - Set to 10 rows per page
+                const rows = Array.from(document.querySelectorAll("#resultsTableBody tr")).filter(
+                    r => !r.querySelector("td[colspan]")
+                );
+
+                if (rows.length === 0) return;
+
+                const rowsPerPage = 10;
+                let currentPage = 1;
+
+                function displayPage(page) {
+                    currentPage = page;
+                    const start = (page - 1) * rowsPerPage;
+                    const end = start + rowsPerPage;
+
+                    rows.forEach((row, index) => {
+                        row.style.display = index >= start && index < end ? "" : "none";
+                    });
+
+                    renderPagination();
+                }
+
+                function renderPagination() {
+                    const pageCount = Math.ceil(rows.length / rowsPerPage);
+                    const paginationDiv = document.getElementById("pagination");
+
+                    paginationDiv.innerHTML = "";
+
+                    // Previous button
+                    const prevBtn = document.createElement("button");
+                    prevBtn.innerHTML = "&laquo;";
+                    prevBtn.className = `btn btn-sm mx-1 ${currentPage === 1 ? 'btn-secondary' : 'btn-outline-primary'}`;
+                    prevBtn.disabled = currentPage === 1;
+                    prevBtn.addEventListener("click", () => displayPage(currentPage - 1));
+                    paginationDiv.appendChild(prevBtn);
+
+                    // Page numbers
+                    let startPage = Math.max(1, currentPage - 2);
+                    let endPage = Math.min(pageCount, currentPage + 2);
+
+                    if (endPage - startPage < 4) {
+                        if (currentPage < 3) {
+                            endPage = Math.min(pageCount, 5);
+                        } else {
+                            startPage = Math.max(1, pageCount - 4);
+                        }
                     }
+
+                    for (let i = startPage; i <= endPage; i++) {
+                        const btn = document.createElement("button");
+                        btn.textContent = i;
+                        btn.className = `btn btn-sm mx-1 ${i === currentPage ? 'btn-primary' : 'btn-outline-primary'}`;
+                        btn.addEventListener("click", () => displayPage(i));
+                        paginationDiv.appendChild(btn);
+                    }
+
+                    // Next button
+                    const nextBtn = document.createElement("button");
+                    nextBtn.innerHTML = "&raquo;";
+                    nextBtn.className = `btn btn-sm mx-1 ${currentPage === pageCount ? 'btn-secondary' : 'btn-outline-primary'}`;
+                    nextBtn.disabled = currentPage === pageCount;
+                    nextBtn.addEventListener("click", () => displayPage(currentPage + 1));
+                    paginationDiv.appendChild(nextBtn);
                 }
-                
-                for (let i = startPage; i <= endPage; i++) {
-                    const btn = document.createElement("button");
-                    btn.textContent = i;
-                    btn.className = `btn btn-sm mx-1 ${i === currentPage ? 'btn-primary' : 'btn-outline-primary'}`;
-                    btn.addEventListener("click", () => displayPage(i));
-                    paginationDiv.appendChild(btn);
-                }
-                
-                // Next button
-                const nextBtn = document.createElement("button");
-                nextBtn.innerHTML = "&raquo;";
-                nextBtn.className = `btn btn-sm mx-1 ${currentPage === pageCount ? 'btn-secondary' : 'btn-outline-primary'}`;
-                nextBtn.disabled = currentPage === pageCount;
-                nextBtn.addEventListener("click", () => displayPage(currentPage + 1));
-                paginationDiv.appendChild(nextBtn);
-            }
-            
-            displayPage(1);
-        });
-    </script>
+
+                displayPage(1);
+            });
+        </script>
 </body>
+
 </html>

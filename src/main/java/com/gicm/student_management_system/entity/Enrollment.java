@@ -3,6 +3,7 @@ package com.gicm.student_management_system.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "enrollments")
@@ -51,4 +52,8 @@ public class Enrollment {
             status = "pending";
         }
     }
+
+    // Reverse relationship (TestResult -> Enrollment)
+    @OneToMany(mappedBy = "enrollment", fetch = FetchType.LAZY)
+    private List<TestResult> testResults;
 }

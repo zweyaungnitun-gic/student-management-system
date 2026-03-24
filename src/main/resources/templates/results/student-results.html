@@ -1,7 +1,7 @@
 <!DOCTYPE html>
-<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" th:lang="${#locale.language}">
 
-<head th:replace="~{layouts/admin-layout :: head(pageTitle='学生のテスト結果')}">
+<head th:replace="~{layouts/admin-layout :: head(pageTitle=#{result.student.title})}">
 </head>
 
 <body>
@@ -19,7 +19,7 @@
                             <i class="bi bi-list fs-4"></i>
                         </button>
                         <div>
-                            <h1 class="mb-0" style="color: #0a58a0; font-weight: 600; font-size: 1.8rem;">
+                            <h1 class="mb-0" style="color: #0a58a0; font-weight: 600; font-size: 1.8rem;" th:text="#{result.student.title}">
                                 学生のテスト結果
                             </h1>
                             <p class="text-muted mb-0" th:if="${student != null}" 
@@ -32,20 +32,19 @@
                 <div class="d-flex justify-content-end align-items-center mb-4 gap-2">
                     <!-- Back Button -->
                     <a href="javascript:history.back()" class="btn btn-outline-secondary">
-                        <i class="bi bi-arrow-left me-2"></i>戻る
+                        <i class="bi bi-arrow-left me-2"></i><span th:text="#{app.back}">戻る</span>
                     </a>
                     
                     <!-- Excel Download Button -->
                     <button type="button" id="excelDownloadBtn" class="btn btn-success" onclick="exportToExcel()">
-                        <i class="bi bi-file-earmark-excel me-2"></i>Excelダウンロード
+                        <i class="bi bi-file-earmark-excel me-2"></i><span th:text="#{app.excel.download}">Excelダウンロード</span>
                     </button>
                     
                     <!-- Add Result Button -->
                     <a th:href="@{'/results/add?studentId=' + ${student.id}}" 
                     class="btn btn-primary"
                     sec:authorize="hasRole('ADMIN') or hasRole('TEACHER')">
-                        <i class="bi bi-plus-circle me-2"></i>結果追加
-                    </a>
+                        <i class="bi bi-plus-circle me-2"></i><th:block th:text="#{results.student-results.auto_3f98}">結果追加</th:block></a>
                 </div>
 
                 <!-- Results Table -->
@@ -55,14 +54,14 @@
                             <table class="table table-hover align-middle mb-0" id="resultsTable">
                                 <thead class="bg-primary text-white">
                                     <tr>
-                                        <th>テスト名</th>
-                                        <th>コース</th>
-                                        <th class="text-center">得点/満点</th>
+                                        <th th:text="#{results.student-results.auto_0355}">テスト名</th>
+                                        <th th:text="#{results.student-results.auto_107b}">コース</th>
+                                        <th class="text-center" th:text="#{results.student-results.auto_d05f}">得点/満点</th>
                                         <th class="text-center">%</th>
-                                        <th class="text-center">評価</th>
+                                        <th class="text-center" th:text="#{results.student-results.auto_6745}">評価</th>
                                         <th class="text-center">GPA</th>
-                                        <th class="text-center">結果</th>
-                                        <th class="text-center">操作</th>
+                                        <th class="text-center" th:text="#{results.student-results.auto_54b7}">結果</th>
+                                        <th class="text-center" th:text="#{results.student-results.auto_2b6b}">操作</th>
                                     </tr>
                                 </thead>
                                 <tbody id="resultsTableBody">
@@ -84,8 +83,8 @@
                                         </td>
                                         <td class="text-center" th:text="${result.gpa != null ? result.gpa : '-'}"></td>
                                         <td class="text-center">
-                                            <span th:if="${result.result == '合格'}" class="badge bg-success">合格</span>
-                                            <span th:if="${result.result == '不合格'}" class="badge bg-danger">不合格</span>
+                                            <span th:if="${result.result == '合格'}" class="badge bg-success" th:text="#{results.student-results.auto_86f7}">合格</span>
+                                            <span th:if="${result.result == '不合格'}" class="badge bg-danger" th:text="#{results.student-results.auto_6e5a}">不合格</span>
                                             <span th:if="${result.result == null}" class="badge bg-secondary">-</span>
                                         </td>
                                         <td class="text-center">
@@ -97,9 +96,7 @@
                                     </tr>
                                     <tr th:if="${results == null or results.size() == 0}">
                                         <td colspan="8" class="text-center text-muted py-5">
-                                            <i class="bi bi-inbox fs-1 d-block mb-3"></i>
-                                            この学生のテスト結果はありません。
-                                        </td>
+                                            <i class="bi bi-inbox fs-1 d-block mb-3"></i><th:block th:text="#{results.student-results.auto_e4c5}">この学生のテスト結果はありません。</th:block></td>
                                     </tr>
                                 </tbody>
                             </table>

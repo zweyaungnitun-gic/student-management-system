@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html lang="ja" xmlns:th="http://www.thymeleaf.org"
+<html xmlns:th="http://www.thymeleaf.org" th:lang="${#locale.language}"
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
-<head th:replace="~{layouts/admin-layout :: head(pageTitle='コース管理 | 生徒情報管理システム')}">
+<head th:replace="~{layouts/admin-layout :: head(pageTitle=#{course.title} + ' | ' + #{app.title})}">
 </head>
 
 <body>
@@ -22,7 +22,7 @@
                             <i class="bi bi-list fs-4"></i>
                         </button>
                         <div>
-                            <h1 class="mb-0" style="color: #0a58a0; font-weight: 600; font-size: 1.8rem;">
+                            <h1 class="mb-0" style="color: #0a58a0; font-weight: 600; font-size: 1.8rem;" th:text="#{course.title}">
                                 コース管理
                             </h1>
                         </div>
@@ -44,16 +44,16 @@
                                                         <i class="bi bi-search"></i>
                                                     </span>
                                                     <input type="text" class="form-control" name="search" th:value="${search}"
-                                                        placeholder="コース名またはコードで検索...">
+                                                        th:placeholder="#{course.search.placeholder}">
                                                 </div>
                                             </div>
                                             <button type="submit" class="btn btn-primary d-flex align-items-center gap-2 px-3 py-2" style="white-space: nowrap;">
                                                 <i class="bi bi-search"></i>
-                                                <span>検索</span>
+                                                <span th:text="#{course.search}">検索</span>
                                             </button>
                                             <a href="/courses" class="btn btn-outline-secondary d-flex align-items-center gap-2 px-3 py-2" style="white-space: nowrap;">
                                                 <i class="bi bi-arrow-repeat"></i>
-                                                <span>リフレッシュ</span>
+                                                <span th:text="#{course.refresh}">リフレッシュ</span>
                                             </a>
                                         </div>
                                     </div>
@@ -62,7 +62,7 @@
                                             <input type="checkbox" class="form-check-input" name="activeOnly" 
                                                 value="true" th:checked="${activeOnly}" id="activeOnly">
                                             <input type="hidden" name="_activeOnly" value="on"/>
-                                            <label class="form-check-label" for="activeOnly">アクティブのみ表示</label>
+                                            <label class="form-check-label" for="activeOnly" th:text="#{courses.list.auto_e10f}">アクティブのみ表示</label>
                                         </div>
                                     </div>
                                 </form>
@@ -74,7 +74,7 @@
                                     <a href="/courses/add" class="btn btn-success d-flex align-items-center gap-2 px-3 py-2" 
                                     sec:authorize="hasRole('ADMIN')" style="white-space: nowrap;">
                                         <i class="bi bi-plus-circle"></i>
-                                        <span>新規追加</span>
+                                        <span th:text="#{courses.list.auto_3237}">新規追加</span>
                                     </a>
                                 </div>
                             </div>
@@ -100,13 +100,13 @@
                                 <thead class="bg-primary text-white">
                                     <tr>
                                         <th class="text-center">ID</th>
-                                        <th class="text-center">コースコード</th>
-                                        <th class="text-center">コース名</th>
-                                        <th class="text-center">単位数</th>
-                                        <th class="text-center">担当教師</th>
-                                        <th class="text-center">ステータス</th>
-                                        <th class="text-center">登録日</th>
-                                        <th class="text-center">操作</th>
+                                        <th class="text-center" th:text="#{courses.list.auto_9068}">コースコード</th>
+                                        <th class="text-center" th:text="#{courses.list.auto_abf1}">コース名</th>
+                                        <th class="text-center" th:text="#{courses.list.auto_91f9}">単位数</th>
+                                        <th class="text-center" th:text="#{courses.list.auto_f98a}">担当教師</th>
+                                        <th class="text-center" th:text="#{courses.list.auto_54dd}">ステータス</th>
+                                        <th class="text-center" th:text="#{courses.list.auto_2f22}">登録日</th>
+                                        <th class="text-center" th:text="#{courses.list.auto_2b6b}">操作</th>
                                     </tr>
                                 </thead>
                                 <tbody id="courseTableBody">
@@ -120,11 +120,11 @@
                                         <td class="text-center" th:text="${course.creditHours}"></td>
                                         <td class="text-center">
                                             <span th:if="${course.teacherName}" th:text="${course.teacherName}"></span>
-                                            <span th:unless="${course.teacherName}" class="text-muted fst-italic">未割当</span>
+                                            <span th:unless="${course.teacherName}" class="text-muted fst-italic" th:text="#{courses.list.auto_eb20}">未割当</span>
                                         </td>
                                         <td class="text-center">
-                                            <span th:if="${course.isActive == true}" class="badge bg-success rounded-pill px-3">アクティブ</span>
-                                            <span th:if="${course.isActive == false}" class="badge bg-danger rounded-pill px-3">非アクティブ</span>
+                                            <span th:if="${course.isActive == true}" class="badge bg-success rounded-pill px-3" th:text="#{courses.list.auto_0277}">アクティブ</span>
+                                            <span th:if="${course.isActive == false}" class="badge bg-danger rounded-pill px-3" th:text="#{courses.list.auto_f32a}">非アクティブ</span>
                                         </td>
                                         <td class="text-center" th:text="${#temporals.format(course.createdAt, 'yyyy-MM-dd HH:mm')}"></td>
                                         <td class="text-center">
@@ -181,9 +181,7 @@
                                     </tr>
                                     <tr th:if="${courses.size() == 0}">
                                         <td colspan="8" class="text-center text-muted py-5">
-                                            <i class="bi bi-inbox fs-1 d-block mb-3"></i>
-                                            コースが登録されていません。
-                                        </td>
+                                            <i class="bi bi-inbox fs-1 d-block mb-3"></i><th:block th:text="#{courses.list.auto_45df}">コースが登録されていません。</th:block></td>
                                     </tr>
                                 </tbody>
                             </table>

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:lang="${#locale.language}">
+<head th:replace="~{layouts/admin-layout :: head(pageTitle=#{report.dashboard})}">
+</head>
+<body>
+    <div class="dashboard-layout">
+        <th:block th:replace="~{layouts/admin-layout :: sidebar(currentPage='reports')}"></th:block>
+        
+        <div class="dashboard-main">
+            <div class="page-wrapper py-4 px-4">
+                <h1 class="mb-4" th:text="#{report.dashboard}">レポートダッシュボード</h1>
+                
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title" th:text="#{report.grade.summary}">成績サマリー</h5>
+                                <p class="card-text" th:text="#{report.grade.summary.description}">学生ごとの成績サマリーを表示</p>
+                                <form class="d-flex" onsubmit="window.location.href='/reports/student/' + document.getElementById('studentId').value; return false;">
+                                    <input type="number" id="studentId" class="form-control me-2" th:placeholder="#{student.id}">
+                                    <button type="submit" class="btn btn-primary" th:text="#{app.show}">表示</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-4 mb-3">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title" th:text="#{report.report.card}">成績表</h5>
+                                <p class="card-text" th:text="#{report.report.card.description}">PDF形式の成績表を表示</p>
+                                <form class="d-flex" onsubmit="window.location.href='/reports/report-card/' + document.getElementById('reportStudentId').value; return false;">
+                                    <input type="number" id="reportStudentId" class="form-control me-2" th:placeholder="#{student.id}">
+                                    <button type="submit" class="btn btn-success" th:text="#{app.show}">表示</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-4 mb-3">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title" th:text="#{report.class.rankings}">クラス順位</h5>
+                                <p class="card-text" th:text="#{report.class.rankings.description}">クラス内の順位を表示</p>
+                                <select id="className" class="form-select mb-2">
+                                    <option value="N5" th:text="#{class.n5}">N5クラス</option>
+                                    <option value="N4" th:text="#{class.n4}">N4クラス</option>
+                                    <option value="N3" th:text="#{class.n3}">N3クラス</option>
+                                    <option value="N2" th:text="#{class.n2}">N2クラス</option>
+                                    <option value="N1" th:text="#{class.n1}">N1クラス</option>
+                                </select>
+                                <button class="btn btn-warning" onclick="window.location.href='/reports/rankings?className=' + document.getElementById('className').value" th:text="#{app.show}">
+                                    表示
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

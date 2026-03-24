@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.context.MessageSource;
 
 import static org.mockito.Mockito.mock;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -17,7 +18,7 @@ public class RegistrationControllerTest {
     @Test
     void getRegister_returnsRegisterView_anonymousAllowed() throws Exception {
         RegisterStudentService mockService = mock(RegisterStudentService.class);
-        RegistrationController controller = new RegistrationController(mockService);
+        RegistrationController controller = new RegistrationController(mockService, mock(MessageSource.class));
 
         MockMvc mockMvc = MockMvcBuilders.standaloneSetup(controller).build();
 
@@ -29,7 +30,7 @@ public class RegistrationControllerTest {
     @Test
     void getRegister_withSessionStudentData_exposesStudentDataToModel() throws Exception {
         RegisterStudentService mockService = mock(RegisterStudentService.class);
-        RegistrationController controller = new RegistrationController(mockService);
+        RegistrationController controller = new RegistrationController(mockService, mock(MessageSource.class));
 
         MockMvc mockMvc = MockMvcBuilders.standaloneSetup(controller).build();
 
@@ -47,7 +48,7 @@ public class RegistrationControllerTest {
     @Test
     void getSecondPage_returnsSecondPageView() throws Exception {
         RegisterStudentService mockService = mock(RegisterStudentService.class);
-        RegistrationController controller = new RegistrationController(mockService);
+        RegistrationController controller = new RegistrationController(mockService, mock(MessageSource.class));
 
         MockMvc mockMvc = MockMvcBuilders.standaloneSetup(controller).build();
 
@@ -59,7 +60,7 @@ public class RegistrationControllerTest {
     @Test
     void getSecondPage_withSession_exposesStudentDataToModel() throws Exception {
         RegisterStudentService mockService = mock(RegisterStudentService.class);
-        RegistrationController controller = new RegistrationController(mockService);
+        RegistrationController controller = new RegistrationController(mockService, mock(MessageSource.class));
 
         MockMvc mockMvc = MockMvcBuilders.standaloneSetup(controller).build();
 
@@ -77,7 +78,7 @@ public class RegistrationControllerTest {
     @Test
     void getThirdPage_returnsThirdPageView() throws Exception {
         RegisterStudentService mockService = mock(RegisterStudentService.class);
-        RegistrationController controller = new RegistrationController(mockService);
+        RegistrationController controller = new RegistrationController(mockService, mock(MessageSource.class));
 
         MockMvc mockMvc = MockMvcBuilders.standaloneSetup(controller).build();
 
@@ -89,7 +90,7 @@ public class RegistrationControllerTest {
     @Test
     void getThirdPage_withSession_exposesStudentDataToModel() throws Exception {
         RegisterStudentService mockService = mock(RegisterStudentService.class);
-        RegistrationController controller = new RegistrationController(mockService);
+        RegistrationController controller = new RegistrationController(mockService, mock(MessageSource.class));
 
         MockMvc mockMvc = MockMvcBuilders.standaloneSetup(controller).build();
 
@@ -107,7 +108,7 @@ public class RegistrationControllerTest {
     @Test
     void getCheckPage_withoutSession_redirectsToRegister() throws Exception {
         RegisterStudentService mockService = mock(RegisterStudentService.class);
-        RegistrationController controller = new RegistrationController(mockService);
+        RegistrationController controller = new RegistrationController(mockService, mock(MessageSource.class));
 
         MockMvc mockMvc = MockMvcBuilders.standaloneSetup(controller).build();
 
@@ -119,7 +120,7 @@ public class RegistrationControllerTest {
     @Test
     void getCheckPage_withSession_returnsCheckPageAndModel() throws Exception {
         RegisterStudentService mockService = mock(RegisterStudentService.class);
-        RegistrationController controller = new RegistrationController(mockService);
+        RegistrationController controller = new RegistrationController(mockService, mock(MessageSource.class));
 
         MockMvc mockMvc = MockMvcBuilders.standaloneSetup(controller).build();
 
@@ -137,7 +138,7 @@ public class RegistrationControllerTest {
     @Test
     void getSuccess_withSession_returnsSuccessViewAndModel() throws Exception {
         RegisterStudentService mockService = mock(RegisterStudentService.class);
-        RegistrationController controller = new RegistrationController(mockService);
+        RegistrationController controller = new RegistrationController(mockService, mock(MessageSource.class));
 
         MockMvc mockMvc = MockMvcBuilders.standaloneSetup(controller).build();
 

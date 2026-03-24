@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html lang="ja" xmlns:th="http://www.thymeleaf.org"
+<html xmlns:th="http://www.thymeleaf.org" th:lang="${#locale.language}"
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
-<head th:replace="~{layouts/admin-layout :: head(pageTitle='テスト統計 | 生徒情報管理システム')}">
+<head th:replace="~{layouts/admin-layout :: head(pageTitle=#{report.test.statistics} + ' | ' + #{app.title})}">
 </head>
 
 <body>
@@ -20,7 +20,7 @@
                             <i class="bi bi-list fs-4"></i>
                         </button>
                         <div>
-                            <h1 class="mb-0" style="color: #0a58a0; font-weight: 600; font-size: 1.8rem;">
+                            <h1 class="mb-0" style="color: #0a58a0; font-weight: 600; font-size: 1.8rem;" th:text="#{report.test.statistics}">
                                 テスト統計
                             </h1>
                         </div>
@@ -31,25 +31,25 @@
                 <div class="row g-4 mb-4">
                     <div class="col-md-3">
                         <div class="mini-card p-4 text-center">
-                            <div class="text-muted small mb-2">受験者数</div>
+                            <div class="text-muted small mb-2" th:text="#{test.total.students}">受験者数</div>
                             <div class="h2 mb-0 fw-bold" th:text="${statistics.totalStudents}">0</div>
                         </div>
                     </div>
                     <div class="col-md-3">
                         <div class="mini-card p-4 text-center">
-                            <div class="text-muted small mb-2">平均点</div>
+                            <div class="text-muted small mb-2" th:text="#{test.average.score}">平均点</div>
                             <div class="h2 mb-0 fw-bold" th:text="${statistics.averageScore}">0</div>
                         </div>
                     </div>
                     <div class="col-md-3">
                         <div class="mini-card p-4 text-center">
-                            <div class="text-muted small mb-2">平均GPA</div>
+                            <div class="text-muted small mb-2" th:text="#{test.average.gpa}">平均GPA</div>
                             <div class="h2 mb-0 fw-bold" th:text="${statistics.averageGpa}">0</div>
                         </div>
                     </div>
                     <div class="col-md-3">
                         <div class="mini-card p-4 text-center">
-                            <div class="text-muted small mb-2">合格率</div>
+                            <div class="text-muted small mb-2" th:text="#{test.pass.rate}">合格率</div>
                             <div class="h2 mb-0 fw-bold" th:text="${statistics.passRate} + '%'">0%</div>
                         </div>
                     </div>
@@ -58,33 +58,33 @@
                 <div class="row g-4 mb-4">
                     <div class="col-md-4">
                         <div class="mini-card p-4">
-                            <h6 class="mb-3">得点範囲</h6>
+                            <h6 class="mb-3" th:text="#{reports.test-statistics.auto_0183}">得点範囲</h6>
                             <div class="d-flex justify-content-between mb-2">
-                                <span>最高点</span>
+                                <span th:text="#{reports.test-statistics.auto_4b38}">最高点</span>
                                 <span class="fw-bold text-success" th:text="${statistics.highestScore}"></span>
                             </div>
                             <div class="d-flex justify-content-between">
-                                <span>最低点</span>
+                                <span th:text="#{reports.test-statistics.auto_952a}">最低点</span>
                                 <span class="fw-bold text-danger" th:text="${statistics.lowestScore}"></span>
                             </div>
                         </div>
                     </div>
                     <div class="col-md-4">
                         <div class="mini-card p-4">
-                            <h6 class="mb-3">合格状況</h6>
+                            <h6 class="mb-3" th:text="#{reports.test-statistics.auto_8a73}">合格状況</h6>
                             <div class="d-flex justify-content-between mb-2">
-                                <span>合格者</span>
+                                <span th:text="#{reports.test-statistics.auto_23e5}">合格者</span>
                                 <span class="fw-bold text-success" th:text="${statistics.passedCount}"></span>
                             </div>
                             <div class="d-flex justify-content-between">
-                                <span>不合格者</span>
+                                <span th:text="#{reports.test-statistics.auto_ac05}">不合格者</span>
                                 <span class="fw-bold text-danger" th:text="${statistics.failedCount}"></span>
                             </div>
                         </div>
                     </div>
                     <div class="col-md-4">
                         <div class="mini-card p-4">
-                            <h6 class="mb-3">評価分布</h6>
+                            <h6 class="mb-3" th:text="#{reports.test-statistics.auto_2928}">評価分布</h6>
                             <div th:each="entry : ${statistics.gradeDistribution}" 
                                  class="d-flex justify-content-between mb-1 small">
                                 <span th:text="${entry.key} + ':'"></span>
@@ -100,13 +100,13 @@
                         <table class="table data-table align-middle mb-0">
                             <thead>
                                 <tr>
-                                    <th>生徒ID</th>
-                                    <th>生徒名</th>
-                                    <th class="text-center">得点</th>
-                                    <th class="text-center">パーセンテージ</th>
-                                    <th class="text-center">評価</th>
+                                    <th th:text="#{reports.test-statistics.auto_7ea9}">生徒ID</th>
+                                    <th th:text="#{reports.test-statistics.auto_8a42}">生徒名</th>
+                                    <th class="text-center" th:text="#{reports.test-statistics.auto_3456}">得点</th>
+                                    <th class="text-center" th:text="#{reports.test-statistics.auto_874c}">パーセンテージ</th>
+                                    <th class="text-center" th:text="#{reports.test-statistics.auto_6745}">評価</th>
                                     <th class="text-center">GPA</th>
-                                    <th class="text-center">結果</th>
+                                    <th class="text-center" th:text="#{reports.test-statistics.auto_54b7}">結果</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -122,8 +122,8 @@
                                     </td>
                                     <td class="text-center" th:text="${result.gpa}"></td>
                                     <td class="text-center">
-                                        <span th:if="${result.result == '合格'}" class="badge bg-success">合格</span>
-                                        <span th:if="${result.result == '不合格'}" class="badge bg-danger">不合格</span>
+                                        <span th:if="${result.result == '合格'}" class="badge bg-success" th:text="#{reports.test-statistics.auto_86f7}">合格</span>
+                                        <span th:if="${result.result == '不合格'}" class="badge bg-danger" th:text="#{reports.test-statistics.auto_6e5a}">不合格</span>
                                     </td>
                                 </tr>
                             </tbody>

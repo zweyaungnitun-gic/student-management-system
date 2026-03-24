@@ -1,6 +1,7 @@
 package com.gicm.student_management_system.entity;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.UUID;
 
 import jakarta.persistence.Column;
@@ -13,6 +14,8 @@ import jakarta.persistence.Id;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.OneToMany;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -89,4 +92,8 @@ public class Student {
     protected void onUpdate() {
         this.updatedAt = LocalDate.now();
     }
+
+    // Reverse relationship (Enrollment -> Student)
+    @OneToMany(mappedBy = "student", fetch = FetchType.LAZY)
+    private List<Enrollment> enrollments;
 }

@@ -9,6 +9,7 @@ import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.context.MessageSource;
 
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -66,7 +67,7 @@ public class ButtonTest {
 	}
 
 	private MockMvc buildMockMvc(RegisterStudentService mockService) {
-		RegistrationController registrationController = new RegistrationController(mockService);
+		RegistrationController registrationController = new RegistrationController(mockService, mock(MessageSource.class));
 		HomeController homeController = new HomeController();
 		return MockMvcBuilders.standaloneSetup(registrationController, homeController).build();
 	}
@@ -119,7 +120,7 @@ public class ButtonTest {
 	@Test
 	void successPageHomeButton_navigatesToHome() throws Exception {
 		RegisterStudentService mockService = mock(RegisterStudentService.class);
-		RegistrationController registrationController = new RegistrationController(mockService);
+		RegistrationController registrationController = new RegistrationController(mockService, mock(MessageSource.class));
 		HomeController homeController = new HomeController();
 		MockMvc mockMvc = MockMvcBuilders.standaloneSetup(registrationController, homeController).build();
 
@@ -130,7 +131,7 @@ public class ButtonTest {
 	@Test
 	    void checkPageChangeButton_navigatesBackToRegister() throws Exception {
 		RegisterStudentService mockService = mock(RegisterStudentService.class);
-		RegistrationController controller = new RegistrationController(mockService);
+		RegistrationController controller = new RegistrationController(mockService, mock(MessageSource.class));
 		MockMvc mockMvc = MockMvcBuilders.standaloneSetup(controller).build();
 
 		MockHttpSession session = new MockHttpSession();
@@ -151,7 +152,7 @@ public class ButtonTest {
 	@Test
 	void checkPageSubmitButton_savesAndRedirectsToSuccess() throws Exception {
 		RegisterStudentService mockService = mock(RegisterStudentService.class);
-		RegistrationController controller = new RegistrationController(mockService);
+		RegistrationController controller = new RegistrationController(mockService, mock(MessageSource.class));
 		MockMvc mockMvc = MockMvcBuilders.standaloneSetup(controller).build();
 
 		// Mock the service to return a valid registration

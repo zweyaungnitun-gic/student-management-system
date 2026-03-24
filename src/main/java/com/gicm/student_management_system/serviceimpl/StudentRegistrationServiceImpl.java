@@ -175,13 +175,13 @@ public class StudentRegistrationServiceImpl implements StudentRegistrationServic
 
         StudentDTO studentDTO = new StudentDTO();
         studentDTO.setStudentId(null);
-        studentDTO.setStudentName(reg.getEnglishName());
+        studentDTO.setStudentName(reg.getEnglishName()); // Using englishName as studentName
         studentDTO.setGender(reg.getGender());
         studentDTO.setPhoneNumber(reg.getPhoneNumber());
-        studentDTO.setNationalId(reg.getNationalIdNumber());
+        studentDTO.setNationalId(reg.getNationalIdNumber()); // Map nationalIdNumber to nationalId
         studentDTO.setReligion(reg.getReligion());
-        studentDTO.setCurrentLivingAddress(reg.getCurrentAddress());
-        studentDTO.setHomeTownAddress(reg.getHometownAddress());
+        studentDTO.setCurrentLivingAddress(reg.getCurrentAddress()); // Map currentAddress to currentLivingAddress
+        studentDTO.setHomeTownAddress(reg.getHometownAddress()); // Map hometownAddress to homeTownAddress
         studentDTO.setDateOfBirth(reg.getDateOfBirth());
         studentDTO.setEnrolledDate(LocalDate.now());
 
@@ -208,6 +208,7 @@ public class StudentRegistrationServiceImpl implements StudentRegistrationServic
                     .hostelPreference(reg.getWantDorm())
                     .memoNotes(reg.getOtherMemo())
                     .schedulePaymentTutionDate(reg.getTuitionPaymentDate())
+                    .otherReligion(reg.getOtherReligion())
                     .build();
             additionalStudentInfoRepository.save(additional);
         }

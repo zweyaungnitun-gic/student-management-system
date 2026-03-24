@@ -20,9 +20,7 @@
                             <i class="bi bi-list fs-4"></i>
                         </button>
                         <div>
-                            <h1 class="mb-0" style="color: #0a58a0; font-weight: 600; font-size: 1.8rem;">
-                                テスト詳細
-                            </h1>
+                            <h1 class="mb-0" style="color: #0a58a0; font-weight: 600; font-size: 1.8rem;" th:text="#{tests.details.auto_e3cf}">テスト詳細</h1>
                             <p class="text-muted mb-0" th:text="'テスト: ' + ${test.testName}"></p>
                         </div>
                     </div>
@@ -32,19 +30,19 @@
                 <div class="d-flex justify-content-end gap-2 mb-4">
                     <a href="/tests" class="btn btn-outline-secondary d-flex align-items-center gap-2">
                         <i class="bi bi-arrow-left"></i>
-                        <span>一覧に戻る</span>
+                        <span th:text="#{tests.details.auto_68e3}">一覧に戻る</span>
                     </a>
                     <a th:href="@{'/tests/edit/' + ${test.testId}}" 
                        class="btn btn-primary d-flex align-items-center gap-2"
                        sec:authorize="hasRole('ADMIN') or hasRole('TEACHER')">
                         <i class="bi bi-pencil-square"></i>
-                        <span>編集</span>
+                        <span th:text="#{tests.details.auto_7578}">編集</span>
                     </a>
                     <a th:href="@{'/results/add/' + ${test.testId}}" 
                        class="btn btn-success d-flex align-items-center gap-2"
                        sec:authorize="hasRole('ADMIN') or hasRole('TEACHER')">
                         <i class="bi bi-plus-circle"></i>
-                        <span>結果追加</span>
+                        <span th:text="#{tests.details.auto_3f98}">結果追加</span>
                     </a>
                 </div>
 
@@ -54,49 +52,47 @@
                         <div class="card shadow-sm h-100">
                             <div class="card-header bg-white py-3">
                                 <h5 class="card-title mb-0">
-                                    <i class="bi bi-info-circle me-2 text-primary"></i>
-                                    テスト情報
-                                </h5>
+                                    <i class="bi bi-info-circle me-2 text-primary"></i><th:block th:text="#{tests.details.auto_c1e1}">テスト情報</th:block></h5>
                             </div>
                             <div class="card-body">
                                 <table class="table table-borderless">
                                     <tr>
-                                        <th class="ps-0 text-muted" style="width: 120px;">テスト名</th>
+                                        <th class="ps-0 text-muted" style="width: 120px;" th:text="#{tests.details.auto_0355}">テスト名</th>
                                         <td class="fw-semibold" th:text="${test.testName}"></td>
                                     </tr>
                                     <tr>
-                                        <th class="ps-0 text-muted">コース</th>
+                                        <th class="ps-0 text-muted" th:text="#{tests.details.auto_107b}">コース</th>
                                         <td>
                                             <span class="badge bg-info bg-opacity-10 text-info px-3 py-2 rounded-pill"
                                                   th:text="${test.courseName}"></span>
                                         </td>
                                     </tr>
                                     <tr>
-                                        <th class="ps-0 text-muted">説明</th>
+                                        <th class="ps-0 text-muted" th:text="#{tests.details.auto_d59c}">説明</th>
                                         <td th:text="${test.description} ?: '-'"></td>
                                     </tr>
                                     <tr>
-                                        <th class="ps-0 text-muted">総合点</th>
+                                        <th class="ps-0 text-muted" th:text="#{tests.details.auto_44ad}">総合点</th>
                                         <td th:text="${test.totalMarks}"></td>
                                     </tr>
                                     <tr>
-                                        <th class="ps-0 text-muted">合格点</th>
+                                        <th class="ps-0 text-muted" th:text="#{tests.details.auto_50ea}">合格点</th>
                                         <td th:text="${test.passingMarks} ?: '-'"></td>
                                     </tr>
                                     <tr>
-                                        <th class="ps-0 text-muted">試験日</th>
+                                        <th class="ps-0 text-muted" th:text="#{tests.details.auto_4f9d}">試験日</th>
                                         <td th:text="${#temporals.format(test.testDate, 'yyyy年MM月dd日 HH:mm')} ?: '-'"></td>
                                     </tr>
                                     <tr>
-                                        <th class="ps-0 text-muted">試験時間</th>
+                                        <th class="ps-0 text-muted" th:text="#{tests.details.auto_46a9}">試験時間</th>
                                         <td th:text="${test.durationMinutes} ? ${test.durationMinutes + '分'} : '-'"></td>
                                     </tr>
                                     <tr>
-                                        <th class="ps-0 text-muted">作成者</th>
+                                        <th class="ps-0 text-muted" th:text="#{tests.details.auto_cbd9}">作成者</th>
                                         <td th:text="${test.createdByName} ?: '-'"></td>
                                     </tr>
                                     <tr>
-                                        <th class="ps-0 text-muted">作成日</th>
+                                        <th class="ps-0 text-muted" th:text="#{tests.details.auto_36d8}">作成日</th>
                                         <td th:text="${#temporals.format(test.createdAt, 'yyyy年MM月dd日 HH:mm')}"></td>
                                     </tr>
                                 </table>
@@ -108,52 +104,50 @@
                         <div class="card shadow-sm h-100">
                             <div class="card-header bg-white py-3">
                                 <h5 class="card-title mb-0">
-                                    <i class="bi bi-graph-up me-2 text-success"></i>
-                                    統計情報
-                                </h5>
+                                    <i class="bi bi-graph-up me-2 text-success"></i><th:block th:text="#{tests.details.auto_6472}">統計情報</th:block></h5>
                             </div>
                             <div class="card-body">
                                 <div class="row g-3">
                                     <div class="col-6">
                                         <div class="mini-card p-3 text-center">
-                                            <div class="text-muted small mb-1">受験者数</div>
+                                            <div class="text-muted small mb-1" th:text="#{tests.details.auto_b101}">受験者数</div>
                                             <div class="h3 mb-0" th:text="${statistics?.totalStudents ?: 0}">0</div>
                                         </div>
                                     </div>
                                     <div class="col-6">
                                         <div class="mini-card p-3 text-center">
-                                            <div class="text-muted small mb-1">平均点</div>
+                                            <div class="text-muted small mb-1" th:text="#{tests.details.auto_6314}">平均点</div>
                                             <div class="h3 mb-0" th:text="${statistics?.averageScore ?: '-'}">-</div>
                                         </div>
                                     </div>
                                     <div class="col-6">
                                         <div class="mini-card p-3 text-center">
-                                            <div class="text-muted small mb-1">合格者</div>
+                                            <div class="text-muted small mb-1" th:text="#{tests.details.auto_23e5}">合格者</div>
                                             <div class="h3 mb-0 text-success" th:text="${statistics?.passedCount ?: 0}">0</div>
                                         </div>
                                     </div>
                                     <div class="col-6">
                                         <div class="mini-card p-3 text-center">
-                                            <div class="text-muted small mb-1">不合格者</div>
+                                            <div class="text-muted small mb-1" th:text="#{tests.details.auto_ac05}">不合格者</div>
                                             <div class="h3 mb-0 text-danger" th:text="${statistics?.failedCount ?: 0}">0</div>
                                         </div>
                                     </div>
                                     <div class="col-6">
                                         <div class="mini-card p-3 text-center">
-                                            <div class="text-muted small mb-1">最高点</div>
+                                            <div class="text-muted small mb-1" th:text="#{tests.details.auto_4b38}">最高点</div>
                                             <div class="h3 mb-0" th:text="${statistics?.highestScore ?: '-'}">-</div>
                                         </div>
                                     </div>
                                     <div class="col-6">
                                         <div class="mini-card p-3 text-center">
-                                            <div class="text-muted small mb-1">最低点</div>
+                                            <div class="text-muted small mb-1" th:text="#{tests.details.auto_952a}">最低点</div>
                                             <div class="h3 mb-0" th:text="${statistics?.lowestScore ?: '-'}">-</div>
                                         </div>
                                     </div>
                                     <div class="col-12">
                                         <div class="mini-card p-3">
                                             <div class="d-flex justify-content-between align-items-center">
-                                                <span class="text-muted">合格率</span>
+                                                <span class="text-muted" th:text="#{tests.details.auto_b8ab}">合格率</span>
                                                 <span class="h4 mb-0" th:text="${statistics?.passRate ?: 0} + '%'">0%</span>
                                             </div>
                                             <div class="progress mt-2" style="height: 8px;">
@@ -174,24 +168,20 @@
                 <div class="card shadow-sm">
                     <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
                         <h5 class="card-title mb-0">
-                            <i class="bi bi-table me-2 text-info"></i>
-                            テスト結果一覧
-                        </h5>
-                        <a th:href="@{'/results/test/' + ${test.testId}}" class="btn btn-sm btn-outline-primary">
-                            全て見る
-                        </a>
+                            <i class="bi bi-table me-2 text-info"></i><th:block th:text="#{tests.details.auto_b180}">テスト結果一覧</th:block></h5>
+                        <a th:href="@{'/results/test/' + ${test.testId}}" class="btn btn-sm btn-outline-primary" th:text="#{tests.details.auto_1172}">全て見る</a>
                     </div>
                     <div class="card-body p-0">
                         <div class="table-responsive">
                             <table class="table table-hover align-middle mb-0">
                                 <thead class="bg-light">
                                     <tr>
-                                        <th class="ps-4">生徒ID</th>
-                                        <th>生徒名</th>
-                                        <th>得点</th>
-                                        <th>結果</th>
-                                        <th>評価日</th>
-                                        <th class="text-center">操作</th>
+                                        <th class="ps-4" th:text="#{tests.details.auto_7ea9}">生徒ID</th>
+                                        <th th:text="#{tests.details.auto_8a42}">生徒名</th>
+                                        <th th:text="#{tests.details.auto_3456}">得点</th>
+                                        <th th:text="#{tests.details.auto_54b7}">結果</th>
+                                        <th th:text="#{tests.details.auto_f82b}">評価日</th>
+                                        <th class="text-center" th:text="#{tests.details.auto_2b6b}">操作</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -207,9 +197,9 @@
                                         </td>
                                         <td>
                                             <span th:if="${result.result == '合格'}" 
-                                                  class="badge bg-success rounded-pill px-3">合格</span>
+                                                  class="badge bg-success rounded-pill px-3" th:text="#{tests.details.auto_86f7}">合格</span>
                                             <span th:if="${result.result == '不合格'}" 
-                                                  class="badge bg-danger rounded-pill px-3">不合格</span>
+                                                  class="badge bg-danger rounded-pill px-3" th:text="#{tests.details.auto_6e5a}">不合格</span>
                                         </td>
                                         <td th:text="${#temporals.format(result.gradedAt, 'yyyy/MM/dd')}"></td>
                                         <td class="text-center">
@@ -220,9 +210,7 @@
                                         </td>
                                     </tr>
                                     <tr th:if="${results == null or results.size() == 0}">
-                                        <td colspan="6" class="text-center text-muted py-4">
-                                            結果がありません
-                                        </td>
+                                        <td colspan="6" class="text-center text-muted py-4" th:text="#{tests.details.auto_1687}">結果がありません</td>
                                     </tr>
                                 </tbody>
                             </table>

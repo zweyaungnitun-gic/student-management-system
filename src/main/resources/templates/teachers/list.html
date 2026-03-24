@@ -22,9 +22,7 @@
                             <i class="bi bi-list fs-4"></i>
                         </button>
                         <div>
-                            <h1 class="mb-0" style="color: #0a58a0; font-weight: 600; font-size: 1.8rem;">
-                                教師管理
-                            </h1>
+                            <h1 class="mb-0" style="color: #0a58a0; font-weight: 600; font-size: 1.8rem;" th:text="#{teachers.list.auto_5d7c}">教師管理</h1>
                         </div>
                     </div>
                 </div>
@@ -37,19 +35,16 @@
                                 <i class="bi bi-search text-muted"></i>
                             </span>
                             <input type="text" class="form-control border-start-0" name="search" th:value="${search}"
-                                placeholder="教師名、メール、教師IDで検索...">
+                                th:placeholder="#{placeholder.teacher.search}">
                         </div>
                         <button type="submit" class="btn btn-primary">
-                            <i class="bi bi-search me-2"></i>検索
-                        </button>
+                            <i class="bi bi-search me-2"></i><th:block th:text="#{teachers.list.auto_fc0d}">検索</th:block></button>
                         <a href="/teachers" class="btn btn-outline-secondary">
-                            <i class="bi bi-arrow-repeat me-2"></i>リフレッシュ
-                        </a>
+                            <i class="bi bi-arrow-repeat me-2"></i><th:block th:text="#{teachers.list.auto_0aec}">リフレッシュ</th:block></a>
                     </form>
                     <div class="d-flex gap-2">
                         <a href="/teachers/add" class="btn btn-success" sec:authorize="hasRole('ADMIN')">
-                            <i class="bi bi-plus-circle me-2"></i>新規教師追加
-                        </a>
+                            <i class="bi bi-plus-circle me-2"></i><th:block th:text="#{teachers.list.auto_0b60}">新規教師追加</th:block></a>
                     </div>
                 </div>
 
@@ -71,13 +66,13 @@
                                 <thead class="bg-primary text-white">
                                     <tr>
                                         <th class="text-center">ID</th>
-                                        <th class="text-center">教師ID</th>
-                                        <th class="text-center">氏名</th>
-                                        <th class="text-center">メールアドレス</th>
-                                        <th class="text-center">学部/学科</th>
-                                        <th class="text-center">ステータス</th>  <!-- New column -->
-                                        <th class="text-center">登録日</th>
-                                        <th class="text-center">操作</th>
+                                        <th class="text-center" th:text="#{teachers.list.auto_1740}">教師ID</th>
+                                        <th class="text-center" th:text="#{teachers.list.auto_08b8}">氏名</th>
+                                        <th class="text-center" th:text="#{teachers.list.auto_0e21}">メールアドレス</th>
+                                        <th class="text-center" th:text="#{teachers.list.auto_a4c2}">学部/学科</th>
+                                        <th class="text-center" th:text="#{teachers.list.auto_54dd}">ステータス</th>  <!-- New column -->
+                                        <th class="text-center" th:text="#{teachers.list.auto_2f22}">登録日</th>
+                                        <th class="text-center" th:text="#{teachers.list.auto_2b6b}">操作</th>
                                     </tr>
                                 </thead>
                                 <tbody id="teacherTableBody">
@@ -93,9 +88,9 @@
                                         <td class="text-center">
                                             <!-- Status badge -->
                                             <span th:if="${teacher.isActive == true}" 
-                                                class="badge bg-success rounded-pill px-3">アクティブ</span>
+                                                class="badge bg-success rounded-pill px-3" th:text="#{teachers.list.auto_0277}">アクティブ</span>
                                             <span th:if="${teacher.isActive == false}" 
-                                                class="badge bg-danger rounded-pill px-3">非アクティブ</span>
+                                                class="badge bg-danger rounded-pill px-3" th:text="#{teachers.list.auto_f32a}">非アクティブ</span>
                                         </td>
                                         <td class="text-center" th:text="${#temporals.format(teacher.createdAt, 'yyyy-MM-dd HH:mm')}"></td>
                                         <td class="text-center">
@@ -152,9 +147,7 @@
                                     </tr>
                                     <tr th:if="${teachers.size() == 0}">
                                         <td colspan="8" class="text-center text-muted py-5">
-                                            <i class="bi bi-inbox fs-1 d-block mb-3"></i>
-                                            教師が登録されていません。
-                                        </td>
+                                            <i class="bi bi-inbox fs-1 d-block mb-3"></i><th:block th:text="#{teachers.list.auto_7ceb}">教師が登録されていません。</th:block></td>
                                     </tr>
                                 </tbody>
                             </table>

@@ -11,6 +11,7 @@ import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.context.MessageSource;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 
 import static org.mockito.Mockito.mock;
@@ -25,7 +26,7 @@ public class FieldValidationTest {
     @BeforeEach
     void setUp() {
         RegisterStudentService mockService = mock(RegisterStudentService.class);
-        RegistrationController controller = new RegistrationController(mockService);
+        RegistrationController controller = new RegistrationController(mockService, mock(MessageSource.class));
 
         LocalValidatorFactoryBean validator = new LocalValidatorFactoryBean();
         validator.afterPropertiesSet();

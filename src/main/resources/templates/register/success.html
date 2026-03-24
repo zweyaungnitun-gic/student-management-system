@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" th:lang="${#locale.language}">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GCG | 登録完了</title>
+    <title th:text="'GCG | ' + #{registration.success}">GCG | 登録完了</title>
     <link rel="icon" type="image/png" href="/images/image.png">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
@@ -21,23 +21,23 @@
                             d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z" />
                     </svg>
                 </div>
-                <h2 class="text-success mb-3">登録完了しました！</h2>
-                <p class="text-muted mb-4">登録申請を受け付けました。管理者の承認後に正式な学生データとして登録されます。</p>
+                <h2 class="text-success mb-3" th:text="#{registration.success.message}">登録完了しました！</h2>
+                <p class="text-muted mb-4" th:text="#{registration.success.description}">登録申請を受け付けました。管理者の承認後に正式な学生データとして登録されます。</p>
                 <!-- Display Registration Code and Name -->
                 <div class="alert alert-info mb-4 col-md-8 mx-auto" th:if="${registrationCode != null}">
                     <div class="mb-2">
-                        <strong>申請 ID : </strong>
+                        <strong th:text="#{registration.application.id}">申請 ID : </strong>
                         <span class="fs-5 text-primary" th:text="${registrationCode}">REG-000001</span>
                     </div>
                     <div>
-                        <strong>氏名 : </strong>
+                        <strong th:text="#{registration.name.label}">氏名 : </strong>
                         <span class="fs-5" th:text="${studentName}">John Doe</span>
                     </div>
                 </div>
                 <!-- Action Buttons -->
                 <div class="d-flex justify-content-center gap-2">
-                    <a href="/register" class="btn btn-secondary btn-lg rounded py-1 px-3">新規登録</a>
-                    <a href="/" class="btn btn-primary btn-lg rounded py-1 px-3">ホーム</a>
+                    <a href="/register" class="btn btn-secondary btn-lg rounded py-1 px-3" th:text="#{registration.new.registration}">新規登録</a>
+                    <a href="/" class="btn btn-primary btn-lg rounded py-1 px-3" th:text="#{app.home}">ホーム</a>
                 </div>
             </div>
         </div>

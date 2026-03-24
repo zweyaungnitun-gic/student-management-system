@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html lang="ja" xmlns:th="http://www.thymeleaf.org"
+<html xmlns:th="http://www.thymeleaf.org" th:lang="${#locale.language}"
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
-<head th:replace="~{layouts/admin-layout :: head(pageTitle='テスト結果ダッシュボード | 生徒情報管理システム')}">
+<head th:replace="~{layouts/admin-layout :: head(pageTitle=#{result.dashboard.title} + ' | ' + #{app.title})}">
 </head>
 
 <body>
@@ -21,10 +21,10 @@
                             <i class="bi bi-list fs-4"></i>
                         </button>
                         <div>
-                            <h1 class="mb-0" style="color: #0a58a0; font-weight: 600; font-size: 1.8rem;">
+                            <h1 class="mb-0" style="color: #0a58a0; font-weight: 600; font-size: 1.8rem;" th:text="#{result.dashboard.title}">
                                 テスト結果ダッシュボード
                             </h1>
-                            <p class="text-muted mb-0">テスト結果の管理と分析</p>
+                            <p class="text-muted mb-0" th:text="#{result.dashboard.description}">テスト結果の管理と分析</p>
                         </div>
                     </div>
                 </div>
@@ -39,7 +39,7 @@
                                         <i class="bi bi-file-text fs-2 text-primary"></i>
                                     </div>
                                     <div class="flex-grow-1 ms-3">
-                                        <h6 class="text-muted mb-1">総テスト数</h6>
+                                        <h6 class="text-muted mb-1" th:text="#{test.total.tests}">総テスト数</h6>
                                         <h3 class="mb-0 fw-bold" th:text="${totalTests}">0</h3>
                                     </div>
                                 </div>
@@ -54,7 +54,7 @@
                                         <i class="bi bi-check-circle fs-2 text-success"></i>
                                     </div>
                                     <div class="flex-grow-1 ms-3">
-                                        <h6 class="text-muted mb-1">合格者数</h6>
+                                        <h6 class="text-muted mb-1" th:text="#{test.passed.count}">合格者数</h6>
                                         <h3 class="mb-0 fw-bold" th:text="${totalPassed}">0</h3>
                                     </div>
                                 </div>
@@ -69,7 +69,7 @@
                                         <i class="bi bi-x-circle fs-2 text-danger"></i>
                                     </div>
                                     <div class="flex-grow-1 ms-3">
-                                        <h6 class="text-muted mb-1">不合格者数</h6>
+                                        <h6 class="text-muted mb-1" th:text="#{test.failed.count}">不合格者数</h6>
                                         <h3 class="mb-0 fw-bold" th:text="${totalFailed}">0</h3>
                                     </div>
                                 </div>
@@ -84,7 +84,7 @@
                                         <i class="bi bi-trophy fs-2 text-info"></i>
                                     </div>
                                     <div class="flex-grow-1 ms-3">
-                                        <h6 class="text-muted mb-1">平均点</h6>
+                                        <h6 class="text-muted mb-1" th:text="#{test.average.score}">平均点</h6>
                                         <h3 class="mb-0 fw-bold" th:text="${averageScore}">0</h3>
                                     </div>
                                 </div>
@@ -99,9 +99,9 @@
                         <div class="card shadow-sm h-100">
                             <div class="card-body text-center p-4">
                                 <i class="bi bi-plus-circle fs-1 text-primary mb-3"></i>
-                                <h5>新規結果入力</h5>
-                                <p class="text-muted small">テストの結果を個別に入力</p>
-                                <a href="/results/add" class="btn btn-outline-primary">結果入力へ</a>
+                                <h5 th:text="#{result.new.entry}">新規結果入力</h5>
+                                <p class="text-muted small" th:text="#{result.new.entry.description}">テストの結果を個別に入力</p>
+                                <a href="/results/add" class="btn btn-outline-primary" th:text="#{result.go.to.entry}">結果入力へ</a>
                             </div>
                         </div>
                     </div>
@@ -109,9 +109,9 @@
                         <div class="card shadow-sm h-100">
                             <div class="card-body text-center p-4">
                                 <i class="bi bi-file-spreadsheet fs-1 text-success mb-3"></i>
-                                <h5>一括アップロード</h5>
-                                <p class="text-muted small">Excelファイルで一括登録</p>
-                                <a href="/results/bulk-upload" class="btn btn-outline-success">アップロード</a>
+                                <h5 th:text="#{result.bulk.upload}">一括アップロード</h5>
+                                <p class="text-muted small" th:text="#{result.bulk.upload.description}">Excelファイルで一括登録</p>
+                                <a href="/results/bulk-upload" class="btn btn-outline-success" th:text="#{app.upload}">アップロード</a>
                             </div>
                         </div>
                     </div>
@@ -119,9 +119,9 @@
                         <div class="card shadow-sm h-100">
                             <div class="card-body text-center p-4">
                                 <i class="bi bi-bar-chart-steps fs-1 text-warning mb-3"></i>
-                                <h5>成績分析</h5>
-                                <p class="text-muted small">クラス別・コース別の分析</p>
-                                <a href="/reports/rankings?className=N5" class="btn btn-outline-warning">分析へ</a>
+                                <h5 th:text="#{result.grade.analysis}">成績分析</h5>
+                                <p class="text-muted small" th:text="#{result.grade.analysis.description}">クラス別・コース別の分析</p>
+                                <a href="/reports/rankings?className=N5" class="btn btn-outline-warning" th:text="#{app.analyze}">分析へ</a>
                             </div>
                         </div>
                     </div>
@@ -132,22 +132,22 @@
                     <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
                         <h5 class="card-title mb-0">
                             <i class="bi bi-clock-history me-2 text-primary"></i>
-                            最近のテスト結果
+                            <span th:text="#{result.recent}">最近のテスト結果</span>
                         </h5>
-                        <a href="/results" class="btn btn-sm btn-primary">すべて見る</a>
+                        <a href="/results" class="btn btn-sm btn-primary" th:text="#{app.view.all}">すべて見る</a>
                     </div>
                     <div class="card-body p-0">
                         <div class="table-responsive">
                             <table class="table table-hover align-middle mb-0">
                                 <thead class="bg-light">
                                     <tr>
-                                        <th class="ps-4">テスト名</th>
-                                        <th>生徒名</th>
-                                        <th>コース</th>
-                                        <th class="text-center">得点</th>
-                                        <th class="text-center">評価</th>
-                                        <th class="text-center">結果</th>
-                                        <th class="text-center">操作</th>
+                                        <th class="ps-4" th:text="#{results.dashboard.auto_0355}">テスト名</th>
+                                        <th th:text="#{results.dashboard.auto_8a42}">生徒名</th>
+                                        <th th:text="#{results.dashboard.auto_107b}">コース</th>
+                                        <th class="text-center" th:text="#{results.dashboard.auto_3456}">得点</th>
+                                        <th class="text-center" th:text="#{results.dashboard.auto_6745}">評価</th>
+                                        <th class="text-center" th:text="#{results.dashboard.auto_54b7}">結果</th>
+                                        <th class="text-center" th:text="#{results.dashboard.auto_2b6b}">操作</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -162,8 +162,8 @@
                                                   th:text="${result.grade}"></span>
                                         </td>
                                         <td class="text-center">
-                                            <span th:if="${result.result == '合格'}" class="badge bg-success">合格</span>
-                                            <span th:if="${result.result == '不合格'}" class="badge bg-danger">不合格</span>
+                                            <span th:if="${result.result == '合格'}" class="badge bg-success" th:text="#{results.dashboard.auto_86f7}">合格</span>
+                                            <span th:if="${result.result == '不合格'}" class="badge bg-danger" th:text="#{results.dashboard.auto_6e5a}">不合格</span>
                                         </td>
                                         <td class="text-center">
                                             <a th:href="@{'/results/edit/' + ${result.testResultId}}" class="btn btn-sm btn-outline-primary" title="編集">
@@ -175,9 +175,7 @@
                                         </td>
                                     </tr>
                                     <tr th:if="${recentResults == null or recentResults.size() == 0}">
-                                        <td colspan="7" class="text-center text-muted py-4">
-                                            最近の結果はありません
-                                        </td>
+                                        <td colspan="7" class="text-center text-muted py-4" th:text="#{results.dashboard.auto_8376}">最近の結果はありません</td>
                                     </tr>
                                 </tbody>
                             </table>
