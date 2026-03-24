@@ -377,7 +377,9 @@ body {
 }
 
 .brand-badge img {
-  max-width: 38px;
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
 }
 
 .xs-pill {
