@@ -23,10 +23,10 @@ public class ReportsController {
     private final TestResultService testResultService;
     private final TestService testService;
 
-    @GetMapping("/dashboard")
-    public String dashboard() {
-        return "reports/dashboard";
-    }
+    // @GetMapping("/dashboard")
+    // public String dashboard() {
+    //     return "reports/dashboard";
+    // }
 
     @GetMapping("/student/{studentId}")
     public String studentGradeSummary(@PathVariable Long studentId,
@@ -51,16 +51,18 @@ public class ReportsController {
         List<TestResultDTO> paginatedResults = start < totalResults ? 
                 allResults.subList(start, end) : new ArrayList<>();
         
+        // Update gradeSummary with paginated results
         gradeSummary.setTestResults(paginatedResults);
         
         model.addAttribute("gradeSummary", gradeSummary);
         model.addAttribute("academicYear", academicYear);
         model.addAttribute("semester", semester);
         model.addAttribute("currentPage", page);
+        model.addAttribute("pageSize", size);
         model.addAttribute("totalPages", totalPages);
         model.addAttribute("totalResults", totalResults);
         model.addAttribute("pageTitle", "成績サマリー");
-        model.addAttribute("currentPage", "reports");
+        model.addAttribute("currentPageNav", "reports");
         
         return "reports/grade-summary";
     }

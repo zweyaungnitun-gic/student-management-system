@@ -47,13 +47,15 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(authz -> authz
-                        .requestMatchers("/", "/login", "/dashboard", "/access-denied", "/css/**", "/js/**", "/images/**", "/register/**")
+                        .requestMatchers("/", "/login", "/access-denied", "/css/**", "/js/**", "/images/**", "/register/**")
                         .permitAll()
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .requestMatchers("/guest/**").hasRole("GUEST")
                         .requestMatchers("/teachers/**").hasRole("ADMIN")
                         .requestMatchers("/courses/**").hasRole("ADMIN")
+                        .requestMatchers("/dashboard").authenticated()
                         .anyRequest().authenticated())
+
                 .exceptionHandling(exception -> exception
                         .accessDeniedPage("/access-denied"))
                 .formLogin(form -> form
