@@ -43,22 +43,30 @@ public class AdminStudentCreateController {
     }
 
     @GetMapping("/step1")
-    public String showStep1(@ModelAttribute("studentCreateWizard") StudentCreateWizardDTO wizard) {
+    public String showStep1(@ModelAttribute("studentCreateWizard") StudentCreateWizardDTO wizard, Model model) {
         if (wizard.getStudent() == null) {
             wizard.setStudent(new StudentDTO());
         }
+        model.addAttribute("layoutType", "admin");
         return "register/register";
     }
 
     @PostMapping("/step1")
     public String submitStep1(
             @Validated(BasicInfoGroup.class) @ModelAttribute("studentCreateWizard") StudentCreateWizardDTO wizard,
-            BindingResult bindingResult) {
+            BindingResult bindingResult, Model model) {
 
         if (bindingResult.hasErrors()) {
+            model.addAttribute("layoutType", "admin");
             return "register/register";
         }
         return "redirect:/admin/students/create/second-page";
+    }
+
+    @GetMapping("/second-page")
+    public String showSecondPage(@ModelAttribute("studentCreateWizard") StudentCreateWizardDTO wizard, Model model) {
+        model.addAttribute("layoutType", "admin");
+        return "register/second-page";
     }
 
     @PostMapping("/second-page")
@@ -70,6 +78,7 @@ public class AdminStudentCreateController {
             Model model) {
 
         if (bindingResult.hasErrors()) {
+            model.addAttribute("layoutType", "admin");
             return "register/second-page";
         }
 

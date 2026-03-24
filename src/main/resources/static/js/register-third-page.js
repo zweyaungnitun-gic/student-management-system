@@ -37,11 +37,13 @@ document.getElementById('backButton').addEventListener('click', function () {
         .then(response => response.json())
         .then(data => {
             // Navigate back after saving (even if validation fails, allow going back)
-            window.location.href = '/register/second-page';
+            const prevUrl = document.querySelector('form')?.getAttribute('data-prev-url') || '/register/second-page';
+            window.location.href = prevUrl;
         })
         .catch(error => {
             console.error('Error:', error);
-            window.location.href = '/register/second-page';
+            const prevUrl = document.querySelector('form')?.getAttribute('data-prev-url') || '/register/second-page';
+            window.location.href = prevUrl;
         });
 });
 
@@ -73,7 +75,8 @@ document.querySelector('form').addEventListener('submit', function (event) {
             try { data = await response.json(); } catch (e) { /* ignore */ }
 
             if (response.ok && data && data.status === 'success') {
-                window.location.href = '/register/check-page';
+                const nextUrl = document.querySelector('form')?.getAttribute('data-next-url') || '/register/check-page';
+                window.location.href = nextUrl;
                 return;
             }
 

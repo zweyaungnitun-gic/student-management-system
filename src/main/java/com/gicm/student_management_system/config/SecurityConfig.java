@@ -23,75 +23,77 @@ import com.gicm.student_management_system.security.SessionJwtAuthenticationFilte
 @EnableMethodSecurity(prePostEnabled = true)
 public class SecurityConfig {
 
-    @Autowired
-    private CustomUserDetailsService customUserDetailsService;
+        @Autowired
+        private CustomUserDetailsService customUserDetailsService;
 
-    @Autowired
-    private SessionJwtAuthenticationFilter sessionJwtAuthenticationFilter;
+        @Autowired
+        private SessionJwtAuthenticationFilter sessionJwtAuthenticationFilter;
 
-    @Autowired
-    private CustomAuthSuccessHandler customAuthSuccessHandler;
+        @Autowired
+        private CustomAuthSuccessHandler customAuthSuccessHandler;
 
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
+        @Bean
+        public PasswordEncoder passwordEncoder() {
+                return new BCryptPasswordEncoder();
+        }
 
-    @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig) throws Exception {
-        return authConfig.getAuthenticationManager();
-    }
+        @Bean
+        public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig) throws Exception {
+                return authConfig.getAuthenticationManager();
+        }
 
-    @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http
-            .csrf(csrf -> csrf.disable())
-            .authorizeHttpRequests(authz -> authz
-                    // Public endpoints
-                    .requestMatchers("/", "/login", "/access-denied", "/css/**", "/js/**", "/images/**", "/register/**")
-                    .permitAll()
-                    
-                    // Dashboard requires authentication
-                    .requestMatchers("/dashboard").authenticated()
-                    
-                    // GUEST only - can only access guest dashboard and logout
-                    .requestMatchers("/guest/**").hasRole("GUEST")
-                    .requestMatchers("/logout").authenticated()
-                    
-                    // ADMIN only - everything else
-                    .requestMatchers("/admin/**").hasRole("ADMIN")
-                    .requestMatchers("/students/**").hasRole("ADMIN")
-                    .requestMatchers("/teachers/**").hasRole("ADMIN")
-                    .requestMatchers("/courses/**").hasRole("ADMIN")
-                    .requestMatchers("/users/**").hasRole("ADMIN")
-                    .requestMatchers("/tests/**").hasRole("ADMIN")
-                    .requestMatchers("/results/**").hasRole("ADMIN")
-                    .requestMatchers("/reports/**").hasRole("ADMIN")
-                    
-                    .anyRequest().authenticated())
-            .exceptionHandling(exception -> exception
-                    .accessDeniedPage("/access-denied"))
-            .formLogin(form -> form
-                    .loginPage("/login")
-                    .loginProcessingUrl("/login")
-                    .successHandler(customAuthSuccessHandler)
-                    .failureUrl("/login?error=true")
-                    .permitAll())
-            .logout(logout -> logout
-                    .logoutUrl("/logout")
-                    .logoutSuccessUrl("/login?logout=true")
-                    .invalidateHttpSession(true)
-                    .deleteCookies("JSESSIONID")
-                    .permitAll())
-            .sessionManagement(session -> session
-                    .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
-                    .maximumSessions(1)
-                    .maxSessionsPreventsLogin(false))
-            .userDetailsService(customUserDetailsService);
+        @Bean
+        public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+                http
+                                .csrf(csrf -> csrf.disable())
+                                .authorizeHttpRequests(authz -> authz
+                                                // Public endpoints
+                                                .requestMatchers("/", "/login", "/access-denied", "/css/**", "/js/**",
+                                                                "/images/**", "/register/**")
+                                                .permitAll()
 
-        // Add Session JWT filter for form-based authentication with JWT stored in Redis session
-        http.addFilterAfter(sessionJwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+                                                // Dashboard requires authentication
+                                                .requestMatchers("/dashboard").authenticated()
 
-        return http.build();
-    }
+                                                // GUEST only - can only access guest dashboard and logout
+                                                .requestMatchers("/guest/**").hasRole("GUEST")
+                                                .requestMatchers("/logout").authenticated()
+
+                                                // ADMIN only - everything else
+                                                .requestMatchers("/admin/**").hasRole("ADMIN")
+                                                .requestMatchers("/students/**").hasRole("ADMIN")
+                                                .requestMatchers("/teachers/**").hasRole("ADMIN")
+                                                .requestMatchers("/courses/**").hasRole("ADMIN")
+                                                .requestMatchers("/users/**").hasRole("ADMIN")
+                                                .requestMatchers("/tests/**").hasRole("ADMIN")
+                                                .requestMatchers("/results/**").hasRole("ADMIN")
+                                                .requestMatchers("/reports/**").hasRole("ADMIN")
+
+                                                .anyRequest().authenticated())
+                                .exceptionHandling(exception -> exception
+                                                .accessDeniedPage("/access-denied"))
+                                .formLogin(form -> form
+                                                .loginPage("/login")
+                                                .loginProcessingUrl("/login")
+                                                .successHandler(customAuthSuccessHandler)
+                                                .failureUrl("/login?error=true")
+                                                .permitAll())
+                                .logout(logout -> logout
+                                                .logoutUrl("/logout")
+                                                .logoutSuccessUrl("/login?logout=true")
+                                                .invalidateHttpSession(true)
+                                                .deleteCookies("JSESSIONID")
+                                                .permitAll())
+                                .sessionManagement(session -> session
+                                                .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
+                                                .maximumSessions(1)
+                                                .maxSessionsPreventsLogin(false))
+                                .userDetailsService(customUserDetailsService);
+
+                // Add Session JWT filter for form-based authentication with JWT stored in Redis
+                // session
+                http.addFilterAfter(sessionJwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+
+                return http.build();
+        }
 }

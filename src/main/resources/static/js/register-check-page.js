@@ -19,7 +19,8 @@ function submitFinalData() {
         .then(data => {
             if (data === 'success') {
                 // Redirect immediately without showing toast
-                window.location.href = '/register/success';
+                const nextUrl = document.body.getAttribute('data-next-url') || '/register/success';
+                window.location.href = nextUrl;
             } else {
                 // Extract error message
                 const errorMsg = data.startsWith('error:') ? data.substring(6) : '登録に失敗しました';

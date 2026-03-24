@@ -51,36 +51,36 @@
                     <input type="text" class="form-control" th:field="*{gender}" th:placeholder="#{placeholder.student.gender}" />
                   </div>
                   <div class="col-md-4">
-                    <label class="form-label fw-semibold" th:text="#{students.registration-edit.auto_6247}">国民ID</label>
+                    <label class="form-label fw-semibold" th:text="#{registration.national.id}">国民ID</label>
                     <input type="text" class="form-control" th:field="*{nationalIdNumber}" required />
                   </div>
 
                   <div class="col-md-6">
-                    <label class="form-label fw-semibold" th:text="#{students.registration-edit.auto_f32c}">電話番号</label>
+                    <label class="form-label fw-semibold" th:text="#{registration.phone.number}">電話番号</label>
                     <input type="text" class="form-control" th:field="*{phoneNumber}" />
                   </div>
                   <div class="col-md-6">
-                    <label class="form-label fw-semibold" th:text="#{students.registration-edit.auto_ecec}">保護者電話番号</label>
+                    <label class="form-label fw-semibold" th:text="#{registration.guardian.phone}">保護者電話番号</label>
                     <input type="text" class="form-control" th:field="*{guardianPhoneNumber}" />
                   </div>
 
                   <div class="col-12">
-                    <label class="form-label fw-semibold" th:text="#{students.registration-edit.auto_a162}">現在所</label>
+                    <label class="form-label fw-semibold" th:text="#{registration.current.address}">現在所</label>
                     <textarea class="form-control" rows="3" th:field="*{currentAddress}"></textarea>
                   </div>
                   <div class="col-12">
-                    <label class="form-label fw-semibold" th:text="#{students.registration-edit.auto_b227}">出身地住所</label>
+                    <label class="form-label fw-semibold" th:text="#{registration.hometown.address}">出身地住所</label>
                     <textarea class="form-control" rows="3" th:field="*{hometownAddress}"></textarea>
                   </div>
 
                   <div class="col-12"><hr class="my-2" /></div>
 
                   <div class="col-md-6">
-                    <label class="form-label fw-semibold" th:text="#{students.registration-edit.auto_5e4f}">父の名前</label>
+                    <label class="form-label fw-semibold" th:text="#{registration.father.name}">父の名前</label>
                     <input type="text" class="form-control" th:field="*{fatherName}" />
                   </div>
                   <div class="col-md-6">
-                    <label class="form-label fw-semibold" th:text="#{students.registration-edit.auto_f5af}">パスポート番号</label>
+                    <label class="form-label fw-semibold" th:text="#{registration.passport.number}">パスポート番号</label>
                     <input type="text" class="form-control" th:field="*{passportNumber}" />
                   </div>
                   <div class="col-md-4">
@@ -88,88 +88,88 @@
                     <input type="text" class="form-control" th:field="*{jlptLevel}" />
                   </div>
                   <div class="col-md-4">
-                    <label class="form-label fw-semibold" th:text="#{students.registration-edit.auto_fe09}">希望職種</label>
+                    <label class="form-label fw-semibold" th:text="#{registration.desired.occupation}">希望職種</label>
                     <input type="text" class="form-control" th:field="*{desiredOccupation}" />
                   </div>
                   <div class="col-md-4">
-                    <label class="form-label fw-semibold" th:text="#{students.registration-edit.auto_e025}">その他職種</label>
+                    <label class="form-label fw-semibold" th:text="#{registration.other.occupation}">その他職種</label>
                     <input type="text" class="form-control" th:field="*{otherOccupation}" />
                   </div>
 
                   <div class="col-md-6">
-                    <label class="form-label fw-semibold" th:text="#{students.registration-edit.auto_e430}">日本渡航経験</label>
+                    <label class="form-label fw-semibold" th:text="#{registration.japan.travel.experience}">日本渡航経験</label>
                     <select class="form-select" th:field="*{japanTravelExperience}">
-                      <option th:value="${null}" th:text="#{students.registration-edit.auto_c5d5}">未選択</option>
-                      <option th:value="${true}" th:text="#{students.registration-edit.auto_beb4}">あり</option>
-                      <option th:value="${false}" th:text="#{students.registration-edit.auto_3609}">なし</option>
+                      <option th:value="${null}" th:text="#{registration.not.selected}">未選択</option>
+                      <option th:value="${true}" th:text="#{registration.yes}">あり</option>
+                      <option th:value="${false}" th:text="#{registration.no}">なし</option>
                     </select>
                   </div>
                   <div class="col-md-6">
-                    <label class="form-label fw-semibold" th:text="#{students.registration-edit.auto_3dd2}">COE申請経験</label>
+                    <label class="form-label fw-semibold" th:text="#{registration.coe.experience}">COE申請経験</label>
                     <select class="form-select" th:field="*{coeApplicationExperience}">
-                      <option th:value="${null}" th:text="#{students.registration-edit.auto_c5d5}">未選択</option>
-                      <option th:value="${true}" th:text="#{students.registration-edit.auto_beb4}">あり</option>
-                      <option th:value="${false}" th:text="#{students.registration-edit.auto_3609}">なし</option>
+                      <option th:value="${null}" th:text="#{registration.not.selected}">未選択</option>
+                      <option th:value="${true}" th:text="#{registration.yes}">あり</option>
+                      <option th:value="${false}" th:text="#{registration.no}">なし</option>
                     </select>
                   </div>
 
                   <div class="col-12"><hr class="my-2" /></div>
 
                   <div class="col-md-4">
-                    <label class="form-label fw-semibold" th:text="#{students.registration-edit.auto_ad8b}">宗教</label>
+                    <label class="form-label fw-semibold" th:text="#{registration.religion}">宗教</label>
                     <input type="text" class="form-control" th:field="*{religion}" />
                   </div>
                   <div class="col-md-4">
-                    <label class="form-label fw-semibold" th:text="#{students.registration-edit.auto_6d7c}">その他宗教</label>
+                    <label class="form-label fw-semibold" th:text="#{registration.other.religion}">その他宗教</label>
                     <input type="text" class="form-control" th:field="*{otherReligion}" />
                   </div>
                   <div class="col-md-4">
-                    <label class="form-label fw-semibold" th:text="#{students.registration-edit.auto_66d9}">寮希望</label>
+                    <label class="form-label fw-semibold" th:text="#{registration.dormitory.preference}">寮希望</label>
                     <select class="form-select" th:field="*{wantDorm}">
-                      <option th:value="${null}" th:text="#{students.registration-edit.auto_c5d5}">未選択</option>
-                      <option th:value="${true}" th:text="#{students.registration-edit.auto_f44a}">希望する</option>
-                      <option th:value="${false}" th:text="#{students.registration-edit.auto_c807}">希望しない</option>
+                      <option th:value="${null}" th:text="#{registration.not.selected}">未選択</option>
+                      <option th:value="${true}" th:text="#{registration.preferred}">希望する</option>
+                      <option th:value="${false}" th:text="#{registration.not.preferred}">希望しない</option>
                     </select>
                   </div>
                   <div class="col-md-4">
-                    <label class="form-label fw-semibold" th:text="#{students.registration-edit.auto_9610}">喫煙</label>
+                    <label class="form-label fw-semibold" th:text="#{registration.smoking}">喫煙</label>
                     <select class="form-select" th:field="*{smoking}">
-                      <option th:value="${null}" th:text="#{students.registration-edit.auto_c5d5}">未選択</option>
-                      <option th:value="${true}" th:text="#{students.registration-edit.auto_beb4}">あり</option>
-                      <option th:value="${false}" th:text="#{students.registration-edit.auto_3609}">なし</option>
+                      <option th:value="${null}" th:text="#{registration.not.selected}">未選択</option>
+                      <option th:value="${true}" th:text="#{registration.yes}">あり</option>
+                      <option th:value="${false}" th:text="#{registration.no}">なし</option>
                     </select>
                   </div>
                   <div class="col-md-4">
-                    <label class="form-label fw-semibold" th:text="#{students.registration-edit.auto_6789}">飲酒</label>
+                    <label class="form-label fw-semibold" th:text="#{registration.alcohol}">飲酒</label>
                     <select class="form-select" th:field="*{alcohol}">
-                      <option th:value="${null}" th:text="#{students.registration-edit.auto_c5d5}">未選択</option>
-                      <option th:value="${true}" th:text="#{students.registration-edit.auto_beb4}">あり</option>
-                      <option th:value="${false}" th:text="#{students.registration-edit.auto_3609}">なし</option>
+                      <option th:value="${null}" th:text="#{registration.not.selected}">未選択</option>
+                      <option th:value="${true}" th:text="#{registration.yes}">あり</option>
+                      <option th:value="${false}" th:text="#{registration.no}">なし</option>
                     </select>
                   </div>
                   <div class="col-md-4">
-                    <label class="form-label fw-semibold" th:text="#{students.registration-edit.auto_1b31}">タトゥー</label>
+                    <label class="form-label fw-semibold" th:text="#{registration.tattoo}">タトゥー</label>
                     <select class="form-select" th:field="*{tattoo}">
-                      <option th:value="${null}" th:text="#{students.registration-edit.auto_c5d5}">未選択</option>
-                      <option th:value="${true}" th:text="#{students.registration-edit.auto_beb4}">あり</option>
-                      <option th:value="${false}" th:text="#{students.registration-edit.auto_3609}">なし</option>
+                      <option th:value="${null}" th:text="#{registration.not.selected}">未選択</option>
+                      <option th:value="${true}" th:text="#{registration.yes}">あり</option>
+                      <option th:value="${false}" th:text="#{registration.no}">なし</option>
                     </select>
                   </div>
 
                   <div class="col-md-6">
-                    <label class="form-label fw-semibold" th:text="#{students.registration-edit.auto_6297}">学費支払予定日</label>
+                    <label class="form-label fw-semibold" th:text="#{registration.tuition.payment.date}">学費支払予定日</label>
                     <input type="date" class="form-control" th:field="*{tuitionPaymentDate}" />
                   </div>
                   <div class="col-12">
-                    <label class="form-label fw-semibold" th:text="#{students.registration-edit.auto_9490}">メモ</label>
+                    <label class="form-label fw-semibold" th:text="#{registration.memo}">メモ</label>
                     <textarea class="form-control" rows="4" th:field="*{otherMemo}"></textarea>
                   </div>
                 </div>
 
                 <div class="d-flex justify-content-end gap-2 mt-4">
-                  <a th:href="@{/students/registrations/{id}(id=${reg.id})}" class="btn btn-outline-secondary" th:text="#{students.registration-edit.auto_6ef3}">キャンセル</a>
+                  <a th:href="@{/students/registrations/{id}(id=${reg.id})}" class="btn btn-outline-secondary" th:text="#{registration.cancel}">キャンセル</a>
                   <button type="submit" class="btn btn-primary">
-                    <i class="bi bi-save"></i><th:block th:text="#{students.registration-edit.auto_be5f}">保存</th:block></button>
+                    <i class="bi bi-save"></i><th:block th:text="#{registration.save}">保存</th:block></button>
                 </div>
               </form>
             </div>

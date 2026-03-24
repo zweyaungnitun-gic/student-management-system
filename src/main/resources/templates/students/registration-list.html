@@ -48,7 +48,7 @@
               <div class="ms-auto">
                 <div class="btn-group" role="group">
                   <a th:href="@{/students}" class="btn btn-outline-secondary btn-sm">
-                    <i class="bi bi-arrow-left"></i><th:block th:text="#{students.registration-list.auto_396b}">生徒一覧へ戻る</th:block></a>
+                    <i class="bi bi-arrow-left"></i><th:block th:text="#{registration.back.to.student.list}">生徒一覧へ戻る</th:block></a>
                 </div>
               </div>
             </div>
@@ -63,7 +63,7 @@
                       <form th:action="@{/students/registrations}" method="get" id="registrationFilterForm">
                         <div class="d-flex flex-col md:flex-row align-items-center gap-4 flex-wrap">
                           <div class="filter-control-group">
-                            <span style="font-size: 16px" th:text="#{students.registration-list.auto_54dd}">ステータス</span>
+                            <span style="font-size: 16px" th:text="#{registration.status.filter}">ステータス</span>
                             <div class="d-flex align-items-center gap-3 mt-1">
                               <label class="form-check form-check-inline mb-0">
                                 <input
@@ -99,7 +99,7 @@
                           </div>
 
                           <div class="filter-control-group">
-                            <span style="font-size: 16px" th:text="#{students.registration-list.auto_91a0}">名前で検索</span>
+                            <span style="font-size: 16px" th:text="#{registration.search.by.name}">名前で検索</span>
                             <input
                               type="text"
                               name="nameSearch"
@@ -111,9 +111,9 @@
 
                           <div class="ms-auto d-flex gap-2">
                             <button type="submit" class="btn btn-outline-primary btn-sm">
-                              <i class="bi bi-search"></i><th:block th:text="#{students.registration-list.auto_fc0d}">検索</th:block></button>
+                              <i class="bi bi-search"></i><th:block th:text="#{registration.search.btn}">検索</th:block></button>
                             <a th:href="@{/students/registrations}" class="btn btn-outline-secondary btn-sm">
-                              <i class="bi bi-x-circle"></i><th:block th:text="#{students.registration-list.auto_deba}">クリア</th:block></a>
+                              <i class="bi bi-x-circle"></i><th:block th:text="#{registration.clear.btn}">クリア</th:block></a>
                           </div>
                         </div>
                       </form>
@@ -121,19 +121,19 @@
                   </tr>
 
                   <tr>
-                    <th th:text="#{students.registration-list.auto_c9a9}">申請ID</th>
-                    <th th:text="#{students.registration-list.auto_08b8}">氏名</th>
-                    <th th:text="#{students.registration-list.auto_4288}">性別</th>
-                    <th th:text="#{students.registration-list.auto_f32c}">電話番号</th>
-                    <th th:text="#{students.registration-list.auto_6247}">国民ID</th>
-                    <th th:text="#{students.registration-list.auto_7398}">申請日</th>
-                    <th class="text-center" th:text="#{students.registration-list.auto_2b6b}">操作</th>
+                    <th th:text="#{registration.application.id}">申請ID</th>
+                    <th th:text="#{registration.full.name}">氏名</th>
+                    <th th:text="#{registration.gender}">性別</th>
+                    <th th:text="#{registration.phone.number}">電話番号</th>
+                    <th th:text="#{registration.national.id}">国民ID</th>
+                    <th th:text="#{registration.application.date}">申請日</th>
+                    <th class="text-center" th:text="#{registration.action}">操作</th>
                   </tr>
                 </thead>
 
                 <tbody>
                   <tr th:if="${#lists.isEmpty(registrations)}">
-                    <td colspan="7" class="text-center py-4 text-muted" th:text="#{students.registration-list.auto_38ec}">該当する登録申請はありません。</td>
+                    <td colspan="7" class="text-center py-4 text-muted" th:text="#{registration.no.results}">該当する登録申請はありません。</td>
                   </tr>
 
                   <tr th:each="reg : ${registrations}">
@@ -152,7 +152,7 @@
                       <div class="btn-group btn-group-sm" role="group" th:if="${reg.registrationStatus.name() == 'PENDING'}">
                         <form th:action="@{/students/registrations/{id}/accept(id=${reg.id})}" method="post">
                           <button type="submit" class="btn btn-success">
-                            <i class="bi bi-check-lg"></i> <span th:text="#{registration.approve}"></span><th:block th:text="#{students.registration-list.auto_2634}">承認</th:block></span>
+                            <i class="bi bi-check-lg"></i> <span th:text="#{registration.approve}">承認</span>
                           </button>
                         </form>
                         <form

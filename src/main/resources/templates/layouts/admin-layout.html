@@ -121,6 +121,13 @@
                 <span class="badge rounded-pill bg-primary ms-auto" style="font-size: 0.7rem;"
                   th:if="${currentPage} == 'students'">New</span>
               </a>
+              <a class="sidebar-link" th:classappend="${currentPage == 'registrations' ? ' active' : ''}"
+                th:href="@{/students/registrations(registrationStatus='PENDING')}">
+                <i class="bi bi-inbox"></i> <span th:text="#{nav.registrations}">登録申請管理</span>
+                <span class="badge rounded-pill bg-danger ms-auto" style="font-size: 0.7rem;"
+                  th:if="${currentPage} == 'registrations' and ${pendingRegistrations != null} and ${pendingRegistrations > 0}"
+                  th:text="${pendingRegistrations}"></span>
+              </a>
               <a class="sidebar-link" th:classappend="${currentPage == 'teachers' ? ' active' : ''}"
                 th:href="@{/teachers}">
                 <i class="bi bi-person-workspace"></i> <span th:text="#{nav.teacher.management}">教師管理</span>

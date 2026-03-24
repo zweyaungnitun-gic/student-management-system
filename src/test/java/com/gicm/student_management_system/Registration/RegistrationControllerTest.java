@@ -143,13 +143,13 @@ public class RegistrationControllerTest {
         MockMvc mockMvc = MockMvcBuilders.standaloneSetup(controller).build();
 
         MockHttpSession session = new MockHttpSession();
-        session.setAttribute("registeredStudentId", "STU123");
+        session.setAttribute("registrationCode", "REG-000001");
         session.setAttribute("registeredStudentName", "Saved Student");
 
         mockMvc.perform(get("/register/success").session(session))
                 .andExpect(status().isOk())
                 .andExpect(view().name("register/success"))
-                .andExpect(model().attributeExists("studentId"))
+                .andExpect(model().attributeExists("registrationCode"))
                 .andExpect(model().attributeExists("studentName"));
     }
 }

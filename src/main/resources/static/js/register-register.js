@@ -1,19 +1,18 @@
-// Define required fields
+// Define required fields using the correct IDs from register.html
 const requiredFields = [
-    { id: 'englishName', message: '英語名は必須です', type: 'text' },
-    { id: 'katakanaName', message: 'カタカナ名は必須です', type: 'text' },
-    { id: 'dob', message: '生年月日は必須です', type: 'date' },
-    { id: 'currentAddress', message: '現在所は必須です', type: 'textarea' },
-    { id: 'hometownAddress', message: '出身地住所は必須です', type: 'textarea' },
+    { id: 'studentName', message: '生徒名は必須です', type: 'text' },
+    { id: 'dateOfBirth', message: '生年月日は必須です', type: 'date' },
+    { id: 'currentLivingAddress', message: '現在所は必須です', type: 'textarea' },
+    { id: 'homeTownAddress', message: '出身地住所は必須です', type: 'textarea' },
     { id: 'phoneNumber', message: '電話番号は必須です', type: 'text' },
-    { id: 'guardianPhoneNumber', message: '保護者電話番号は必須です', type: 'text' },
-    { name: 'gender', message: '性別を選択してください', type: 'radio' }
+    { id: 'nationalId', message: '国民ID番号は必須です', type: 'text' },
+    { name: 'student.gender', message: '性別を選択してください', type: 'radio' }
 ];
 
 // Setup error clearing listeners for inputs
 setupErrorClearListeners(
-    ['englishName', 'katakanaName', 'dob', 'currentAddress', 'hometownAddress', 'phoneNumber', 'guardianPhoneNumber'],
-    ['gender']
+    ['studentName', 'dateOfBirth', 'currentLivingAddress', 'homeTownAddress', 'phoneNumber', 'nationalId'],
+    ['student.gender']
 );
 
 // Form submission
@@ -29,17 +28,25 @@ document.querySelector('form').addEventListener('submit', function (event) {
         return;
     }
 
-    const genderSelected = document.querySelector('input[name="gender"]:checked');
+    const form = document.querySelector('form');
+    // If the form has an action attribute (meaning it's the admin native submit flow), submit it natively
+    if (form.hasAttribute('action') && form.getAttribute('action') !== '') {
+        form.submit();
+        return;
+    }
+
+    const genderSelected = document.querySelector('input[name="student.gender"]:checked');
     // Prepare payload
     const payload = {
-        englishName: document.getElementById('englishName').value.trim(),
-        katakanaName: document.getElementById('katakanaName').value.trim(),
-        dob: document.getElementById('dob').value,
+        englishName: document.getElementById('studentName').value.trim(),
+        katakanaName: "NotProvided", 
+        dob: document.getElementById('dateOfBirth').value,
         gender: genderSelected ? genderSelected.value : null,
-        currentAddress: document.getElementById('currentAddress').value.trim(),
-        hometownAddress: document.getElementById('hometownAddress').value.trim(),
+        currentAddress: document.getElementById('currentLivingAddress').value.trim(),
+        hometownAddress: document.getElementById('homeTownAddress').value.trim(),
         phoneNumber: document.getElementById('phoneNumber').value.trim(),
-        guardianPhoneNumber: document.getElementById('guardianPhoneNumber').value.trim()
+        guardianPhoneNumber: "-", // Not in form anymore
+        nationalIdNumber: document.getElementById('nationalId').value.trim()
     };
 
     // Send data to backend
@@ -67,7 +74,8 @@ document.querySelector('form').addEventListener('submit', function (event) {
 
             if (response.ok && data && data.status === 'success') {
                 console.log('Success! Redirecting to second page...');
-                window.location.href = '/register/second-page';
+                const nextUrl = document.querySelector('form')?.getAttribute('data-next-url') || '/register/second-page';
+                window.location.href = nextUrl;
                 return;
             }
 

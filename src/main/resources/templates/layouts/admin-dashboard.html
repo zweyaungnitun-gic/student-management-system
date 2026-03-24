@@ -19,7 +19,7 @@
 
   <body>
     <div class="dashboard-layout">
-      <aside class="dashboard-sidebar glass-panel">
+      <aside class="dashboard-sidebar glass-panel" th:fragment="sidebar(currentPage)">
         <div class="sidebar-brand gap-3">
           <div class="brand-badge bg-white shadow-sm">
             <img th:src="@{/images/image.png}" alt="GIC logo" />
@@ -60,6 +60,10 @@
             <a class="sidebar-link" href="/students">
               <i class="bi bi-people"></i>
               <span th:text="#{nav.students}">Students</span>
+            </a>
+            <a class="sidebar-link" href="/students/registrations?registrationStatus=PENDING">
+              <i class="bi bi-inbox"></i>
+              <span th:text="#{nav.registrations}">Registrations</span>
             </a>
             <a class="sidebar-link" th:href="@{/users}" sec:authorize="hasRole('ADMIN')">
               <i class="bi bi-people-fill"></i>
@@ -108,7 +112,7 @@
       <div class="sidebar-overlay d-lg-none" data-sidebar-toggle></div>
 
       <div class="dashboard-main">
-        <header class="dashboard-topbar">
+        <header class="dashboard-topbar" th:fragment="topbar(pageTitle, pageSubtitle, actionsFragment)">
           <div class="d-flex align-items-center gap-3">
             <button
               class="btn btn-light btn-icon d-lg-none"
@@ -119,26 +123,31 @@
               <i class="bi bi-list fs-4"></i>
             </button>
             <div>
-              <p class="text-uppercase text-muted small fw-semibold mb-1">
+              <p class="text-uppercase text-muted small fw-semibold mb-1" th:text="${pageSubtitle ?: 'Welcome back'}">
                 Welcome back
               </p>
-              <h4 class="mb-0">Admin Dashboard</h4>
+              <h4 class="mb-0" th:text="${pageTitle ?: 'Admin Dashboard'}">Admin Dashboard</h4>
             </div>
           </div>
 
           <div class="topbar-actions">
-            <div class="topbar-search d-none d-md-flex">
-              <i class="bi bi-search"></i>
-              <input
-                type="search"
-                class="form-control border-0 bg-transparent shadow-none p-0"
-                th:placeholder="#{placeholder.search.admin}"
-              />
-            </div>
-            <button class="btn btn-primary d-flex align-items-center gap-2">
-              <i class="bi bi-plus-lg"></i>
-              <span class="d-none d-sm-inline">Create Exam</span>
-            </button>
+            <th:block th:if="${actionsFragment != null}">
+                <div th:replace="${actionsFragment}"></div>
+            </th:block>
+            <th:block th:unless="${actionsFragment != null}">
+                <div class="topbar-search d-none d-md-flex">
+                  <i class="bi bi-search"></i>
+                  <input
+                    type="search"
+                    class="form-control border-0 bg-transparent shadow-none p-0"
+                    th:placeholder="#{placeholder.search.admin}"
+                  />
+                </div>
+                <button class="btn btn-primary d-flex align-items-center gap-2">
+                  <i class="bi bi-plus-lg"></i>
+                  <span class="d-none d-sm-inline">Create Exam</span>
+                </button>
+            </th:block>
           </div>
         </header>
 
