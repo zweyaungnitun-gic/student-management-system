@@ -59,6 +59,7 @@
       <span class="badge rounded-pill bg-primary ms-auto" style="font-size: 0.7rem;" th:if="${currentPage} == 'registrations'">Now</span>
     </a>
 
+    <div sec:authorize="hasRole('ADMIN')">
     <div class="sidebar-label mt-3">管理</div>
 
     <div class="nav-item">
@@ -124,7 +125,7 @@
         <span>ユーザー管理</span>
         <span class="badge rounded-pill bg-primary ms-auto" style="font-size: 0.7rem;" th:if="${currentPage} == 'users'">New</span>
     </a>
-
+  </div>  
     <!-- <hr class="my-3 mx-3" style="opacity: 0.1; color: white;"> -->
 
     <a class="sidebar-link text-danger fw-semibold mt-auto" th:href="@{/logout}">

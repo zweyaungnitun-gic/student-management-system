@@ -42,44 +42,55 @@ public class SecurityConfig {
         return authConfig.getAuthenticationManager();
     }
 
-    @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http
-                .csrf(csrf -> csrf.disable())
-                .authorizeHttpRequests(authz -> authz
-                        .requestMatchers("/", "/login", "/access-denied", "/css/**", "/js/**", "/images/**", "/register/**")
-                        .permitAll()
-                        .requestMatchers("/admin/**").hasRole("ADMIN")
-                        .requestMatchers("/guest/**").hasRole("GUEST")
-                        .requestMatchers("/teachers/**").hasRole("ADMIN")
-                        .requestMatchers("/courses/**").hasRole("ADMIN")
-                        .requestMatchers("/dashboard").authenticated()
-                        .anyRequest().authenticated())
+@Bean
+public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    http
+            .csrf(csrf -> csrf.disable())
+            .authorizeHttpRequests(authz -> authz
+                    // Public endpoints
+                    .requestMatchers("/", "/login", "/access-denied", "/css/**", "/js/**", "/images/**", "/register/**")
+                    .permitAll()
+                    
+                    // Dashboard requires authentication
+                    .requestMatchers("/dashboard").authenticated()
+                    
+                    // GUEST only - can only access guest dashboard and logout
+                    .requestMatchers("/guest/**").hasRole("GUEST")
+                    .requestMatchers("/logout").authenticated()
+                    
+                    // ADMIN only - everything else
+                    .requestMatchers("/admin/**").hasRole("ADMIN")
+                    .requestMatchers("/students/**").hasRole("ADMIN")
+                    .requestMatchers("/teachers/**").hasRole("ADMIN")
+                    .requestMatchers("/courses/**").hasRole("ADMIN")
+                    .requestMatchers("/users/**").hasRole("ADMIN")
+                    .requestMatchers("/tests/**").hasRole("ADMIN")
+                    .requestMatchers("/results/**").hasRole("ADMIN")
+                    .requestMatchers("/reports/**").hasRole("ADMIN")
+                    
+                    .anyRequest().authenticated())
+            .exceptionHandling(exception -> exception
+                    .accessDeniedPage("/access-denied"))
+            .formLogin(form -> form
+                    .loginPage("/login")
+                    .loginProcessingUrl("/login")
+                    .successHandler(customAuthSuccessHandler)
+                    .failureUrl("/login?error=true")
+                    .permitAll())
+            .logout(logout -> logout
+                    .logoutUrl("/logout")
+                    .logoutSuccessUrl("/login?logout=true")
+                    .invalidateHttpSession(true)
+                    .deleteCookies("JSESSIONID")
+                    .permitAll())
+            .sessionManagement(session -> session
+                    .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
+                    .maximumSessions(1)
+                    .maxSessionsPreventsLogin(false))
+            .userDetailsService(customUserDetailsService);
 
-                .exceptionHandling(exception -> exception
-                        .accessDeniedPage("/access-denied"))
-                .formLogin(form -> form
-                        .loginPage("/login")
-                        .loginProcessingUrl("/login")
-                        .successHandler(customAuthSuccessHandler)
-                        .failureUrl("/login?error=true")
-                        .permitAll())
-                .logout(logout -> logout
-                        .logoutUrl("/logout")
-                        .logoutSuccessUrl("/login?logout=true")
-                        .invalidateHttpSession(true)
-                        .deleteCookies("JSESSIONID")
-                        .permitAll())
-                .sessionManagement(session -> session
-                        .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
-                        .maximumSessions(1)
-                        .maxSessionsPreventsLogin(false))
-                .userDetailsService(customUserDetailsService);
+    http.addFilterAfter(sessionJwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
-        // Add Session JWT filter for form-based authentication with JWT stored in Redis
-        // session
-        http.addFilterAfter(sessionJwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
-
-        return http.build();
-    }
+    return http.build();
+}
 }

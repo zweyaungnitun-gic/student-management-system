@@ -11,8 +11,7 @@ public class GuestDashboardController {
 
     @GetMapping("/dashboard")
     public String getGuestDashboard(Model model) {
-        model.addAttribute("pageTitle", "Guest Dashboard");
-        model.addAttribute("pageSubtitle", "Welcome, Guest");
+        model.addAttribute("pageTitle", "ゲストダッシュボード");
         return "layouts/guest-dashboard";
     }
 }
