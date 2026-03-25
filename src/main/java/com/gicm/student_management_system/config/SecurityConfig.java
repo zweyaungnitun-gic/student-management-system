@@ -59,15 +59,16 @@ public class SecurityConfig {
                                                 .requestMatchers("/guest/**").hasRole("GUEST")
                                                 .requestMatchers("/logout").authenticated()
 
-                                                // ADMIN only - everything else
-                                                .requestMatchers("/admin/**").hasRole("ADMIN")
-                                                .requestMatchers("/students/**").hasRole("ADMIN")
-                                                .requestMatchers("/teachers/**").hasRole("ADMIN")
-                                                .requestMatchers("/courses/**").hasRole("ADMIN")
-                                                .requestMatchers("/users/**").hasRole("ADMIN")
-                                                .requestMatchers("/tests/**").hasRole("ADMIN")
-                                                .requestMatchers("/results/**").hasRole("ADMIN")
-                                                .requestMatchers("/reports/**").hasRole("ADMIN")
+                                                // SUPER_ADMIN and ADMIN can access admin areas
+                                                .requestMatchers("/admin/**").hasAnyRole("ADMIN", "SUPER_ADMIN")
+                                                .requestMatchers("/students/**").hasAnyRole("ADMIN", "SUPER_ADMIN")
+                                                .requestMatchers("/teachers/**").hasAnyRole("ADMIN", "SUPER_ADMIN")
+                                                .requestMatchers("/courses/**").hasAnyRole("ADMIN", "SUPER_ADMIN")
+                                                .requestMatchers("/users/**").hasAnyRole("ADMIN", "SUPER_ADMIN")
+                                                .requestMatchers("/tests/**").hasAnyRole("ADMIN", "SUPER_ADMIN")
+                                                .requestMatchers("/results/**").hasAnyRole("ADMIN", "SUPER_ADMIN")
+                                                .requestMatchers("/reports/**").hasAnyRole("ADMIN", "SUPER_ADMIN")
+                                                .requestMatchers("/dashboard").hasAnyRole("ADMIN", "SUPER_ADMIN", "GUEST")
 
                                                 .anyRequest().authenticated())
                                 .exceptionHandling(exception -> exception

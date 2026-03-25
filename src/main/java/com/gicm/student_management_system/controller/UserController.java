@@ -16,22 +16,25 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.gicm.student_management_system.entity.Role;
 import com.gicm.student_management_system.entity.User;
+import com.gicm.student_management_system.security.SecurityUtils;
 import com.gicm.student_management_system.service.UserService;
 
 import jakarta.validation.Valid;
 
 @Controller
 @RequestMapping("/users")
-@PreAuthorize("hasRole('ADMIN')")
 public class UserController {
 
     private final UserService userService;
+    private final SecurityUtils securityUtils;
 
-    public UserController(UserService userService) {
+    public UserController(UserService userService, SecurityUtils securityUtils) {
         this.userService = userService;
+        this.securityUtils = securityUtils;
     }
 
     @GetMapping
+    @PreAuthorize("hasRole('SUPER_ADMIN')")
     public String listUsers(
             @RequestParam(value = "search", required = false) String search,
             Model model) {
@@ -45,14 +48,23 @@ public class UserController {
     }
 
     @GetMapping("/add")
+    @PreAuthorize("hasRole('SUPER_ADMIN')")
     public String addUserForm(Model model) {
         model.addAttribute("user", new User());
-        model.addAttribute("roles", Role.values());
+        // Only allow creating ADMIN and GUEST users (not SUPER_ADMIN)
+        model.addAttribute("roles", new Role[]{Role.ADMIN, Role.GUEST});
         return "users/add";
     }
 
     @PostMapping("/add")
+    @PreAuthorize("hasRole('SUPER_ADMIN')")
     public String addUser(@Valid @ModelAttribute User user, BindingResult bindingResult, Model model) {
+        // Prevent creating SUPER_ADMIN through this form
+        if (user.getRole() == Role.SUPER_ADMIN) {
+            bindingResult.rejectValue("role", "error.user", "SUPER_ADMINは作成できません");
+            model.addAttribute("roles", new Role[]{Role.ADMIN, Role.GUEST});
+            return "users/add";
+        }
         // Store password to preserve it on validation errors
         String submittedPassword = user.getPassword();
         
@@ -86,6 +98,7 @@ public class UserController {
     }
 
     @PostMapping("/edit/{id}")
+    @PreAuthorize("hasRole('SUPER_ADMIN') or @userController.isCurrentUser(#id)")
     public String updateUser(@PathVariable Long id,
             @Valid @ModelAttribute User userForm,
             BindingResult bindingResult,
@@ -97,6 +110,17 @@ public class UserController {
         if (originalUser == null) {
             redirectAttributes.addFlashAttribute("error", "ユーザーが見つかりません");
             return "redirect:/users";
+        }
+
+        // Only SUPER_ADMIN can change roles or edit other users
+        if (!SecurityUtils.isSuperAdmin()) {
+            // Regular users can only edit themselves
+            if (!securityUtils.getCurrentUserId().equals(id)) {
+                redirectAttributes.addFlashAttribute("error", "他のユーザーを編集する権限がありません");
+                return "redirect:/dashboard";
+            }
+            // Regular users cannot change their own role
+            userForm.setRole(originalUser.getRole());
         }
 
         userForm.setId(originalUser.getId());
@@ -134,8 +158,15 @@ public class UserController {
     }
 
     @GetMapping("/delete/{id}")
+    @PreAuthorize("hasRole('SUPER_ADMIN')")
     public String deleteUser(@PathVariable Long id, RedirectAttributes redirectAttributes) {
         try {
+            // Prevent deleting the last SUPER_ADMIN
+            User userToDelete = userService.getUserById(id).orElse(null);
+            if (userToDelete != null && userToDelete.getRole() == Role.SUPER_ADMIN) {
+                redirectAttributes.addFlashAttribute("error", "SUPER_ADMINは削除できません");
+                return "redirect:/users";
+            }
             userService.deleteUser(id);
             redirectAttributes.addFlashAttribute("success", "ユーザーが削除されました");
             return "redirect:/users";
@@ -146,6 +177,7 @@ public class UserController {
     }
 
     @GetMapping("/edit/{id}")
+    @PreAuthorize("hasRole('SUPER_ADMIN') or @userController.isCurrentUser(#id)")
     public String showEditForm(@PathVariable Long id, Model model, RedirectAttributes redirectAttributes) {
         User user = userService.getUserById(id).orElse(null);
         
@@ -154,8 +186,26 @@ public class UserController {
             return "redirect:/users";
         }
         
+        // Regular users can only edit themselves
+        if (!SecurityUtils.isSuperAdmin() && !securityUtils.getCurrentUserId().equals(id)) {
+            redirectAttributes.addFlashAttribute("error", "他のユーザーを編集する権限がありません");
+            return "redirect:/dashboard";
+        }
+        
         model.addAttribute("user", user);
-        model.addAttribute("roles", Role.values());
+        // SUPER_ADMIN can change roles, regular users cannot
+        if (SecurityUtils.isSuperAdmin()) {
+            model.addAttribute("roles", Role.values());
+        } else {
+            model.addAttribute("roles", new Role[]{user.getRole()}); // Cannot change role
+        }
         return "users/edit";
+    }
+
+    /**
+     * Helper method for SpEL expression to check if the given user ID is the current user
+     */
+    public boolean isCurrentUser(Long id) {
+        return securityUtils.getCurrentUserId().equals(id);
     }
 }

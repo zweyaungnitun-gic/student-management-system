@@ -32,6 +32,7 @@ import com.gicm.student_management_system.dto.TestResultDTO;
 import com.gicm.student_management_system.entity.RegistrationStatus;
 import com.gicm.student_management_system.entity.Student;
 import com.gicm.student_management_system.entity.StudentRegistration;
+import com.gicm.student_management_system.repository.AdditionalStudentInfoRepository;
 import com.gicm.student_management_system.service.EnrollmentService;
 import com.gicm.student_management_system.service.InterviewNotesService;
 import com.gicm.student_management_system.service.StudentExportService;
@@ -55,6 +56,7 @@ public class StudentController {
     private final EnrollmentService enrollmentService;
     private final TestResultService testResultService;
     private final MessageSource messageSource;
+    private final AdditionalStudentInfoRepository additionalStudentInfoRepository;
 
     // ---- UI METHODS ----
     @GetMapping
@@ -65,10 +67,11 @@ public class StudentController {
         List<StudentDTO> students;
 
         // Student no longer has a 'status' column; keep name search only.
+        // Use tenant-filtered methods for multi-tenancy
         if (nameSearch.isBlank()) {
-            students = studentService.getAllStudents();
+            students = studentService.getAllStudentsForCurrentUser();
         } else {
-            students = studentService.getStudentsByFilter(nameSearch);
+            students = studentService.getStudentsByFilterForCurrentUser(nameSearch);
         }
 
         // --- Keep your sorting logic exactly as it is ---
@@ -251,13 +254,15 @@ public class StudentController {
             @RequestParam(value = "nameSearch", defaultValue = "") String nameSearch,
             @RequestParam(value = "status", defaultValue = "") String status,
             Model model) {
-        Student student = studentService.findById(id)
-                .orElseThrow(() -> new RuntimeException(messageSource.getMessage("student.not.found", null, java.util.Locale.getDefault()) + ": ID " + id));
+        StudentDTO studentDTO = studentService.getStudentById(id);
+        if (studentDTO == null) {
+            throw new RuntimeException(messageSource.getMessage("student.not.found", null, java.util.Locale.getDefault()) + ": ID " + id);
+        }
 
         InterviewNotesDTO interviewNotesDTO = interviewNotesService.getOrCreateInterviewNotesDTO(id);
         model.addAttribute("interviewNotes", interviewNotesDTO);
 
-        model.addAttribute("student", student);
+        model.addAttribute("student", studentDTO);
         model.addAttribute("isNew", false);
 
         model.addAttribute("nameSearch", nameSearch);
@@ -322,6 +327,54 @@ public class StudentController {
         redirectAttributes.addFlashAttribute("success", messageSource.getMessage("success.update", null, java.util.Locale.getDefault()));
 
         return buildUpdateRedirectUrl(id, "basic", nameSearch, status);
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping("/update-status/{id}")
+    public String updateStatus(
+            @PathVariable Long id,
+            @ModelAttribute("student") com.gicm.student_management_system.dto.StudentDTO formDto,
+            RedirectAttributes redirectAttributes,
+            @RequestParam(value = "nameSearch", defaultValue = "") String nameSearch,
+            @RequestParam(value = "filterStatus", defaultValue = "") String filterStatus) {
+
+        com.gicm.student_management_system.entity.Student student = studentService.findById(id).orElse(null);
+        if (student != null) {
+            com.gicm.student_management_system.entity.AdditionalStudentInfo additionalInfo = additionalStudentInfoRepository
+                    .findByCommonStudent_Id(id)
+                    .orElse(new com.gicm.student_management_system.entity.AdditionalStudentInfo());
+            
+            additionalInfo.setCommonStudent(student);
+            additionalInfo.setDesiredJobType(formDto.getDesiredJobType());
+            additionalInfo.setOtherDesiredJobType(formDto.getOtherDesiredJobType());
+            additionalInfo.setOtherReligion(formDto.getOtherReligion());
+            additionalInfo.setCurrentJapanLevel(formDto.getCurrentJapanLevel());
+            additionalInfo.setAttendingClassRelatedStatus(formDto.getAttendingClassRelatedStatus());
+            additionalInfo.setPassedHighestJlptLevel(formDto.getPassedHighestJlptLevel());
+            additionalInfo.setJapanTravelExperience(formDto.getJapanTravelExperience());
+            additionalInfo.setCoeApplicationExperience(formDto.getCoeApplicationExperience());
+            additionalInfo.setHostelPreference(formDto.getHostelPreference());
+            additionalInfo.setIsAlcoholDrink(formDto.getIsAlcoholDrink());
+            additionalInfo.setIsSmoking(formDto.getIsSmoking());
+            additionalInfo.setHaveTatto(formDto.getHaveTatto());
+            additionalInfo.setSchedulePaymentTutionDate(formDto.getSchedulePaymentTutionDate());
+            additionalInfo.setActualTutionPaymentDate(formDto.getActualTutionPaymentDate());
+            additionalInfo.setMemoNotes(formDto.getMemoNotes());
+            
+            // Also sink religion to the main Student entity
+            student.setReligion(formDto.getReligion());
+            if (formDto.getStatus() != null && !formDto.getStatus().isBlank()) {
+                additionalInfo.setAttendingClassRelatedStatus(formDto.getStatus());
+            }
+
+            studentService.save(student);
+            additionalStudentInfoRepository.save(additionalInfo);
+
+            redirectAttributes.addFlashAttribute("success",
+                    messageSource.getMessage("success.update", null, java.util.Locale.getDefault()));
+        }
+        
+        return buildUpdateRedirectUrl(id, "status", nameSearch, filterStatus);
     }
 
     @PreAuthorize("hasRole('ADMIN')")

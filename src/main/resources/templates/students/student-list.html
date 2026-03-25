@@ -916,43 +916,41 @@ document.addEventListener("DOMContentLoaded", function() {
                         <td data-label="支払予定日" th:text="${student.schedulePaymentTutionDate != null ? #temporals.format(student.schedulePaymentTutionDate, 'MM/dd/yyyy') : ''}"></td>
                         <td data-label="支払実績日" th:text="${student.actualTutionPaymentDate != null ? #temporals.format(student.actualTutionPaymentDate, 'MM/dd/yyyy') : ''}"></td>
                         <td data-label="動作機能" class="action-cell">
-                            <!-- action buttons  -->
+                            <div class="d-flex flex-nowrap justify-content-center gap-2">
+                                <a th:href="@{/students/detail/{id}(id=${student.id}, nameSearch=${nameSearch}, status=${status})}"
+                                   class="text-decoration-none text-info" 
+                                   title="詳細"
+                                   style="font-size: 1.2rem;">
+                                    <i class="bi bi-info-circle"></i>
+                                </a>
+                                
+                                <a th:href="@{/students/student-update/{id}(id=${student.id}, nameSearch=${nameSearch}, status=${status})}"
+                                   class="text-decoration-none text-primary" 
+                                   title="編集"
+                                   sec:authorize="hasRole('ADMIN') or hasRole('TEACHER')"
+                                   style="font-size: 1.2rem;">
+                                    <i class="bi bi-pencil-square"></i>
+                                </a>
+                                
+                                <!-- We keep the reports button if it works -->
+                                <a th:href="@{'/reports/student/' + ${student.id}}" 
+                                   class="text-decoration-none text-success" 
+                                   title="成績"
+                                   style="font-size: 1.2rem;">
+                                    <i class="bi bi-bar-chart-fill"></i>
+                                </a>
+                                
+                                <a href="#"
+                                   th:attr="data-delete-url=@{/students/delete/{id}(id=${student.id}, nameSearch=${nameSearch}, status=${status})}"
+                                   onclick="if(confirm('本当に削除しますか？')) window.location.href=this.getAttribute('data-delete-url');"
+                                   class="text-decoration-none text-danger"
+                                   title="削除"
+                                   sec:authorize="hasRole('ADMIN')"
+                                   style="font-size: 1.2rem;">
+                                    <i class="bi bi-trash-fill"></i>
+                                </a>
+                            </div>
                         </td>
-                        
-<!-- <td data-label="動作機能" class="action-cell">
-    <div class="d-flex flex-nowrap justify-content-center gap-2">
-        <a th:href="@{/students/detail/{id}(id=${student.id}, nameSearch=${nameSearch}, status=${status})}"
-           class="text-decoration-none text-info" 
-           title="詳細"
-           style="font-size: 1.2rem;">
-            <i class="bi bi-info-circle"></i>
-        </a>
-        
-        <a th:href="@{/students/student-update/{id}(id=${student.id}, nameSearch=${nameSearch}, status=${status})}"
-           class="text-decoration-none text-primary" 
-           title="編集"
-           sec:authorize="hasRole('ADMIN') or hasRole('TEACHER')"
-           style="font-size: 1.2rem;">
-            <i class="bi bi-pencil-square"></i>
-        </a>
-        
-        <a th:href="@{'/reports/student/' + ${student.id}}" 
-           class="text-decoration-none text-success" 
-           title="成績"
-           style="font-size: 1.2rem;">
-            <i class="bi bi-bar-chart-fill"></i>
-        </a>
-        
-        <a href="#" 
-           th:onclick="'if(confirm(\'本当に削除しますか？\')) window.location.href=\'/students/delete/' + ${student.id} + '?nameSearch=' + encodeURIComponent(\'' + ${nameSearch} + '\') + '&status=' + encodeURIComponent(\'' + ${status} + '\');'"
-           class="text-decoration-none text-danger" 
-           title="削除"
-           sec:authorize="hasRole('ADMIN')"
-           style="font-size: 1.2rem;">
-            <i class="bi bi-trash-fill"></i>
-        </a>
-    </div>
-</td> -->
                     </tr>
                 </tbody>
 

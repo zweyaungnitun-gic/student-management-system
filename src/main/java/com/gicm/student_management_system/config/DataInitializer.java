@@ -26,6 +26,7 @@ public class DataInitializer implements CommandLineRunner {
         log.info("========================================");
 
         // Initialize Demo Admin Users (idempotent by email)
+        ensureUser("superadmin@gmail.com", "Super Admin", Role.SUPER_ADMIN, "superadmin123");
         ensureUser("admin@gmail.com", "Admin", Role.ADMIN, "admin123");
         ensureUser("admin1@gmail.com", "Admin One", Role.ADMIN, "admin123");
         ensureUser("admin2@gmail.com", "Admin Two", Role.ADMIN, "admin123");

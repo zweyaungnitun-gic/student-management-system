@@ -13,7 +13,21 @@ public interface StudentService {
 
     List<StudentDTO> getStudentsByFilter(String nameSearch);
 
+    /**
+     * Get students filtered by tenant (for multi-tenancy)
+     * If current user is SUPER_ADMIN, returns all students
+     * If current user is ADMIN, returns only students created by that admin
+     */
+    List<StudentDTO> getAllStudentsForCurrentUser();
+
+    List<StudentDTO> getStudentsByFilterForCurrentUser(String nameSearch);
+
     StudentDTO getStudentById(Long id);
+
+    /**
+     * Check if current user can access the student
+     */
+    boolean canAccessStudent(Long studentId);
 
     StudentDTO createStudent(StudentDTO studentDTO);
 
