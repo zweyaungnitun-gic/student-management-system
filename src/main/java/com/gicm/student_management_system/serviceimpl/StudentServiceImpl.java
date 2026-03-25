@@ -6,6 +6,7 @@ import com.gicm.student_management_system.entity.RegistrationStatus;
 import com.gicm.student_management_system.entity.Student;
 import com.gicm.student_management_system.repository.AdditionalStudentInfoRepository;
 import com.gicm.student_management_system.repository.StudentRepository;
+import com.gicm.student_management_system.security.SecurityUtils;
 import com.gicm.student_management_system.service.StudentIdGeneratorService;
 import com.gicm.student_management_system.service.StudentService;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +25,7 @@ public class StudentServiceImpl implements StudentService {
     private final StudentRepository studentRepository;
     private final StudentIdGeneratorService idGeneratorService;
     private final AdditionalStudentInfoRepository additionalStudentInfoRepository;
+    private final SecurityUtils securityUtils;
 
 public StudentDTO convertToDTO(Student student) {
     if (student == null) {
@@ -133,6 +135,51 @@ public StudentDTO convertToDTO(Student student) {
     }
 
     @Override
+    public List<StudentDTO> getAllStudentsForCurrentUser() {
+        Long tenantId = securityUtils.getTenantFilterId();
+        List<Student> students;
+        
+        if (tenantId == null) {
+            // Super admin - see all
+            students = studentRepository.findAll();
+        } else {
+            // Regular admin - see only their students
+            students = studentRepository.findByCreatedBy(tenantId);
+        }
+        
+        return students.stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<StudentDTO> getStudentsByFilterForCurrentUser(String nameSearch) {
+        Long tenantId = securityUtils.getTenantFilterId();
+        List<Student> students;
+        boolean hasName = nameSearch != null && !nameSearch.isBlank();
+
+        if (tenantId == null) {
+            // Super admin - see all
+            if (hasName) {
+                students = studentRepository.findAllByNameForSuperAdmin(nameSearch);
+            } else {
+                students = studentRepository.findAll();
+            }
+        } else {
+            // Regular admin - filter by createdBy
+            if (hasName) {
+                students = studentRepository.findByCreatedByAndStudentNameIgnoreCaseContaining(tenantId, nameSearch);
+            } else {
+                students = studentRepository.findByCreatedBy(tenantId);
+            }
+        }
+
+        return students.stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
+
+    @Override
     public List<StudentDTO> getStudentsByFilter(String nameSearch) {
         List<Student> students;
         boolean hasName = nameSearch != null && !nameSearch.isBlank();
@@ -150,9 +197,24 @@ public StudentDTO convertToDTO(Student student) {
 
     @Override
     public StudentDTO getStudentById(Long id) {
-        return studentRepository.findById(id)
-                .map(this::convertToDTO)
-                .orElse(null);
+        Student student = studentRepository.findById(id).orElse(null);
+        if (student == null) {
+            return null;
+        }
+        // Check access permission
+        if (!securityUtils.canAccessData(student.getCreatedBy())) {
+            return null; // Or throw access denied exception
+        }
+        return convertToDTO(student);
+    }
+
+    @Override
+    public boolean canAccessStudent(Long studentId) {
+        Student student = studentRepository.findById(studentId).orElse(null);
+        if (student == null) {
+            return false;
+        }
+        return securityUtils.canAccessData(student.getCreatedBy());
     }
 
     @Override
@@ -171,6 +233,11 @@ public StudentDTO convertToDTO(Student student) {
         dto.setStudentId(null);
 
         Student student = convertToEntity(dto);
+        
+        // Set the creator for multi-tenancy
+        Long currentUserId = securityUtils.getCurrentUserId();
+        student.setCreatedBy(currentUserId);
+        
         Student saved = studentRepository.save(student);
 
         dto.setStudentId(saved.getStudentId());
@@ -188,6 +255,11 @@ public StudentDTO convertToDTO(Student student) {
         }
 
         Student existing = opt.get();
+        
+        // Check access permission
+        if (!securityUtils.canAccessData(existing.getCreatedBy())) {
+            return null; // Or throw access denied exception
+        }
 
         dto.setStudentId(existing.getStudentId());
 
@@ -220,7 +292,15 @@ public StudentDTO convertToDTO(Student student) {
     @Override
     @Transactional
     public void deleteStudent(Long id) {
-        studentRepository.deleteById(id);
+        Optional<Student> opt = studentRepository.findById(id);
+        if (opt.isPresent()) {
+            Student student = opt.get();
+            // Check access permission before deleting
+            if (!securityUtils.canAccessData(student.getCreatedBy())) {
+                throw new RuntimeException("Access denied: You cannot delete this student");
+            }
+            studentRepository.deleteById(id);
+        }
     }
 
     @Override

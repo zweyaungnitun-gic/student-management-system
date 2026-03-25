@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<html lang="ja" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
   <head th:replace="~{layouts/admin-layout :: head(pageTitle=${'生徒詳細（受講科目と結果） | Admin Dashboard'})}"></head>
   <body>
     <div class="dashboard-layout">
@@ -28,19 +28,29 @@
               <span th:text="${student.studentId}">STU001</span>
             </div>
 
-              <div class="d-flex gap-2">
+              <div class="d-flex gap-2 flex-wrap">
               <a th:href="@{/students(nameSearch=${nameSearch}, status=${status})}" class="btn btn-outline-secondary btn-sm">
                 <i class="bi bi-arrow-left me-1"></i><th:block th:text="#{students.student-details-courses.auto_57ee}">生徒一覧に戻る</th:block></a>
               <a th:href="@{/students/student-update/{id}(id=${student.id}, nameSearch=${nameSearch}, status=${status})}" class="btn btn-primary btn-sm">
                 <i class="bi bi-pencil me-1"></i><th:block th:text="#{students.student-details-courses.auto_7578}">編集</th:block></a>
+              <a href="#"
+                 th:attr="data-delete-url=@{/students/delete/{id}(id=${student.id}, nameSearch=${nameSearch}, status=${status})}"
+                 onclick="if(confirm('本当に削除しますか？')) window.location.href=this.getAttribute('data-delete-url');"
+                 class="btn btn-danger btn-sm"
+                 sec:authorize="hasRole('ADMIN')">
+                <i class="bi bi-trash me-1"></i>削除</a>
             </div>
           </div>
 
           <div class="row g-4">
             <div class="col-lg-4">
               <div class="card border-0 shadow-sm">
-                <div class="card-header bg-white py-3">
+                <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
                   <h5 class="mb-0"><i class="bi bi-info-circle me-2 text-primary"></i><th:block th:text="#{students.student-details-courses.auto_1ea1}">基本情報</th:block></h5>
+                  <a th:href="@{/students/student-update/{id}(id=${student.id}, nameSearch=${nameSearch}, status=${status})}#basic"
+                     class="btn btn-sm btn-outline-primary py-0 px-2" title="基本情報を編集" sec:authorize="hasRole('ADMIN') or hasRole('TEACHER')">
+                    <i class="bi bi-pencil-square"></i>
+                  </a>
                 </div>
                 <div class="card-body">
                   <div class="mb-3">
@@ -68,6 +78,68 @@
                     <div class="text-muted small" th:text="#{students.student-details-courses.auto_2f22}">登録日</div>
                     <div class="fw-semibold"
                       th:text="${student.enrolledDate != null ? #temporals.format(student.enrolledDate, 'MM/dd/yyyy') : 'N/A'}">--</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Additional Student Info Card -->
+            <div class="col-lg-4">
+              <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+                  <h5 class="mb-0"><i class="bi bi-card-list me-2 text-warning"></i>追加情報</h5>
+                  <a th:href="@{/students/student-update/{id}(id=${student.id}, nameSearch=${nameSearch}, status=${status})}#status"
+                     class="btn btn-sm btn-outline-warning py-0 px-2" title="追加情報を編集" sec:authorize="hasRole('ADMIN')">
+                    <i class="bi bi-pencil-square"></i>
+                  </a>
+                </div>
+                <div class="card-body">
+                  <div class="mb-3">
+                    <div class="text-muted small">在籍ステータス</div>
+                    <span th:if="${student.status != null}"
+                          th:text="${student.status}"
+                          th:classappend="${student.status == '在校'} ? 'badge bg-success' : (${student.status == '卉業'} ? 'badge bg-primary' : 'badge bg-danger')"
+                          class="badge">
+                    </span>
+                    <span th:if="${student.status == null}" class="text-muted small">--</span>
+                  </div>
+                  <div class="mb-3">
+                    <div class="text-muted small">希望職種</div>
+                    <div class="fw-semibold" th:text="${student.desiredJobType ?: '--'}">--</div>
+                  </div>
+                  <div class="mb-3">
+                    <div class="text-muted small">宗教</div>
+                    <div class="fw-semibold" th:text="${additionalInfo != null ? (additionalInfo.otherReligion ?: student.religion ?: '--') : (student.religion ?: '--')}">--</div>
+                  </div>
+                  <div class="mb-3">
+                    <div class="text-muted small">指導中 JLPT レベル</div>
+                    <div class="fw-semibold" th:text="${student.currentJapanLevel ?: '--'}">--</div>
+                  </div>
+                  <div class="mb-3">
+                    <div class="text-muted small">合格最高 JLPT レベル</div>
+                    <div class="fw-semibold" th:text="${student.passedHighestJlptLevel ?: '--'}">--</div>
+                  </div>
+                  <div class="row g-2">
+                    <div class="col-6">
+                      <div class="text-muted small">日本渡航経験</div>
+                      <div class="fw-semibold" th:text="${student.japanTravelExperience != null ? (student.japanTravelExperience ? 'あり' : 'なし') : '--'}">--</div>
+                    </div>
+                    <div class="col-6">
+                      <div class="text-muted small">宮館希望</div>
+                      <div class="fw-semibold" th:text="${student.hostelPreference != null ? (student.hostelPreference ? 'はい' : 'いいえ') : '--'}">--</div>
+                    </div>
+                    <div class="col-6">
+                      <div class="text-muted small">タバコ</div>
+                      <div class="fw-semibold" th:text="${student.isSmoking != null ? (student.isSmoking ? '吸う' : '吸わない') : '--'}">--</div>
+                    </div>
+                    <div class="col-6">
+                      <div class="text-muted small">お酒</div>
+                      <div class="fw-semibold" th:text="${student.isAlcoholDrink != null ? (student.isAlcoholDrink ? '飲む' : '飲まない') : '--'}">--</div>
+                    </div>
+                  </div>
+                  <div class="mt-3" th:if="${student.memoNotes != null and !student.memoNotes.isBlank()}">
+                    <div class="text-muted small">メモ</div>
+                    <div class="border rounded p-2 bg-light small" style="white-space: pre-wrap;" th:text="${student.memoNotes}"></div>
                   </div>
                 </div>
               </div>
