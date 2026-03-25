@@ -128,7 +128,7 @@
                             </div>
                             <div class="card-footer bg-white text-end">
                                 <a href="/students" class="btn btn-sm btn-outline-primary">
-                                    すべての生徒を見る <i class="bi bi-arrow-right ms-1"></i>
+                                    <span th:text="#{student.view.all}">すべての生徒を見る</span> <i class="bi bi-arrow-right ms-1"></i>
                                 </a>
                             </div>
                         </div>
@@ -167,7 +167,7 @@
                             <div class="card-footer bg-white text-end">
                                 <a href="/students/registrations?registrationStatus=PENDING"
                                     class="btn btn-sm btn-outline-primary">
-                                    PENDING申請を見る <i class="bi bi-arrow-right ms-1"></i>
+                                    <span th:text="#{registration.view.pending}">PENDING申請を見る</span> <i class="bi bi-arrow-right ms-1"></i>
                                 </a>
                             </div>
                         </div>
@@ -177,58 +177,55 @@
                     <div class="col-lg-6">
                         <!-- 3 Report Cards Row -->
                         <div class="row g-4 report-cards-row mb-4">
-                            <!-- 成績サマリー Card -->
+                            <!-- Grade Summary Card -->
                             <div class="col-md-4">
                                 <div class="card border-0 shadow-sm h-100">
                                     <div class="card-body text-center">
                                         <i class="bi bi-bar-chart-line fs-1 text-primary mb-3"></i>
-                                        <h6 class="card-title fw-bold mb-2">成績サマリー</h6>
-                                        <p class="card-text text-muted small mb-3">学生ごとの成績サマリーを表示</p>
+                                        <h6 class="card-title fw-bold mb-2" th:text="#{report.grade.summary}">成績サマリー</h6>
+                                        <p class="card-text text-muted small mb-3" th:text="#{report.grade.summary.description}">学生ごとの成績サマリーを表示</p>
                                         <input type="number" id="studentId" class="form-control form-control-sm mb-2"
                                             th:placeholder="#{placeholder.student.id}">
                                         <button class="btn btn-sm btn-primary w-100"
-                                            onclick="window.location.href='/reports/student/' + document.getElementById('studentId').value">
-                                            表示
-                                        </button>
+                                            onclick="window.location.href='/reports/student/' + document.getElementById('studentId').value"
+                                            th:text="#{app.show}">表示</button>
                                     </div>
                                 </div>
                             </div>
 
-                            <!-- 成績表 Card -->
+                            <!-- Report Card Card -->
                             <div class="col-md-4">
                                 <div class="card border-0 shadow-sm h-100">
                                     <div class="card-body text-center">
                                         <i class="bi bi-file-text fs-1 text-success mb-3"></i>
-                                        <h6 class="card-title fw-bold mb-2">成績表</h6>
-                                        <p class="card-text text-muted small mb-3">PDF形式の成績表を表示</p>
+                                        <h6 class="card-title fw-bold mb-2" th:text="#{report.report.card}">成績表</h6>
+                                        <p class="card-text text-muted small mb-3" th:text="#{report.report.card.description}">PDF形式の成績表を表示</p>
                                         <input type="number" id="reportStudentId"
                                             class="form-control form-control-sm mb-2" th:placeholder="#{placeholder.student.id}">
                                         <button class="btn btn-sm btn-success w-100"
-                                            onclick="window.location.href='/reports/report-card/' + document.getElementById('reportStudentId').value">
-                                            表示
-                                        </button>
+                                            onclick="window.location.href='/reports/report-card/' + document.getElementById('reportStudentId').value"
+                                            th:text="#{app.show}">表示</button>
                                     </div>
                                 </div>
                             </div>
 
-                            <!-- クラス順位 Card -->
+                            <!-- Class Rankings Card -->
                             <div class="col-md-4">
                                 <div class="card border-0 shadow-sm h-100">
                                     <div class="card-body text-center">
                                         <i class="bi bi-trophy fs-1 text-warning mb-3"></i>
-                                        <h6 class="card-title fw-bold mb-2">クラス順位</h6>
-                                        <p class="card-text text-muted small mb-3">クラス内の順位を表示</p>
+                                        <h6 class="card-title fw-bold mb-2" th:text="#{report.class.rankings}">クラス順位</h6>
+                                        <p class="card-text text-muted small mb-3" th:text="#{report.class.rankings.description}">クラス内の順位を表示</p>
                                         <select id="className" class="form-select form-select-sm mb-2">
-                                            <option value="N5">N5クラス</option>
-                                            <option value="N4">N4クラス</option>
-                                            <option value="N3">N3クラス</option>
-                                            <option value="N3">N2クラス</option>
-                                            <option value="N3">N1クラス</option>
+                                            <option value="N5" th:text="#{class.n5}">N5クラス</option>
+                                            <option value="N4" th:text="#{class.n4}">N4クラス</option>
+                                            <option value="N3" th:text="#{class.n3}">N3クラス</option>
+                                            <option value="N2" th:text="#{class.n2}">N2クラス</option>
+                                            <option value="N1" th:text="#{class.n1}">N1クラス</option>
                                         </select>
                                         <button class="btn btn-sm btn-warning w-100"
-                                            onclick="window.location.href='/reports/rankings?className=' + document.getElementById('className').value">
-                                            表示
-                                        </button>
+                                            onclick="window.location.href='/reports/rankings?className=' + document.getElementById('className').value"
+                                            th:text="#{app.show}">表示</button>
                                     </div>
                                 </div>
                             </div>
@@ -262,7 +259,7 @@
                             </div>
                             <div class="card-footer bg-white text-end">
                                 <a href="/courses" class="btn btn-sm btn-outline-success">
-                                    すべてのコースを見る <i class="bi bi-arrow-right ms-1"></i>
+                                    <span th:text="#{course.view.all}">すべてのコースを見る</span> <i class="bi bi-arrow-right ms-1"></i>
                                 </a>
                             </div>
                         </div>
