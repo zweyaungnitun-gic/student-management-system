@@ -65,89 +65,54 @@
                             <table class="table table-hover align-middle mb-0" id="teacherTable">
                                 <thead class="bg-primary text-white">
                                     <tr>
-                                        <th class="text-center">ID</th>
-                                        <th class="text-center" th:text="#{teachers.list.auto_1740}">教師ID</th>
-                                        <th class="text-center" th:text="#{teachers.list.auto_08b8}">氏名</th>
-                                        <th class="text-center" th:text="#{teachers.list.auto_0e21}">メールアドレス</th>
-                                        <th class="text-center" th:text="#{teachers.list.auto_a4c2}">学部/学科</th>
-                                        <th class="text-center" th:text="#{teachers.list.auto_54dd}">ステータス</th>  <!-- New column -->
-                                        <th class="text-center" th:text="#{teachers.list.auto_2f22}">登録日</th>
-                                        <th class="text-center" th:text="#{teachers.list.auto_2b6b}">操作</th>
+                                        <th class="text-center" style="min-width: 60px;">ID</th>
+                                        <th class="text-center" style="min-width: 100px;" th:text="#{teachers.list.auto_1740}">教師ID</th>
+                                        <th style="min-width: 150px;" th:text="#{teachers.list.auto_08b8}">氏名</th>
+                                        <th style="min-width: 200px;" th:text="#{teachers.list.auto_0e21}">メールアドレス</th>
+                                        <th style="min-width: 120px;" th:text="#{teachers.list.auto_a4c2}">学部/学科</th>
+                                        <th class="text-center" style="min-width: 100px;" th:text="#{teachers.list.auto_54dd}">ステータス</th>
+                                        <th class="text-center" style="min-width: 140px;" th:text="#{teachers.list.auto_2f22}">登録日</th>
+                                        <th class="text-center" style="min-width: 180px;" th:text="#{teachers.list.auto_2b6b}">操作</th>
                                     </tr>
                                 </thead>
                                 <tbody id="teacherTableBody">
                                     <tr th:each="teacher : ${teachers}">
-                                        <td class="text-center" th:text="${teacher.teacherId}"></td>
-                                        <td class="text-center">
-                                            <span class="badge bg-primary bg-opacity-10 text-primary px-3 py-2 rounded-pill" 
-                                                th:text="${teacher.teacherCode}">TCH001</span>
+                                        <td class="text-center" data-label="ID" th:text="${teacher.teacherId}">
+                                        <td class="text-center" data-label="教師ID">
+                                            <span class="badge bg-primary bg-opacity-10 text-primary px-3 py-2 rounded-pill"
+                                                th:text="${teacher.teacherCode}">
+                                            </span>
                                         </td>
-                                        <td th:text="${teacher.name}"></td>
-                                        <td th:text="${teacher.email}"></td>
-                                        <td th:text="${teacher.department} ?: '-'"></td>
-                                        <td class="text-center">
-                                            <!-- Status badge -->
-                                            <span th:if="${teacher.isActive == true}" 
-                                                class="badge bg-success rounded-pill px-3" th:text="#{teachers.list.auto_0277}">アクティブ</span>
-                                            <span th:if="${teacher.isActive == false}" 
-                                                class="badge bg-danger rounded-pill px-3" th:text="#{teachers.list.auto_f32a}">非アクティブ</span>
+                                        <td data-label="氏名" th:text="${teacher.name}">
+                                        <td data-label="メール" th:text="${teacher.email}">
+                                        <td data-label="学部/学科" th:text="${teacher.department} ?: '-'">
+                                        <td class="text-center" data-label="ステータス">
+                                            <span th:if="${teacher.isActive == true}" class="badge bg-success rounded-pill px-3" th:text="#{teachers.list.auto_0277}">アクティブ</span>
+                                            <span th:if="${teacher.isActive == false}" class="badge bg-danger rounded-pill px-3" th:text="#{teachers.list.auto_f32a}">非アクティブ</span>
                                         </td>
-                                        <td class="text-center" th:text="${#temporals.format(teacher.createdAt, 'yyyy-MM-dd HH:mm')}"></td>
-                                        <td class="text-center">
+                                        <td class="text-center" data-label="登録日" th:text="${#temporals.format(teacher.createdAt, 'yyyy-MM-dd HH:mm')}">
+                                        <td class="text-center" data-label="操作">
                                             <div class="d-flex gap-3 justify-content-center">
-                                                <!-- Edit Button -->
-                                                <a th:href="@{'/teachers/edit/' + ${teacher.teacherId}}" 
-                                                class="text-decoration-none text-primary" 
-                                                title="編集"
-                                                sec:authorize="hasRole('ADMIN')"
-                                                style="font-size: 1.2rem;">
+                                                <a th:href="@{'/teachers/edit/' + ${teacher.teacherId}}" class="text-decoration-none text-primary" title="編集" style="font-size: 1.2rem;">
                                                     <i class="bi bi-pencil-square"></i>
                                                 </a>
-                                                
-                                                <!-- Detail Button -->
-                                                <a th:href="@{'/teachers/' + ${teacher.teacherId}}" 
-                                                class="text-decoration-none text-info" 
-                                                title="詳細"
-                                                style="font-size: 1.2rem;">
+                                                <a th:href="@{'/teachers/' + ${teacher.teacherId}}" class="text-decoration-none text-info" title="詳細" style="font-size: 1.2rem;">
                                                     <i class="bi bi-info-circle"></i>
                                                 </a>
-                                                
-                                                <!-- Activate/Deactivate Button -->
-                                                <a th:if="${teacher.isActive == true}" 
-                                                th:href="@{'/teachers/deactivate/' + ${teacher.teacherId}}" 
-                                                class="text-decoration-none text-warning" 
-                                                title="非アクティブ化"
-                                                sec:authorize="hasRole('ADMIN')"
-                                                onclick="return confirm('この教師を非アクティブにしてもよろしいですか？');"
-                                                style="font-size: 1.2rem;">
+                                                <a th:if="${teacher.isActive == true}" th:href="@{'/teachers/deactivate/' + ${teacher.teacherId}}" class="text-decoration-none text-warning" title="非アクティブ化" onclick="return confirm('この教師を非アクティブにしてもよろしいですか？');" style="font-size: 1.2rem;">
                                                     <i class="bi bi-pause-circle"></i>
                                                 </a>
-                                                <a th:if="${teacher.isActive == false}" 
-                                                th:href="@{'/teachers/activate/' + ${teacher.teacherId}}" 
-                                                class="text-decoration-none text-success" 
-                                                title="アクティブ化"
-                                                sec:authorize="hasRole('ADMIN')"
-                                                onclick="return confirm('この教師をアクティブにしてもよろしいですか？');"
-                                                style="font-size: 1.2rem;">
+                                                <a th:if="${teacher.isActive == false}" th:href="@{'/teachers/activate/' + ${teacher.teacherId}}" class="text-decoration-none text-success" title="アクティブ化" onclick="return confirm('この教師をアクティブにしてもよろしいですか？');" style="font-size: 1.2rem;">
                                                     <i class="bi bi-play-circle"></i>
                                                 </a>
-                                                
-                                                <!-- Delete Button (only show for inactive teachers or with warning) -->
-                                                <a th:href="@{'/teachers/delete/' + ${teacher.teacherId}}" 
-                                                class="text-decoration-none text-danger" 
-                                                title="削除"
-                                                sec:authorize="hasRole('ADMIN')"
-                                                th:classappend="${teacher.isActive == true} ? 'opacity-50' : ''"
-                                                th:onclick="${teacher.isActive == true} ? 'return confirm(\'この教師はアクティブです。削除する代わりに非アクティブ化することをお勧めします。本当に削除しますか？\');' : 'return confirm(\'この教師を完全に削除してもよろしいですか？\');'"
-                                                style="font-size: 1.2rem;">
+                                                <a th:href="@{'/teachers/delete/' + ${teacher.teacherId}}" class="text-decoration-none text-danger" title="削除" style="font-size: 1.2rem;">
                                                     <i class="bi bi-trash-fill"></i>
                                                 </a>
                                             </div>
                                         </td>
                                     </tr>
                                     <tr th:if="${teachers.size() == 0}">
-                                        <td colspan="8" class="text-center text-muted py-5">
-                                            <i class="bi bi-inbox fs-1 d-block mb-3"></i><th:block th:text="#{teachers.list.auto_7ceb}">教師が登録されていません。</th:block></td>
+                                        <td colspan="8" class="text-center text-muted py-5" th:text="#{teachers.list.auto_7ceb}">教師が登録されていません。</td>
                                     </tr>
                                 </tbody>
                             </table>

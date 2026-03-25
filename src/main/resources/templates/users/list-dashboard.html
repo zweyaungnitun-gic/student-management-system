@@ -79,67 +79,58 @@
                           </div>
 
                             <!-- Users Table -->
-                            <table class="table table-hover align-middle mb-0" id="userTable">
-                                <thead class="bg-primary text-white">
-                                    <tr>
-                                        <th class="text-center">ID</th>
-                                        <th class="text-center" th:text="#{users.list-dashboard.auto_c97c}">ユーザーID</th>
-                                        <th class="text-center" th:text="#{users.list-dashboard.auto_5b9e}">名前</th>
-                                        <th class="text-center" th:text="#{users.list-dashboard.auto_97a7}">メール</th>
-                                        <th class="text-center" th:text="#{users.list-dashboard.auto_2683}">ロール</th>
-                                        <th class="text-center" th:text="#{users.list-dashboard.auto_36d8}">作成日</th>
-                                        <th class="text-center" th:text="#{users.list-dashboard.auto_2b6b}">操作</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="userTableBody">
-                                    <tr th:each="user : ${users}">
-                                        <td class="text-center" th:text="${user.id}"></td>
-                                        <td class="text-center">
-                                            <span class="badge bg-primary bg-opacity-10 text-primary px-3 py-2 rounded-pill"
-                                                  th:text="${user.userId}"></span>
-                                        </td>
-                                        <td th:text="${user.username}"></td>
-                                        <td th:text="${user.email}"></td>
-                                        <td class="text-center">
-                                            <span th:if="${user.role.name() == 'ADMIN'}" 
-                                                  class="badge bg-danger bg-opacity-10 text-danger px-3 py-2 rounded-pill" th:text="#{users.list-dashboard.auto_5093}">管理者</span>
-                                            <span th:if="${user.role.name() == 'GUEST'}" 
-                                                  class="badge bg-success bg-opacity-10 text-success px-3 py-2 rounded-pill" th:text="#{users.list-dashboard.auto_95f0}">ゲスト</span>
-                                        </td>
-                                        <td class="text-center" th:text="${#temporals.format(user.createdAt, 'yyyy-MM-dd HH:mm')}"></td>
-                                        <td class="text-center">
-                                            <div class="d-flex gap-3 justify-content-center">
-                                                <a th:href="@{'/users/edit/' + ${user.id}}" 
-                                                   class="text-decoration-none text-primary" 
-                                                   title="編集"
-                                                   style="font-size: 1.2rem;">
-                                                    <i class="bi bi-pencil-square"></i>
-                                                </a>
-                                                <a th:href="@{'/users/delete/' + ${user.id}}" 
-                                                   class="text-decoration-none text-danger" 
-                                                   title="削除"
-                                                   onclick="return confirm('このユーザーを削除してもよろしいですか？');"
-                                                   style="font-size: 1.2rem;">
-                                                    <i class="bi bi-trash-fill"></i>
-                                                </a>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr th:if="${users.size() == 0}">
-                                        <td colspan="7" class="text-center text-muted py-5">
-                                            <i class="bi bi-inbox fs-1 d-block mb-3"></i><th:block th:text="#{users.list-dashboard.auto_804f}">ユーザーが登録されていません。</th:block></td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
+                            <div class="card shadow-sm">
+                                <div class="card-body p-0">
+                                    <div class="table-responsive">
+                                        <table class="table table-hover align-middle mb-0" id="userTable">
+                                            <thead class="bg-primary text-white">
+                                                <tr>
+                                                    <th class="text-center" style="min-width: 60px;">ID</th>
+                                                    <th class="text-center" style="min-width: 120px;" th:text="#{users.list-dashboard.auto_c97c}">ユーザーID</th>
+                                                    <th style="min-width: 150px;" th:text="#{users.list-dashboard.auto_5b9e}">名前</th>
+                                                    <th style="min-width: 200px;" th:text="#{users.list-dashboard.auto_97a7}">メール</th>
+                                                    <th class="text-center" style="min-width: 100px;" th:text="#{users.list-dashboard.auto_2683}">ロール</th>
+                                                    <th class="text-center" style="min-width: 140px;" th:text="#{users.list-dashboard.auto_36d8}">作成日</th>
+                                                    <th class="text-center" style="min-width: 120px;" th:text="#{users.list-dashboard.auto_2b6b}">操作</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="userTableBody">
+                                                <tr th:each="user : ${users}">
+                                                    <td class="text-center" data-label="ID" th:text="${user.id}">
+                                                    <td class="text-center" data-label="ユーザーID">
+                                                        <span class="badge bg-primary bg-opacity-10 text-primary px-3 py-2 rounded-pill"
+                                                            th:text="${user.userId}">
+                                                        </span>
+                                                    </td>
+                                                    <td data-label="名前" th:text="${user.username}">
+                                                    <td data-label="メール" th:text="${user.email}">
+                                                    <td class="text-center" data-label="ロール">
+                                                        <span th:if="${user.role.name() == 'ADMIN'}" class="badge bg-danger bg-opacity-10 text-danger px-3 py-2 rounded-pill" th:text="#{users.list-dashboard.auto_5093}">管理者</span>
+                                                        <span th:if="${user.role.name() == 'GUEST'}" class="badge bg-success bg-opacity-10 text-success px-3 py-2 rounded-pill" th:text="#{users.list-dashboard.auto_95f0}">ゲスト</span>
+                                                    </td>
+                                                    <td class="text-center" data-label="作成日" th:text="${#temporals.format(user.createdAt, 'yyyy-MM-dd HH:mm')}">
+                                                    <td class="text-center" data-label="操作">
+                                                        <div class="d-flex gap-3 justify-content-center">
+                                                            <a th:href="@{'/users/edit/' + ${user.id}}" class="text-decoration-none text-primary" title="編集" style="font-size: 1.2rem;">
+                                                                <i class="bi bi-pencil-square"></i>
+                                                            </a>
+                                                            <a th:href="@{'/users/delete/' + ${user.id}}" class="text-decoration-none text-danger" title="削除" onclick="return confirm('このユーザーを削除してもよろしいですか？');" style="font-size: 1.2rem;">
+                                                                <i class="bi bi-trash-fill"></i>
+                                                            </a>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                <tr th:if="${users.size() == 0}">
+                                                    <td colspan="7" class="text-center text-muted py-5" th:text="#{users.list-dashboard.auto_804f}">ユーザーが登録されていません。</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <div id="pagination" class="d-flex justify-content-center py-3 border-top"></div>
+                                </div>
+                            </div>
                     </div>
                 </div>
-
-                <!-- Pagination -->
-                <div id="pagination" class="d-flex justify-content-center mt-4"></div>
-            </div>
-        </div>
-    </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     

@@ -97,47 +97,40 @@
                             <table class="table table-hover align-middle mb-0" id="resultsTable">
                                 <thead class="bg-primary text-white">
                                     <tr>
-                                        <th>ID</th>
-                                        <th th:text="#{test.name}">テスト名</th>
-                                        <th th:text="#{student.name}">生徒名</th>
-                                        <th th:text="#{course.course}">コース</th>
-                                        <th class="text-center" th:text="#{test.score.full}">得点/満点</th>
-                                        <th class="text-center">%</th>
-                                        <th class="text-center" th:text="#{test.evaluation.short}">評価</th>
-                                        <th class="text-center">GPA</th>
-                                        <th class="text-center" th:text="#{test.result.short}">結果</th>
-                                        <th class="text-center" th:text="#{test.actions}">操作</th>
+                                        <th style="min-width: 60px;">ID</th>
+                                        <th style="min-width: 150px;" th:text="#{test.name}">テスト名</th>
+                                        <th style="min-width: 150px;" th:text="#{student.name}">生徒名</th>
+                                        <th style="min-width: 120px;" th:text="#{course.course}">コース</th>
+                                        <th class="text-center" style="min-width: 100px;" th:text="#{test.score.full}">得点/満点</th>
+                                        <th class="text-center" style="min-width: 80px;">%</th>
+                                        <th class="text-center" style="min-width: 80px;" th:text="#{test.evaluation.short}">評価</th>
+                                        <th class="text-center" style="min-width: 80px;">GPA</th>
+                                        <th class="text-center" style="min-width: 80px;" th:text="#{test.result.short}">結果</th>
+                                        <th class="text-center" style="min-width: 100px;" th:text="#{test.actions}">操作</th>
                                     </tr>
                                 </thead>
                                 <tbody id="resultsTableBody">
                                     <tr th:each="result : ${results}">
-                                        <td th:text="${result.testResultId}"></td>
-                                        <td th:text="${result.testName}"></td>
-                                        <td th:text="${result.studentName}"></td>
-                                        <td th:text="${result.courseName}"></td>
-                                        <td class="text-center"
-                                            th:text="${result.scoreObtained != null and result.totalMarks != null ? result.scoreObtained + '/' + result.totalMarks : '-'}">
-                                        </td>
-                                        <td class="text-center"
-                                            th:text="${result.percentage != null ? #numbers.formatDecimal(result.percentage, 1, 1) + '%' : '-'}">
-                                        </td>
-                                        <td class="text-center">
+                                        <td data-label="ID" th:text="${result.testResultId}">
+                                        <td data-label="テスト名" th:text="${result.testName}">
+                                        <td data-label="生徒名" th:text="${result.studentName}">
+                                        <td data-label="コース" th:text="${result.courseName}">
+                                        <td class="text-center" data-label="得点/満点" th:text="${result.scoreObtained != null and result.totalMarks != null ? result.scoreObtained + '/' + result.totalMarks : '-'}">
+                                        <td class="text-center" data-label="%" th:text="${result.percentage != null ? #numbers.formatDecimal(result.percentage, 1, 1) + '%' : '-'}">
+                                        <td class="text-center" data-label="評価">
                                             <span class="badge" th:if="${result.grade != null}"
                                                 th:classappend="${result.grade == 'A' or result.grade == 'A+' ? 'bg-success' : (result.grade == 'F' ? 'bg-danger' : 'bg-info')}"
                                                 th:text="${result.grade}"></span>
                                             <span th:if="${result.grade == null}">-</span>
                                         </td>
-                                        <td class="text-center" th:text="${result.gpa != null} ? ${result.gpa} : '-'">
-                                        </td>
-                                        <td class="text-center">
+                                        <td class="text-center" data-label="GPA" th:text="${result.gpa != null} ? ${result.gpa} : '-'">
+                                        <td class="text-center" data-label="結果">
                                             <span th:if="${result.result == '合格'}" class="badge bg-success">合格</span>
                                             <span th:if="${result.result == '不合格'}" class="badge bg-danger">不合格</span>
                                             <span th:if="${result.result != '合格' and result.result != '不合格'}">-</span>
                                         </td>
-                                        <td class="text-center">
-                                            <a th:href="@{'/results/edit/' + ${result.testResultId}}"
-                                                class="btn btn-sm btn-outline-primary" title="編集"
-                                                sec:authorize="hasRole('ADMIN') or hasRole('TEACHER')">
+                                        <td class="text-center" data-label="操作">
+                                            <a th:href="@{'/results/edit/' + ${result.testResultId}}" class="btn btn-sm btn-outline-primary" title="編集">
                                                 <i class="bi bi-pencil"></i>
                                             </a>
                                         </td>

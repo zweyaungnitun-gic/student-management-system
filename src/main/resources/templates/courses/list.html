@@ -99,89 +99,57 @@
                             <table class="table table-hover align-middle mb-0" id="courseTable">
                                 <thead class="bg-primary text-white">
                                     <tr>
-                                        <th class="text-center">ID</th>
-                                        <th class="text-center" th:text="#{courses.list.auto_9068}">コースコード</th>
-                                        <th class="text-center" th:text="#{courses.list.auto_abf1}">コース名</th>
-                                        <th class="text-center" th:text="#{courses.list.auto_91f9}">単位数</th>
-                                        <th class="text-center" th:text="#{courses.list.auto_f98a}">担当教師</th>
-                                        <th class="text-center" th:text="#{courses.list.auto_54dd}">ステータス</th>
-                                        <th class="text-center" th:text="#{courses.list.auto_2f22}">登録日</th>
-                                        <th class="text-center" th:text="#{courses.list.auto_2b6b}">操作</th>
+                                        <th class="text-center" style="min-width: 60px;">ID</th>
+                                        <th class="text-center" style="min-width: 120px;" th:text="#{courses.list.auto_9068}">コースコード</th>
+                                        <th style="min-width: 180px;" th:text="#{courses.list.auto_abf1}">コース名</th>
+                                        <th class="text-center" style="min-width: 80px;" th:text="#{courses.list.auto_91f9}">単位数</th>
+                                        <th style="min-width: 150px;" th:text="#{courses.list.auto_f98a}">担当教師</th>
+                                        <th class="text-center" style="min-width: 100px;" th:text="#{courses.list.auto_54dd}">ステータス</th>
+                                        <th class="text-center" style="min-width: 140px;" th:text="#{courses.list.auto_2f22}">登録日</th>
+                                        <th class="text-center" style="min-width: 200px;" th:text="#{courses.list.auto_2b6b}">操作</th>
                                     </tr>
                                 </thead>
                                 <tbody id="courseTableBody">
                                     <tr th:each="course : ${courses}">
-                                        <td class="text-center" th:text="${course.courseId}"></td>
-                                        <td class="text-center">
+                                        <td class="text-center" data-label="ID" th:text="${course.courseId}">
+                                        <td class="text-center" data-label="コースコード">
                                             <span class="badge bg-secondary bg-opacity-10 text-secondary px-3 py-2 rounded-pill"
-                                                  th:text="${course.courseCode}"></span>
+                                                th:text="${course.courseCode}">
+                                            </span>
                                         </td>
-                                        <td th:text="${course.courseName}"></td>
-                                        <td class="text-center" th:text="${course.creditHours}"></td>
-                                        <td class="text-center">
+                                        <td data-label="コース名" th:text="${course.courseName}">
+                                        <td class="text-center" data-label="単位数" th:text="${course.creditHours}">
+                                        <td data-label="担当教師">
                                             <span th:if="${course.teacherName}" th:text="${course.teacherName}"></span>
                                             <span th:unless="${course.teacherName}" class="text-muted fst-italic" th:text="#{courses.list.auto_eb20}">未割当</span>
                                         </td>
-                                        <td class="text-center">
+                                        <td class="text-center" data-label="ステータス">
                                             <span th:if="${course.isActive == true}" class="badge bg-success rounded-pill px-3" th:text="#{courses.list.auto_0277}">アクティブ</span>
                                             <span th:if="${course.isActive == false}" class="badge bg-danger rounded-pill px-3" th:text="#{courses.list.auto_f32a}">非アクティブ</span>
                                         </td>
-                                        <td class="text-center" th:text="${#temporals.format(course.createdAt, 'yyyy-MM-dd HH:mm')}"></td>
-                                        <td class="text-center">
+                                        <td class="text-center" data-label="登録日" th:text="${#temporals.format(course.createdAt, 'yyyy-MM-dd HH:mm')}">
+                                        <td class="text-center" data-label="操作">
                                             <div class="d-flex gap-3 justify-content-center align-items-center">
-                                                <!-- Detail Button -->
-                                                <a th:href="@{'/courses/' + ${course.courseId}}" 
-                                                class="text-decoration-none text-info" 
-                                                title="詳細"
-                                                style="font-size: 1.2rem;">
+                                                <a th:href="@{'/courses/' + ${course.courseId}}" class="text-decoration-none text-info" title="詳細" style="font-size: 1.2rem;">
                                                     <i class="bi bi-info-circle"></i>
                                                 </a>
-                                                
-                                                <!-- Edit Button -->
-                                                <a th:href="@{'/courses/edit/' + ${course.courseId}}" 
-                                                class="text-decoration-none text-primary" 
-                                                title="編集"
-                                                sec:authorize="hasRole('ADMIN')"
-                                                style="font-size: 1.2rem;">
+                                                <a th:href="@{'/courses/edit/' + ${course.courseId}}" class="text-decoration-none text-primary" title="編集" style="font-size: 1.2rem;">
                                                     <i class="bi bi-pencil-square"></i>
                                                 </a>
-                                                
-                                                <!-- Activate/Deactivate Button -->
-                                                <a th:if="${course.isActive == true}" 
-                                                th:href="@{'/courses/deactivate/' + ${course.courseId}}" 
-                                                class="text-decoration-none text-warning" 
-                                                title="非アクティブ化"
-                                                sec:authorize="hasRole('ADMIN')"
-                                                onclick="return confirm('このコースを非アクティブにしてもよろしいですか？');"
-                                                style="font-size: 1.2rem;">
+                                                <a th:if="${course.isActive == true}" th:href="@{'/courses/deactivate/' + ${course.courseId}}" class="text-decoration-none text-warning" title="非アクティブ化" onclick="return confirm('このコースを非アクティブにしてもよろしいですか？');" style="font-size: 1.2rem;">
                                                     <i class="bi bi-pause-circle"></i>
                                                 </a>
-                                                <a th:if="${course.isActive == false}" 
-                                                th:href="@{'/courses/activate/' + ${course.courseId}}" 
-                                                class="text-decoration-none text-success" 
-                                                title="アクティブ化"
-                                                sec:authorize="hasRole('ADMIN')"
-                                                onclick="return confirm('このコースをアクティブにしてもよろしいですか？');"
-                                                style="font-size: 1.2rem;">
+                                                <a th:if="${course.isActive == false}" th:href="@{'/courses/activate/' + ${course.courseId}}" class="text-decoration-none text-success" title="アクティブ化" onclick="return confirm('このコースをアクティブにしてもよろしいですか？');" style="font-size: 1.2rem;">
                                                     <i class="bi bi-play-circle"></i>
                                                 </a>
-                                                
-                                                <!-- Delete Button -->
-                                                <a th:href="@{'/courses/delete/' + ${course.courseId}}" 
-                                                class="text-decoration-none text-danger" 
-                                                title="削除"
-                                                sec:authorize="hasRole('ADMIN')"
-                                                th:classappend="${course.isActive == true} ? 'opacity-50' : ''"
-                                                th:onclick="${course.isActive == true} ? 'return confirm(\'このコースはアクティブです。削除する代わりに非アクティブ化することをお勧めします。本当に削除しますか？\');' : 'return confirm(\'このコースを完全に削除してもよろしいですか？\');'"
-                                                style="font-size: 1.2rem;">
+                                                <a th:href="@{'/courses/delete/' + ${course.courseId}}" class="text-decoration-none text-danger" title="削除" style="font-size: 1.2rem;">
                                                     <i class="bi bi-trash-fill"></i>
                                                 </a>
                                             </div>
                                         </td>
                                     </tr>
                                     <tr th:if="${courses.size() == 0}">
-                                        <td colspan="8" class="text-center text-muted py-5">
-                                            <i class="bi bi-inbox fs-1 d-block mb-3"></i><th:block th:text="#{courses.list.auto_45df}">コースが登録されていません。</th:block></td>
+                                        <td colspan="8" class="text-center text-muted py-5" th:text="#{courses.list.auto_45df}">コースが登録されていません。</td>
                                     </tr>
                                 </tbody>
                             </table>
