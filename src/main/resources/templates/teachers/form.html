@@ -1,105 +1,117 @@
 <!DOCTYPE html>
-<html lang="ja" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title th:if="${teacher.teacherId == null}" th:text="#{teachers.form.auto_0b60}">新規教師追加</title>
-    <title th:unless="${teacher.teacherId == null}" th:text="#{teachers.form.auto_3044}">教師編集</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
-    <style>
-        body { 
-            background-color: #f8f9fa;
-            display: flex;
-            align-items: center;
-            min-height: 100vh;
-        }
-        .container-fluid { 
-            max-width: 800px;
-            margin: 0 auto;
-        }
-        .card { 
-            border-radius: 10px; 
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            margin: 20px 0;
-        }
-        .card-header {
-            padding: 0.75rem 1.25rem;
-        }
-        .card-body {
-            padding: 1.5rem;
-        }
-        .row {
-            margin-bottom: 1rem !important;
-        }
-        .col-sm-3 {
-            padding-top: 0.5rem;
-        }
-        .form-control {
-            padding: 0.375rem 0.75rem;
-        }
-    </style>
+<html xmlns:th="http://www.thymeleaf.org" th:lang="${#locale.language}"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head th:replace="~{layouts/admin-layout :: head(pageTitle=${teacher.teacherId == null} ? #{teachers.form.auto_0b60} : #{teachers.form.auto_3044})}">
 </head>
+
 <body>
-    <div class="container-fluid">
-        <div class="card">
-            <div class="card-header bg-primary text-white">
-                <h4 class="mb-0">
-                    <i class="bi bi-person-plus-fill me-2"></i>
-                    <span th:if="${teacher.teacherId == null}" th:text="#{teachers.form.auto_0b60}">新規教師追加</span>
-                    <span th:unless="${teacher.teacherId == null}" th:text="#{teachers.form.auto_3044}">教師編集</span>
-                </h4>
-            </div>
-            <div class="card-body">
-                <form th:action="@{${teacher.teacherId == null} ? '/teachers/add' : '/teachers/edit/' + ${teacher.teacherId}}"
-                      th:object="${teacher}" method="post" class="needs-validation" novalidate>
+    <div class="dashboard-layout">
+        <!-- Sidebar -->
+        <th:block th:replace="~{layouts/admin-layout :: sidebar(currentPage='teachers')}"></th:block>
 
-                    <input type="hidden" name="_method" value="post" />
-                    <input type="hidden" th:field="*{teacherId}" />
+        <div class="sidebar-overlay d-lg-none" data-sidebar-toggle></div>
 
-                    <div class="row">
-                        <label class="col-sm-3 col-form-label">氏名 <span class="text-danger">*</span></label>
-                        <div class="col-sm-9">
-                            <input type="text" th:field="*{name}" class="form-control" 
-                                   th:classappend="${#fields.hasErrors('name')} ? 'is-invalid'" required>
-                            <div class="invalid-feedback" th:if="${#fields.hasErrors('name')}" 
-                                 th:errors="*{name}" th:text="#{teachers.form.auto_a5d1}">エラー</div>
+        <div class="dashboard-main">
+            <div class="page-wrapper py-4 py-md-5 px-3 px-md-5">
+                <!-- Page Header -->
+                <div class="page-header mb-4">
+                    <div class="d-flex align-items-center gap-3">
+                        <button class="btn btn-light btn-icon d-lg-none" type="button" data-sidebar-toggle>
+                            <i class="bi bi-list fs-4"></i>
+                        </button>
+                        <div>
+                            <h1 class="mb-0" style="color: #0a58a0; font-weight: 600; font-size: 1.8rem;">
+                                <span th:if="${teacher.teacherId == null}" th:text="#{teachers.form.auto_0b60}">新規教師追加</span>
+                                <span th:unless="${teacher.teacherId == null}" th:text="#{teachers.form.auto_3044}">教師編集</span>
+                            </h1>
                         </div>
                     </div>
+                </div>
 
-                    <div class="row">
-                        <label class="col-sm-3 col-form-label">メールアドレス <span class="text-danger">*</span></label>
-                        <div class="col-sm-9">
-                            <input type="email" th:field="*{email}" class="form-control" 
-                                   th:classappend="${#fields.hasErrors('email')} ? 'is-invalid'" required>
-                            <div class="invalid-feedback" th:if="${#fields.hasErrors('email')}" 
-                                 th:errors="*{email}" th:text="#{teachers.form.auto_a5d1}">エラー</div>
+                <!-- Form Card -->
+                <div class="d-flex justify-content-center mt-4">
+                    <div class="card" style="border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); max-width: 900px; width: 100%;">
+                        <div class="card-body" style="padding: 1.5rem 2rem;">
+                            <form th:action="@{${teacher.teacherId == null} ? '/teachers/add' : '/teachers/edit/' + ${teacher.teacherId}}"
+                                  th:object="${teacher}" method="post">
+
+                                <input type="hidden" name="_method" value="post" />
+                                <input type="hidden" th:field="*{teacherId}" />
+
+                                <!-- Name -->
+                                <div class="row mb-3 align-items-center">
+                                    <label class="col-sm-3 col-form-label fw-semibold">
+                                        氏名 <span class="text-danger">*</span>
+                                    </label>
+                                    <div class="col-sm-9">
+                                        <input type="text" th:field="*{name}" class="form-control" 
+                                               th:classappend="${#fields.hasErrors('name')} ? 'is-invalid'" required>
+                                        <div class="invalid-feedback" th:if="${#fields.hasErrors('name')}" 
+                                             th:errors="*{name}"></div>
+                                    </div>
+                                </div>
+
+                                <!-- Email -->
+                                <div class="row mb-3 align-items-center">
+                                    <label class="col-sm-3 col-form-label fw-semibold">
+                                        メールアドレス <span class="text-danger">*</span>
+                                    </label>
+                                    <div class="col-sm-9">
+                                        <input type="email" th:field="*{email}" class="form-control" 
+                                               th:classappend="${#fields.hasErrors('email')} ? 'is-invalid'" required>
+                                        <div class="invalid-feedback" th:if="${#fields.hasErrors('email')}" 
+                                             th:errors="*{email}"></div>
+                                    </div>
+                                </div>
+
+                                <!-- Department -->
+                                <div class="row mb-3 align-items-center">
+                                    <label class="col-sm-3 col-form-label fw-semibold" th:text="#{teachers.form.auto_a4c2}">
+                                        学部/学科
+                                    </label>
+                                    <div class="col-sm-9">
+                                        <input type="text" th:field="*{department}" class="form-control"
+                                               th:classappend="${#fields.hasErrors('department')} ? 'is-invalid'">
+                                        <div class="invalid-feedback" th:if="${#fields.hasErrors('department')}" 
+                                             th:errors="*{department}"></div>
+                                        <small class="text-muted" th:text="#{teachers.form.hint.department}">例: 情報工学科、ビジネス学科など</small>
+                                    </div>
+                                </div>
+
+                                <!-- Form Actions -->
+                                <div class="row mt-4">
+                                    <div class="col-sm-9 offset-sm-3">
+                                        <div class="d-flex gap-2">
+                                            <a href="/teachers" class="btn btn-outline-secondary px-4">
+                                                <i class="bi bi-x-circle me-2"></i><span th:text="#{teachers.form.auto_6ef3}">キャンセル</span>
+                                            </a>
+                                            <button type="submit" class="btn btn-primary px-4">
+                                                <i class="bi bi-check-circle me-2"></i><span th:text="#{teachers.form.auto_be5f}">保存</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
                         </div>
                     </div>
-
-                    <div class="row">
-                        <label class="col-sm-3 col-form-label" th:text="#{teachers.form.auto_a4c2}">学部/学科</label>
-                        <div class="col-sm-9">
-                            <input type="text" th:field="*{department}" class="form-control"
-                                   th:classappend="${#fields.hasErrors('department')} ? 'is-invalid'">
-                            <div class="invalid-feedback" th:if="${#fields.hasErrors('department')}" 
-                                 th:errors="*{department}" th:text="#{teachers.form.auto_a5d1}">エラー</div>
-                        </div>
-                    </div>
-
-                    <div class="row mt-4">
-                        <div class="col-sm-9 offset-sm-3">
-                            <a href="/teachers" class="btn btn-outline-secondary px-4 ms-2">
-                                <i class="bi bi-x-circle me-2"></i><th:block th:text="#{teachers.form.auto_6ef3}">キャンセル</th:block></a>
-                            <button type="submit" class="btn btn-primary px-4">
-                                <i class="bi bi-check-circle me-2"></i><th:block th:text="#{teachers.form.auto_be5f}">保存</th:block></button>
-                        </div>
-                    </div>
-                </form>
+                </div>
             </div>
         </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const layout = document.querySelector(".dashboard-layout");
+            const toggles = document.querySelectorAll("[data-sidebar-toggle]");
+            toggles.forEach((btn) =>
+                btn.addEventListener("click", function (event) {
+                    event.preventDefault();
+                    layout?.classList.toggle("sidebar-open");
+                })
+            );
+        });
+    </script>
 </body>
 </html>
