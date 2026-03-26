@@ -36,24 +36,33 @@ body {
 }
 
 .dashboard-sidebar {
-  width: 310px;
+    width: 310px;
     padding: 2.5rem 2rem;
     border-radius: 0 1.5rem 1.5rem 0;
     display: flex;
     flex-direction: column;
-    gap: 1.5rem; 
+    gap: 1.5rem;
     background: rgba(255, 255, 255, 0.85);
     border-right: 1px solid rgba(28, 39, 76, 0.08);
-    max-height: 100vh;
-    overflow-y: auto;
+    height: 100vh;  /* Change from max-height to height */
+    position: sticky;  /* Add sticky positioning */
+    top: 0;  /* Stick to top */
+    overflow-y: auto;  /* Enable scrolling */
     scrollbar-width: thin;
 }
+
+/* Keep the scrollbar styling */
 .dashboard-sidebar::-webkit-scrollbar {
     width: 4px;
 }
+
 .dashboard-sidebar::-webkit-scrollbar-thumb {
     background: rgba(75, 176, 255, 0.2);
     border-radius: 10px;
+}
+
+.dashboard-sidebar::-webkit-scrollbar-thumb:hover {
+    background: rgba(75, 176, 255, 0.4);
 }
 .sidebar-brand {
   display: flex;

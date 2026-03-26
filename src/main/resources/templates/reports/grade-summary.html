@@ -207,7 +207,13 @@
 
                             <!-- Results count info -->
                             <div class="text-center text-muted small mt-2">
-                                表示: <span th:text="${gradeSummary.testResults.size()}"></span>件 / 全<span th:text="${totalResults}"></span>件
+                                <span th:text="#{pagination.showing}">表示:</span> 
+                                <span th:text="${gradeSummary.testResults.size()}"></span>
+                                <span th:text="#{pagination.items}">件</span>
+                                <span th:text="#{pagination.of}">/</span>
+                                <span th:text="#{pagination.total}">全</span>
+                                <span th:text="${totalResults}"></span>
+                                <span th:text="#{pagination.items}">件</span>
                             </div>
                         </div>
                     </div>

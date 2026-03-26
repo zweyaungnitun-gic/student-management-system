@@ -1,20 +1,18 @@
 <!DOCTYPE html>
-<html lang="ja" xmlns:th="http://www.thymeleaf.org"
+<html xmlns:th="http://www.thymeleaf.org" th:lang="${#locale.language}"
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
-<head th:replace="~{layouts/admin-layout :: head(pageTitle=${test.testId == null ? '新規テスト作成' : 'テスト編集'})}">
+<head th:replace="~{layouts/admin-layout :: head(pageTitle=${test.testId == null} ? '新規テスト作成' : 'テスト編集')}">
 </head>
 
 <body>
     <div class="dashboard-layout">
-        <!-- Sidebar -->
         <th:block th:replace="~{layouts/admin-layout :: sidebar(currentPage='tests')}"></th:block>
 
         <div class="sidebar-overlay d-lg-none" data-sidebar-toggle></div>
 
         <div class="dashboard-main">
             <div class="page-wrapper py-4 py-md-5 px-3 px-md-5">
-                <!-- Page Header -->
                 <div class="page-header mb-4">
                     <div class="d-flex align-items-center gap-3">
                         <button class="btn btn-light btn-icon d-lg-none" type="button" data-sidebar-toggle>
@@ -29,11 +27,12 @@
                     </div>
                 </div>
 
-                <!-- Form Card -->
                 <div class="card shadow-sm">
                     <div class="card-header bg-white py-3">
                         <h5 class="card-title mb-0">
-                            <i class="bi bi-journal-plus me-2 text-primary"></i><th:block th:text="#{tests.form.auto_e59d}">テスト情報入力</th:block></h5>
+                            <i class="bi bi-journal-plus me-2 text-primary"></i>
+                            <th:block th:text="#{tests.form.auto_e59d}">テスト情報入力</th:block>
+                        </h5>
                     </div>
                     <div class="card-body p-4">
                         <form th:action="@{${test.testId == null} ? '/tests/add' : '/tests/edit/' + ${test.testId}}"
@@ -45,46 +44,36 @@
                             <!-- Course Selection -->
                             <div class="row mb-4">
                                 <label class="col-sm-3 col-form-label fw-semibold">
-                                    コース <span class="text-danger">*</span>
+                                    <span th:text="#{test.course}">コース</span> <span class="text-danger">*</span>
                                 </label>
                                 <div class="col-sm-9">
-                                    <select th:field="*{courseId}" class="form-select" 
-                                            th:classappend="${#fields.hasErrors('courseId')} ? 'is-invalid'" required>
-                                        <option value="" th:text="#{tests.form.auto_4fa2}">-- コースを選択してください --</option>
+                                    <select th:field="*{courseId}" class="form-select" required>
+                                        <option value="" th:text="#{test.course.placeholder}">-- コースを選択してください --</option>
                                         <option th:each="course : ${courses}" 
                                                 th:value="${course.courseId}"
-                                                th:text="${course.courseName} + ' (' + ${course.courseCode} + ')'"
-                                                th:selected="${course.courseId == test.courseId}">
+                                                th:text="${course.courseName} + ' (' + ${course.courseCode} + ')'">
                                         </option>
                                     </select>
-                                    <div class="invalid-feedback" th:if="${#fields.hasErrors('courseId')}" 
-                                         th:errors="*{courseId}"></div>
                                 </div>
                             </div>
 
                             <!-- Test Name -->
                             <div class="row mb-4">
                                 <label class="col-sm-3 col-form-label fw-semibold">
-                                    テスト名 <span class="text-danger">*</span>
+                                    <span th:text="#{test.name}">テスト名</span> <span class="text-danger">*</span>
                                 </label>
                                 <div class="col-sm-9">
                                     <input type="text" th:field="*{testName}" class="form-control" 
-                                           th:placeholder="#{placeholder.test.name}"
-                                           th:classappend="${#fields.hasErrors('testName')} ? 'is-invalid'" required>
-                                    <div class="invalid-feedback" th:if="${#fields.hasErrors('testName')}" 
-                                         th:errors="*{testName}"></div>
+                                           th:placeholder="#{test.name.placeholder}" required>
                                 </div>
                             </div>
 
                             <!-- Description -->
                             <div class="row mb-4">
-                                <label class="col-sm-3 col-form-label fw-semibold" th:text="#{tests.form.auto_d59c}">説明</label>
+                                <label class="col-sm-3 col-form-label fw-semibold" th:text="#{test.description}">説明</label>
                                 <div class="col-sm-9">
                                     <textarea th:field="*{description}" class="form-control" rows="4"
-                                              th:placeholder="#{placeholder.test.description}"
-                                              th:classappend="${#fields.hasErrors('description')} ? 'is-invalid'"></textarea>
-                                    <div class="invalid-feedback" th:if="${#fields.hasErrors('description')}" 
-                                         th:errors="*{description}"></div>
+                                              th:placeholder="#{test.description.placeholder}"></textarea>
                                 </div>
                             </div>
 
@@ -92,64 +81,37 @@
                                 <!-- Total Marks -->
                                 <div class="col-md-6">
                                     <label class="form-label fw-semibold">
-                                        総合点 <span class="text-danger">*</span>
+                                        <span th:text="#{test.total.marks}">総合点</span> <span class="text-danger">*</span>
                                     </label>
-                                    <div class="input-group">
-                                        <span class="input-group-text"><i class="bi bi-123"></i></span>
-                                        <input type="number" th:field="*{totalMarks}" class="form-control" 
-                                               min="1" step="1"
-                                               th:classappend="${#fields.hasErrors('totalMarks')} ? 'is-invalid'" required>
-                                    </div>
-                                    <div class="invalid-feedback" th:if="${#fields.hasErrors('totalMarks')}" 
-                                         th:errors="*{totalMarks}"></div>
+                                    <input type="number" th:field="*{totalMarks}" class="form-control" min="1" required>
                                 </div>
 
                                 <!-- Passing Marks -->
                                 <div class="col-md-6">
-                                    <label class="form-label fw-semibold" th:text="#{tests.form.auto_50ea}">合格点</label>
-                                    <div class="input-group">
-                                        <span class="input-group-text"><i class="bi bi-check-circle"></i></span>
-                                        <input type="number" th:field="*{passingMarks}" class="form-control" 
-                                               min="0" step="1"
-                                               th:classappend="${#fields.hasErrors('passingMarks')} ? 'is-invalid'">
-                                    </div>
-                                    <div class="invalid-feedback" th:if="${#fields.hasErrors('passingMarks')}" 
-                                         th:errors="*{passingMarks}"></div>
-                                    <small class="text-muted" th:text="#{tests.form.auto_53e8}">※ 未入力の場合は合格/不合格の判定なし</small>
+                                    <label class="form-label fw-semibold" th:text="#{test.passing.marks}">合格点</label>
+                                    <input type="number" th:field="*{passingMarks}" class="form-control" min="0">
+                                    <small class="text-muted" th:text="#{test.passing.marks.hint}">※ 未入力の場合は合格/不合格の判定なし</small>
                                 </div>
                             </div>
 
                             <div class="row mb-4">
                                 <!-- Test Date -->
                                 <div class="col-md-6">
-                                    <label class="form-label fw-semibold" th:text="#{tests.form.auto_4f9d}">試験日</label>
-                                    <div class="input-group">
-                                        <span class="input-group-text"><i class="bi bi-calendar-date"></i></span>
-                                        <input type="datetime-local" th:field="*{testDate}" class="form-control"
-                                               th:classappend="${#fields.hasErrors('testDate')} ? 'is-invalid'">
-                                    </div>
-                                    <small class="text-muted" th:text="#{tests.form.auto_8b63}">※ 日時を選択してください</small>
-                                    <div class="invalid-feedback" th:if="${#fields.hasErrors('testDate')}" 
-                                         th:errors="*{testDate}"></div>
+                                    <label class="form-label fw-semibold" th:text="#{test.date}">試験日</label>
+                                    <input type="datetime-local" th:field="*{testDate}" class="form-control">
+                                    <small class="text-muted" th:text="#{test.date.hint}">※ 日時を選択してください</small>
                                 </div>
 
                                 <!-- Duration -->
                                 <div class="col-md-6">
-                                    <label class="form-label fw-semibold" th:text="#{tests.form.auto_94ac}">試験時間 (分)</label>
-                                    <div class="input-group">
-                                        <span class="input-group-text"><i class="bi bi-clock"></i></span>
-                                        <input type="number" th:field="*{durationMinutes}" class="form-control" 
-                                               min="1" step="1"
-                                               th:classappend="${#fields.hasErrors('durationMinutes')} ? 'is-invalid'">
-                                    </div>
-                                    <div class="invalid-feedback" th:if="${#fields.hasErrors('durationMinutes')}" 
-                                         th:errors="*{durationMinutes}"></div>
+                                    <label class="form-label fw-semibold" th:text="#{test.duration}">試験時間 (分)</label>
+                                    <input type="number" th:field="*{durationMinutes}" class="form-control" min="1">
                                 </div>
                             </div>
 
-                            <!-- Creator Information - Redesigned -->
+                            <!-- Creator Information -->
                             <div class="row mb-4">
-                                <label class="col-sm-3 col-form-label fw-semibold" th:text="#{tests.form.auto_5ce5}">作成者情報</label>
+                                <label class="col-sm-3 col-form-label fw-semibold" th:text="#{test.creator}">作成者情報</label>
                                 <div class="col-sm-9">
                                     <div th:if="${test.testId != null}" class="bg-light p-3 rounded">
                                         <div class="d-flex align-items-center">
@@ -159,23 +121,26 @@
                                             <div>
                                                 <h6 class="mb-1" th:text="${test.createdByName} ?: 'システム'"></h6>
                                                 <small class="text-muted" th:if="${test.createdAt != null}">
-                                                    作成日: <span th:text="${#temporals.format(test.createdAt, 'yyyy年MM月dd日 HH:mm')}"></span>
+                                                    <span th:text="#{app.created.date}">作成日</span>: 
+                                                    <span th:text="${#temporals.format(test.createdAt, 'yyyy-MM-dd HH:mm')}"></span>
                                                 </small>
                                             </div>
                                         </div>
                                     </div>
                                     
                                     <div th:if="${test.testId == null}" class="border rounded p-3">
-                                        <label class="form-label fw-semibold" th:text="#{tests.form.auto_29f3}">作成者を選択</label>
+                                        <label class="form-label fw-semibold" th:text="#{test.creator.select}">作成者を選択</label>
                                         <select name="teacherId" class="form-select">
-                                            <option value="" th:text="#{tests.form.auto_f2f1}">-- システム管理者として作成 --</option>
+                                            <option value="" th:text="#{test.creator.system}">-- システム管理者として作成 --</option>
                                             <option th:each="teacher : ${teachers}" 
                                                     th:value="${teacher.teacherId}"
                                                     th:text="${teacher.name} + ' (' + ${teacher.teacherCode} + ')'">
                                             </option>
                                         </select>
                                         <small class="text-muted d-block mt-2">
-                                            <i class="bi bi-info-circle me-1"></i><th:block th:text="#{tests.form.auto_bd0e}">教師を選択すると、その教師が作成者として記録されます</th:block></small>
+                                            <i class="bi bi-info-circle me-1"></i>
+                                            <th:block th:text="#{test.creator.hint}">教師を選択すると、その教師が作成者として記録されます</th:block>
+                                        </small>
                                     </div>
                                 </div>
                             </div>
@@ -184,80 +149,29 @@
                             <div class="alert alert-info d-flex align-items-center mb-4" role="alert">
                                 <i class="bi bi-info-circle-fill fs-4 me-3"></i>
                                 <div>
-                                    <strong th:text="#{tests.form.auto_4bb6}">注意事項</strong><br>
-                                    • 合格点は総合点以下に設定してください<br>
-                                    • 試験日時は実際のテスト実施日時を入力してください<br th:text="#{tests.form.auto_d81f}">• 作成者は後から変更できません</div>
+                                    <strong th:text="#{test.note}">注意事項</strong><br>
+                                    <th:block th:text="#{test.note.cannot.change}">• 作成者は後から変更できません</th:block>
+                                </div>
                             </div>
 
                             <!-- Form Actions -->
                             <div class="row mt-5">
                                 <div class="col-sm-9 offset-sm-3">
                                     <a href="/tests" class="btn btn-outline-secondary px-5 py-2 ms-3">
-                                        <i class="bi bi-x-circle me-2"></i><th:block th:text="#{tests.form.auto_6ef3}">キャンセル</th:block></a>
+                                        <i class="bi bi-x-circle me-2"></i><span th:text="#{test.cancel}">キャンセル</span>
+                                    </a>
                                     <button type="submit" class="btn btn-primary px-5 py-2">
-                                        <i class="bi bi-check-circle me-2"></i><th:block th:text="#{tests.form.auto_be5f}">保存</th:block></button>
+                                        <i class="bi bi-check-circle me-2"></i><span th:text="#{test.save}">保存</span>
+                                    </button>
                                 </div>
                             </div>
                         </form>
                     </div>
                 </div>
-
-                <!-- Back Button -->
-                <!-- <div class="mt-4">
-                    <a href="/tests" class="btn btn-secondary px-5 py-2 ms-3">
-                        <i class="bi bi-arrow-left me-1"></i><th:block th:text="#{tests.form.auto_fec9}">テスト一覧に戻る</th:block></a>
-                </div> -->
             </div>
         </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            const layout = document.querySelector(".dashboard-layout");
-            const toggles = document.querySelectorAll("[data-sidebar-toggle]");
-            toggles.forEach((btn) =>
-                btn.addEventListener("click", function (event) {
-                    event.preventDefault();
-                    layout?.classList.toggle("sidebar-open");
-                })
-            );
-
-            // Validate that passing marks don't exceed total marks
-            const totalMarks = document.querySelector('[name="totalMarks"]');
-            const passingMarks = document.querySelector('[name="passingMarks"]');
-            
-            if (totalMarks && passingMarks) {
-                passingMarks.addEventListener('input', function() {
-                    if (parseInt(this.value) > parseInt(totalMarks.value)) {
-                        this.setCustomValidity('合格点は総合点以下にしてください');
-                        this.reportValidity();
-                    } else {
-                        this.setCustomValidity('');
-                    }
-                });
-                
-                totalMarks.addEventListener('input', function() {
-                    if (parseInt(passingMarks.value) > parseInt(this.value)) {
-                        passingMarks.setCustomValidity('合格点は総合点以下にしてください');
-                    } else {
-                        passingMarks.setCustomValidity('');
-                    }
-                });
-            }
-            
-            // Set default date to now if empty
-            const testDateInput = document.querySelector('[name="testDate"]');
-            if (testDateInput && !testDateInput.value) {
-                const now = new Date();
-                const year = now.getFullYear();
-                const month = String(now.getMonth() + 1).padStart(2, '0');
-                const day = String(now.getDate()).padStart(2, '0');
-                const hours = String(now.getHours()).padStart(2, '0');
-                const minutes = String(now.getMinutes()).padStart(2, '0');
-                testDateInput.value = `${year}-${month}-${day}T${hours}:${minutes}`;
-            }
-        });
-    </script>
 </body>
 </html>

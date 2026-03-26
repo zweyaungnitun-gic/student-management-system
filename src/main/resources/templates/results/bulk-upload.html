@@ -2,7 +2,7 @@
 <html lang="ja" xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
-<head th:replace="~{layouts/admin-layout :: head(pageTitle='一括アップロード | 生徒情報管理システム')}">
+<head th:replace="~{layouts/admin-layout :: head(pageTitle=#{bulk.upload.title})}">
 </head>
 
 <body>
@@ -20,10 +20,10 @@
                             <i class="bi bi-list fs-4"></i>
                         </button>
                         <div>
-                            <h1 class="mb-0" style="color: #0a58a0; font-weight: 600; font-size: 1.8rem;">
+                            <h1 class="mb-0" style="color: #0a58a0; font-weight: 600; font-size: 1.8rem;" th:text="#{bulk.upload.title}">
                                 テスト結果一括アップロード
                             </h1>
-                            <p class="text-muted mb-0">Excelファイルからテスト結果を一括登録</p>
+                            <p class="text-muted mb-0" th:text="#{bulk.upload.description}">Excelファイルからテスト結果を一括登録</p>
                         </div>
                     </div>
                 </div>
@@ -33,16 +33,18 @@
                     <div class="card-header bg-white py-3">
                         <h5 class="card-title mb-0">
                             <i class="bi bi-file-spreadsheet me-2 text-success"></i>
-                            Excelファイルを選択
+                            <span th:text="#{bulk.upload.select.file}">Excelファイルを選択</span>
                         </h5>
                     </div>
                     <div class="card-body p-4">
                         <form th:action="@{/results/bulk-upload}" method="post" enctype="multipart/form-data">
                             <div class="row mb-4">
                                 <div class="col-md-6">
-                                    <label class="form-label fw-semibold">テストを選択 <span class="text-danger">*</span></label>
+                                    <label class="form-label fw-semibold">
+                                        <span th:text="#{bulk.upload.select.test}">テストを選択</span> <span class="text-danger">*</span>
+                                    </label>
                                     <select name="testId" class="form-select" required>
-                                        <option value="">-- テストを選択してください --</option>
+                                        <option value="" th:text="#{test.course.placeholder}">-- テストを選択してください --</option>
                                         <option th:each="test : ${tests}" 
                                                 th:value="${test.testId}"
                                                 th:text="${test.testName} + ' (' + ${test.courseName} + ')'">
@@ -50,33 +52,36 @@
                                     </select>
                                 </div>
                                 <div class="col-md-6">
-                                    <label class="form-label fw-semibold">Excelファイル <span class="text-danger">*</span></label>
+                                    <label class="form-label fw-semibold">
+                                        <span th:text="#{bulk.upload.select.file}">Excelファイル</span> <span class="text-danger">*</span>
+                                    </label>
                                     <input type="file" name="file" class="form-control" accept=".xlsx, .xls" required>
                                 </div>
                             </div>
 
                             <div class="alert alert-info mb-4">
                                 <i class="bi bi-info-circle-fill me-2"></i>
-                                <strong>ファイル形式:</strong> Excelファイル (.xlsx, .xls)<br>
-                                <strong>フォーマット:</strong>
+                                <strong th:text="#{bulk.upload.file.format}">ファイル形式:</strong> 
+                                <span th:text="#{bulk.upload.format.instruction}">Excelファイル (.xlsx, .xls)</span><br>
+                                <strong th:text="#{bulk.upload.format.columns}">フォーマット:</strong>
                                 <ul class="mb-0 mt-2">
-                                    <li>1列目: 生徒ID (必須)</li>
-                                    <li>2列目: 得点 (必須)</li>
-                                    <li>3列目: フィードバック (任意)</li>
+                                    <li th:text="#{bulk.upload.column.student.id}">1列目: 生徒ID (必須)</li>
+                                    <li th:text="#{bulk.upload.column.score}">2列目: 得点 (必須)</li>
+                                    <li th:text="#{bulk.upload.column.feedback}">3列目: フィードバック (任意)</li>
                                 </ul>
                                 <div class="mt-2">
                                     <button type="button" class="btn btn-sm btn-outline-primary" onclick="downloadTemplate()">
-                                        <i class="bi bi-download me-1"></i>テンプレートをダウンロード
+                                        <i class="bi bi-download me-1"></i><span th:text="#{bulk.upload.download.template}">テンプレートをダウンロード</span>
                                     </button>
                                 </div>
                             </div>
 
                             <div class="d-flex gap-3 justify-content-end">
                                 <a href="/results" class="btn btn-outline-secondary px-4">
-                                    <i class="bi bi-x-circle me-2"></i>キャンセル
+                                    <i class="bi bi-x-circle me-2"></i><span th:text="#{bulk.upload.cancel}">キャンセル</span>
                                 </a>
                                 <button type="submit" class="btn btn-success px-4">
-                                    <i class="bi bi-upload me-2"></i>アップロード
+                                    <i class="bi bi-upload me-2"></i><span th:text="#{bulk.upload.upload}">アップロード</span>
                                 </button>
                             </div>
                         </form>
@@ -88,15 +93,15 @@
                     <div class="card-header bg-white py-3">
                         <h5 class="card-title mb-0">
                             <i class="bi bi-question-circle me-2 text-info"></i>
-                            使い方
+                            <span th:text="#{bulk.upload.how.to.use}">使い方</span>
                         </h5>
                     </div>
                     <div class="card-body">
                         <ol class="mb-0">
-                            <li>「テンプレートをダウンロード」ボタンをクリックしてExcelテンプレートをダウンロードします</li>
-                            <li>テンプレートに生徒ID、得点、フィードバックを入力します</li>
-                            <li>テストを選択し、入力したExcelファイルをアップロードします</li>
-                            <li>「アップロード」ボタンをクリックすると一括登録されます</li>
+                            <li th:text="#{bulk.upload.step1}">「テンプレートをダウンロード」ボタンをクリックしてExcelテンプレートをダウンロードします</li>
+                            <li th:text="#{bulk.upload.step2}">テンプレートに生徒ID、得点、フィードバックを入力します</li>
+                            <li th:text="#{bulk.upload.step3}">テストを選択し、入力したExcelファイルをアップロードします</li>
+                            <li th:text="#{bulk.upload.step4}">「アップロード」ボタンをクリックすると一括登録されます</li>
                         </ol>
                     </div>
                 </div>
@@ -119,9 +124,10 @@
         });
 
         function downloadTemplate() {
-            // Create Excel template
             const data = [
-                ['生徒ID', '得点', 'フィードバック'],
+                [document.querySelector('th:text="#{bulk.upload.column.student.id}"')?.innerText || '生徒ID', 
+                 document.querySelector('th:text="#{bulk.upload.column.score}"')?.innerText || '得点', 
+                 document.querySelector('th:text="#{bulk.upload.column.feedback}"')?.innerText || 'フィードバック'],
                 ['STU001', '85', 'よくできました'],
                 ['STU002', '72', 'もう少し練習が必要です'],
                 ['STU003', '90', '優秀です']

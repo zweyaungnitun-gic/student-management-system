@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<html lang="ja" xmlns:th="http://www.thymeleaf.org" th:lang="${#locale.language}">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ゲストダッシュボード | 生徒情報管理システム</title>
+    <title th:text="#{guest.dashboard.title}">ゲストダッシュボード | 生徒情報管理システム</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
     <style>
@@ -68,18 +68,34 @@
 <body>
     <div class="guest-container">
         <!-- Welcome Card -->
-        <div class="welcome-card">
-            <div class="d-flex justify-content-between align-items-center flex-wrap">
-                <div>
-                    <h1 class="mb-2">ようこそ、<span th:text="${userName}">ゲスト</span>さん</h1>
-                    <p class="mb-0 opacity-75">このシステムは管理者のみが利用できます。</p>
-                    <p class="mb-0 opacity-75">ご質問がある場合は管理者にお問い合わせください。</p>
-                </div>
-                <div class="mt-3 mt-md-0">
-                    <img th:src="@{/images/image.png}" alt="GIC Logo" style="height: 70px; background: white; padding: 10px; border-radius: 1rem;">
-                </div>
-            </div>
+<!-- Welcome Card -->
+<div class="welcome-card">
+    <div class="d-flex justify-content-between align-items-center flex-wrap">
+        <div>
+            <h1 class="mb-2">
+                <span th:text="#{guest.dashboard.welcome}">ようこそ</span>、
+                <span th:text="${userName}">ゲスト</span>
+                <span th:text="#{guest.dashboard.title}">ゲストダッシュボード</span>
+            </h1>
+            <p class="mb-0 opacity-75" th:text="#{guest.dashboard.description}">このシステムは管理者のみが利用できます。</p>
+            <p class="mb-0 opacity-75" th:text="#{guest.dashboard.contact}">ご質問がある場合は管理者にお問い合わせください。</p>
         </div>
+        <div class="mt-3 mt-md-0 d-flex flex-column align-items-end gap-2">
+            <!-- Language Switcher -->
+            <div class="d-flex gap-2 bg-white rounded p-2" style="background: rgba(255,255,255,0.9) !important;">
+                <a href="?lang=en" class="text-decoration-none px-3 py-1 rounded" 
+                   th:classappend="${#locale.language == 'en'} ? 'bg-primary text-white' : 'text-dark'">
+                    🇺🇸 English
+                </a>
+                <a href="?lang=ja" class="text-decoration-none px-3 py-1 rounded" 
+                   th:classappend="${#locale.language == 'ja'} ? 'bg-primary text-white' : 'text-dark'">
+                    🇯🇵 日本語
+                </a>
+            </div>
+            <img th:src="@{/images/gic-logo.png}" alt="GIC Logo" style="height: 70px; background: white; padding: 10px; border-radius: 1rem;">
+        </div>
+    </div>
+</div>
 
         <div class="row">
             <!-- Recent Students -->
@@ -88,7 +104,7 @@
                     <div class="card-header bg-white py-3">
                         <h5 class="card-title mb-0">
                             <i class="bi bi-clock-history me-2 text-primary"></i>
-                            最近登録された生徒
+                            <span th:text="#{guest.dashboard.recent.students}">最近登録された生徒</span>
                         </h5>
                     </div>
                     <div class="card-body p-0">
@@ -102,7 +118,8 @@
                                 <span class="badge bg-primary rounded-pill" th:text="${student.attendingClassRelatedStatus}">N5</span>
                             </div>
                             <div th:if="${recentStudents.isEmpty()}" class="list-group-item text-center text-muted py-4">
-                                最近登録された生徒はいません
+                                <i class="bi bi-inbox fs-2 d-block mb-2"></i>
+                                <span th:text="#{guest.dashboard.recent.students.empty}">最近登録された生徒はいません</span>
                             </div>
                         </div>
                     </div>
@@ -115,7 +132,7 @@
                     <div class="card-header bg-white py-3">
                         <h5 class="card-title mb-0">
                             <i class="bi bi-bookmark-star me-2 text-success"></i>
-                            アクティブなコース
+                            <span th:text="#{guest.dashboard.active.courses}">アクティブなコース</span>
                         </h5>
                     </div>
                     <div class="card-body p-0">
@@ -127,11 +144,12 @@
                                     <small class="text-muted" th:text="${course.courseCode}">JAVA101</small>
                                 </div>
                                 <span class="badge bg-success rounded-pill">
-                                    <span th:text="${course.creditHours}">3</span> 単位
+                                    <span th:text="${course.creditHours}">3</span> <span th:text="#{course.credits}">単位</span>
                                 </span>
                             </div>
                             <div th:if="${activeCourses.isEmpty()}" class="list-group-item text-center text-muted py-4">
-                                アクティブなコースはありません
+                                <i class="bi bi-inbox fs-2 d-block mb-2"></i>
+                                <span th:text="#{guest.dashboard.active.courses.empty}">アクティブなコースはありません</span>
                             </div>
                         </div>
                     </div>
@@ -146,7 +164,7 @@
                     <div class="card-header bg-white py-3">
                         <h5 class="card-title mb-0">
                             <i class="bi bi-person-workspace me-2 text-info"></i>
-                            担当教師
+                            <span th:text="#{guest.dashboard.teachers.in.charge}">担当教師</span>
                         </h5>
                     </div>
                     <div class="card-body p-0">
@@ -160,7 +178,8 @@
                                 <span class="badge bg-info rounded-pill" th:text="${teacher.department}">情報工学科</span>
                             </div>
                             <div th:if="${teachers.isEmpty()}" class="list-group-item text-center text-muted py-4">
-                                教師情報はありません
+                                <i class="bi bi-inbox fs-2 d-block mb-2"></i>
+                                <span th:text="#{guest.dashboard.teachers.empty}">教師情報はありません</span>
                             </div>
                         </div>
                     </div>
@@ -173,7 +192,7 @@
                     <div class="card-header bg-white py-3">
                         <h5 class="card-title mb-0">
                             <i class="bi bi-lightning-charge-fill me-2 text-warning"></i>
-                            クイックアクション
+                            <span th:text="#{guest.dashboard.quick.actions}">クイックアクション</span>
                         </h5>
                     </div>
                     <div class="card-body">
@@ -182,8 +201,8 @@
                                 <a href="http://localhost:8080/register" class="text-decoration-none" target="_blank">
                                     <div class="text-center p-3 border rounded bg-light quick-action-btn">
                                         <i class="bi bi-person-plus-fill fs-2 text-primary mb-2"></i>
-                                        <h6 class="mb-0">新規生徒登録</h6>
-                                        <small class="text-muted">入学者登録はこちら</small>
+                                        <h6 class="mb-0" th:text="#{guest.dashboard.new.registration}">新規生徒登録</h6>
+                                        <small class="text-muted" th:text="#{guest.dashboard.new.registration.description}">入学者登録はこちら</small>
                                     </div>
                                 </a>
                             </div>
@@ -200,14 +219,14 @@
                     <div class="card-header bg-white py-3">
                         <h5 class="card-title mb-0">
                             <i class="bi bi-envelope-fill me-2 text-primary"></i>
-                            お問い合わせ
+                            <span th:text="#{guest.dashboard.contact.info}">お問い合わせ</span>
                         </h5>
                     </div>
                     <div class="card-body text-center d-flex flex-column justify-content-center flex-grow-1">
                         <i class="bi bi-person-badge fs-1 text-success mb-3"></i>
-                        <p class="mb-2">システムに関するお問い合わせは管理者までご連絡ください。</p>
+                        <p class="mb-2" th:text="#{guest.dashboard.contact.message}">システムに関するお問い合わせは管理者までご連絡ください。</p>
                         <h5 class="text-primary">admin@gmail.com</h5>
-                        <p class="text-muted small mt-3">平日 9:00 - 18:00 (土日祝除く)</p>
+                        <p class="text-muted small mt-3" th:text="#{guest.dashboard.business.hours}">平日 9:00 - 18:00 (土日祝除く)</p>
                     </div>
                 </div>
             </div>
@@ -217,18 +236,18 @@
                     <div class="card-header bg-white py-3">
                         <h5 class="card-title mb-0">
                             <i class="bi bi-box-arrow-right me-2 text-danger"></i>
-                            ログアウト
+                            <span th:text="#{guest.dashboard.logout.section}">ログアウト</span>
                         </h5>
                     </div>
                     <div class="card-body text-center d-flex flex-column justify-content-center flex-grow-1">
                         <i class="bi bi-shield-lock-fill fs-1 text-danger mb-3"></i>
-                        <p class="mb-3">セッションを終了する場合は、下のボタンからログアウトしてください。</p>
+                        <p class="mb-3" th:text="#{guest.dashboard.logout.description}">セッションを終了する場合は、下のボタンからログアウトしてください。</p>
                         <form th:action="@{/logout}" method="post" class="d-inline">
                             <button type="submit" class="btn btn-danger logout-btn px-4 py-2">
-                                <i class="bi bi-box-arrow-right me-2"></i>ログアウト
+                                <i class="bi bi-box-arrow-right me-2"></i><span th:text="#{guest.dashboard.logout}">ログアウト</span>
                             </button>
                         </form>
-                        <p class="text-muted small mt-3">セッションは30分間有効です</p>
+                        <p class="text-muted small mt-3" th:text="#{guest.dashboard.session.info}">セッションは30分間有効です</p>
                     </div>
                 </div>
             </div>
