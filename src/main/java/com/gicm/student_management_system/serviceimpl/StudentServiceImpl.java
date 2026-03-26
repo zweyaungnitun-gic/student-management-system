@@ -134,23 +134,17 @@ public StudentDTO convertToDTO(Student student) {
                 .collect(Collectors.toList());
     }
 
-    @Override
-    public List<StudentDTO> getAllStudentsForCurrentUser() {
-        Long tenantId = securityUtils.getTenantFilterId();
-        List<Student> students;
-        
-        if (tenantId == null) {
-            // Super admin - see all
-            students = studentRepository.findAll();
-        } else {
-            // Regular admin - see only their students
-            students = studentRepository.findByCreatedBy(tenantId);
-        }
-        
-        return students.stream()
-                .map(this::convertToDTO)
-                .collect(Collectors.toList());
-    }
+@Override
+public List<StudentDTO> getAllStudentsForCurrentUser() {
+    Long tenantId = securityUtils.getTenantFilterId();
+    List<Student> students;
+    
+    students = studentRepository.findAll();
+    
+    return students.stream()
+            .map(this::convertToDTO)
+            .collect(Collectors.toList());
+}
 
     @Override
     public List<StudentDTO> getStudentsByFilterForCurrentUser(String nameSearch) {
@@ -197,15 +191,12 @@ public StudentDTO convertToDTO(Student student) {
 
     @Override
     public StudentDTO getStudentById(Long id) {
-        Student student = studentRepository.findById(id).orElse(null);
-        if (student == null) {
-            return null;
+        Optional<Student> student = studentRepository.findById(id);
+        if (student.isPresent()) {
+            return convertToDTO(student.get());
         }
-        // Check access permission
-        if (!securityUtils.canAccessData(student.getCreatedBy())) {
-            return null; // Or throw access denied exception
-        }
-        return convertToDTO(student);
+        System.out.println("Student not found with ID: " + id);
+        return null;
     }
 
     @Override

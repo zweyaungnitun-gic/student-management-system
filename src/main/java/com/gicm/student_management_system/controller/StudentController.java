@@ -152,7 +152,6 @@ public class StudentController {
             @RequestParam(required = false, defaultValue = "courses") String tab,
             @RequestParam(required = false) String subTab,
             @RequestParam(value = "nameSearch", defaultValue = "") String nameSearch,
-            // Rename this to filterStatus in the method signature
             @RequestParam(value = "status", defaultValue = "") String filterStatus,
             Model model) {
 
@@ -161,6 +160,10 @@ public class StudentController {
 
         // Fetch Student DTO via Studentservice (template expects DTO fields)
         StudentDTO studentDTO = studentService.getStudentById(id);
+        if (studentDTO == null) {
+            throw new RuntimeException("Student not found with ID: " + id);
+        }
+    
         model.addAttribute("student", studentDTO);
 
         InterviewNotesDTO interviewNotes = interviewNotesService.getOrCreateInterviewNotesDTO(id);
