@@ -34,7 +34,7 @@ public class UserController {
     }
 
     @GetMapping
-    @PreAuthorize("hasRole('SUPER_ADMIN')")
+    @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'ADMIN')")
     public String listUsers(
             @RequestParam(value = "search", required = false) String search,
             Model model) {
@@ -48,7 +48,7 @@ public class UserController {
     }
 
     @GetMapping("/add")
-    @PreAuthorize("hasRole('SUPER_ADMIN')")
+    @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'ADMIN')")
     public String addUserForm(Model model) {
         model.addAttribute("user", new User());
         // Only allow creating ADMIN and GUEST users (not SUPER_ADMIN)
@@ -57,7 +57,7 @@ public class UserController {
     }
 
     @PostMapping("/add")
-    @PreAuthorize("hasRole('SUPER_ADMIN')")
+    @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'ADMIN')")
     public String addUser(@Valid @ModelAttribute User user, BindingResult bindingResult, Model model) {
         // Prevent creating SUPER_ADMIN through this form
         if (user.getRole() == Role.SUPER_ADMIN) {
@@ -98,7 +98,7 @@ public class UserController {
     }
 
     @PostMapping("/edit/{id}")
-    @PreAuthorize("hasRole('SUPER_ADMIN') or @userController.isCurrentUser(#id)")
+    @PreAuthorize("hasRole('SUPER_ADMIN', 'ADMIN') or @userController.isCurrentUser(#id)")
     public String updateUser(@PathVariable Long id,
             @Valid @ModelAttribute User userForm,
             BindingResult bindingResult,
@@ -158,7 +158,7 @@ public class UserController {
     }
 
     @GetMapping("/delete/{id}")
-    @PreAuthorize("hasRole('SUPER_ADMIN')")
+    @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'ADMIN')")
     public String deleteUser(@PathVariable Long id, RedirectAttributes redirectAttributes) {
         try {
             // Prevent deleting the last SUPER_ADMIN
@@ -177,7 +177,7 @@ public class UserController {
     }
 
     @GetMapping("/edit/{id}")
-    @PreAuthorize("hasRole('SUPER_ADMIN') or @userController.isCurrentUser(#id)")
+    @PreAuthorize("hasRole('SUPER_ADMIN', 'ADMIN') or @userController.isCurrentUser(#id)")
     public String showEditForm(@PathVariable Long id, Model model, RedirectAttributes redirectAttributes) {
         User user = userService.getUserById(id).orElse(null);
         

@@ -122,7 +122,11 @@
                     <p class="mb-1"><strong th:text="#{reports.report-card.auto_3e6d}">氏名:</strong> <span th:text="${reportCard.studentName}"></span></p>
                 </div>
                 <div class="col-md-4">
-                    <p class="mb-1"><strong th:text="#{reports.report-card.auto_970e}">クラス:</strong> <span th:text="${reportCard.courseResults[0]?.teacherName ?: 'N/A'}"></span></p>
+                    <p class="mb-1"><strong th:text="#{reports.report-card.auto_970e}">クラス:</strong> 
+                        <span th:if="${reportCard.courseResults != null and reportCard.courseResults.size() > 0}" 
+                            th:text="${reportCard.courseResults[0].teacherName}"></span>
+                        <span th:unless="${reportCard.courseResults != null and reportCard.courseResults.size() > 0}">N/A</span>
+                    </p>
                     <p class="mb-1"><strong th:text="#{reports.report-card.auto_5c54}">クラス順位:</strong> 
                         <span th:text="${reportCard.classRank} + '/' + ${reportCard.totalStudents}"></span>
                     </p>

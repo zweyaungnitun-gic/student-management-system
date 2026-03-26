@@ -38,7 +38,7 @@ public class User {
 
     @NotBlank(message = "ユーザー名は必須です")
     @Size(max = 25, message = "ユーザー名は25文字以内で入力してください")
-    @Column(name = "Name", nullable = false)
+    @Column(name = "name", nullable = false)
     private String username;
 
     @NotBlank(message = "メールアドレスは必須です")
