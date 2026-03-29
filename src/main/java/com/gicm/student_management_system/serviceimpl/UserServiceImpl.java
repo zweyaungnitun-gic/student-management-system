@@ -1,16 +1,17 @@
 package com.gicm.student_management_system.serviceimpl;
 
-import com.gicm.student_management_system.entity.User;
-import com.gicm.student_management_system.repository.UserRepository;
-import com.gicm.student_management_system.service.UserIdGeneratorService;
-import com.gicm.student_management_system.service.UserService;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
+import com.gicm.student_management_system.entity.User;
+import com.gicm.student_management_system.repository.UserRepository;
+import com.gicm.student_management_system.service.UserIdGeneratorService;
+import com.gicm.student_management_system.service.UserService;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -69,6 +70,7 @@ public class UserServiceImpl implements UserService {
         existingUser.setUsername(user.getUsername());
         existingUser.setEmail(user.getEmail());
         existingUser.setRole(user.getRole());
+        existingUser.setSchoolName(user.getSchoolName());
         
         // Only update password if provided
         if (user.getPassword() != null && !user.getPassword().isEmpty()) {

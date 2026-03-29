@@ -50,4 +50,9 @@ public interface StudentService {
     List<Student> findByRegistrationStatus(RegistrationStatus status, String nameSearch);
 
     Optional<Student> findByStudentId(String studentId);
+
+    /**
+     * Find students by the admin who created them (for super admin view)
+     */
+    List<Student> findByCreatedBy(Long createdBy);
 }

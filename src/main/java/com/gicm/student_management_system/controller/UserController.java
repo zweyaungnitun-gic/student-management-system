@@ -15,8 +15,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.gicm.student_management_system.entity.Role;
+import com.gicm.student_management_system.entity.Student;
 import com.gicm.student_management_system.entity.User;
 import com.gicm.student_management_system.security.SecurityUtils;
+import com.gicm.student_management_system.service.StudentService;
 import com.gicm.student_management_system.service.UserService;
 
 import jakarta.validation.Valid;
@@ -26,10 +28,12 @@ import jakarta.validation.Valid;
 public class UserController {
 
     private final UserService userService;
+    private final StudentService studentService;
     private final SecurityUtils securityUtils;
 
-    public UserController(UserService userService, SecurityUtils securityUtils) {
+    public UserController(UserService userService, StudentService studentService, SecurityUtils securityUtils) {
         this.userService = userService;
+        this.studentService = studentService;
         this.securityUtils = securityUtils;
     }
 
@@ -200,6 +204,32 @@ public class UserController {
             model.addAttribute("roles", new Role[]{user.getRole()}); // Cannot change role
         }
         return "users/edit";
+    }
+
+    @GetMapping("/detail/{id}")
+    @PreAuthorize("hasRole('SUPER_ADMIN')")
+    public String showAdminDetail(@PathVariable Long id, Model model, RedirectAttributes redirectAttributes) {
+        User admin = userService.getUserById(id).orElse(null);
+        
+        if (admin == null) {
+            redirectAttributes.addFlashAttribute("error", "ユーザーが見つかりません");
+            return "redirect:/users";
+        }
+        
+        // Only show details for ADMIN and GUEST users (not SUPER_ADMIN)
+        if (admin.getRole() == Role.SUPER_ADMIN) {
+            redirectAttributes.addFlashAttribute("error", "SUPER_ADMINの詳細は表示できません");
+            return "redirect:/users";
+        }
+        
+        // Get students created by this admin
+        List<Student> students = studentService.findByCreatedBy(id);
+        
+        model.addAttribute("admin", admin);
+        model.addAttribute("students", students);
+        model.addAttribute("studentCount", students.size());
+        
+        return "users/admin-detail";
     }
 
     /**

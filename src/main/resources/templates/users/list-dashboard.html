@@ -88,6 +88,7 @@
                                                     <th class="text-center" style="min-width: 60px;">ID</th>
                                                     <th class="text-center" style="min-width: 120px;" th:text="#{users.list-dashboard.auto_c97c}">ユーザーID</th>
                                                     <th style="min-width: 150px;" th:text="#{users.list-dashboard.auto_5b9e}">名前</th>
+                                                    <th style="min-width: 120px;">学校名</th>
                                                     <th style="min-width: 200px;" th:text="#{users.list-dashboard.auto_97a7}">メール</th>
                                                     <th class="text-center" style="min-width: 100px;" th:text="#{users.list-dashboard.auto_2683}">ロール</th>
                                                     <th class="text-center" style="min-width: 140px;" th:text="#{users.list-dashboard.auto_36d8}">作成日</th>
@@ -103,18 +104,23 @@
                                                         </span>
                                                     </td>
                                                     <td data-label="名前" th:text="${user.username}">
+                                                    <td data-label="学校名" th:text="${user.schoolName} ?: '-'">
                                                     <td data-label="メール" th:text="${user.email}">
                                                     <td class="text-center" data-label="ロール">
+                                                        <span th:if="${user.role.name() == 'SUPER_ADMIN'}" class="badge bg-dark bg-opacity-10 text-dark px-3 py-2 rounded-pill">スーパー管理者</span>
                                                         <span th:if="${user.role.name() == 'ADMIN'}" class="badge bg-danger bg-opacity-10 text-danger px-3 py-2 rounded-pill" th:text="#{users.list-dashboard.auto_5093}">管理者</span>
                                                         <span th:if="${user.role.name() == 'GUEST'}" class="badge bg-success bg-opacity-10 text-success px-3 py-2 rounded-pill" th:text="#{users.list-dashboard.auto_95f0}">ゲスト</span>
                                                     </td>
                                                     <td class="text-center" data-label="作成日" th:text="${#temporals.format(user.createdAt, 'yyyy-MM-dd HH:mm')}">
                                                     <td class="text-center" data-label="操作">
                                                         <div class="d-flex gap-3 justify-content-center">
-                                                            <a th:href="@{'/users/edit/' + ${user.id}}" class="text-decoration-none text-primary" title="編集" style="font-size: 1.2rem;">
+                                                            <a th:href="@{/users/detail/{id}(id=${user.id})}" class="text-decoration-none text-info" title="詳細表示" style="font-size: 1.2rem;" sec:authorize="hasRole('SUPER_ADMIN')">
+                                                                <i class="bi bi-eye"></i>
+                                                            </a>
+                                                            <a th:href="@{/users/edit/{id}(id=${user.id})}" class="text-decoration-none text-primary" title="編集" style="font-size: 1.2rem;">
                                                                 <i class="bi bi-pencil-square"></i>
                                                             </a>
-                                                            <a th:href="@{'/users/delete/' + ${user.id}}" class="text-decoration-none text-danger" title="削除" onclick="return confirm('このユーザーを削除してもよろしいですか？');" style="font-size: 1.2rem;">
+                                                            <a th:href="@{/users/delete/{id}(id=${user.id})}" class="text-decoration-none text-danger" title="削除" onclick="return confirm('このユーザーを削除してもよろしいですか？');" style="font-size: 1.2rem;" sec:authorize="hasRole('SUPER_ADMIN')">
                                                                 <i class="bi bi-trash-fill"></i>
                                                             </a>
                                                         </div>

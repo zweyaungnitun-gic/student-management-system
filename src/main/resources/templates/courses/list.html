@@ -133,8 +133,14 @@
                                                 <a th:href="@{'/courses/' + ${course.courseId}}" class="text-decoration-none text-info" title="詳細" style="font-size: 1.2rem;">
                                                     <i class="bi bi-info-circle"></i>
                                                 </a>
-                                                <a th:href="@{'/courses/edit/' + ${course.courseId}}" class="text-decoration-none text-primary" title="編集" style="font-size: 1.2rem;">
+                                                                <a th:href="@{'/courses/edit/' + ${course.courseId}}" class="text-decoration-none text-primary" title="編集" style="font-size: 1.2rem;">
                                                     <i class="bi bi-pencil-square"></i>
+                                                </a>
+                                                <a th:href="@{'/enrollments/new?courseId=' + ${course.courseId}}" 
+                                                   class="text-decoration-none text-success" 
+                                                   th:title="#{btn.enroll}" 
+                                                   style="font-size: 1.2rem;">
+                                                    <i class="bi bi-person-plus-fill"></i>
                                                 </a>
                                                 <a th:if="${course.isActive == true}" th:href="@{'/courses/deactivate/' + ${course.courseId}}" class="text-decoration-none text-warning" title="非アクティブ化" onclick="return confirm('このコースを非アクティブにしてもよろしいですか？');" style="font-size: 1.2rem;">
                                                     <i class="bi bi-pause-circle"></i>

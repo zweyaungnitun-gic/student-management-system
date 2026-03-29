@@ -55,6 +55,10 @@ public class User {
     @Column(name = "role", nullable = false)
     private Role role;
 
+    @Size(max = 100, message = "学校名は100文字以内で入力してください")
+    @Column(name = "school_name")
+    private String schoolName;
+
     @Column(name = "created_at", nullable = false)
     private OffsetDateTime createdAt;
 

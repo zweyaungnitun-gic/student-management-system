@@ -1,29 +1,39 @@
 package com.gicm.student_management_system.controller;
 
-import com.gicm.student_management_system.dto.TestResultDTO;
-import com.gicm.student_management_system.entity.Student;
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
 import com.gicm.student_management_system.dto.EnrollmentDTO;
 import com.gicm.student_management_system.dto.StudentDTO;
 import com.gicm.student_management_system.dto.TestDTO;
-import com.gicm.student_management_system.service.TestResultService;
-import com.gicm.student_management_system.service.TestService;
-
+import com.gicm.student_management_system.dto.TestResultDTO;
+import com.gicm.student_management_system.entity.Student;
 import com.gicm.student_management_system.service.CourseService;
 import com.gicm.student_management_system.service.EnrollmentService;
 import com.gicm.student_management_system.service.StudentService;
 import com.gicm.student_management_system.service.TeacherService;
-import lombok.RequiredArgsConstructor;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import com.gicm.student_management_system.service.TestResultService;
+import com.gicm.student_management_system.service.TestService;
 
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.util.*;
-import java.util.stream.Collectors;
+import lombok.RequiredArgsConstructor;
 
 @Controller
 @RequestMapping("/results")
@@ -108,7 +118,7 @@ public class ResultsController {
     }
 
     @GetMapping("/add")
-    @PreAuthorize("hasRole('ADMIN') or hasRole('TEACHER')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN') or hasRole('TEACHER')")
     public String showAddForm(Model model) {
         model.addAttribute("result", new TestResultDTO());
         model.addAttribute("tests", testService.getAllTests());
@@ -125,7 +135,7 @@ public class ResultsController {
     }
 
     @GetMapping("/edit/{id}")
-    @PreAuthorize("hasRole('ADMIN') or hasRole('TEACHER')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN') or hasRole('TEACHER')")
     public String showEditForm(@PathVariable Long id, Model model, RedirectAttributes redirectAttributes) {
         return testResultService.getResultById(id)
                 .map(result -> {
@@ -142,7 +152,7 @@ public class ResultsController {
     }
 
     @PostMapping("/save")
-    @PreAuthorize("hasRole('ADMIN') or hasRole('TEACHER')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN') or hasRole('TEACHER')")
     public String saveResult(@ModelAttribute TestResultDTO resultDTO, RedirectAttributes redirectAttributes) {
         try {
             testResultService.addOrUpdateResult(resultDTO);
@@ -155,7 +165,7 @@ public class ResultsController {
     }
 
     @PostMapping("/update")
-    @PreAuthorize("hasRole('ADMIN') or hasRole('TEACHER')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN') or hasRole('TEACHER')")
     public String updateResult(@ModelAttribute TestResultDTO resultDTO, RedirectAttributes redirectAttributes) {
         try {
             testResultService.addOrUpdateResult(resultDTO);
@@ -168,7 +178,7 @@ public class ResultsController {
     }
 
     @GetMapping("/delete/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN')")
     public String deleteResult(@PathVariable Long id, RedirectAttributes redirectAttributes) {
         try {
             testResultService.deleteResult(id);
@@ -221,7 +231,7 @@ public class ResultsController {
     }
 
     @GetMapping("/add/{testId}")
-    @PreAuthorize("hasRole('ADMIN') or hasRole('TEACHER')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN') or hasRole('TEACHER')")
     public String showAddFormWithTest(@PathVariable Long testId, Model model) {
         TestResultDTO resultDTO = new TestResultDTO();
         resultDTO.setTestId(testId);
@@ -247,14 +257,14 @@ public class ResultsController {
     }
 
     @GetMapping("/bulk-upload")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN')")
     public String showBulkUploadForm(Model model) {
         model.addAttribute("tests", testService.getAllTests());
         return "results/bulk-upload";
     }
 
     @PostMapping("/bulk-upload")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN')")
     public String processBulkUpload(@RequestParam("file") MultipartFile file,
                                     @RequestParam("testId") Long testId,
                                     RedirectAttributes redirectAttributes) {

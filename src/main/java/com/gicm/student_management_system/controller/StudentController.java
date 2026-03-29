@@ -30,6 +30,7 @@ import com.gicm.student_management_system.dto.StudentFullExportDTO;
 import com.gicm.student_management_system.dto.StudentRegistrationDTO;
 import com.gicm.student_management_system.dto.TestResultDTO;
 import com.gicm.student_management_system.entity.RegistrationStatus;
+import com.gicm.student_management_system.entity.Role;
 import com.gicm.student_management_system.entity.Student;
 import com.gicm.student_management_system.entity.StudentRegistration;
 import com.gicm.student_management_system.repository.AdditionalStudentInfoRepository;
@@ -39,6 +40,7 @@ import com.gicm.student_management_system.service.StudentExportService;
 import com.gicm.student_management_system.service.StudentRegistrationService;
 import com.gicm.student_management_system.service.StudentService;
 import com.gicm.student_management_system.service.TestResultService;
+import com.gicm.student_management_system.service.UserService;
 import com.gicm.student_management_system.validation.BasicInfoGroup;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -57,21 +59,29 @@ public class StudentController {
     private final TestResultService testResultService;
     private final MessageSource messageSource;
     private final AdditionalStudentInfoRepository additionalStudentInfoRepository;
+    private final UserService userService;
 
     // ---- UI METHODS ----
     @GetMapping
     public String getStudents(@RequestParam(value = "nameSearch", defaultValue = "") String nameSearch,
             @RequestParam(value = "status", defaultValue = "") String status,
+            @RequestParam(value = "adminId", required = false) Long adminId,
             Model model) {
 
         List<StudentDTO> students;
 
-        // Student no longer has a 'status' column; keep name search only.
-        // Use tenant-filtered methods for multi-tenancy
-        if (nameSearch.isBlank()) {
-            students = studentService.getAllStudentsForCurrentUser();
+        // If super admin selected a specific admin, filter by that admin
+        if (adminId != null) {
+            students = studentService.findByCreatedBy(adminId).stream()
+                .map(this::convertToDTO)
+                .collect(java.util.stream.Collectors.toList());
         } else {
-            students = studentService.getStudentsByFilterForCurrentUser(nameSearch);
+            // Use tenant-filtered methods for multi-tenancy
+            if (nameSearch.isBlank()) {
+                students = studentService.getAllStudentsForCurrentUser();
+            } else {
+                students = studentService.getStudentsByFilterForCurrentUser(nameSearch);
+            }
         }
 
         // --- Keep your sorting logic exactly as it is ---
@@ -93,11 +103,35 @@ public class StudentController {
             }
         });
 
+        // Get admin users for the filter dropdown (for super admin)
+        List<com.gicm.student_management_system.entity.User> adminUsers = userService.getAllUsers().stream()
+            .filter(u -> u.getRole() == Role.ADMIN || u.getRole() == Role.GUEST)
+            .collect(java.util.stream.Collectors.toList());
+
         model.addAttribute("students", students);
         model.addAttribute("nameSearch", nameSearch);
         model.addAttribute("status", status);
+        model.addAttribute("adminId", adminId);
+        model.addAttribute("adminUsers", adminUsers);
 
         return "students/student-list";
+    }
+
+    // Helper method to convert Student entity to StudentDTO
+    private StudentDTO convertToDTO(Student student) {
+        StudentDTO dto = new StudentDTO();
+        dto.setId(student.getId());
+        dto.setStudentId(student.getStudentId());
+        dto.setStudentName(student.getStudentName());
+        dto.setGender(student.getGender());
+        dto.setPhoneNumber(student.getPhoneNumber());
+        dto.setDateOfBirth(student.getDateOfBirth());
+        dto.setNationalId(student.getNationalId());
+        dto.setReligion(student.getReligion());
+        dto.setCurrentLivingAddress(student.getCurrentLivingAddress());
+        dto.setHomeTownAddress(student.getHomeTownAddress());
+        dto.setEnrolledDate(student.getEnrolledDate());
+        return dto;
     }
 
     // Helper method for extracting number from Student ID
@@ -114,7 +148,7 @@ public class StudentController {
 
     // KZT
     // 181225
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN')")
     @GetMapping("/delete/{id}")
     public String deleteStudent(@PathVariable Long id,
             @RequestParam(value = "nameSearch", defaultValue = "") String nameSearch,
@@ -251,7 +285,7 @@ public class StudentController {
         return "redirect:/students";
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN')")
     @GetMapping("/student-update/{id}")
     public String showUpdateForm(@PathVariable Long id,
             @RequestParam(value = "nameSearch", defaultValue = "") String nameSearch,
@@ -274,7 +308,7 @@ public class StudentController {
         return "students/student-update.html";
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN')")
     @PostMapping("/update-basic/{id}")
     public String updateBasicInfo(
             @PathVariable Long id,
@@ -332,7 +366,7 @@ public class StudentController {
         return buildUpdateRedirectUrl(id, "basic", nameSearch, status);
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN')")
     @PostMapping("/update-status/{id}")
     public String updateStatus(
             @PathVariable Long id,
@@ -380,7 +414,7 @@ public class StudentController {
         return buildUpdateRedirectUrl(id, "status", nameSearch, filterStatus);
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN')")
     @PostMapping("/update-interview/{id}")
     public String updateInterviewNotes(@PathVariable Long id,
             @ModelAttribute("interviewNotes") InterviewNotesDTO interviewNotesDTO,
@@ -398,7 +432,7 @@ public class StudentController {
 
     // KZT
     // 181225
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN')")
     @GetMapping("/export")
     @ResponseBody
     public List<StudentFullExportDTO> getStudentsExport(
@@ -446,7 +480,7 @@ public class StudentController {
     // ----------------------------------------------------------------------------------------
     // Registration List (Admin) - Accept / Reject
     // ----------------------------------------------------------------------------------------
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN')")
     @GetMapping("/registrations")
     public String listRegistrations(
             @RequestParam(value = "nameSearch", defaultValue = "") String nameSearch,
@@ -460,7 +494,7 @@ public class StudentController {
         return "students/registration-list";
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN')")
     @GetMapping("/registrations/{id}")
     public String registrationDetail(@PathVariable Long id, Model model) {
         StudentRegistration reg = studentRegistrationService.getRegistration(id);
@@ -468,7 +502,7 @@ public class StudentController {
         return "students/registration-detail";
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN')")
     @GetMapping("/registrations/{id}/edit")
     public String registrationEdit(@PathVariable Long id, Model model, RedirectAttributes redirectAttributes) {
         StudentRegistration reg = studentRegistrationService.getRegistration(id);
@@ -508,7 +542,7 @@ public class StudentController {
         return "students/registration-edit";
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN')")
     @PostMapping("/registrations/{id}/update")
     public String registrationUpdate(
             @PathVariable Long id,
@@ -519,7 +553,7 @@ public class StudentController {
         return "redirect:/students/registrations/" + id;
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN')")
     @PostMapping("/registrations/{id}/delete")
     public String registrationDelete(@PathVariable Long id, RedirectAttributes redirectAttributes) {
         studentRegistrationService.deleteRegistration(id);
@@ -527,7 +561,7 @@ public class StudentController {
         return "redirect:/students/registrations?registrationStatus=PENDING";
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN')")
     @PostMapping("/registrations/{id}/accept")
     public String acceptRegistration(
             @PathVariable Long id,
@@ -538,7 +572,7 @@ public class StudentController {
         return "redirect:/students/registrations?registrationStatus=PENDING";
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN')")
     @PostMapping("/registrations/{id}/reject")
     public String rejectRegistration(
             @PathVariable Long id,

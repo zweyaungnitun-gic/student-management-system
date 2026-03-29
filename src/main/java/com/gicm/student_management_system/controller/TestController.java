@@ -1,23 +1,29 @@
 package com.gicm.student_management_system.controller;
 
-import com.gicm.student_management_system.dto.TestDTO;
-import com.gicm.student_management_system.dto.TestResultDTO;
-import com.gicm.student_management_system.service.TestService;
-import com.gicm.student_management_system.service.CourseService;
-import com.gicm.student_management_system.service.TeacherService;
-import com.gicm.student_management_system.service.TestResultService;
+import java.util.List;
+import java.util.Map;
 
-import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.util.List;
-import java.util.Map;
+import com.gicm.student_management_system.dto.TestDTO;
+import com.gicm.student_management_system.dto.TestResultDTO;
+import com.gicm.student_management_system.service.CourseService;
+import com.gicm.student_management_system.service.TeacherService;
+import com.gicm.student_management_system.service.TestResultService;
+import com.gicm.student_management_system.service.TestService;
+
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 
 @Controller
 @RequestMapping("/tests")
@@ -142,7 +148,7 @@ public class TestController {
     }
 
     @GetMapping("/delete/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN')")
     public String deleteTest(@PathVariable Long id, RedirectAttributes redirectAttributes) {
         try {
             testService.deleteTest(id);

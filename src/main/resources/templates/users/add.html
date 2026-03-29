@@ -89,6 +89,18 @@
                          th:errors="*{role}" ></div>
                   </div>
                   <div class="col-6 ps-4">
+                    <label class="form-label" th:text="#{users.add.schoolName}">学校名</label>
+                    <input type="text" class="form-control" th:field="*{schoolName}" 
+                           th:classappend="${#fields.hasErrors('schoolName')} ? 'is-invalid' : ''"
+                           th:placeholder="#{placeholder.user.schoolName}" maxlength="100">
+                    <div class="invalid-feedback" th:if="${#fields.hasErrors('schoolName')}" 
+                         th:errors="*{schoolName}" ></div>
+                  </div>
+                </div>
+
+                <!-- Row 3 -->
+                <div class="row mb-4">
+                  <div class="col-6 pe-4">
                       <label class="form-label required-field" th:text="#{users.add.auto_4bdf}">パスワード</label>
                       <div class="input-group">
                           <input type="password" class="form-control" name="password" 

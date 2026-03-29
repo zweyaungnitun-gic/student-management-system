@@ -1,5 +1,13 @@
 package com.gicm.student_management_system.serviceimpl;
 
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.gicm.student_management_system.dto.StudentDTO;
 import com.gicm.student_management_system.entity.AdditionalStudentInfo;
 import com.gicm.student_management_system.entity.RegistrationStatus;
@@ -9,14 +17,8 @@ import com.gicm.student_management_system.repository.StudentRepository;
 import com.gicm.student_management_system.security.SecurityUtils;
 import com.gicm.student_management_system.service.StudentIdGeneratorService;
 import com.gicm.student_management_system.service.StudentService;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
+import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
@@ -338,5 +340,10 @@ public List<StudentDTO> getAllStudentsForCurrentUser() {
             return studentRepository.findByRegistrationStatus(status);
         }
         return studentRepository.findByRegistrationStatusAndStudentNameIgnoreCaseContaining(status, nameSearch);
+    }
+
+    @Override
+    public List<Student> findByCreatedBy(Long createdBy) {
+        return studentRepository.findByCreatedBy(createdBy);
     }
 }

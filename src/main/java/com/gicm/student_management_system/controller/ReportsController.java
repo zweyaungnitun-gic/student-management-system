@@ -1,5 +1,6 @@
 package com.gicm.student_management_system.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -21,7 +22,6 @@ import com.gicm.student_management_system.service.TestResultService;
 import com.gicm.student_management_system.service.TestService;
 
 import lombok.RequiredArgsConstructor;
-import java.util.ArrayList;
 
 @Controller
 @RequestMapping("/reports")
@@ -91,7 +91,7 @@ public class ReportsController {
         }
 
         @GetMapping("/rankings")
-        @PreAuthorize("hasRole('ADMIN')")
+        @PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN')")
         public String classRankings(@RequestParam(defaultValue = "N5") String className,
                         @RequestParam(defaultValue = "2024-2025") String academicYear,
                         @RequestParam(defaultValue = "Semester 1") String semester,

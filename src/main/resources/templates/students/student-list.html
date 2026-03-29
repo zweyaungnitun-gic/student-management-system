@@ -1,34 +1,17 @@
 <!DOCTYPE html>
 <html lang="ja" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
-  <head th:replace="~{layouts/admin-layout :: head( pageTitle=${'生徒情報一覧 | Admin Dashboard'},
-    extraHead=~{::extraCSS}, extraJS=~{::extraJS} )}">
-    <style>
-      .badge-status {
-      padding: 4px 12px;
-      border-radius: 20px;
-      font-size: 0.75rem;
-      font-weight: 500;
-      }
-      .badge-status.enrolled { 
-        background: #d1fae5; 
-        color: #065f46; 
-      }
-      .badge-status.graduated { 
-        background: #fed7aa; 
-        color: #92400e; 
-      }
-      .badge-status.dropped { 
-        background: #fee2e2; 
-        color: #991b1b; 
-      }
-    </style>
-  </head>
+<head th:replace="~{layouts/admin-layout :: head(
+    pageTitle=${'生徒情報一覧 | Admin Dashboard'},
+    extraHead=~{::extraCSS},
+    extraJS=~{::extraJS}
+)}">
+</head>
 
-  <th:block th:fragment="extraCSS">
-    <link rel="stylesheet" href="/css/student-list.css" />
-  </th:block>
-
+<th:block th:fragment="extraCSS">
+  <link rel="stylesheet" href="/css/student-list.css" />
+</th:block>
+<td data-label="動作機能" class="action-cell">
   <th:block th:fragment="extraJS">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
@@ -64,9 +47,7 @@
         }
 
         // Display first page
-        if (allRows.length > 0) {
-          displayPage(1);
-        }
+        displayPage(1);
         updateSelectionInfo();
       }
 
@@ -75,6 +56,7 @@
         // Listen for checkbox changes
         document.addEventListener("change", function (e) {
           if (e.target.classList.contains("row-checkbox")) {
+            // updateSelectAllCheckbox();
             updateSelectionInfo();
             updateDownloadButton();
           }
@@ -95,6 +77,7 @@
         const selectAll = document.getElementById("selectAll");
         if (!selectAll) return;
 
+        // Check if all VISIBLE rows on the current page are checked
         const visibleCheckboxes = document.querySelectorAll(
           "#studentTableBody tr:not([style*='display: none']) .row-checkbox"
         );
@@ -112,6 +95,7 @@
           selectAll.checked = true;
           selectAll.indeterminate = false;
         } else {
+          // This shows the dash (-) in the checkbox if some are selected
           selectAll.checked = false;
           selectAll.indeterminate = true;
         }
@@ -124,6 +108,7 @@
         ).length;
         const totalCount = document.querySelectorAll(".row-checkbox").length;
 
+        // Create or update selection info display
         let infoDiv = document.querySelector(".selection-info");
         if (!infoDiv) {
           infoDiv = document.createElement("div");
@@ -144,24 +129,29 @@
         }
       }
 
-      // ============ DATE FORMATTING FOR EXPORT ============
+      // ============ DATE FORMATTING FOR EXPORT (mm/dd/yyyy) ============
       function formatExportDate(dateStr) {
         if (!dateStr) return "";
         const date = new Date(dateStr);
         if (isNaN(date.getTime())) return dateStr;
+
         const mm = String(date.getMonth() + 1).padStart(2, "0");
         const dd = String(date.getDate()).padStart(2, "0");
         const yyyy = date.getFullYear();
+
+        // The '\u200B' is a zero-width space.
+        // It is invisible to the user but stops Excel from re-formatting the cell.
         return `\u200B${mm}/${dd}/${yyyy}`;
       }
-
       // ============ DOWNLOAD FUNCTIONALITY ============
       function setupDownloadButton() {
         const downloadBtn = document.getElementById("downloadBtn");
         if (!downloadBtn) return;
 
         downloadBtn.addEventListener("click", async function () {
+          // Check if user has admin role
           if (userRole !== "ROLE_ADMIN") {
+            // Redirect to access denied page for non-admin users
             window.location.href = "/access-denied";
             return;
           }
@@ -173,36 +163,49 @@
         const downloadBtn = document.getElementById("downloadBtn");
         const originalText = downloadBtn.innerHTML;
 
+        // --- NEW ADDITION START ---
+        // Get all checkboxes that are checked
         const checkedCheckboxes = document.querySelectorAll(
           ".row-checkbox:checked"
         );
 
+        // If no student is selected, show alert and stop execution
         if (checkedCheckboxes.length === 0) {
           alert("少なくとも1つのチェックボックスをチェックしてください。");
           return;
         }
 
         try {
-          downloadBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 処理中...';
+          // Show loading
+          downloadBtn.innerHTML =
+            '<i class="fas fa-spinner fa-spin"></i> 処理中...';
           downloadBtn.disabled = true;
 
-          const nameSearch = document.getElementById("nameSearchInput")?.value || "";
+          // Get filter values
+          const nameSearch =
+            document.getElementById("nameSearchInput")?.value || "";
           const status = Array.from(document.querySelectorAll(".status-option"))
             .filter((cb) => cb.checked)
             .map((cb) => cb.value)
             .join(",");
 
+          // Get selected database IDs (for backend)
           const allCheckboxes = document.querySelectorAll(".row-checkbox");
           const selectedDbIds = Array.from(allCheckboxes)
             .filter((cb) => cb.checked)
             .map((cb) => cb.value)
             .filter((id) => id && id !== "");
 
+          // Get selected student IDs (for display)
           const selectedStudentIds = Array.from(allCheckboxes)
             .filter((cb) => cb.checked)
             .map((cb) => cb.getAttribute("data-student-id"))
             .filter((id) => id);
 
+          console.log("Selected Database IDs for backend:", selectedDbIds);
+          console.log("Selected Student IDs for display:", selectedStudentIds);
+
+          // Build query parameters
           const params = new URLSearchParams();
           if (selectedDbIds.length > 0) {
             params.append("ids", selectedDbIds.join(","));
@@ -210,6 +213,7 @@
           if (nameSearch) params.append("nameSearch", nameSearch);
           if (status) params.append("status", status);
 
+          // Fetch data from backend
           const response = await fetch(`/students/export?${params.toString()}`);
 
           if (!response.ok) {
@@ -223,70 +227,292 @@
             return;
           }
 
+          // Sort data by student ID before exporting
           const sortedData = sortStudentData(data);
+
+          // Prepare Excel data
           await exportToExcel(sortedData, selectedStudentIds);
         } catch (err) {
           console.error("Export error:", err);
           alert("エクスポートに失敗しました: " + err.message);
         } finally {
+          // Reset button
           downloadBtn.innerHTML = originalText;
           downloadBtn.disabled = false;
           updateDownloadButton();
         }
       }
 
+      // ============ SORT STUDENT DATA ============
       function sortStudentData(data) {
+        // Create a copy of the data array
         const sortedData = [...data];
+
+        // Sort by student ID in ascending order
         sortedData.sort((a, b) => {
+          // Extract numeric part from student ID (e.g., "STU001" -> 1, "STU010" -> 10)
           const extractNumber = (studentId) => {
             if (!studentId) return 0;
+            // Handle different student ID formats
             const match = studentId.match(/\d+/);
             return match ? parseInt(match[0], 10) : 0;
           };
+
           const numA = extractNumber(a.studentId);
           const numB = extractNumber(b.studentId);
+
+          // If numbers are equal, sort alphabetically
           if (numA === numB) {
             return (a.studentId || "").localeCompare(b.studentId || "");
           }
+
           return numA - numB;
         });
+
+        console.log(
+          "Sorted data:",
+          sortedData.map((s) => s.studentId)
+        );
         return sortedData;
       }
 
       async function exportToExcel(data, selectedStudentIds) {
+        // Headers
         const headers = [
-          "生徒ID", "名前", "名前(カタカナ)", "生年月日", "性別", "父親名",
-          "連絡先(TEL,Viber)", "国民ID番号", "パスポート番号", "電話番号",
-          "保護者電話番号", "現住所", "出身地住所", "希望職種", "その他希望職種",
-          "宗教", "その他宗教", "現在のJLPT合格レベル", "生徒の授業ステータス",
-          "在籍状況", "合格済みJLPTレベル", "日本渡航経験", "COE申請経験",
-          "寮があれば入りたい", "お酒", "タバコ", "入れ墨", "学校登録日",
-          "授業料支払予定日", "授業料支払実績日", "その他メモ（自由形式）"
+          // Student Info page
+          "生徒ID",
+          "名前",
+          "名前(カタカナ)",
+          "生年月日",
+          "性別",
+          "父親名",
+          "連絡先(TEL,Viber)",
+          "国民ID番号",
+          "パスポート番号",
+          "電話番号",
+          "保護者電話番号",
+          "現住所",
+          "出身地住所",
+
+          // Status page
+          "希望職種",
+          "その他希望職種",
+          "宗教",
+          "その他宗教",
+          "現在のJLPT合格レベル",
+          "生徒の授業ステータス",
+          "在籍状況",
+          "合格済みJLPTレベル",
+          "日本渡航経験",
+          "COE申請経験",
+          "寮があれば入りたい",
+          "お酒",
+          "タバコ",
+          "入れ墨",
+          "学校登録日",
+          "授業料支払予定日",
+          "授業料支払実績日",
+          "その他メモ（自由形式）",
+
+          // N5 Class
+          "N5クラス名",
+          "N5担当教師",
+          "N5出席率",
+          "N5テスト結果1",
+          "N5テスト結果2",
+          "N5テスト結果3",
+          "N5テスト結果4",
+          "N5教師所感",
+          "N5会話クラス①名",
+          "N5会話クラス①教師",
+          "N5会話クラス①出席率",
+          "N5会話クラス①テスト結果",
+          "N5会話クラス①教師所感",
+          "N5会話クラス②名",
+          "N5会話クラス②教師",
+          "N5会話クラス②出席率",
+          "N5会話クラス②テスト結果",
+          "N5会話クラス②教師所感",
+          "N5会話クラス③名",
+          "N5会話クラス③教師",
+          "N5会話クラス③出席率",
+          "N5会話クラス③テスト結果",
+          "N5会話クラス③教師所感",
+
+          // N4 Class
+          "N4クラス名",
+          "N4担当教師",
+          "N4出席率",
+          "N4テスト結果1",
+          "N4テスト結果2",
+          "N4テスト結果3",
+          "N4テスト結果4",
+          "N4教師所感",
+          "N4会話クラス①名",
+          "N4会話クラス①教師",
+          "N4会話クラス①出席率",
+          "N4会話クラス①テスト結果",
+          "N4会話クラス①教師所感",
+          "N4会話クラス②名",
+          "N4会話クラス②教師",
+          "N4会話クラス②出席率",
+          "N4会話クラス②テスト結果",
+          "N4会話クラス②教師所感",
+          "N4会話クラス③名",
+          "N4会話クラス③教師",
+          "N4会話クラス③出席率",
+          "N4会話クラス③テスト結果",
+          "N4会話クラス③教師所感",
+
+          // Interview Notes
+          "一回目面接メモ",
+          "二回目面接メモ",
+          "三回目面接メモ",
+          "メモ／備考",
         ];
 
+        // Map data to rows
         const rows = data.map((student) => [
-          student.studentId || "", student.studentName || "", student.nameInJapanese || "",
-          formatExportDate(student.dateOfBirth), student.gender || "", student.fatherName || "",
-          student.contactViber || "", student.nationalID || "", student.passportNumber || "",
-          student.phoneNumber || "", student.secondaryPhone || "", student.currentLivingAddress || "",
-          student.homeTownAddress || "", student.desiredJobType || "", student.otherDesiredJobType || "",
-          student.religion || "", student.otherReligion || "", student.currentJapanLevel || "",
-          student.attendingClassRelatedStatus || "", student.status || "", student.passedHighestJLPTLevel || "",
-          student.japanTravelExperience || "", student.coeApplicationExperience || "", student.hostelPreference || "",
-          student.isAlcoholDrink === true ? "飲む" : student.isAlcoholDrink === false ? "飲まない" : "",
-          student.isSmoking === true ? "吸う" : student.isSmoking === false ? "吸わない" : "",
-          student.haveTatto === true ? "ある" : student.haveTatto === false ? "ない" : "",
-          formatExportDate(student.enrolledDate), formatExportDate(student.schedulePaymentTutionDate),
-          formatExportDate(student.actualTutionPaymentDate), student.memoNotes || ""
+          // Student Info page
+          student.studentId || "",
+          student.studentName || "",
+          student.nameInJapanese || "",
+          formatExportDate(student.dateOfBirth),
+          student.gender || "",
+          student.fatherName || "",
+          student.contactViber || "",
+          student.nationalID || "",
+          student.passportNumber || "",
+          student.phoneNumber || "",
+          student.secondaryPhone || "",
+          student.currentLivingAddress || "",
+          student.homeTownAddress || "",
+
+          // Status page
+          student.desiredJobType || "",
+          student.otherDesiredJobType || "",
+          student.religion || "",
+          student.otherReligion || "",
+          student.currentJapanLevel || "",
+          student.attendingClassRelatedStatus || "",
+          student.status || "",
+          student.passedHighestJLPTLevel || "",
+          student.japanTravelExperience || "",
+          student.coeApplicationExperience || "",
+          student.hostelPreference || "",
+          student.isAlcoholDrink === true
+            ? "飲む"
+            : student.isAlcoholDrink === false
+              ? "飲まない"
+              : "",
+          student.isSmoking === true
+            ? "吸う"
+            : student.isSmoking === false
+              ? "吸わない"
+              : "",
+          student.haveTatto === true
+            ? "ある"
+            : student.haveTatto === false
+              ? "ない"
+              : "",
+          formatExportDate(student.enrolledDate),
+          formatExportDate(student.schedulePaymentTutionDate),
+          formatExportDate(student.actualTutionPaymentDate),
+          student.memoNotes || "",
+
+          // N5 Class data
+          student.n5ClassName || "N5クラス",
+          student.n5ClassTeacher || "",
+          student.n5ClassAttendance || "",
+          student.n5ClassTestResult1 || "",
+          student.n5ClassTestResult2 || "",
+          student.n5ClassTestResult3 || "",
+          student.n5ClassTestResult4 || "",
+          student.n5ClassFeedback || "",
+          student.n5Class1Name || "N5会話クラス①",
+          student.n5Class1Teacher || "",
+          student.n5Class1AttendanceRate || "",
+          student.n5Class1TestResult || "",
+          student.n5Class1TeacherFeedback || "",
+          student.n5Class2Name || "N5会話クラス②",
+          student.n5Class2Teacher || "",
+          student.n5Class2AttendanceRate || "",
+          student.n5Class2TestResult || "",
+          student.n5Class2TeacherFeedback || "",
+          student.n5Class3Name || "N5会話クラス③",
+          student.n5Class3Teacher || "",
+          student.n5Class3AttendanceRate || "",
+          student.n5Class3TestResult || "",
+          student.n5Class3TeacherFeedback || "",
+
+          // N4 Class data
+          student.n4ClassName || "N4クラス",
+          student.n4ClassTeacher || "",
+          student.n4ClassAttendance || "",
+          student.n4ClassTestResult1 || "",
+          student.n4ClassTestResult2 || "",
+          student.n4ClassTestResult3 || "",
+          student.n4ClassTestResult4 || "",
+          student.n4ClassFeedback || "",
+          student.n4Class1Name || "N4会話クラス①",
+          student.n4Class1Teacher || "",
+          student.n4Class1AttendanceRate || "",
+          student.n4Class1TestResult || "",
+          student.n4Class1TeacherFeedback || "",
+          student.n4Class2Name || "N4会話クラス②",
+          student.n4Class2Teacher || "",
+          student.n4Class2AttendanceRate || "",
+          student.n4Class2TestResult || "",
+          student.n4Class2TeacherFeedback || "",
+          student.n4Class3Name || "N4会話クラス③",
+          student.n4Class3Teacher || "",
+          student.n4Class3AttendanceRate || "",
+          student.n4Class3TestResult || "",
+          student.n4Class3TeacherFeedback || "",
+
+          // Interview Notes
+          student.interview1 || "",
+          student.interview2 || "",
+          student.interview3 || "",
+          student.otherMemo || "",
         ]);
 
+        // Create workbook
         const wb = XLSX.utils.book_new();
         const ws = XLSX.utils.aoa_to_sheet([headers, ...rows]);
+
+        // Set column widths
         ws["!cols"] = headers.map((h) => ({ wch: 20 }));
+
+        // Add color to headers
+        const colorMap = [
+          { start: 0, end: 27, bg: "FFFF99" }, // Student Info - Yellow
+          { start: 28, end: 48, bg: "99CCFF" }, // N5 Class - Light Blue
+          { start: 49, end: 69, bg: "99FF99" }, // N4 Class - Light Green
+          { start: 70, end: 77, bg: "FFCC99" }, // Interview - Orange
+        ];
+
+        colorMap.forEach((section) => {
+          for (let c = section.start; c <= section.end; c++) {
+            const cellAddress = XLSX.utils.encode_cell({ r: 0, c: c });
+            if (!ws[cellAddress]) continue;
+            ws[cellAddress].s = {
+              fill: { fgColor: { rgb: section.bg } },
+              font: { bold: true },
+              alignment: { horizontal: "center" },
+            };
+          }
+        });
+
         XLSX.utils.book_append_sheet(wb, ws, "生徒情報");
 
-        const timestamp = new Date().toISOString().slice(0, 10).replace(/-/g, "");
+        // Create filename
+        const timestamp = new Date()
+          .toISOString()
+          .slice(0, 10)
+          .replace(/-/g, "");
         let filename;
+
         if (selectedStudentIds.length > 0) {
           if (selectedStudentIds.length <= 3) {
             filename = `生徒_${selectedStudentIds.join("_")}_${timestamp}.xlsx`;
@@ -296,28 +522,33 @@
         } else {
           filename = `全生徒_${timestamp}.xlsx`;
         }
+
+        // Download file
         XLSX.writeFile(wb, filename);
       }
 
       function updateDownloadButton() {
         const downloadBtn = document.getElementById("downloadBtn");
-        if (downloadBtn) {
-          downloadBtn.innerHTML = "↓ダウンロード";
-        }
+        if (!downloadBtn) return;
+
+        // Simply keep the text static
+        downloadBtn.innerHTML = "↓ダウンロード";
       }
 
       // ============ PAGINATION ============
+      // ============ PAGINATION ============
       function setupPagination() {
+        // Get all rows (excluding header and empty rows)
         allRows = Array.from(document.querySelectorAll("#studentTableBody tr")).filter(
           r => !r.querySelector("td[colspan]")
         );
         console.log("Total rows found:", allRows.length);
-        
+
         if (allRows.length === 0) {
-          const paginationDiv = document.getElementById("pagination");
-          if (paginationDiv) paginationDiv.innerHTML = "";
+          document.getElementById("pagination").innerHTML = "";
           return;
         }
+
         displayPage(1);
       }
 
@@ -325,17 +556,21 @@
         currentPage = page;
         const start = (page - 1) * rowsPerPage;
         const end = Math.min(start + rowsPerPage, allRows.length);
-        
+
+        console.log(`Displaying page ${page}: rows ${start} to ${end - 1}`);
+
+        // First hide all rows
         allRows.forEach(row => {
           row.style.display = "none";
         });
-        
+
+        // Then show only rows for current page
         for (let i = start; i < end; i++) {
           if (allRows[i]) {
             allRows[i].style.display = "";
           }
         }
-        
+
         renderPagination();
         updateSelectAllCheckbox();
       }
@@ -344,21 +579,21 @@
         const pageCount = Math.ceil(allRows.length / rowsPerPage);
         const paginationDiv = document.getElementById("pagination");
         if (!paginationDiv) return;
-        
+
         paginationDiv.innerHTML = "";
-        
-        if (pageCount <= 1) return;
-        
+
+        // Previous button
         const prevBtn = document.createElement("button");
         prevBtn.innerHTML = "&laquo;";
         prevBtn.className = `btn btn-sm mx-1 ${currentPage === 1 ? 'btn-secondary' : 'btn-outline-primary'}`;
         prevBtn.disabled = currentPage === 1;
         prevBtn.addEventListener("click", () => displayPage(currentPage - 1));
         paginationDiv.appendChild(prevBtn);
-        
+
+        // Page numbers
         let startPage = Math.max(1, currentPage - 2);
         let endPage = Math.min(pageCount, currentPage + 2);
-        
+
         for (let i = startPage; i <= endPage; i++) {
           const btn = document.createElement("button");
           btn.textContent = i;
@@ -366,7 +601,8 @@
           btn.addEventListener("click", () => displayPage(i));
           paginationDiv.appendChild(btn);
         }
-        
+
+        // Next button
         const nextBtn = document.createElement("button");
         nextBtn.innerHTML = "&raquo;";
         nextBtn.className = `btn btn-sm mx-1 ${currentPage === pageCount ? 'btn-secondary' : 'btn-outline-primary'}`;
@@ -375,6 +611,34 @@
         paginationDiv.appendChild(nextBtn);
       }
 
+      // Initialize pagination after DOM is loaded
+      document.addEventListener("DOMContentLoaded", function () {
+        console.log("Initializing student list page...");
+
+        // Initialize allRows array
+        allRows = Array.from(document.querySelectorAll("#studentTableBody tr")).filter(
+          r => !r.querySelector("td[colspan]")
+        );
+        console.log("Total rows after DOM load:", allRows.length);
+
+        // Setup pagination
+        setupPagination();
+
+        // Setup other event listeners
+        setupEventListeners();
+        setupDownloadButton();
+        setupFilterForm();
+
+        // Sidebar toggle
+        const layout = document.querySelector(".dashboard-layout");
+        const toggles = document.querySelectorAll("[data-sidebar-toggle]");
+        toggles.forEach((btn) =>
+          btn.addEventListener("click", function (event) {
+            event.preventDefault();
+            layout?.classList.toggle("sidebar-open");
+          })
+        );
+      });
       // ============ FILTER FORM ============
       function setupFilterForm() {
         const statusInput = document.getElementById("statusFilterInput");
@@ -384,6 +648,7 @@
         const form = document.getElementById("studentFilterForm");
         const hiddenStatus = document.getElementById("hiddenStatus");
 
+        // Restore saved values
         const savedStatuses = localStorage.getItem("savedStatuses");
         const savedName = localStorage.getItem("savedName");
 
@@ -404,9 +669,11 @@
           nameInput.value = savedName;
         }
 
+        // Update background colors
         updateStatusInputBg();
         updateNameInputBg();
 
+        // Status checkbox changes
         statusCheckboxes.forEach((cb) =>
           cb.addEventListener("change", () => {
             const selected = Array.from(statusCheckboxes)
@@ -414,7 +681,8 @@
               .map((c) => c.value);
 
             if (statusInput) {
-              statusInput.value = selected.length > 0 ? selected.join(", ") : "ステータス選択";
+              statusInput.value =
+                selected.length > 0 ? selected.join(", ") : "ステータス選択";
             }
             if (hiddenStatus) {
               hiddenStatus.value = selected.join(",");
@@ -425,6 +693,7 @@
           })
         );
 
+        // Name input changes
         if (nameInput) {
           nameInput.addEventListener("input", () => {
             localStorage.setItem("savedName", nameInput.value);
@@ -432,20 +701,24 @@
           });
         }
 
+        // Toggle dropdown
         if (statusInput) {
           statusInput.addEventListener("click", () => {
             if (dropdown) {
-              dropdown.style.display = dropdown.style.display === "block" ? "none" : "block";
+              dropdown.style.display =
+                dropdown.style.display === "block" ? "none" : "block";
             }
           });
         }
 
+        // Close dropdown when clicking outside
         document.addEventListener("click", (e) => {
           if (!e.target.closest(".multiselect-wrapper") && dropdown) {
             dropdown.style.display = "none";
           }
         });
 
+        // Handle Enter key
         [statusInput, nameInput].forEach((input) => {
           if (input) {
             input.addEventListener("keydown", (e) => {
@@ -461,7 +734,10 @@
       function updateStatusInputBg() {
         const statusInput = document.getElementById("statusFilterInput");
         const statusCheckboxes = document.querySelectorAll(".status-option");
-        const anyChecked = Array.from(statusCheckboxes).some((cb) => cb.checked);
+        const anyChecked = Array.from(statusCheckboxes).some(
+          (cb) => cb.checked
+        );
+
         if (statusInput) {
           statusInput.style.backgroundColor = anyChecked ? "#E8F0FE" : "white";
         }
@@ -470,24 +746,11 @@
       function updateNameInputBg() {
         const nameInput = document.getElementById("nameSearchInput");
         if (nameInput) {
-          nameInput.style.backgroundColor = nameInput.value.trim() !== "" ? "#E8F0FE" : "white";
+          nameInput.style.backgroundColor =
+            nameInput.value.trim() !== "" ? "#E8F0FE" : "white";
         }
       }
-
-      // Initialize
-      document.addEventListener("DOMContentLoaded", function() {
-        console.log("Initializing student list page...");
-        
-        allRows = Array.from(document.querySelectorAll("#studentTableBody tr")).filter(
-          r => !r.querySelector("td[colspan]")
-        );
-        console.log("Total rows after DOM load:", allRows.length);
-        
-        setupPagination();
-        setupEventListeners();
-        setupDownloadButton();
-        setupFilterForm();
-        
+      document.addEventListener("DOMContentLoaded", function () {
         const layout = document.querySelector(".dashboard-layout");
         const toggles = document.querySelectorAll("[data-sidebar-toggle]");
         toggles.forEach((btn) =>
@@ -503,9 +766,7 @@
   <body>
     <div class="dashboard-layout">
       <!-- Sidebar -->
-      <th:block
-        th:replace="~{layouts/admin-layout :: sidebar(currentPage=${'students'})}"
-      ></th:block>
+      <th:block th:replace="~{layouts/admin-layout :: sidebar(currentPage=${'students'})}"></th:block>
 
       <div class="sidebar-overlay d-lg-none" data-sidebar-toggle></div>
 
@@ -514,89 +775,103 @@
         <div class="page-wrapper py-4 py-md-5 px-3 px-md-5">
           <div class="page-header mb-3">
             <div class="d-flex align-items-center gap-3">
-              <button
-                class="btn btn-light btn-icon d-lg-none"
-                type="button"
-                aria-label="Toggle sidebar"
-                data-sidebar-toggle
-              >
+              <button class="btn btn-light btn-icon d-lg-none" type="button" aria-label="Toggle sidebar"
+                data-sidebar-toggle>
                 <i class="bi bi-list fs-4"></i>
               </button>
               <div>
-                <h1 class="mb-0" style="color: #0a58a0; font-weight: 600; font-size: 1.8rem" th:text="#{students.student-list.auto_1e0b}">生徒情報一覧画面</h1>
+                <h1 class="mb-0" style="color: #0a58a0; font-weight: 600; font-size: 1.8rem"
+                  th:text="#{students.student-list.auto_1e0b}">生徒情報一覧画面</h1>
               </div>
               <div class="ms-auto">
                 <div class="btn-group" role="group">
-                    <a th:href="@{/admin/students/create/step1}" class="btn btn-primary btn-sm" sec:authorize="hasRole('ADMIN')">
-                        <i class="bi bi-person-plus-fill"></i><th:block th:text="#{students.student-list.auto_0fd0}">生徒追加</th:block></a>
-                    <a th:href="@{/teachers}" class="btn btn-outline-primary btn-sm">
-                        <i class="bi bi-people-fill"></i><th:block th:text="#{students.student-list.auto_5d7c}">教師管理</th:block></a>
-                    <a th:href="@{/courses}" class="btn btn-outline-success btn-sm">
-                        <i class="bi bi-book-fill"></i><th:block th:text="#{students.student-list.auto_5b1d}">コース管理</th:block></a>
-                    <a th:href="@{/users/add}" class="btn btn-outline-warning btn-sm" sec:authorize="hasRole('ADMIN')">
-                        <i class="bi bi-person-plus-fill"></i><th:block th:text="#{students.student-list.auto_4f12}">ユーザー追加</th:block></a>
+                  <a th:href="@{/admin/students/create/step1}" class="btn btn-primary btn-sm"
+                    sec:authorize="hasRole('ADMIN')">
+                    <i class="bi bi-person-plus-fill"></i>
+                    <th:block th:text="#{students.student-list.auto_0fd0}">生徒追加</th:block>
+                  </a>
+                  <a th:href="@{/teachers}" class="btn btn-outline-primary btn-sm">
+                    <i class="bi bi-people-fill"></i>
+                    <th:block th:text="#{students.student-list.auto_5d7c}">教師管理</th:block>
+                  </a>
+                  <a th:href="@{/courses}" class="btn btn-outline-success btn-sm">
+                    <i class="bi bi-book-fill"></i>
+                    <th:block th:text="#{students.student-list.auto_5b1d}">コース管理</th:block>
+                  </a>
+                  <a th:href="@{/users/add}" class="btn btn-outline-warning btn-sm" sec:authorize="hasRole('ADMIN')">
+                    <i class="bi bi-person-plus-fill"></i>
+                    <th:block th:text="#{students.student-list.auto_4f12}">ユーザー追加</th:block>
+                  </a>
                 </div>
-            </div>
+              </div>
             </div>
           </div>
 
           <div class="table-wrapper p-1" style="border: 1px solid transparent">
             <div class="table-responsive me-3">
-              <table class="table data-table align-middle border border-radius"
-                id="studentTable">
+              <table class="table data-table align-middle border border-radius" id="studentTable">
                 <thead>
                   <tr class="filter-row">
                     <th colspan="10" class="p-3">
                       <form th:action="@{/students}" method="get" id="studentFilterForm">
                         <div class="d-flex flex-col md:flex-row align-items-center gap-4 flex-wrap">
+                          <!-- subete -->
                           <div class="filter-control-group checkbox-group flex flex-row justify-content-start">
                             <div>
-                              <input type="checkbox" id="selectAll" class="form-check-input"/>
+                              <input type="checkbox" id="selectAll" class="form-check-input" />
                               <span style="font-size: 16px" th:text="#{students.student-list.auto_5172}">全て選択</span>
                             </div>
                           </div>
+                          <!-- name search -->
                           <div class="filter-control-group">
                             <span style="font-size: 16px" th:text="#{students.student-list.auto_91a0}">名前で検索</span>
-                            <input
-                              type="text"
-                              name="nameSearch"
-                              th:value="${nameSearch}"
-                              class="form-control form-control-sm"
-                              id="nameSearchInput"
-                              th:placeholder="#{placeholder.student.search.name}"
-                            />
+                            <input type="text" name="nameSearch" th:value="${nameSearch}"
+                              class="form-control form-control-sm" id="nameSearchInput"
+                              th:placeholder="#{placeholder.student.search.name}" />
                           </div>
+                          <!-- admin filter (super admin only) -->
+                          <div class="filter-control-group" sec:authorize="hasRole('SUPER_ADMIN')">
+                            <span style="font-size: 16px">管理者でフィルタ</span>
+                            <select name="adminId" class="form-select form-select-sm" style="min-width: 150px;">
+                              <option value="" th:selected="${adminId == null}">すべての管理者</option>
+                              <option th:each="admin : ${adminUsers}" th:value="${admin.id}"
+                                th:text="${admin.username} + ' (' + (${admin.schoolName} ?: '-') + ')'"
+                                th:selected="${adminId != null && adminId == admin.id}">
+                                Admin Name
+                              </option>
+                            </select>
+                          </div>
+                          <!-- status filter -->
                           <div class="filter-control-group" id="studentStatusWrapper">
                             <div id="studentStatusFilter">
                               <div class="filter-control-group">
                                 <label class="filter-label" th:text="#{students.student-list.auto_2c3e}">生徒ステータス</label>
                                 <div class="multiselect-wrapper">
-                                  <input
-                                    type="text"
-                                    id="statusFilterInput"
-                                    class="multiselect-input"
-                                    value="ステータス選択"
-                                    readonly
-                                  />
+                                  <input type="text" id="statusFilterInput" class="multiselect-input" value="ステータス選択"
+                                    readonly />
                                   <span class="dropdown-arrow">▼</span>
-                                  <div id="statusDropdownList"
-                                    class="multiselect-dropdown">
+                                  <div id="statusDropdownList" class="multiselect-dropdown">
                                     <label>
-                                      <input type="checkbox" class="status-option" value="在校" th:text="#{students.student-list.auto_ed9f}"/>在校</label>
+                                      <input type="checkbox" class="status-option" value="在校"
+                                        th:text="#{students.student-list.auto_ed9f}" />在校</label>
                                     <label>
-                                      <input type="checkbox" class="status-option" value="卒業" th:text="#{students.student-list.auto_bff7}">卒業</label>
+                                      <input type="checkbox" class="status-option" value="卒業"
+                                        th:text="#{students.student-list.auto_bff7}">卒業</label>
                                     <label>
-                                      <input type="checkbox" class="status-option" value="途中退校" th:text="#{students.student-list.auto_b541}"/>途中退校</label>
+                                      <input type="checkbox" class="status-option" value="途中退校"
+                                        th:text="#{students.student-list.auto_b541}" />途中退校</label>
                                   </div>
                                 </div>
                               </div>
                             </div>
                           </div>
+                          <!-- Download button container -->
                           <div class="download-button-container flex flex-row justify-content-start">
-                            <button type="button" id="downloadBtn" 
-                              sec:authorize="hasRole('GUEST')" disabled style="cursor: not-allowed; opacity: 0.6;" th:text="#{students.student-list.auto_3151}">↓ダウンロード</button>
-                            <button type="button" id="downloadBtn" 
-                              sec:authorize="hasRole('ADMIN')" th:text="#{students.student-list.auto_3151}">↓ダウンロード</button>
+                            <button type="button" id="downloadBtn" sec:authorize="hasRole('GUEST')" disabled
+                              style="cursor: not-allowed; opacity: 0.6;"
+                              th:text="#{students.student-list.auto_3151}">↓ダウンロード</button>
+                            <button type="button" id="downloadBtn" sec:authorize="hasRole('ADMIN')"
+                              th:text="#{students.student-list.auto_3151}">↓ダウンロード</button>
                           </div>
                         </div>
                         <button type="submit" style="display: none"></button>
@@ -604,6 +879,7 @@
                       </form>
                     </th>
                   </tr>
+
                   <tr>
                     <th scope="col" style="width: 50px" th:text="#{students.student-list.auto_7ea9}">生徒ID</th>
                     <th scope="col" style="width: 100px" th:text="#{students.student-list.auto_5b9e}">名前</th>
@@ -617,12 +893,12 @@
                   </tr>
                 </thead>
 
-                <tbody id="studentTableBody" th:if="${students != null and students.size() > 0}">
+                <tbody id="studentTableBody" th:if="${students != null && students.size() > 0}">
                   <tr th:each="student : ${students}">
                     <td data-label="生徒ID" class="id-cell">
                       <label class="d-flex align-items-center justify-content-md-center gap-1 m-0">
-                        <input class="form-check-input row-checkbox" type="checkbox" 
-                              th:value="${student.id}" th:attr="data-student-id=${student.studentId}"/>
+                        <input class="form-check-input row-checkbox" type="checkbox" th:value="${student.id}"
+                          th:attr="data-student-id=${student.studentId}" />
                         <span th:text="${student.studentId}">STU001</span>
                       </label>
                     </td>
@@ -630,43 +906,43 @@
                     <td data-label="性別" th:text="${student.gender}">男性</td>
                     <td data-label="電話番号" th:text="${student.phoneNumber}">09012345678</td>
                     <td data-label="希望職種" th:text="${student.desiredJobType ?: '-'}">-</td>
-                    <td data-label="ステータス">
-                        <span th:if="${student.status == '在校'}" class="badge bg-success">在校</span>
-                        <span th:if="${student.status == '卒業'}" class="badge bg-primary">卒業</span>
-                        <span th:if="${student.status == '途中退校'}" class="badge bg-danger">途中退校</span>
-                        <span th:unless="${student.status == '在校' or student.status == '卒業' or student.status == '途中退校'}" 
-                              th:text="${student.status ?: '-'}"></span>
+                    <td data-label="ステータス" th:text="${student.status ?: '-'}">-</td>
+                    <td data-label="支払予定日"
+                      th:text="${student.schedulePaymentTutionDate != null ? #temporals.format(student.schedulePaymentTutionDate, 'MM/dd/yyyy') : ''}">
                     </td>
-                    <td data-label="支払予定日" th:text="${student.schedulePaymentTutionDate != null ? #temporals.format(student.schedulePaymentTutionDate, 'MM/dd/yyyy') : ''}"></td>
-                    <td data-label="支払実績日" th:text="${student.actualTutionPaymentDate != null ? #temporals.format(student.actualTutionPaymentDate, 'MM/dd/yyyy') : ''}"></td>
+                    <td data-label="支払実績日"
+                      th:text="${student.actualTutionPaymentDate != null ? #temporals.format(student.actualTutionPaymentDate, 'MM/dd/yyyy') : ''}">
+                    </td>
                     <td data-label="動作機能" class="action-cell">
                       <div class="d-flex flex-nowrap justify-content-center gap-2">
                         <a th:href="@{/students/detail/{id}(id=${student.id}, nameSearch=${nameSearch}, status=${status})}"
-                           class="text-decoration-none text-info" 
-                           title="詳細"
-                           style="font-size: 1.2rem;">
+                          class="text-decoration-none text-info" title="詳細" style="font-size: 1.2rem;">
                           <i class="bi bi-info-circle"></i>
                         </a>
+
                         <a th:href="@{/students/student-update/{id}(id=${student.id}, nameSearch=${nameSearch}, status=${status})}"
-                           class="text-decoration-none text-primary" 
-                           title="編集"
-                           sec:authorize="hasRole('ADMIN') or hasRole('TEACHER')"
-                           style="font-size: 1.2rem;">
+                          class="text-decoration-none text-primary" title="編集"
+                          sec:authorize="hasRole('ADMIN') or hasRole('TEACHER')" style="font-size: 1.2rem;">
                           <i class="bi bi-pencil-square"></i>
                         </a>
-                        <a th:href="@{'/reports/student/' + ${student.id}}" 
-                           class="text-decoration-none text-success" 
-                           title="成績"
-                           style="font-size: 1.2rem;">
+
+                        <a th:href="@{'/enrollments/new?studentId=' + ${student.id}}"
+                          class="text-decoration-none text-success" th:title="#{btn.enroll}"
+                          sec:authorize="hasRole('ADMIN')" style="font-size: 1.2rem;">
+                          <i class="bi bi-person-plus-fill"></i>
+                        </a>
+
+                        <!-- We keep the reports button if it works -->
+                        <a th:href="@{'/reports/student/' + ${student.id}}" class="text-decoration-none text-success"
+                          title="成績" style="font-size: 1.2rem;">
                           <i class="bi bi-bar-chart-fill"></i>
                         </a>
+
                         <a href="#"
-                           th:attr="data-delete-url=@{/students/delete/{id}(id=${student.id}, nameSearch=${nameSearch}, status=${status})}"
-                           onclick="if(confirm('本当に削除しますか？')) window.location.href=this.getAttribute('data-delete-url');"
-                           class="text-decoration-none text-danger"
-                           title="削除"
-                           sec:authorize="hasRole('ADMIN')"
-                           style="font-size: 1.2rem;">
+                          th:attr="data-delete-url=@{/students/delete/{id}(id=${student.id}, nameSearch=${nameSearch}, status=${status})}"
+                          onclick="if(confirm('本当に削除しますか？')) window.location.href=this.getAttribute('data-delete-url');"
+                          class="text-decoration-none text-danger" title="削除" sec:authorize="hasRole('ADMIN')"
+                          style="font-size: 1.2rem;">
                           <i class="bi bi-trash-fill"></i>
                         </a>
                       </div>
@@ -674,13 +950,10 @@
                   </tr>
                 </tbody>
 
-                <tbody th:if="${students == null or students.size() == 0}">
+                <tbody th:if="${students == null || students.size() == 0}">
                   <tr>
-                    <td colspan="9" class="text-center text-muted py-5">
-                      <span th:text="#{students.student-list.auto_0a90}">生徒情報がありません。</span>
-                      <span th:if="${students == null}" style="display:block; font-size:12px;">(students is NULL - check controller)</span>
-                      <span th:if="${students != null and students.size() == 0}" style="display:block; font-size:12px;">(students is EMPTY - no data in database for your user)</span>
-                    </td>
+                    <td colspan="10" class="text-center text-muted py-5" th:text="#{students.student-list.auto_0a90}">
+                      生徒情報がありません。</td>
                   </tr>
                 </tbody>
               </table>
@@ -691,4 +964,5 @@
       </div>
     </div>
   </body>
+
 </html>
