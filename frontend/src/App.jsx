@@ -1,11 +1,12 @@
+// src/App.jsx
+
 import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
-import { AuthProvider } from './contexts/AuthContext';
 import Layout from './components/Layout';
+import { AuthProvider } from './contexts/AuthContext';
 
 // Pages
-import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 
 import StudentList from './pages/students/StudentList';
@@ -14,9 +15,11 @@ import StudentDetail from './pages/students/StudentDetail';
 
 import TeacherList from './pages/teachers/TeacherList';
 import TeacherForm from './pages/teachers/TeacherForm';
+import TeacherDetails from './pages/teachers/TeacherDetails';
 
 import CourseList from './pages/courses/CourseList';
 import CourseForm from './pages/courses/CourseForm';
+import CourseDetails from './pages/courses/CourseDetails';  // Make sure this file exists
 
 import EnrollmentList from './pages/enrollments/EnrollmentList';
 import EnrollmentForm from './pages/enrollments/EnrollmentForm';
@@ -52,10 +55,12 @@ function App() {
           }}
         />
         <Routes>
-          <Route path="/login" element={<Login />} />
+          {/* Redirect root and login to dashboard */}
+          <Route path="/" element={<Navigate to="/dashboard" replace />} />
+          <Route path="/login" element={<Navigate to="/dashboard" replace />} />
 
-          <Route path="/" element={<Layout />}>
-            <Route index element={<Navigate to="/dashboard" replace />} />
+          {/* Main app - no authentication required */}
+          <Route element={<Layout />}>
             <Route path="dashboard" element={<Dashboard />} />
 
             {/* Students */}
@@ -70,14 +75,16 @@ function App() {
             <Route path="teachers">
               <Route index element={<TeacherList />} />
               <Route path="new" element={<TeacherForm />} />
-              <Route path=":id" element={<TeacherForm />} />
+              <Route path=":id" element={<TeacherDetails />} />
+              <Route path=":id/edit" element={<TeacherForm />} />
             </Route>
 
             {/* Courses */}
             <Route path="courses">
               <Route index element={<CourseList />} />
               <Route path="new" element={<CourseForm />} />
-              <Route path=":id" element={<CourseForm />} />
+              <Route path=":id" element={<CourseDetails />} />
+              <Route path=":id/edit" element={<CourseForm />} />
             </Route>
 
             {/* Enrollments */}
@@ -118,6 +125,7 @@ function App() {
             </Route>
           </Route>
 
+          {/* 404 Page */}
           <Route
             path="*"
             element={

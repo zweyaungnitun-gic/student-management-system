@@ -1,152 +1,226 @@
+// frontend/src/pages/teachers/TeacherForm.jsx
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { ChevronLeft, Save, X } from 'lucide-react';
 import { useForm } from 'react-hook-form';
-import { ChevronLeft, Save } from 'lucide-react';
 import toast from 'react-hot-toast';
-import { teacherService } from '../../api/teacherService';
+import client from '../../api/client';
 
 const TeacherForm = () => {
   const navigate = useNavigate();
   const { id } = useParams();
   const isEditing = Boolean(id);
   const [loading, setLoading] = useState(false);
-  const [initialLoading, setInitialLoading] = useState(isEditing);
-
-  const { register, handleSubmit, reset, formState: { errors } } = useForm();
+  const [fetchLoading, setFetchLoading] = useState(isEditing);
+  
+  const { register, handleSubmit, formState: { errors }, setValue, reset } = useForm({
+    defaultValues: {
+      name: '',
+      email: '',
+      department: '',
+    }
+  });
 
   useEffect(() => {
     if (isEditing) {
-      const fetchTeacher = async () => {
-        try {
-          const data = await teacherService.getById(id);
-          reset({
-            full_name: data.full_name,
-            email: data.email,
-            department: data.department,
-            teacher_code: data.teacher_code,
-            is_active: data.is_active
-          });
-        } catch (error) {
-          console.error('Error fetching teacher:', error);
-          toast.error('教師情報の取得に失敗しました');
-        } finally {
-          setInitialLoading(false);
-        }
-      };
       fetchTeacher();
     }
-  }, [id, isEditing, reset]);
+  }, [id]);
+
+  const fetchTeacher = async () => {
+    try {
+      const response = await client.get(`/teachers/${id}`);
+      const teacher = response.data;
+      setValue('name', teacher.name || '');
+      setValue('email', teacher.email || '');
+      setValue('department', teacher.department || '');
+    } catch (error) {
+      console.error('Error fetching teacher:', error);
+      toast.error('Failed to load teacher data');
+      navigate('/teachers');
+    } finally {
+      setFetchLoading(false);
+    }
+  };
 
   const onSubmit = async (data) => {
+    setLoading(true);
     try {
-      setLoading(true);
       if (isEditing) {
-        await teacherService.update(id, data);
-        toast.success('教師情報を更新しました');
+        await client.put(`/teachers/edit/${id}`, data);
+        toast.success('Teacher information updated');
       } else {
-        await teacherService.create(data);
-        toast.success('新しい教師を追加しました');
+        await client.post('/teachers/add', data);
+        toast.success('Teacher added successfully');
       }
       navigate('/teachers');
     } catch (error) {
       console.error('Error saving teacher:', error);
-      toast.error(error.response?.data?.detail || '保存に失敗しました');
+      if (error.response?.status === 400) {
+        toast.error(error.response.data?.detail || 'Invalid data');
+      } else if (error.response?.data?.detail) {
+        toast.error(error.response.data.detail);
+      } else {
+        toast.error(isEditing ? 'Update failed' : 'Add failed');
+      }
     } finally {
       setLoading(false);
     }
   };
 
-  if (initialLoading) {
+  if (fetchLoading) {
     return (
-      <div className="text-center py-5">
-        <div className="spinner-border text-primary" role="status"></div>
-        <p className="mt-2 text-muted">読み込み中...</p>
+      <div className="d-flex justify-content-center align-items-center" style={{ height: '400px' }}>
+        <div className="spinner-border text-primary" role="status">
+          <span className="visually-hidden">Loading...</span>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="fade-in">
-      <div className="d-flex align-items-center gap-3 mb-4">
-        <button onClick={() => navigate('/teachers')} className="btn btn-outline-secondary btn-icon">
-          <ChevronLeft size={20} />
-        </button>
-        <div>
-          <h1 className="h3 mb-1">{isEditing ? '教師情報編集' : '新規教師追加'}</h1>
-          <p className="text-muted mb-0">教師のプロフィールと所属部署を管理します。</p>
+    <div>
+      <div className="d-flex justify-content-between align-items-center mb-4">
+        <div className="d-flex align-items-center gap-3">
+          <button 
+            className="btn btn-outline-secondary d-flex align-items-center gap-2"
+            onClick={() => navigate('/teachers')}
+          >
+            <ChevronLeft size={18} />
+            <span>Back</span>
+          </button>
+          <div>
+            <h1 className="mb-0" style={{ color: '#0a58a0', fontWeight: 600, fontSize: '1.8rem' }}>
+              {isEditing ? 'Edit Teacher' : 'Add New Teacher'}
+            </h1>
+          </div>
         </div>
       </div>
 
-      <form onSubmit={handleSubmit(onSubmit)} className="glass-card p-4">
-        <div className="row g-4 mb-4">
-          <div className="col-md-6">
-            <label className="form-label fw-bold small text-uppercase">Full Name *</label>
-            <input 
-              type="text" 
-              className={`form-control ${errors.full_name ? 'is-invalid' : ''}`}
-              {...register('full_name', { required: '名前は必須です' })}
-              placeholder="e.g. Yamamoto Keiko"
-            />
-            {errors.full_name && <div className="invalid-feedback">{errors.full_name.message}</div>}
-          </div>
+      <div className="d-flex justify-content-center mt-4">
+        <div className="card" style={{ borderRadius: '10px', boxShadow: '0 2px 10px rgba(0,0,0,0.1)', maxWidth: '900px', width: '100%' }}>
+          <div className="card-body" style={{ padding: '1.5rem 2rem' }}>
+            <form onSubmit={handleSubmit(onSubmit)}>
+              {/* User ID (display only for edit) */}
+              {isEditing && (
+                <div className="row mb-3 align-items-center">
+                  <label className="col-sm-3 col-form-label fw-semibold">
+                    Teacher ID
+                  </label>
+                  <div className="col-sm-9">
+                    <input
+                      type="text"
+                      className="form-control bg-light"
+                      value={id}
+                      readOnly
+                    />
+                  </div>
+                </div>
+              )}
 
-          <div className="col-md-6">
-            <label className="form-label fw-bold small text-uppercase">Email *</label>
-            <input 
-              type="email" 
-              className={`form-control ${errors.email ? 'is-invalid' : ''}`}
-              {...register('email', { required: 'メールアドレスは必須です' })}
-              placeholder="e.g. keiko@example.edu"
-            />
-            {errors.email && <div className="invalid-feedback">{errors.email.message}</div>}
-          </div>
-
-          <div className="col-md-6">
-            <label className="form-label fw-bold small text-uppercase">Department</label>
-            <input 
-              type="text" 
-              className="form-control"
-              {...register('department')}
-              placeholder="e.g. Japanese Language"
-            />
-          </div>
-
-          <div className="col-md-6">
-            <label className="form-label fw-bold small text-uppercase">Teacher Code</label>
-            <input 
-              type="text" 
-              className="form-control"
-              {...register('teacher_code')}
-              placeholder="e.g. TCH001"
-            />
-          </div>
-
-          {!isEditing && (
-            <div className="col-md-6">
-              <label className="form-label fw-bold small text-uppercase">Initial Status</label>
-              <div className="form-check form-switch pt-2">
-                <input 
-                  className="form-check-input" 
-                  type="checkbox" 
-                  {...register('is_active')}
-                  defaultChecked={true}
-                />
-                <label className="form-check-label">Active</label>
+              {/* Name */}
+              <div className="row mb-3 align-items-center">
+                <label className="col-sm-3 col-form-label fw-semibold">
+                  Full Name <span className="text-danger">*</span>
+                </label>
+                <div className="col-sm-9">
+                  <input
+                    type="text"
+                    className={`form-control ${errors.name ? 'is-invalid' : ''}`}
+                    {...register('name', { 
+                      required: 'Name is required',
+                      maxLength: { value: 100, message: 'Max 100 characters' }
+                    })}
+                    placeholder="Enter teacher's full name"
+                  />
+                  {errors.name && (
+                    <div className="invalid-feedback">{errors.name.message}</div>
+                  )}
+                </div>
               </div>
-            </div>
-          )}
-        </div>
 
-        <div className="d-flex justify-content-end gap-2 pt-3 border-top">
-          <button type="button" onClick={() => navigate('/teachers')} className="btn btn-light">
-            キャンセル
-          </button>
-          <button type="submit" disabled={loading} className="btn btn-primary d-flex align-items-center gap-2">
-            <Save size={18} />
-            {loading ? '保存中...' : (isEditing ? '更新を保存' : '教師を登録')}
-          </button>
+              {/* Email */}
+              <div className="row mb-3 align-items-center">
+                <label className="col-sm-3 col-form-label fw-semibold">
+                  Email Address <span className="text-danger">*</span>
+                </label>
+                <div className="col-sm-9">
+                  <input
+                    type="email"
+                    className={`form-control ${errors.email ? 'is-invalid' : ''}`}
+                    {...register('email', { 
+                      required: 'Email is required',
+                      pattern: {
+                        value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                        message: 'Enter a valid email address'
+                      }
+                    })}
+                    placeholder="email@example.com"
+                  />
+                  {errors.email && (
+                    <div className="invalid-feedback">{errors.email.message}</div>
+                  )}
+                </div>
+              </div>
+
+              {/* Department */}
+              <div className="row mb-3 align-items-center">
+                <label className="col-sm-3 col-form-label fw-semibold">
+                  Department
+                </label>
+                <div className="col-sm-9">
+                  <input
+                    type="text"
+                    className={`form-control ${errors.department ? 'is-invalid' : ''}`}
+                    {...register('department')}
+                    placeholder="e.g., Computer Science, Business Administration"
+                  />
+                  <small className="text-muted">Optional</small>
+                  {errors.department && (
+                    <div className="invalid-feedback">{errors.department.message}</div>
+                  )}
+                </div>
+              </div>
+
+              {/* Info Alert */}
+              <div className="alert alert-info d-flex align-items-center mb-4" role="alert">
+                <i className="bi bi-info-circle-fill fs-4 me-3"></i>
+                <div>
+                  <strong>Notes:</strong><br />
+                  • Email address must be unique in the system<br />
+                  • Teacher code will be automatically generated (e.g., TCH001)<br />
+                  • Deactivated teachers cannot be assigned to new courses
+                </div>
+              </div>
+
+              {/* Form Actions */}
+              <div className="row mt-4">
+                <div className="col-sm-9 offset-sm-3">
+                  <div className="d-flex gap-2">
+                    <button
+                      type="button"
+                      className="btn btn-outline-secondary px-4"
+                      onClick={() => navigate('/teachers')}
+                    >
+                      <X size={16} className="me-2" />
+                      Cancel
+                    </button>
+                    <button
+                      type="submit"
+                      className="btn btn-primary px-4"
+                      disabled={loading}
+                    >
+                      <Save size={16} className="me-2" />
+                      {loading ? 'Saving...' : 'Save Teacher'}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </form>
+          </div>
         </div>
-      </form>
+      </div>
     </div>
   );
 };
