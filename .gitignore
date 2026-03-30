@@ -63,3 +63,10 @@ buildNumber.properties
 *.zip
 *.tar.gz
 *.rar
+
+### Python ###
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+.pytest_cache/
