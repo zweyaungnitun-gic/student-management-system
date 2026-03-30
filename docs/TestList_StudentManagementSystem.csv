@@ -1,0 +1,187 @@
+Test ID,Category,Module,Test Case Title,Steps / Description,Endpoint / Component,Expected Result,Priority,Status,Notes
+UT-P-001,Unit,HomeController,homePage returns view,Call homePage(),"GET /",Returns view name home/index and 200,High,Not Run,Page
+UT-P-002,Unit,AuthController,loginPage returns view,Call loginPage(),"GET /login",Returns view login,High,Not Run,Page
+UT-P-003,Unit,AuthController,accessDeniedPage returns view,Call accessDeniedPage(),"GET /access-denied",Returns view access-denied,High,Not Run,Page
+UT-P-004,Unit,AdminDashboardController,getAdminDashboard returns view,Call getAdminDashboard with Model,"GET /admin/dashboard",Returns layouts/admin-dashboard; model has pageTitle pageSubtitle,Medium,Not Run,Page
+UT-P-005,Unit,GuestDashboardController,getGuestDashboard returns view,Call getGuestDashboard with Model,"GET /guest/dashboard",Returns layouts/guest-dashboard; model has pageTitle pageSubtitle,Medium,Not Run,Page
+UT-P-006,Unit,RegistrationController,showRegistrationForm,GET /register with optional session,"GET /register",Returns register/register; session studentData in model if present,High,Not Run,Page
+UT-P-007,Unit,RegistrationController,secondPage,GET second page with session,"GET /register/second-page",Returns register/second-page; session data in model,High,Not Run,Page
+UT-P-008,Unit,RegistrationController,thirdPage,GET third page with session,"GET /register/third-page",Returns register/third-page; session data in model,High,Not Run,Page
+UT-P-009,Unit,RegistrationController,checkPage with and without session,GET check-page with/without session,"GET /register/check-page",With session: register/check-page; without: redirect /register,High,Not Run,Page
+UT-P-010,Unit,RegistrationController,successPage,GET success after submit,"GET /register/success",Returns register/success; model studentId studentName from session,Medium,Not Run,Page
+UT-P-011,Unit,RegistrationController,saveStep1 valid and invalid,POST save-step1 with valid/invalid body,"POST /register/save-step1",Valid: 200 success session has studentData; invalid: 400 errors,High,Not Run,Page
+UT-P-012,Unit,RegistrationController,saveStep2 valid and no session,POST save-step2 with session or not,"POST /register/save-step2",Valid+session: 200 success; no session: 400,High,Not Run,Page
+UT-P-013,Unit,RegistrationController,saveStep3 valid and no session,POST save-step3 with session or not,"POST /register/save-step3",Valid+session: 200 success; no session: 400,High,Not Run,Page
+UT-P-014,Unit,RegistrationController,submitFinal with and without session,POST submit-final with session or not,"POST /register/submit-final",With session: 200 success student created; no session: 400,High,Not Run,Page
+UT-P-015,Unit,StudentController,getStudents no filter,Mock service; call getStudents with empty nameSearch and status,"GET /students",View students/student-list; model students nameSearch status; getAllStudents called,High,Not Run,Page
+UT-P-016,Unit,StudentController,getStudents with filter,Mock getStudentsByStatuses; call with nameSearch and status,"GET /students?nameSearch=&status=",getStudentsByStatuses called; model has filtered list,High,Not Run,Page
+UT-P-017,Unit,StudentController,showStudentDetails,Mock services; call showStudentDetails(id),"GET /students/detail/{id}",View students/student-details; model student n5Class n4Class interviewNotes tabs; not found throws,High,Not Run,Page
+UT-P-018,Unit,StudentController,deleteStudent as ADMIN,Mock studentService; call deleteStudent(id) as ADMIN,"GET /students/delete/{id}",deleteStudent(id) called; redirect with query params,High,Not Run,Page
+UT-P-019,Unit,StudentController,createStudent valid and invalid,POST create with valid/invalid StudentDTO,"POST /students/create",Valid: createStudent called redirect /students flash success; invalid: students/student-form,High,Not Run,Page
+UT-P-020,Unit,StudentController,showUpdateForm,Mock services; call showUpdateForm(id),"GET /students/student-update/{id}",View students/student-update; model student n5 n4 interviewNotes; not found throws,High,Not Run,Page
+UT-P-021,Unit,StudentController,updateBasicInfo valid and invalid,POST update-basic with valid/invalid data,"POST /students/update-basic/{id}",Valid: save() called redirect flash; invalid: return update form with errors,High,Not Run,Page
+UT-P-022,Unit,StudentController,updateStatusInfo valid and invalid,POST update-status with valid/invalid data,"POST /students/update-status/{id}",Valid: save() redirect; invalid: return update form,High,Not Run,Page
+UT-P-023,Unit,StudentController,updateN5ClassInfo,POST update-n5; verify service called,"POST /students/update-n5/{id}",saveN5ClassDTO called; redirect + flash,High,Not Run,Page
+UT-P-024,Unit,StudentController,updateN4ClassInfo,POST update-n4; verify service called,"POST /students/update-n4/{id}",saveN4ClassDTO called; redirect + flash,High,Not Run,Page
+UT-P-025,Unit,StudentController,updateInterviewNotes,POST update-interview; verify service called,"POST /students/update-interview/{id}",saveInterviewNotesDTO called; redirect + flash,High,Not Run,Page
+UT-P-026,Unit,StudentController,getStudentsExport with ids and without,GET export with optional ids nameSearch status,"GET /students/export",With ids: getStudentsByIds; else getAllStudentsFull; returns list,High,Not Run,Page
+UT-P-027,Unit,StudentRestController,checkDuplicate,Mock studentService; GET check-duplicate-id,"GET /api/students/check-duplicate-id",isNationalIDDuplicate called; returns boolean,Medium,Not Run,Page
+UT-P-028,Unit,UserController,listUsers,Mock userService; call listUsers with optional search,"GET /users",View users/list-dashboard; model users search; searchUsers called,High,Not Run,Page
+UT-P-029,Unit,UserController,addUserForm,Call addUserForm,"GET /users/add",View users/add; model user (new) roles,High,Not Run,Page
+UT-P-030,Unit,UserController,addUser valid duplicate invalid,POST add with valid / duplicate email / invalid,"POST /users/add",Valid: createUser redirect success; duplicate email: reject; invalid: users/add,High,Not Run,Page
+UT-P-031,Unit,UserController,editUserFormPost,POST edit with id; mock getUserById,"POST /users/edit",View users/edit or redirect; model user roles; not found redirect error,High,Not Run,Page
+UT-P-032,Unit,UserController,updateUser,POST edit/{id} with valid duplicate optional password,"POST /users/edit/{id}",Valid: updateUser redirect; duplicate email other user: reject; newPassword applied if set,High,Not Run,Page
+UT-P-033,Unit,UserController,deleteUser,Mock deleteUser; call deleteUser(id),"GET /users/delete/{id}",deleteUser(id) called; redirect /users success or error,High,Not Run,Page
+UT-P-034,Unit,N5ClassController,showN5ClassForm,GET n5-class for studentId,"GET /students/{id}/n5-class",Returns view/fragment with N5 form for student,Medium,Not Run,Page
+UT-P-035,Unit,N5ClassController,saveN5ClassForm,POST n5-class; verify saveN5ClassDTO,"POST /students/{id}/n5-class",saveN5ClassDTO called; redirect or success,Medium,Not Run,Page
+UT-P-036,Unit,N4ClassController,showN4ClassForm,GET n4-class for studentId,"GET /students/{id}/n4-class",Returns view/fragment with N4 form for student,Medium,Not Run,Page
+UT-P-037,Unit,N4ClassController,saveN4ClassForm,POST n4-class; verify saveN4ClassDTO,"POST /students/{id}/n4-class",saveN4ClassDTO called; redirect or success,Medium,Not Run,Page
+UT-P-038,Unit,InterviewNotesController,showInterviewNotesForm,GET interview-notes for studentId,"GET /students/{id}/interview-notes",Returns form view for student,Medium,Not Run,Page
+UT-P-039,Unit,InterviewNotesController,saveInterviewNotesForm,POST interview-notes; verify saveInterviewNotesDTO,"POST /students/{id}/interview-notes",saveInterviewNotesDTO called; redirect or success,Medium,Not Run,Page
+UT-P-040,Unit,GlobalExceptionHandler,handleIllegalArgument,Trigger IllegalArgumentException,"GlobalExceptionHandler",Returns error view/model,Medium,Not Run,Page
+UT-P-041,Unit,GlobalExceptionHandler,handleMethodNotAllowed,Trigger HttpRequestMethodNotSupportedException,"GlobalExceptionHandler",Returns error view,Medium,Not Run,Page
+UT-P-042,Unit,GlobalExceptionHandler,handleValidation,Trigger MethodArgumentNotValidException,"GlobalExceptionHandler",Returns validation error view/model,Medium,Not Run,Page
+UT-S-001,Unit,StudentService,getAllStudents,Call getAllStudents(),"StudentService.getAllStudents()",Returns list of StudentDTO (empty or ordered),High,Not Run,Service
+UT-S-002,Unit,StudentService,getStudentsByFilter,Call getStudentsByFilter(nameSearch status),"StudentService.getStudentsByFilter(String String)",Returns filtered list,High,Not Run,Service
+UT-S-003,Unit,StudentService,getStudentById found and not found,Call getStudentById with valid/invalid id,"StudentService.getStudentById(Long)",Found: StudentDTO; not found: empty or exception,High,Not Run,Service
+UT-S-004,Unit,StudentService,createStudent,Create with valid DTO,"StudentService.createStudent(StudentDTO)",Creates entity returns DTO with studentId,High,Not Run,Service
+UT-S-005,Unit,StudentService,updateStudent,Update by id and DTO,"StudentService.updateStudent(Long StudentDTO)",Updates and returns StudentDTO,High,Not Run,Service
+UT-S-006,Unit,StudentService,deleteStudent,Delete by id,"StudentService.deleteStudent(Long)",Deletes student and cascades N5 N4 InterviewNotes,High,Not Run,Service
+UT-S-007,Unit,StudentService,findAll,Call findAll(),"StudentService.findAll()",Returns list of Student entities,Medium,Not Run,Service
+UT-S-008,Unit,StudentService,findById,Call findById(id),"StudentService.findById(Long)",Returns Optional<Student>,High,Not Run,Service
+UT-S-009,Unit,StudentService,getStudentsByFilterFull,Call getStudentsByFilterFull(name status),"StudentService.getStudentsByFilterFull(String String)",Returns list of Student,Medium,Not Run,Service
+UT-S-010,Unit,StudentService,save,Call save(student),"StudentService.save(Student)",Persists and returns saved Student,High,Not Run,Service
+UT-S-011,Unit,StudentService,getStudentsByStatuses,Call getStudentsByStatuses(nameSearch statuses),"StudentService.getStudentsByStatuses(String List)",Returns filtered StudentDTO list,High,Not Run,Service
+UT-S-012,Unit,StudentService,findAllByIds,Call findAllByIds(ids),"StudentService.findAllByIds(List)",Returns list of Student for ids,Medium,Not Run,Service
+UT-S-013,Unit,StudentService,isNationalIDDuplicate,Call with existing/new nationalID and excludeId,"StudentService.isNationalIDDuplicate(String Long)",true when duplicate excluding excludeId; false otherwise,High,Not Run,Service
+UT-S-014,Unit,StudentExportService,getAllStudentsFull,Call with name and status filters,"StudentExportService.getAllStudentsFull(String String)",Returns List StudentFullExportDTO,High,Not Run,Service
+UT-S-015,Unit,StudentExportService,getStudentsByIds,Call with list of ids,"StudentExportService.getStudentsByIds(List)",Returns List StudentFullExportDTO for ids,High,Not Run,Service
+UT-S-016,Unit,UserService,getAllUsers,Call getAllUsers(),"UserService.getAllUsers()",Returns list of all users,Medium,Not Run,Service
+UT-S-017,Unit,UserService,getUserById,Call getUserById(id),"UserService.getUserById(Long)",Returns Optional<User>,High,Not Run,Service
+UT-S-018,Unit,UserService,getUserByEmail,Call getUserByEmail(email),"UserService.getUserByEmail(String)",Returns Optional<User>,High,Not Run,Service
+UT-S-019,Unit,UserService,createUser,Create user with valid data,"UserService.createUser(User)",Encodes password saves returns User,High,Not Run,Service
+UT-S-020,Unit,UserService,updateUser,Update user by id,"UserService.updateUser(Long User)",Updates and returns User,High,Not Run,Service
+UT-S-021,Unit,UserService,updateUserPassword,Call updateUserPassword(id newPassword),"UserService.updateUserPassword(Long String)",Updates password encoded,Medium,Not Run,Service
+UT-S-022,Unit,UserService,deleteUser,Call deleteUser(id),"UserService.deleteUser(Long)",Removes user,High,Not Run,Service
+UT-S-023,Unit,UserService,existsByEmail,Call existsByEmail(email),"UserService.existsByEmail(String)",Returns true/false,Medium,Not Run,Service
+UT-S-024,Unit,UserService,searchUsers,Call searchUsers(search),"UserService.searchUsers(String)",Returns list matching name or email,Medium,Not Run,Service
+UT-S-025,Unit,RegisterStudentService,registerStudent,Register from full DTO,"RegisterStudentService.registerStudent(StudentRegistrationDTO)",Maps DTO to Student saves returns entity with studentId,High,Not Run,Service
+UT-S-026,Unit,RegisterStudentService,generateStudentId,Call generateStudentId(),"RegisterStudentService.generateStudentId()",Returns unique ID string e.g. STU001,High,Not Run,Service
+UT-S-027,Unit,N5ClassService,getOrCreateN5ClassDTO,Call getOrCreateN5ClassDTO(studentId),"N5ClassService.getOrCreateN5ClassDTO(Long)",Returns N5ClassDTO; creates entity if missing,High,Not Run,Service
+UT-S-028,Unit,N5ClassService,saveN5ClassDTO,Call saveN5ClassDTO(studentId dto),"N5ClassService.saveN5ClassDTO(Long N5ClassDTO)",Saves or updates N5 class for student,High,Not Run,Service
+UT-S-029,Unit,N4ClassService,getOrCreateN4ClassDTO,Call getOrCreateN4ClassDTO(studentId),"N4ClassService.getOrCreateN4ClassDTO(Long)",Returns N4ClassDTO; creates entity if missing,High,Not Run,Service
+UT-S-030,Unit,N4ClassService,saveN4ClassDTO,Call saveN4ClassDTO(studentId dto),"N4ClassService.saveN4ClassDTO(Long N4ClassDTO)",Saves or updates N4 class for student,High,Not Run,Service
+UT-S-031,Unit,InterviewNotesService,getOrCreateInterviewNotesDTO,Call getOrCreateInterviewNotesDTO(studentId),"InterviewNotesService.getOrCreateInterviewNotesDTO(Long)",Returns DTO; creates entity if missing,High,Not Run,Service
+UT-S-032,Unit,InterviewNotesService,saveInterviewNotesDTO,Call saveInterviewNotesDTO(studentId dto),"InterviewNotesService.saveInterviewNotesDTO(Long InterviewNotesDTO)",Saves or updates interview notes,High,Not Run,Service
+UT-S-033,Unit,StudentIdGeneratorService,generateStudentId no or max not STU,No students or maxStudentId not STUxxx,"StudentIdGeneratorService.generateStudentId()",Returns STU001,Medium,Not Run,Service
+UT-S-034,Unit,StudentIdGeneratorService,generateStudentId next number,Max id STU001 STU002 etc,"StudentIdGeneratorService.generateStudentId()",Returns STU002 STU003 etc,High,Not Run,Service
+UT-S-035,Unit,StudentIdGeneratorService,generateStudentId parse fallback,Parse exception fallback,"StudentIdGeneratorService.generateStudentId()",Uses count()+1 for ID,Low,Not Run,Service
+UT-S-036,Unit,DataMigrationService,migrateExistingData,Call migrateExistingData(),"DataMigrationService.migrateExistingData()",Fixes null createdAt enrolledDate; saves only changed; no-op when all valid,Medium,Not Run,Service
+UT-S-037,Unit,EmployeeService,getEmployeeSnapshot,Call getEmployeeSnapshot(),"EmployeeService.getEmployeeSnapshot()",Returns EmployeeListResponse,Medium,Not Run,Service
+UT-S-038,Unit,EmployeeService,getEmployeeStats,Call getEmployeeStats(),"EmployeeService.getEmployeeStats()",Returns EmployeeStats,Medium,Not Run,Service
+UT-S-039,Unit,EmployeeService,getEmployee,Call getEmployee(id),"EmployeeService.getEmployee(Long)",Returns EmployeeResponse; not found as designed,Medium,Not Run,Service
+UT-S-040,Unit,EmployeeService,createEmployee,Call createEmployee(request),"EmployeeService.createEmployee(EmployeeRequest)",Creates and returns EmployeeResponse,Medium,Not Run,Service
+UT-S-041,Unit,EmployeeService,updateEmployee,Call updateEmployee(id request),"EmployeeService.updateEmployee(Long EmployeeRequest)",Updates and returns EmployeeResponse,Medium,Not Run,Service
+UT-S-042,Unit,EmployeeService,deleteEmployee,Call deleteEmployee(id),"EmployeeService.deleteEmployee(Long)",Deletes employee,Medium,Not Run,Service
+UT-S-043,Unit,CustomUserDetailsService,loadUserByUsername found,Load by existing email,"CustomUserDetailsService.loadUserByUsername(String)",Returns UserDetails,High,Not Run,Service
+UT-S-044,Unit,CustomUserDetailsService,loadUserByUsername not found,Load by non-existent email,"CustomUserDetailsService.loadUserByUsername(String)",Throws UsernameNotFoundException,Medium,Not Run,Service
+UT-S-045,Unit,JwtTokenProvider,generateToken,Generate JWT for authentication,"JwtTokenProvider.generateToken(Authentication)",Returns valid JWT string,High,Not Run,Service
+UT-S-046,Unit,JwtTokenProvider,validateToken,Validate valid and invalid token,"JwtTokenProvider.validateToken(String)",true for valid; false or exception for invalid,High,Not Run,Service
+UT-S-047,Unit,FirstPageValidation,valid and invalid,Validate DTO with required first-page fields,"FirstPageValidation",Valid: no violations; invalid: constraint violations,High,Not Run,Service
+UT-S-048,Unit,SecondPageValidation,valid and invalid,Validate second step DTO,"SecondPageValidation",Valid: no violations; invalid: violations,High,Not Run,Service
+UT-S-049,Unit,ThirdPageValidation,valid and invalid,Validate third step DTO,"ThirdPageValidation",Valid: no violations; invalid: violations,High,Not Run,Service
+UT-S-050,Unit,Religion,getLabelFromValue,Get label for each religion value,"Religion.getLabelFromValue(String)",Returns correct display label,Low,Not Run,Service
+UT-S-051,Unit,YesNoDisplay,from Boolean,Map Boolean to Yes/No display,"YesNoDisplay.from(Boolean)",Returns correct enum value,Low,Not Run,Service
+E2E-001,E2E,Home,Home page loads,GET / without auth,"GET /",Returns 200 and home/index view,High,Not Run,Public
+E2E-002,E2E,Auth,Login page,GET /login,"GET /login",Returns 200 and login view,High,Not Run,Public
+E2E-003,E2E,Auth,Login success admin,POST /login with valid admin credentials,"POST /login",Redirect to /students with session,High,Not Run,
+E2E-004,E2E,Auth,Login success guest,POST /login with valid guest credentials,"POST /login",Redirect to /students with session,High,Not Run,
+E2E-005,E2E,Auth,Login failure,POST /login with invalid credentials,"POST /login",Redirect to /login?error=true,High,Not Run,
+E2E-006,E2E,Auth,Logout,POST /logout when authenticated,"POST /logout",Session invalidated redirect to /login?logout=true,High,Not Run,
+E2E-007,E2E,Auth,Access denied,Access /users as GUEST,"GET /users as GUEST",403 or redirect to /access-denied,High,Not Run,
+E2E-008,E2E,Registration,Registration step 1 page,GET /register,"GET /register",Returns register form (first page),High,Not Run,Public
+E2E-009,E2E,Registration,Registration save step 1,POST /register/save-step1 with valid JSON,"POST /register/save-step1",200 and success; session has studentData,High,Not Run,
+E2E-010,E2E,Registration,Registration step 2 page,GET /register/second-page with session,"GET /register/second-page",Returns second page with session data,Medium,Not Run,
+E2E-011,E2E,Registration,Registration save step 2,POST /register/save-step2 valid,"POST /register/save-step2",200 success; session updated,High,Not Run,
+E2E-012,E2E,Registration,Registration step 3 and save,GET third page; POST save-step3,"GET /register/third-page POST /register/save-step3",200 success session updated,High,Not Run,
+E2E-013,E2E,Registration,Check page and submit final,GET check-page then POST submit-final,"GET /register/check-page POST /register/submit-final",Student created; redirect to /register/success,High,Not Run,
+E2E-014,E2E,Registration,Success page shows student id,GET /register/success after submit,"GET /register/success",Shows registered student ID and name,Medium,Not Run,
+E2E-015,E2E,Students,List students as admin,GET /students as ADMIN,"GET /students",200 and student-list view with model students,High,Not Run,
+E2E-016,E2E,Students,List students as guest,GET /students as GUEST,"GET /students",200 and student-list view (read-only UI),High,Not Run,
+E2E-017,E2E,Students,List with name search,GET /students?nameSearch=xxx,"GET /students",Filtered list by name,High,Not Run,
+E2E-018,E2E,Students,List with status filter,GET /students?status=yyy,"GET /students",Filtered list by status,High,Not Run,
+E2E-019,E2E,Students,Student detail view,GET /students/detail/{id} as authenticated,"GET /students/detail/{id}",200 and student-details view with tabs,High,Not Run,
+E2E-020,E2E,Students,Student detail not found,GET /students/detail/99999,"GET /students/detail/{id}",404 or error for non-existent id,Medium,Not Run,
+E2E-021,E2E,Students,Create student form and submit,GET create form; POST /students/create with valid data,"POST /students/create",Redirect to /students with success message,High,Not Run,Admin only
+E2E-022,E2E,Students,Update basic info,POST /students/update-basic/{id} as ADMIN,"POST /students/update-basic/{id}",Redirect with success; basic info updated,High,Not Run,Admin only
+E2E-023,E2E,Students,Update status info,POST /students/update-status/{id} as ADMIN,"POST /students/update-status/{id}",Redirect with success; status updated,High,Not Run,Admin only
+E2E-024,E2E,Students,Update N5 class,POST /students/update-n5/{id} as ADMIN,"POST /students/update-n5/{id}",Redirect with success; N5 data saved,High,Not Run,Admin only
+E2E-025,E2E,Students,Update N4 class,POST /students/update-n4/{id} as ADMIN,"POST /students/update-n4/{id}",Redirect with success; N4 data saved,High,Not Run,Admin only
+E2E-026,E2E,Students,Update interview notes,POST /students/update-interview/{id} as ADMIN,"POST /students/update-interview/{id}",Redirect with success; interview notes saved,High,Not Run,Admin only
+E2E-027,E2E,Students,Delete student,GET /students/delete/{id} as ADMIN,"GET /students/delete/{id}",Student deleted; redirect to list,High,Not Run,Admin only
+E2E-028,E2E,Students,Guest cannot delete,GET /students/delete/{id} as GUEST,"GET /students/delete/{id}",403 access denied,High,Not Run,
+E2E-029,E2E,Students,Export all or selected,GET /students/export with optional ids nameSearch status,"GET /students/export",Returns export data (e.g. JSON/list),High,Not Run,Admin and Guest if allowed
+E2E-030,E2E,API,Check duplicate national ID,GET /api/students/check-duplicate-id?nationalID=xxx,"GET /api/students/check-duplicate-id",Returns true/false,Medium,Not Run,
+E2E-031,E2E,Users,List users as admin,GET /users as ADMIN,"GET /users",200 and users list view,High,Not Run,Admin only
+E2E-032,E2E,Users,Add user form,GET /users/add as ADMIN,"GET /users/add",Form with roles,High,Not Run,
+E2E-033,E2E,Users,Add user submit,POST /users/add with valid user,"POST /users/add",User created redirect to /users,High,Not Run,
+E2E-034,E2E,Users,Edit user and update,POST /users/edit then POST /users/edit/{id} with changes,"POST /users/edit POST /users/edit/{id}",User updated redirect to /users,High,Not Run,
+E2E-035,E2E,Users,Delete user,GET /users/delete/{id} as ADMIN,"GET /users/delete/{id}",User deleted redirect to /users,High,Not Run,
+E2E-036,E2E,Dashboard,Admin dashboard,GET /admin/dashboard as ADMIN,"GET /admin/dashboard",200 admin dashboard view,Medium,Not Run,
+E2E-037,E2E,Dashboard,Guest dashboard,GET /guest/dashboard as GUEST,"GET /guest/dashboard",200 guest dashboard view,Medium,Not Run,
+E2E-038,E2E,N5Class,Get N5 class form,GET /students/{id}/n5-class,"GET /students/{id}/n5-class",Returns N5 class form or fragment,Medium,Not Run,
+E2E-039,E2E,N4Class,Get N4 class form,GET /students/{id}/n4-class,"GET /students/{id}/n4-class",Returns N4 class form or fragment,Medium,Not Run,
+E2E-040,E2E,InterviewNotes,Get interview notes form,GET /students/{id}/interview-notes,"GET /students/{id}/interview-notes",Returns interview notes form,Medium,Not Run,
+UT-V-001,Validation,Registration Step 1,englishName required and pattern,Submit step1 with blank englishName or non-alpha characters,"POST /register/save-step1",400; field error for NotBlank or Pattern (English only),High,Not Run,FirstPageValidation
+UT-V-002,Validation,Registration Step 1,katakanaName required and pattern,Submit step1 with blank or non-katakana,"POST /register/save-step1",400; field error for NotBlank or Pattern (カタカナ),High,Not Run,FirstPageValidation
+UT-V-003,Validation,Registration Step 1,dob required and format,Submit step1 with blank or invalid date format (not YYYY-MM-DD),"POST /register/save-step1",400; field error for date pattern,High,Not Run,FirstPageValidation
+UT-V-004,Validation,Registration Step 1,gender required and pattern,Submit step1 with blank or value other than 男性/女性,"POST /register/save-step1",400; field error for gender,High,Not Run,FirstPageValidation
+UT-V-005,Validation,Registration Step 1,currentAddress hometownAddress required,Submit step1 with blank address fields,"POST /register/save-step1",400; field errors; max 100 chars,High,Not Run,FirstPageValidation
+UT-V-006,Validation,Registration Step 1,phoneNumber guardianPhoneNumber pattern,Submit step1 with invalid phone (e.g. not 09 or +959 prefix 7-9 digits),"POST /register/save-step1",400; field error for phone pattern,High,Not Run,FirstPageValidation
+UT-V-007,Validation,Registration Step 1,Size limits step1,Submit step1 with englishName katakanaName or address over max length,"POST /register/save-step1",400; Size constraint violations,Medium,Not Run,FirstPageValidation
+UT-V-008,Validation,Registration Step 2,fatherName required and pattern,Submit step2 with blank fatherName or non-alpha,"POST /register/save-step2",400; field error for fatherName,High,Not Run,SecondPageValidation
+UT-V-009,Validation,Registration Step 2,passportNumber format,Submit step2 with invalid passport (e.g. not A-Z 1-2 letters + 6 digits),"POST /register/save-step2",400; field error for passport pattern,Medium,Not Run,SecondPageValidation
+UT-V-010,Validation,Registration Step 2,nationalIdNumber required and format,Submit step2 with blank or invalid national ID format (e.g. 12/ThaPhaYa(N)111111),"POST /register/save-step2",400; field error for nationalIdNumber,High,Not Run,SecondPageValidation
+UT-V-011,Validation,Registration Step 2,otherOccupation size,Submit step2 with otherOccupation over 20 chars,"POST /register/save-step2",400; Size violation,Low,Not Run,SecondPageValidation
+UT-V-012,Validation,Registration Step 3,otherReligion size,Submit step3 with otherReligion over 20 chars,"POST /register/save-step3",400; Size violation,Low,Not Run,ThirdPageValidation
+UT-V-013,Validation,Student Create,BasicInfoGroup required fields,POST /students/create with missing studentName nameInJapanese DOB gender etc,"POST /students/create",BindingResult errors; return student-form view,High,Not Run,StudentDTO BasicInfoGroup
+UT-V-014,Validation,Student Update Basic,nationalID duplicate,POST update-basic with nationalID that exists for another student,"POST /students/update-basic/{id}",rejectValue nationalID; return update form with error message,High,Not Run,StudentController
+UT-V-015,Validation,Student Update,StatusGroup required,POST update-status with invalid or missing status fields,"POST /students/update-status/{id}",BindingResult errors; return student-update view,High,Not Run,StatusGroup
+UT-V-016,Validation,User Add,username required and size,POST /users/add with blank username or over 25 chars,"POST /users/add",BindingResult errors; return users/add; message ユーザー名,High,Not Run,User entity
+UT-V-017,Validation,User Add,email required format and duplicate,POST /users/add with invalid email or duplicate email,"POST /users/add",Email format error or rejectValue email 既に使用されています,High,Not Run,User entity
+UT-V-018,Validation,User Add,password required,POST /users/add with blank password,"POST /users/add",rejectValue password パスワードは必須です; return users/add,High,Not Run,UserController
+UT-V-019,Validation,User Add,role required,POST /users/add with null role,"POST /users/add",BindingResult error; return users/add,Medium,Not Run,User entity
+UT-V-020,Validation,User Edit,email duplicate for other user,POST /users/edit/{id} with email belonging to another user,"POST /users/edit/{id}",rejectValue email; return users/edit,High,Not Run,UserController
+UT-V-021,Validation,N5ClassDTO,teacher and feedback size,N5 form with teacher name or feedback over max length,"N5ClassDTO",Size constraint violations if validated,Low,Not Run,N5ClassDTO
+UT-V-022,Validation,N4ClassDTO,teacher and feedback size,N4 form with fields over max length,"N4ClassDTO",Size constraint violations if validated,Low,Not Run,N4ClassDTO
+UT-V-023,Validation,InterviewNotesDTO,interview fields size,Interview notes fields over 500 chars,"InterviewNotesDTO",Size constraint violations if validated,Low,Not Run,InterviewNotesDTO
+UI-001,UI,Home,Page title and branding,Open home page; check title and logo,"GET /",Title and GIC logo visible,High,Not Run,
+UI-002,UI,Home,Links to register and login,On home page verify links,"/",Links to /register and /login present and clickable,High,Not Run,
+UI-003,UI,Login,Login form elements,Open /login; check form,"GET /login",Email and password fields and submit button visible,High,Not Run,
+UI-004,UI,Login,Error message on invalid login,Submit invalid credentials; check page,"POST /login",Error message (e.g. error=true) displayed on login page,High,Not Run,
+UI-005,UI,Registration,Step 1 form fields,Open /register; check all step 1 fields,"GET /register",English name Katakana DOB gender addresses phones visible and labeled,High,Not Run,
+UI-006,UI,Registration,Step indicator and next button,On registration step 1 check navigation,"/register",Step indicator and Next/次へ button visible,Medium,Not Run,
+UI-007,UI,Registration,Validation errors displayed step1,Submit step1 with invalid data; check response or page,"POST /register/save-step1",Validation error messages shown (inline or in response),High,Not Run,
+UI-008,UI,Registration,Step 2 and 3 navigation,Complete step1; check step2 then step3 forms,"/register/second-page /third-page",All step 2 and step 3 fields visible; Back/Next work,High,Not Run,
+UI-009,UI,Registration,Check page summary,Open check-page with session data,"GET /register/check-page",Summary of entered data displayed; submit button visible,High,Not Run,
+UI-010,UI,Registration,Success page content,After submit open success page,"GET /register/success",Registered student ID and name displayed,High,Not Run,
+UI-011,UI,Student List,Table and columns,Open /students as authenticated user,"GET /students",Student list table with expected columns (e.g. ID name status),High,Not Run,
+UI-012,UI,Student List,Search and filter controls,On student list page check controls,"/students",Name search box and status filter present and usable,High,Not Run,
+UI-013,UI,Student List,Create button admin only,As ADMIN open /students; as GUEST open /students,"/students",Admin sees Create/Add student button; Guest does not see Create,High,Not Run,
+UI-014,UI,Student List,Export button,On student list as admin or guest,"/students",Export button or link visible and triggers export,Medium,Not Run,
+UI-015,UI,Student Detail,Tabs and content,Open student detail page,"GET /students/detail/{id}",Tabs (e.g. basic status N5 N4 interview) visible; data displayed in each tab,High,Not Run,
+UI-016,UI,Student Detail,Edit button admin only,Open detail as ADMIN vs GUEST,"/students/detail/{id}",Admin sees Edit/Update; Guest does not see Edit,High,Not Run,
+UI-017,UI,Student Detail,Delete link admin only,On detail or list as ADMIN vs GUEST,"/students",Admin sees Delete; Guest does not see Delete,High,Not Run,
+UI-018,UI,Student Update Form,Tabbed form and save,Open student update form; switch tabs,"GET /students/student-update/{id}",Basic Status N5 N4 Interview tabs; Save per section works,High,Not Run,
+UI-019,UI,Student Update,Validation errors on form,Submit update-basic with invalid data,"POST /students/update-basic/{id}",Form redisplays with field errors visible,High,Not Run,
+UI-020,UI,Flash messages,Success message after create,Create student; check redirect page,"POST /students/create",Flash success message (e.g. 生徒が作成されました) displayed,High,Not Run,
+UI-021,UI,Flash messages,Success message after update,Update student basic info; check redirect,"POST /students/update-basic/{id}",Flash success message displayed,Medium,Not Run,
+UI-022,UI,Users List,Table and search,Open /users as ADMIN,"GET /users",Users table and search box visible,High,Not Run,
+UI-023,UI,Users List,Add user and edit delete,On users list check actions,"/users",Add user button; Edit and Delete per row (or equivalent) for admin,High,Not Run,
+UI-024,UI,User Form,Add user form fields,Open /users/add,"GET /users/add",Username email password role dropdown visible and labeled,High,Not Run,
+UI-025,UI,User Form,Validation errors add user,Submit add user with invalid or duplicate email,"POST /users/add",Form redisplays with validation/error messages,High,Not Run,
+UI-026,UI,Dashboard,Admin dashboard content,Open /admin/dashboard as ADMIN,"GET /admin/dashboard",Dashboard layout sidebar and content area visible,Medium,Not Run,
+UI-027,UI,Dashboard,Guest dashboard content,Open /guest/dashboard as GUEST,"GET /guest/dashboard",Dashboard layout and guest-appropriate content visible,Medium,Not Run,
+UI-028,UI,Access denied,Access denied page content,Trigger access denied (e.g. GUEST to /users),"/access-denied",Access denied message or view displayed,High,Not Run,
+UI-029,UI,Responsive,Student list on narrow viewport,Resize browser or use mobile view; open student list,"/students",List or layout adapts (e.g. table scroll or stack),Low,Not Run,
+UI-030,UI,Navigation,Sidebar and logout,As logged-in user check sidebar and logout,"/students or /admin/dashboard",Sidebar with navigation links; Logout link works and redirects to login,High,Not Run,

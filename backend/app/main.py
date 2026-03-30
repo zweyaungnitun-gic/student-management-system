@@ -25,9 +25,18 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+from app.routers import auth, students, courses, teachers, enrollments, tests, results, registrations, dashboard, users
+
 app.include_router(auth.router, prefix="/api")
-from app.routers import students
 app.include_router(students.router, prefix="/api")
+app.include_router(courses.router, prefix="/api")
+app.include_router(teachers.router, prefix="/api")
+app.include_router(enrollments.router, prefix="/api")
+app.include_router(tests.router, prefix="/api")
+app.include_router(results.router, prefix="/api")
+app.include_router(registrations.router, prefix="/api")
+app.include_router(dashboard.router, prefix="/api")
+app.include_router(users.router, prefix="/api")
 
 @app.get("/api/health")
 def health_check():

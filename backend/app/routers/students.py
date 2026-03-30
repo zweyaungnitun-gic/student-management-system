@@ -3,8 +3,11 @@ from sqlalchemy.orm import Session
 from typing import List
 from app.database import get_db
 from app.models.student import Student
+from app.models.additional_student_info import AdditionalStudentInfo
 from app.schemas.student import StudentCreate, StudentUpdate, StudentResponse
 from app.dependencies import get_current_user
+
+from app.services.student_service import StudentService
 
 router = APIRouter(prefix="/students", tags=["students"])
 
@@ -15,8 +18,7 @@ def get_students(
     db: Session = Depends(get_db),
     current_user = Depends(get_current_user)
 ):
-    students = db.query(Student).offset(skip).limit(limit).all()
-    return students
+    return StudentService.get_all_students(db, skip, limit)
 
 @router.get("/{student_id}", response_model=StudentResponse)
 def get_student(
@@ -24,7 +26,7 @@ def get_student(
     db: Session = Depends(get_db),
     current_user = Depends(get_current_user)
 ):
-    student = db.query(Student).filter(Student.id == student_id).first()
+    student = StudentService.get_student_by_id(db, student_id)
     if not student:
         raise HTTPException(status_code=404, detail="Student not found")
     return student
@@ -38,12 +40,8 @@ def create_student(
     # Check if national ID exists
     if db.query(Student).filter(Student.national_id == student_in.national_id).first():
         raise HTTPException(status_code=400, detail="Student with this National ID already exists")
-        
-    db_student = Student(**student_in.model_dump(), created_by=current_user.id)
-    db.add(db_student)
-    db.commit()
-    db.refresh(db_student)
-    return db_student
+    
+    return StudentService.create_student(db, student_in, current_user.id)
 
 @router.put("/{student_id}", response_model=StudentResponse)
 def update_student(
@@ -52,17 +50,10 @@ def update_student(
     db: Session = Depends(get_db),
     current_user = Depends(get_current_user)
 ):
-    db_student = db.query(Student).filter(Student.id == student_id).first()
-    if not db_student:
+    student = StudentService.update_student(db, student_id, student_in)
+    if not student:
         raise HTTPException(status_code=404, detail="Student not found")
-        
-    update_data = student_in.model_dump(exclude_unset=True)
-    for key, value in update_data.items():
-        setattr(db_student, key, value)
-        
-    db.commit()
-    db.refresh(db_student)
-    return db_student
+    return student
 
 @router.delete("/{student_id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_student(
@@ -70,10 +61,6 @@ def delete_student(
     db: Session = Depends(get_db),
     current_user = Depends(get_current_user)
 ):
-    db_student = db.query(Student).filter(Student.id == student_id).first()
-    if not db_student:
+    if not StudentService.delete_student(db, student_id):
         raise HTTPException(status_code=404, detail="Student not found")
-        
-    db.delete(db_student)
-    db.commit()
     return None

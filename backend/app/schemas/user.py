@@ -6,11 +6,20 @@ from app.models.user import Role
 class UserBase(BaseModel):
     username: str
     email: EmailStr
-    role: Role = Role.GUEST
+    full_name: Optional[str] = None
+    role: str = "GUEST"
     school_name: Optional[str] = None
 
 class UserCreate(UserBase):
     password: str
+
+class UserUpdate(BaseModel):
+    username: Optional[str] = None
+    email: Optional[EmailStr] = None
+    full_name: Optional[str] = None
+    password: Optional[str] = None
+    role: Optional[str] = None
+    school_name: Optional[str] = None
 
 class UserResponse(UserBase):
     id: int

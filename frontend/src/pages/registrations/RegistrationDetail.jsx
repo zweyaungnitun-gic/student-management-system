@@ -1,129 +1,242 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { ChevronLeft, Check, X, User, Phone, MapPin, FileText } from 'lucide-react';
+import { ChevronLeft, Check, X, User, Phone, MapPin, FileText, Calendar, Heart, Home, Info } from 'lucide-react';
+import { registrationService } from '../../api/registrationService';
 import toast from 'react-hot-toast';
 
 const RegistrationDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [status, setStatus] = useState('PENDING');
+  const [registration, setRegistration] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [processing, setProcessing] = useState(false);
 
-  const registration = {
-    registrationCode: 'REG-2024-001', englishName: 'Aung Ko Ko', katakanaName: 'アウン コ コ',
-    dateOfBirth: '1998-05-22', gender: 'Male', phoneNumber: '09-977-123456',
-    currentAddress: 'No. 15, U Wisara Road, Kamayut, Yangon',
-    hometownAddress: 'No. 5, Main Road, Bago City',
-    nationalIdNumber: '12/LAKANA(N)001234', passportNumber: 'MA123456',
-    jlptLevel: 'N5', desiredOccupation: 'Manufacturing',
-    japanTravelExperience: false, coeApplicationExperience: false,
-    religion: 'Buddhism', smoking: false, alcohol: false, tattoo: false,
-    wantDorm: true, submittedAt: '2024-01-15',
-    otherMemo: 'Student is very eager to work in Japan and has been preparing for 6 months.'
+  const fetchRegistration = async () => {
+    try {
+      setLoading(true);
+      const data = await registrationService.getById(id);
+      setRegistration(data);
+    } catch (error) {
+      console.error('Error fetching registration:', error);
+      toast.error('申請内容の取得に失敗しました');
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleDecision = (decision) => {
-    setStatus(decision);
-    toast.success(`Registration ${decision.toLowerCase()} successfully!`);
+  useEffect(() => {
+    fetchRegistration();
+  }, [id]);
+
+  const handleDecision = async (decision) => {
+    try {
+      setProcessing(true);
+      if (decision === 'ACCEPTED') {
+        await registrationService.accept(id);
+        toast.success('申請を承認しました。生徒として登録されました。');
+      } else {
+        await registrationService.reject(id);
+        toast.success('申請を却下しました。');
+      }
+      fetchRegistration();
+    } catch (error) {
+      console.error(`Error ${decision.toLowerCase()}ing registration:`, error);
+      toast.error('処理に失敗しました');
+    } finally {
+      setProcessing(false);
+    }
   };
 
   const InfoRow = ({ icon, label, value }) => (
-    <div style={{ display: 'flex', gap: '1rem', marginBottom: '1rem', alignItems: 'flex-start' }}>
-      <div style={{ color: 'var(--text-muted)', paddingTop: '2px' }}>{icon}</div>
+    <div className="d-flex gap-3 mb-3 align-items-start">
+      <div className="text-muted mt-1">{icon}</div>
       <div>
-        <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{label}</div>
-        <div style={{ color: 'var(--text-primary)', fontWeight: '500', marginTop: '2px' }}>{value ?? 'N/A'}</div>
+        <div className="small text-uppercase fw-bold text-muted spacing-wide" style={{ fontSize: '0.7rem' }}>{label}</div>
+        <div className="text-primary fw-medium">{value || '—'}</div>
       </div>
     </div>
   );
 
-  const Section = ({ title, children }) => (
-    <div style={{ backgroundColor: 'var(--bg-surface)', borderRadius: 'var(--radius-lg)', border: '1px solid var(--border-subtle)', padding: '1.5rem', marginBottom: '1.5rem' }}>
-      <h3 style={{ fontSize: '1rem', marginBottom: '1.25rem', paddingBottom: '0.5rem', borderBottom: '1px solid var(--border-subtle)' }}>{title}</h3>
+  const Section = ({ title, children, icon }) => (
+    <div className="glass-card mb-4 p-4">
+      <div className="d-flex align-items-center gap-2 mb-4 pb-2 border-bottom border-subtle">
+        {icon}
+        <h3 className="h6 mb-0 text-uppercase fw-bold">{title}</h3>
+      </div>
       {children}
     </div>
   );
 
   const YesNo = ({ value }) => (
-    <span style={{ color: value ? 'var(--accent-success)' : 'var(--accent-danger)', fontWeight: '600' }}>
-      {value ? 'Yes' : 'No'}
+    <span className={`fw-bold ${value ? 'text-success' : 'text-danger'}`}>
+      {value ? (
+        <span className="d-flex align-items-center gap-1"><Check size={14}/> YES</span>
+      ) : (
+        <span className="d-flex align-items-center gap-1"><X size={14}/> NO</span>
+      )}
     </span>
   );
 
+  if (loading) {
+    return (
+      <div className="text-center py-5">
+        <div className="spinner-border text-primary" role="status"></div>
+        <p className="mt-2 text-muted">読み込み中...</p>
+      </div>
+    );
+  }
+
+  if (!registration) {
+    return (
+      <div className="text-center py-5">
+        <p className="text-danger">登録申請が見つかりませんでした。</p>
+        <button onClick={() => navigate('/registrations')} className="btn btn-outline-primary">一覧に戻る</button>
+      </div>
+    );
+  }
+
+  const status = registration.status?.toUpperCase() || 'PENDING';
+
   return (
-    <div>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '2rem' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-          <button onClick={() => navigate('/registrations')} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '40px', height: '40px', borderRadius: 'var(--radius-full)', border: '1px solid var(--border-subtle)', backgroundColor: 'var(--bg-surface)', color: 'var(--text-secondary)' }}>
+    <div className="fade-in">
+      <div className="d-flex align-items-center justify-content-between mb-4 flex-wrap gap-3">
+        <div className="d-flex align-items-center gap-3">
+          <button onClick={() => navigate('/registrations')} className="btn btn-outline-secondary btn-icon">
             <ChevronLeft size={20} />
           </button>
           <div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-              <h1 style={{ fontSize: '1.875rem', margin: 0 }}>{registration.englishName}</h1>
-              <span style={{
-                padding: '0.25rem 0.75rem', borderRadius: 'var(--radius-full)', fontSize: '0.75rem', fontWeight: '600',
-                color: status === 'PENDING' ? 'var(--accent-warning)' : status === 'ACCEPTED' ? 'var(--accent-success)' : 'var(--accent-danger)',
-                backgroundColor: status === 'PENDING' ? 'rgba(245,158,11,0.15)' : status === 'ACCEPTED' ? 'rgba(16,185,129,0.15)' : 'rgba(239,68,68,0.15)'
-              }}>{status}</span>
+            <div className="d-flex align-items-center gap-3">
+              <h1 className="h3 mb-0">{registration.english_name}</h1>
+              <span className={`badge ${
+                status === 'PENDING' ? 'bg-warning' : 
+                status === 'ACCEPTED' ? 'bg-success' : 'bg-danger'
+              }`}>
+                {status}
+              </span>
             </div>
-            <p style={{ color: 'var(--text-secondary)', margin: '0.25rem 0 0' }}>Code: {registration.registrationCode} · Submitted: {registration.submittedAt}</p>
+            <p className="text-muted mb-0">Code: {registration.registration_code} · Submitted: {new Date(registration.submitted_at).toLocaleDateString()}</p>
           </div>
         </div>
+        
         {status === 'PENDING' && (
-          <div style={{ display: 'flex', gap: '0.75rem' }}>
-            <button onClick={() => handleDecision('REJECTED')} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.625rem 1.25rem', backgroundColor: 'rgba(239,68,68,0.1)', color: 'var(--accent-danger)', border: '1px solid rgba(239,68,68,0.3)', borderRadius: 'var(--radius-md)', fontWeight: '500' }}>
-              <X size={16} /> Reject
+          <div className="d-flex gap-2">
+            <button 
+              onClick={() => handleDecision('REJECTED')} 
+              disabled={processing}
+              className="btn btn-outline-danger d-flex align-items-center gap-2"
+            >
+              <X size={18} /> Reject
             </button>
-            <button onClick={() => handleDecision('ACCEPTED')} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.625rem 1.25rem', backgroundColor: 'var(--accent-success)', color: 'white', border: 'none', borderRadius: 'var(--radius-md)', fontWeight: '500' }}>
-              <Check size={16} /> Accept
+            <button 
+              onClick={() => handleDecision('ACCEPTED')} 
+              disabled={processing}
+              className="btn btn-success d-flex align-items-center gap-2"
+            >
+              <Check size={18} /> Accept Application
             </button>
           </div>
         )}
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1.5fr', gap: '1.5rem' }}>
-        <div>
-          <Section title="Personal Information">
-            <InfoRow icon={<User size={16} />} label="Katakana Name" value={registration.katakanaName} />
-            <InfoRow icon={<User size={16} />} label="Date of Birth" value={registration.dateOfBirth} />
+      <div className="row">
+        <div className="col-lg-4">
+          <Section title="Personal Information" icon={<User size={18} className="text-primary"/>}>
+            <InfoRow icon={<User size={16} />} label="Katakana Name" value={registration.katakana_name} />
+            <InfoRow icon={<Calendar size={16} />} label="Date of Birth" value={registration.date_of_birth} />
             <InfoRow icon={<User size={16} />} label="Gender" value={registration.gender} />
-            <InfoRow icon={<Phone size={16} />} label="Phone Number" value={registration.phoneNumber} />
-            <InfoRow icon={<FileText size={16} />} label="National ID" value={registration.nationalIdNumber} />
-            <InfoRow icon={<FileText size={16} />} label="Passport Number" value={registration.passportNumber} />
+            <InfoRow icon={<Phone size={16} />} label="Phone Number" value={registration.phone_number} />
+            <InfoRow icon={<FileText size={16} />} label="National ID" value={registration.national_id_number} />
+            <InfoRow icon={<FileText size={16} />} label="Passport No." value={registration.passport_number} />
           </Section>
-          <Section title="Japan-Related">
-            <InfoRow icon={<FileText size={16} />} label="JLPT Level" value={registration.jlptLevel} />
-            <InfoRow icon={<FileText size={16} />} label="Desired Occupation" value={registration.desiredOccupation} />
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginTop: '0.5rem' }}>
-              <div><div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', marginBottom: '4px' }}>JAPAN TRAVEL</div><YesNo value={registration.japanTravelExperience} /></div>
-              <div><div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', marginBottom: '4px' }}>COE APPLICATION</div><YesNo value={registration.coeApplicationExperience} /></div>
+
+          <Section title="Japan Travel & COE" icon={<Plane size={18} className="text-primary"/>}>
+            <InfoRow icon={<FileText size={16} />} label="JLPT Level" value={registration.jlpt_level} />
+            <InfoRow icon={<FileText size={16} />} label="Desired Job" value={registration.desired_occupation} />
+            <div className="row mt-2 g-3">
+              <div className="col-6">
+                <div className="small text-muted mb-1 text-uppercase">Japan Travel</div>
+                <YesNo value={registration.japan_travel_experience} />
+              </div>
+              <div className="col-6">
+                <div className="small text-muted mb-1 text-uppercase">COE Exp.</div>
+                <YesNo value={registration.coe_application_experience} />
+              </div>
             </div>
           </Section>
         </div>
 
-        <div>
-          <Section title="Addresses">
-            <InfoRow icon={<MapPin size={16} />} label="Current Address" value={registration.currentAddress} />
-            <InfoRow icon={<MapPin size={16} />} label="Hometown Address" value={registration.hometownAddress} />
-          </Section>
-          <Section title="Lifestyle">
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr', gap: '1rem' }}>
-              <div><div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', marginBottom: '4px' }}>RELIGION</div><div style={{ fontWeight: '500' }}>{registration.religion}</div></div>
-              <div><div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', marginBottom: '4px' }}>SMOKING</div><YesNo value={registration.smoking} /></div>
-              <div><div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', marginBottom: '4px' }}>ALCOHOL</div><YesNo value={registration.alcohol} /></div>
-              <div><div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', marginBottom: '4px' }}>TATTOO</div><YesNo value={registration.tattoo} /></div>
+        <div className="col-lg-8">
+          <div className="row">
+            <div className="col-md-12">
+              <Section title="Addresses" icon={<MapPin size={18} className="text-primary"/>}>
+                <div className="row">
+                  <div className="col-md-6 border-end border-subtle">
+                    <InfoRow icon={<Home size={16} />} label="Current Address" value={registration.current_address} />
+                  </div>
+                  <div className="col-md-6 ps-md-4">
+                    <InfoRow icon={<MapPin size={16} />} label="Hometown Address" value={registration.hometown_address} />
+                  </div>
+                </div>
+              </Section>
             </div>
-            <div style={{ marginTop: '1rem' }}>
-              <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', marginBottom: '4px' }}>DORMITORY PREFERENCE</div>
-              <YesNo value={registration.wantDorm} />
+            
+            <div className="col-md-12">
+              <Section title="Lifestyle & Preferences" icon={<Heart size={18} className="text-primary"/>}>
+                <div className="row g-4">
+                  <div className="col-sm-3">
+                    <div className="small text-muted mb-1 text-uppercase">Religion</div>
+                    <div className="fw-medium">{registration.religion || '—'}</div>
+                  </div>
+                  <div className="col-sm-3">
+                    <div className="small text-muted mb-1 text-uppercase">Smoking</div>
+                    <YesNo value={registration.smoking} />
+                  </div>
+                  <div className="col-sm-3">
+                    <div className="small text-muted mb-1 text-uppercase">Alcohol</div>
+                    <YesNo value={registration.alcohol} />
+                  </div>
+                  <div className="col-sm-3">
+                    <div className="small text-muted mb-1 text-uppercase">Tattoo</div>
+                    <YesNo value={registration.tattoo} />
+                  </div>
+                  <div className="col-12 border-top border-subtle pt-3">
+                    <div className="small text-muted mb-1 text-uppercase">Dormitory Preference</div>
+                    <YesNo value={registration.want_dorm} />
+                  </div>
+                </div>
+              </Section>
             </div>
-          </Section>
-          <Section title="Admin Memo">
-            <p style={{ color: 'var(--text-secondary)', lineHeight: '1.7', margin: 0 }}>{registration.otherMemo}</p>
-          </Section>
+
+            <div className="col-md-12">
+              <Section title="Additional Notes" icon={<Info size={18} className="text-primary"/>}>
+                <p className="text-muted mb-0 bg-light p-3 rounded" style={{ whiteSpace: 'pre-wrap', lineHeight: '1.6' }}>
+                  {registration.other_memo || 'No additional notes provided.'}
+                </p>
+              </Section>
+            </div>
+          </div>
         </div>
       </div>
     </div>
   );
 };
+
+// Internal icon for Plane since plane icon was used but not imported
+const Plane = ({ size, className }) => (
+  <svg 
+    xmlns="http://www.w3.org/2000/svg" 
+    width={size} 
+    height={size} 
+    viewBox="0 0 24 24" 
+    fill="none" 
+    stroke="currentColor" 
+    strokeWidth="2" 
+    strokeLinecap="round" 
+    strokeLinejoin="round" 
+    className={className}
+  >
+    <path d="M17.8 19.2L16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z"></path>
+  </svg>
+);
 
 export default RegistrationDetail;

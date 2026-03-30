@@ -1,78 +1,185 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import toast from 'react-hot-toast';
+import { studentService } from '../../api/studentService';
 
 const StudentDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const s = { id, studentId: 'ST-001', studentName: 'John Doe', dateOfBirth: '1995-05-15', gender: 'Male', nationalId: '123456789', phoneNumber: '+81 555-1234', email: 'john.doe@example.com', currentLivingAddress: 'Tokyo, Japan', homeTownAddress: 'Yangon, Myanmar', enrolledDate: '2023-09-01', registrationStatus: 'ENROLLED', religion: 'Buddhism', jlptLevel: 'N5', desiredJob: 'IT Engineer' };
+  const [student, setStudent] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-  const Row = ({ label, value }) => (
-    <tr>
-      <th className="text-muted fw-semibold" style={{ width: '35%', background: '#f8f9fa' }}>{label}</th>
-      <td>{value || '—'}</td>
-    </tr>
-  );
+  useEffect(() => {
+    const fetchStudent = async () => {
+      try {
+        setLoading(true);
+        const data = await studentService.getById(id);
+        setStudent(data);
+      } catch (error) {
+        toast.error('Failed to load student details');
+        navigate('/students');
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchStudent();
+  }, [id, navigate]);
+
+  const handleDelete = async () => {
+    if (window.confirm('Are you absolutely sure you want to delete this student?')) {
+      try {
+        await studentService.delete(id);
+        toast.success('Student deleted successfully');
+        navigate('/students');
+      } catch (error) {
+        toast.error('Failed to delete student');
+      }
+    }
+  };
+
+  const getStatusBadge = (status) => {
+    switch (status) {
+      case 'ENROLLED': return <span className="status-badge status-enrolled"><i className="bi bi-mortarboard-fill me-1"></i>Enrolled</span>;
+      case 'ACCEPTED': return <span className="status-badge status-accepted"><i className="bi bi-check-circle-fill me-1"></i>Accepted</span>;
+      case 'PENDING': return <span className="status-badge status-pending"><i className="bi bi-clock-fill me-1"></i>Pending</span>;
+      case 'REJECTED': return <span className="status-badge status-rejected"><i className="bi bi-x-circle-fill me-1"></i>Rejected</span>;
+      default: return <span className="status-badge status-default">{status}</span>;
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="premium-loader py-5">
+        <div className="spinner-border" role="status"></div>
+        Loading profile...
+      </div>
+    );
+  }
+
+  if (!student) return null;
 
   return (
-    <>
+    <div className="fade-in">
+      {/* Header Actions */}
       <div className="d-flex justify-content-between align-items-center mb-4">
-        <div className="d-flex align-items-center gap-3">
-          <button className="btn btn-outline-secondary btn-sm" onClick={() => navigate('/students')}>
-            <i className="bi bi-arrow-left me-1"></i>Back
-          </button>
-          <div>
-            <div className="d-flex align-items-center gap-2">
-              <h4 className="fw-bold mb-0">{s.studentName}</h4>
-              <span className="badge bg-success">{s.registrationStatus}</span>
-            </div>
-            <p className="text-muted small mb-0">Student ID: {s.studentId}</p>
-          </div>
-        </div>
-        <button className="btn btn-outline-primary btn-sm" onClick={() => navigate(`/students/${id}/edit`)}>
-          <i className="bi bi-pencil-square me-1"></i>Edit
+        <button className="btn btn-light shadow-sm" onClick={() => navigate('/students')} style={{fontWeight: 600}}>
+          <i className="bi bi-arrow-left me-2"></i>Back to Directory
         </button>
+        <div className="d-flex gap-2">
+          <button className="btn btn-outline-primary bg-white shadow-sm" onClick={() => navigate(`/students/${id}/edit`)}>
+            <i className="bi bi-pencil-square me-2"></i>Edit Student
+          </button>
+          <button className="btn btn-outline-danger bg-white shadow-sm" onClick={handleDelete}>
+            <i className="bi bi-trash-fill me-2"></i>Delete
+          </button>
+        </div>
+      </div>
+
+      {/* Main Profile Header */}
+      <div className="glass-card mb-4 d-flex align-items-center gap-4">
+        <div className="user-avatar-placeholder" style={{width: 80, height: 80, fontSize: '2rem'}}>
+          {student.student_name.charAt(0)}
+        </div>
+        <div>
+          <div className="d-flex align-items-center gap-3 mb-1">
+            <h1 className="fw-bold mb-0 text-main" style={{fontFamily: 'Outfit, sans-serif'}}>{student.student_name}</h1>
+            {getStatusBadge(student.registration_status)}
+          </div>
+          <p className="text-muted fw-semibold mb-0" style={{letterSpacing: '0.05em'}}>{student.student_id}</p>
+        </div>
       </div>
 
       <div className="row g-4">
+        {/* Personal Details */}
         <div className="col-lg-6">
-          <div className="bg-white rounded-3 shadow-sm overflow-hidden h-100">
-            <div className="section-header-blue"><i className="bi bi-person-fill me-2"></i>Personal Information</div>
-            <table className="table table-bordered mb-0 small">
-              <tbody>
-                <Row label="Full Name"    value={s.studentName} />
-                <Row label="Date of Birth" value={s.dateOfBirth} />
-                <Row label="Gender"       value={s.gender} />
-                <Row label="National ID"  value={s.nationalId} />
-                <Row label="Religion"     value={s.religion} />
-              </tbody>
-            </table>
+          <div className="glass-card h-100 p-0 overflow-hidden">
+            <div className="section-header-blue">
+              <i className="bi bi-person-bounding-box opacity-75"></i>Personal Information
+            </div>
+            <div className="p-4 pt-2">
+              <div className="detail-table-row">
+                <span className="detail-label">National ID</span>
+                <span className="detail-val">{student.national_id || '—'}</span>
+              </div>
+              <div className="detail-table-row">
+                <span className="detail-label">Date of Birth</span>
+                <span className="detail-val">{student.date_of_birth ? new Date(student.date_of_birth).toLocaleDateString() : '—'}</span>
+              </div>
+              <div className="detail-table-row">
+                <span className="detail-label">Gender</span>
+                <span className="detail-val">{student.gender || '—'}</span>
+              </div>
+            </div>
           </div>
         </div>
+
+        {/* Contact & Meta */}
         <div className="col-lg-6">
-          <div className="bg-white rounded-3 shadow-sm overflow-hidden mb-4">
-            <div className="section-header-blue"><i className="bi bi-telephone-fill me-2"></i>Contact & Address</div>
-            <table className="table table-bordered mb-0 small">
-              <tbody>
-                <Row label="Phone"         value={s.phoneNumber} />
-                <Row label="Email"         value={s.email} />
-                <Row label="Current Address" value={s.currentLivingAddress} />
-                <Row label="Hometown"      value={s.homeTownAddress} />
-              </tbody>
-            </table>
+          <div className="glass-card mb-4 p-0 overflow-hidden">
+            <div className="section-header-blue">
+              <i className="bi bi-telephone opacity-75"></i>Contact & Address
+            </div>
+            <div className="p-4 pt-2">
+              <div className="detail-table-row">
+                <span className="detail-label">Email Address</span>
+                <span className="detail-val">{student.email || '—'}</span>
+              </div>
+              <div className="detail-table-row">
+                <span className="detail-label">Phone Number</span>
+                <span className="detail-val">{student.phone_number || '—'}</span>
+              </div>
+              <div className="detail-table-row">
+                <span className="detail-label">Current Address</span>
+                <span className="detail-val">{student.current_living_address || '—'}</span>
+              </div>
+              <div className="detail-table-row">
+                <span className="detail-label">Hometown</span>
+                <span className="detail-val">{student.home_town_address || '—'}</span>
+              </div>
+            </div>
           </div>
-          <div className="bg-white rounded-3 shadow-sm overflow-hidden">
-            <div className="section-header-blue"><i className="bi bi-airplane-fill me-2"></i>Japan Information</div>
-            <table className="table table-bordered mb-0 small">
-              <tbody>
-                <Row label="JLPT Level"     value={s.jlptLevel} />
-                <Row label="Desired Job"    value={s.desiredJob} />
-                <Row label="Enrolled Date"  value={s.enrolledDate} />
-              </tbody>
-            </table>
+        </div>
+
+        {/* Additional Info */}
+        <div className="col-12">
+          <div className="glass-card p-0 overflow-hidden">
+            <div className="section-header-blue">
+              <i className="bi bi-airplane opacity-75"></i>Additional & Japan Information
+            </div>
+            <div className="p-4 pt-2 row">
+              <div className="col-lg-6">
+                <div className="detail-table-row">
+                  <span className="detail-label">Name in Japanese</span>
+                  <span className="detail-val">{student.additional_info?.name_in_japanese || '—'}</span>
+                </div>
+                <div className="detail-table-row">
+                  <span className="detail-label">Passport Number</span>
+                  <span className="detail-val">{student.additional_info?.passport_number || '—'}</span>
+                </div>
+                <div className="detail-table-row">
+                  <span className="detail-label">Father's Name</span>
+                  <span className="detail-val">{student.additional_info?.father_name || '—'}</span>
+                </div>
+              </div>
+              <div className="col-lg-6">
+                <div className="detail-table-row">
+                  <span className="detail-label">Highest JLPT Level</span>
+                  <span className="detail-val">{student.additional_info?.passed_highest_jlpt_level || '—'}</span>
+                </div>
+                <div className="detail-table-row">
+                  <span className="detail-label">Desired Job Type</span>
+                  <span className="detail-val">{student.additional_info?.desired_job_type || '—'}</span>
+                </div>
+                <div className="detail-table-row">
+                  <span className="detail-label">Viber Contact</span>
+                  <span className="detail-val">{student.additional_info?.contact_viber || '—'}</span>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 

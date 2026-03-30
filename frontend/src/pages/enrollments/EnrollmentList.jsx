@@ -1,48 +1,135 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import DataTable from '../../components/DataTable';
-import { Plus, Pencil, Trash2 } from 'lucide-react';
-
-const statusBadge = (status) => {
-  const map = { enrolled: 'badge-success', pending: 'badge-warning', completed: 'badge-primary', dropped: 'badge-danger', failed: 'badge-secondary' };
-  return <span className={`badge ${map[status] || 'badge-secondary'}`}>{status}</span>;
-};
+import { enrollmentService } from '../../api/enrollmentService';
+import toast from 'react-hot-toast';
 
 const EnrollmentList = () => {
   const navigate = useNavigate();
-  const [rows] = useState([
-    { id: 1, student: 'John Doe',      studentId: 'ST-001', course: 'Japanese N5', semester: '2024-S1', status: 'enrolled',  initiatedBy: 'admin' },
-    { id: 2, student: 'Jane Smith',    studentId: 'ST-002', course: 'Japanese N4', semester: '2024-S1', status: 'pending',   initiatedBy: 'student' },
-    { id: 3, student: 'Robert Johnson',studentId: 'ST-003', course: 'Japanese N5', semester: '2024-S1', status: 'completed', initiatedBy: 'admin' },
-    { id: 4, student: 'Maria Garcia',  studentId: 'ST-004', course: 'Tech Japanese',semester: '2024-S1', status: 'dropped',  initiatedBy: 'student' },
-  ]);
-  const columns = [
-    { header: '#',        accessor: 'id' },
-    { header: 'Student',  accessor: 'student' },
-    { header: 'Student ID',accessor: 'studentId' },
-    { header: 'Course',   accessor: 'course' },
-    { header: 'Semester', accessor: 'semester' },
-    { header: 'By',       accessor: 'initiatedBy' },
-    { header: 'Status',   accessor: 'status', render: (r) => statusBadge(r.status) },
-    { header: 'Actions',  accessor: 'id', render: (r) => (
-        <div style={{ display:'flex', gap:'0.25rem', justifyContent:'center' }}>
-          <button className="action-icon update" onClick={(e)=>{ e.stopPropagation(); navigate(`/enrollments/${r.id}`); }}><Pencil size={13}/> Edit</button>
-          <button className="action-icon delete" onClick={(e)=>{ e.stopPropagation(); }}><Trash2 size={13}/> Delete</button>
-        </div>
-      )
-    },
-  ];
+  const [enrollments, setEnrollments] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  const fetchEnrollments = async () => {
+    try {
+      setLoading(true);
+      const data = await enrollmentService.getAll();
+      setEnrollments(data);
+    } catch (error) {
+      console.error('Error fetching enrollments:', error);
+      toast.error('受講登録一覧の取得に失敗しました');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchEnrollments();
+  }, []);
+
+  const handleDelete = async (e, id) => {
+    e.stopPropagation();
+    if (window.confirm('この登録を削除してもよろしいですか？')) {
+      try {
+        await enrollmentService.delete(id);
+        toast.success('削除しました');
+        fetchEnrollments();
+      } catch (error) {
+        toast.error('削除に失敗しました');
+      }
+    }
+  };
+
+  const getStatusBadgeClass = (status) => {
+    switch (status?.toLowerCase()) {
+      case 'enrolled': return 'bg-success';
+      case 'pending': return 'bg-warning text-dark';
+      case 'completed': return 'bg-info';
+      default: return 'bg-secondary';
+    }
+  };
+
   return (
-    <div>
-      <div className="page-header" style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-end' }}>
-        <div>
-          <h1 className="page-title">Enrollments</h1>
-          <p className="page-subtitle">Track student course enrollments.</p>
+    <div className="fade-in">
+      <div className="page-header mb-4">
+        <div className="d-flex align-items-center justify-content-between">
+          <div className="d-flex align-items-center gap-3">
+            <h1 className="mb-0" style={{ color: '#0a58a0', fontWeight: 600, fontSize: '1.8rem' }}>
+              受講登録一覧
+            </h1>
+          </div>
+          <button className="btn btn-primary px-4 py-2 d-flex align-items-center gap-2" 
+            onClick={() => navigate('/enrollments/new')}
+            style={{ backgroundColor: '#0b5ed7', border: 'none' }}>
+            <i className="bi bi-plus-lg"></i>
+            <span>新規登録</span>
+          </button>
         </div>
-        <button className="btn btn-primary" onClick={() => navigate('/enrollments/new')}><Plus size={16}/> New Enrollment</button>
       </div>
-      <DataTable columns={columns} data={rows} title="Enrollments" searchPlaceholder="Search enrollments..." />
+
+      <div className="card shadow-sm border-0" style={{ borderRadius: '12px', overflow: 'hidden' }}>
+        <div className="card-body p-0">
+          <div className="table-responsive">
+            <table className="table table-hover align-middle mb-0">
+              <thead className="table-light">
+                <tr>
+                  <th className="ps-4 py-3">生徒</th>
+                  <th className="py-3">コース</th>
+                  <th className="py-3">学期</th>
+                  <th className="py-3">ステータス</th>
+                  <th className="py-3">登録日</th>
+                  <th className="text-center pe-4 py-3">アクション</th>
+                </tr>
+              </thead>
+              <tbody>
+                {loading ? (
+                  <tr>
+                    <td colSpan="6" className="text-center py-5">
+                      <div className="spinner-border text-primary" role="status"></div>
+                    </td>
+                  </tr>
+                ) : enrollments.length === 0 ? (
+                  <tr>
+                    <td colSpan="6" className="text-center py-5 text-muted">該当するデータはありません。</td>
+                  </tr>
+                ) : (
+                  enrollments.map(e => (
+                    <tr key={e.id}>
+                      <td className="ps-4">
+                        <div className="fw-bold">{e.student_name}</div>
+                        <small className="text-muted">{e.student_id_number}</small>
+                      </td>
+                      <td>
+                        <div className="fw-medium">{e.course_name}</div>
+                        <small className="text-muted">{e.course_code}</small>
+                      </td>
+                      <td>{e.semester}</td>
+                      <td>
+                        <span className={`badge px-3 py-2 rounded-pill fw-medium ${getStatusBadgeClass(e.status)}`}>
+                          {e.status_display || e.status}
+                        </span>
+                      </td>
+                      <td>{e.enrolled_date ? new Date(e.enrolled_date).toLocaleDateString() : '-'}</td>
+                      <td className="text-center pe-4">
+                        <div className="d-flex justify-content-center gap-3">
+                          <button className="border-0 bg-transparent text-primary p-0" title="編集"
+                            onClick={() => navigate(`/enrollments/${e.id}/edit`)}>
+                            <i className="bi bi-pencil" style={{ fontSize: '1.2rem' }}></i>
+                          </button>
+                          <button className="border-0 bg-transparent text-danger p-0" title="削除"
+                            onClick={(event) => handleDelete(event, e.id)}>
+                            <i className="bi bi-trash" style={{ fontSize: '1.2rem' }}></i>
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };
+
 export default EnrollmentList;

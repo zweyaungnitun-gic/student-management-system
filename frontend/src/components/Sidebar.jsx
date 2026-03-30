@@ -8,7 +8,7 @@ const Sidebar = () => {
   const [managementOpen, setManagementOpen] = useState(true);
   const [academicOpen, setAcademicOpen] = useState(false);
 
-  const Link = ({ to, icon, label }) => (
+  const LinkItem = ({ to, icon, label, badge }) => (
     <NavLink
       to={to}
       className={({ isActive }) => `sidebar-link${isActive ? ' active' : ''}`}
@@ -16,105 +16,109 @@ const Sidebar = () => {
     >
       <i className={`bi ${icon}`}></i>
       <span>{label}</span>
+      {badge && <span className="sidebar-pill">{badge}</span>}
     </NavLink>
   );
 
   return (
     <aside className="dashboard-sidebar glass-panel sidebar-scrollable">
       {/* Brand */}
-      <div className="sidebar-brand">
-        <div className="brand-badge">
-          <i className="bi bi-mortarboard-fill"></i>
+      <div className="sidebar-brand gap-3">
+        <div className="brand-badge bg-white shadow-sm">
+          <img src="/images/image.png" alt="GIC logo" />
         </div>
         <div className="flex-grow-1">
-          <p className="text-uppercase text-muted small fw-semibold mb-0" style={{ fontSize: '0.65rem' }}>
-            Student Management
+          <p className="text-uppercase text-muted small fw-semibold mb-0" style={{ fontSize: '0.7rem', lineHeight: '1.2' }}>
+            生徒情報管理システム
           </p>
-          <p className="fw-bold mb-0 small">GIC System</p>
         </div>
       </div>
 
       {/* User */}
       <div className="sidebar-user">
         <div className="d-flex align-items-center gap-3">
-          <div className="user-avatar-placeholder">
-            {(user?.username || 'A').charAt(0).toUpperCase()}
-          </div>
+          <img className="user-avatar" src="/images/profile.jpg" alt="Admin avatar" />
           <div>
-            <p className="mb-0 fw-semibold small">{user?.username || 'Admin'}</p>
+            <p className="mb-0 fw-semibold small text-truncate" style={{ maxWidth: '150px' }}>
+              {user?.username || 'Admin'}
+            </p>
             <p className="mb-0 small text-muted">Administrator</p>
           </div>
         </div>
       </div>
 
-      {/* Language */}
-      <div className="language-selector-sidebar">
+      {/* Language Selector */}
+      <div className="language-selector-sidebar mt-2">
         <div className="d-flex gap-1 justify-content-center">
-          <a href="#" className="lang-pill active"><i className="bi bi-globe2 me-1"></i>EN</a>
-          <span className="lang-divider text-secondary align-self-center mx-1">|</span>
-          <a href="#" className="lang-pill"><i className="bi bi-globe2 me-1"></i>JP</a>
+          <div className="lang-pill active" style={{ cursor: 'pointer' }}>
+            <i className="bi bi-globe2 me-1"></i> EN
+          </div>
+          <span className="lang-divider text-secondary px-1">|</span>
+          <div className="lang-pill" style={{ cursor: 'pointer' }}>
+            <i className="bi bi-globe2 me-1"></i> JP
+          </div>
         </div>
       </div>
 
       {/* Navigation */}
-      <nav className="sidebar-nav mt-2">
-        <Link to="/dashboard" icon="bi-speedometer2" label="Dashboard" />
-        <Link to="/registrations" icon="bi-inbox" label="Registrations" />
+      <nav className="sidebar-nav mt-3">
+        <p className="sidebar-label">Overview</p>
+        <LinkItem to="/dashboard" icon="bi-speedometer2" label="Dashboard" />
+        <LinkItem to="/registrations" icon="bi-inbox" label="Registrations" badge="New" />
 
-        <div className="sidebar-label mt-2">Management</div>
+        <p className="sidebar-label mt-3">Management</p>
 
-        {/* Master Management collapse */}
-        <div>
+        {/* Master Management Group */}
+        <div className="nav-item">
           <button
-            className="sidebar-link w-100 border-0 bg-transparent d-flex align-items-center"
+            className="sidebar-link w-100 d-flex align-items-center"
             onClick={() => setManagementOpen(!managementOpen)}
           >
             <i className="bi bi-hdd-stack"></i>
-            <span className="me-auto">Master Management</span>
-            <i className={`bi bi-chevron-down ms-auto small transition-icon${managementOpen ? '' : ' collapsed'}`}
-              style={{ transform: managementOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.3s ease' }}></i>
+            <span>Master Management</span>
+            <i className="bi bi-chevron-down ms-auto small transition-icon"
+               style={{ transform: managementOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.3s ease' }}></i>
           </button>
           {managementOpen && (
-            <nav className="sidebar-nav ps-3" style={{ borderLeft: '1px solid rgba(255,255,255,0.1)', marginLeft: '1.25rem' }}>
-              <Link to="/students" icon="bi-people" label="Students" />
-              <Link to="/teachers" icon="bi-person-workspace" label="Teachers" />
-              <Link to="/courses" icon="bi-book" label="Courses" />
-            </nav>
+            <div className="ms-3 ps-2 border-start border-light border-opacity-10 mt-1 d-flex flex-column gap-1">
+              <LinkItem to="/students" icon="bi-people" label="Students" />
+              <LinkItem to="/teachers" icon="bi-person-workspace" label="Teachers" />
+              <LinkItem to="/courses" icon="bi-book" label="Courses" />
+            </div>
           )}
         </div>
 
-        {/* Academic */}
-        <div>
+        {/* Academic Group */}
+        <div className="nav-item mt-1">
           <button
-            className="sidebar-link w-100 border-0 bg-transparent d-flex align-items-center"
+            className="sidebar-link w-100 d-flex align-items-center"
             onClick={() => setAcademicOpen(!academicOpen)}
           >
-            <i className="bi bi-journal-bookmark-fill"></i>
-            <span className="me-auto">Academic</span>
-            <i className="bi bi-chevron-down ms-auto small"
-              style={{ transform: academicOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.3s ease' }}></i>
+            <i className="bi bi-mortarboard"></i>
+            <span>Academic</span>
+            <i className="bi bi-chevron-down ms-auto small transition-icon"
+               style={{ transform: academicOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.3s ease' }}></i>
           </button>
           {academicOpen && (
-            <nav className="sidebar-nav ps-3" style={{ borderLeft: '1px solid rgba(255,255,255,0.1)', marginLeft: '1.25rem' }}>
-              <Link to="/enrollments" icon="bi-person-plus" label="Enrollments" />
-              <Link to="/tests" icon="bi-file-earmark-text" label="Tests" />
-              <Link to="/results" icon="bi-bar-chart-fill" label="Test Results" />
-              <Link to="/reports" icon="bi-graph-up" label="Report Cards" />
-            </nav>
+            <div className="ms-3 ps-2 border-start border-light border-opacity-10 mt-1 d-flex flex-column gap-1">
+              <LinkItem to="/enrollments" icon="bi-person-check" label="Enrollments" />
+              <LinkItem to="/tests" icon="bi-file-text" label="Tests" />
+              <LinkItem to="/results" icon="bi-bar-chart" label="Test Results" />
+              <LinkItem to="/reports" icon="bi-trophy" label="Report Cards" />
+            </div>
           )}
         </div>
 
-        <div className="sidebar-label mt-2">System</div>
-        <Link to="/users" icon="bi-people-fill" label="User Management" />
+        <p className="sidebar-label mt-3">System</p>
+        <LinkItem to="/users" icon="bi-person-badge" label="User Management" />
 
-        <div className="mt-3 px-2">
-          <button
-            className="btn btn-outline-danger btn-sm w-100"
-            onClick={() => { logout(); navigate('/login'); }}
-          >
-            <i className="bi bi-box-arrow-right me-2"></i>Sign Out
-          </button>
-        </div>
+        <button
+          className="sidebar-link text-danger fw-semibold mt-auto"
+          onClick={() => { logout(); navigate('/login'); }}
+        >
+          <i className="bi bi-box-arrow-right"></i>
+          <span>Logout</span>
+        </button>
       </nav>
     </aside>
   );

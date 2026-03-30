@@ -1,79 +1,153 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ChevronLeft, Save } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
+import { courseService } from '../../api/courseService';
+import { teacherService } from '../../api/teacherService';
 
 const CourseForm = () => {
   const navigate = useNavigate();
   const { id } = useParams();
   const isEditing = Boolean(id);
   const [loading, setLoading] = useState(false);
-  const { register, handleSubmit, formState: { errors } } = useForm({
-    defaultValues: isEditing ? { courseCode: 'JPN-N5', courseName: 'Japanese N5', creditHours: 4 } : {}
-  });
+  const [teachers, setTeachers] = useState([]);
+  const [initialLoading, setInitialLoading] = useState(isEditing);
 
-  const onSubmit = (data) => {
-    setLoading(true);
-    setTimeout(() => {
-      toast.success(isEditing ? 'Course updated!' : 'Course created!');
-      setLoading(false);
+  const { register, handleSubmit, reset, formState: { errors } } = useForm();
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const teachersData = await teacherService.getAll();
+        setTeachers(teachersData);
+
+        if (isEditing) {
+          const course = await courseService.getById(id);
+          reset({
+            course_code: course.course_code,
+            course_name: course.course_name,
+            credits: course.credits,
+            description: course.description,
+            is_active: course.is_active
+          });
+        }
+      } catch (error) {
+        console.error('Error fetching data:', error);
+        toast.error('データの取得に失敗しました');
+      } finally {
+        setInitialLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [id, isEditing, reset]);
+
+  const onSubmit = async (data) => {
+    try {
+      setLoading(true);
+      if (isEditing) {
+        await courseService.update(id, data);
+        toast.success('コースを更新しました');
+      } else {
+        await courseService.create(data);
+        toast.success('新しいコースを作成しました');
+      }
       navigate('/courses');
-    }, 800);
+    } catch (error) {
+      console.error('Error saving course:', error);
+      toast.error(error.response?.data?.detail || '保存に失敗しました');
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const Field = ({ label, name, type = 'text', required = false }) => (
-    <div>
-      <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '500', marginBottom: '0.5rem', color: 'var(--text-secondary)' }}>
-        {label} {required && <span style={{ color: 'var(--accent-danger)' }}>*</span>}
-      </label>
-      <input type={type} {...register(name, { required })}
-        style={{ width: '100%', padding: '0.75rem 1rem', backgroundColor: 'var(--bg-base)', border: `1px solid ${errors[name] ? 'var(--accent-danger)' : 'var(--border-strong)'}`, borderRadius: 'var(--radius-md)', color: 'var(--text-primary)', outline: 'none' }}
-        onFocus={(e) => e.target.style.borderColor = 'var(--accent-primary)'}
-        onBlur={(e) => e.target.style.borderColor = errors[name] ? 'var(--accent-danger)' : 'var(--border-strong)'}
-      />
-    </div>
-  );
+  if (initialLoading) {
+    return (
+      <div className="text-center py-5">
+        <div className="spinner-border text-primary" role="status"></div>
+        <p className="mt-2 text-muted">読み込み中...</p>
+      </div>
+    );
+  }
 
   return (
-    <div>
-      <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '2rem' }}>
-        <button onClick={() => navigate('/courses')} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '40px', height: '40px', borderRadius: 'var(--radius-full)', border: '1px solid var(--border-subtle)', backgroundColor: 'var(--bg-surface)', color: 'var(--text-secondary)' }}>
+    <div className="fade-in">
+      <div className="d-flex align-items-center gap-3 mb-4">
+        <button onClick={() => navigate('/courses')} className="btn btn-outline-secondary btn-icon">
           <ChevronLeft size={20} />
         </button>
         <div>
-          <h1 style={{ fontSize: '1.875rem', marginBottom: '0.25rem' }}>{isEditing ? 'Edit Course' : 'Create New Course'}</h1>
-          <p style={{ color: 'var(--text-secondary)', margin: 0 }}>Define course details and assign a teacher.</p>
+          <h1 className="h3 mb-1">{isEditing ? 'コース編集' : '新規コース作成'}</h1>
+          <p className="text-muted mb-0">コースの詳細情報を入力してください。</p>
         </div>
       </div>
 
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <div style={{ backgroundColor: 'var(--bg-surface)', borderRadius: 'var(--radius-lg)', border: '1px solid var(--border-subtle)', padding: '1.5rem', marginBottom: '1.5rem' }}>
-          <h3 style={{ fontSize: '1rem', marginBottom: '1rem', paddingBottom: '0.5rem', borderBottom: '1px solid var(--border-subtle)' }}>Course Details</h3>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.25rem' }}>
-            <Field label="Course Code" name="courseCode" required />
-            <Field label="Course Name" name="courseName" required />
-            <Field label="Credit Hours" name="creditHours" type="number" />
-            <div>
-              <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '500', marginBottom: '0.5rem', color: 'var(--text-secondary)' }}>Assign Teacher</label>
-              <select {...register('teacherId')} style={{ width: '100%', padding: '0.75rem 1rem', backgroundColor: 'var(--bg-base)', border: '1px solid var(--border-strong)', borderRadius: 'var(--radius-md)', color: 'var(--text-primary)', outline: 'none' }}>
-                <option value="">Select a teacher</option>
-                <option value="1">Yamamoto Keiko</option>
-                <option value="2">Tanaka Hiroshi</option>
-                <option value="3">Suzuki Aiko</option>
-              </select>
+      <form onSubmit={handleSubmit(onSubmit)} className="glass-card p-4">
+        <div className="row g-4 mb-4">
+          <div className="col-md-6">
+            <label className="form-label fw-bold small text-uppercase">Course Code *</label>
+            <input 
+              type="text" 
+              className={`form-control ${errors.course_code ? 'is-invalid' : ''}`}
+              {...register('course_code', { required: 'コースコードは必須です' })}
+              placeholder="e.g. JPN-N5"
+            />
+            {errors.course_code && <div className="invalid-feedback">{errors.course_code.message}</div>}
+          </div>
+
+          <div className="col-md-6">
+            <label className="form-label fw-bold small text-uppercase">Course Name *</label>
+            <input 
+              type="text" 
+              className={`form-control ${errors.course_name ? 'is-invalid' : ''}`}
+              {...register('course_name', { required: 'コース名は必須です' })}
+              placeholder="e.g. Japanese N5 Basic"
+            />
+            {errors.course_name && <div className="invalid-feedback">{errors.course_name.message}</div>}
+          </div>
+
+          <div className="col-md-6">
+            <label className="form-label fw-bold small text-uppercase">Credits</label>
+            <input 
+              type="number" 
+              className="form-control"
+              {...register('credits', { valueAsNumber: true })}
+              placeholder="4"
+            />
+          </div>
+
+          <div className="col-md-6">
+            <label className="form-label fw-bold small text-uppercase">Status</label>
+            <div className="form-check form-switch pt-2">
+              <input 
+                className="form-check-input" 
+                type="checkbox" 
+                {...register('is_active')}
+                defaultChecked={true}
+              />
+              <label className="form-check-label">Active</label>
             </div>
           </div>
-          <div style={{ marginTop: '1.25rem' }}>
-            <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '500', marginBottom: '0.5rem', color: 'var(--text-secondary)' }}>Description</label>
-            <textarea {...register('description')} rows={3} style={{ width: '100%', padding: '0.75rem 1rem', backgroundColor: 'var(--bg-base)', border: '1px solid var(--border-strong)', borderRadius: 'var(--radius-md)', color: 'var(--text-primary)', outline: 'none', resize: 'vertical' }} />
+
+          <div className="col-12">
+            <label className="form-label fw-bold small text-uppercase">Description</label>
+            <textarea 
+              className="form-control"
+              rows={3}
+              {...register('description')}
+              placeholder="Course description..."
+            />
           </div>
         </div>
 
-        <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '1rem' }}>
-          <button type="button" onClick={() => navigate('/courses')} style={{ padding: '0.75rem 1.5rem', backgroundColor: 'transparent', color: 'var(--text-secondary)', border: '1px solid var(--border-strong)', borderRadius: 'var(--radius-md)', fontWeight: '500' }}>Cancel</button>
-          <button type="submit" disabled={loading} style={{ padding: '0.75rem 1.5rem', backgroundColor: 'var(--accent-primary)', color: 'white', border: 'none', borderRadius: 'var(--radius-md)', fontWeight: '500', display: 'flex', alignItems: 'center', gap: '0.5rem', opacity: loading ? 0.7 : 1 }}>
-            <Save size={18} />{loading ? 'Saving...' : 'Save Course'}
+        <div className="d-flex justify-content-end gap-2 pt-3 border-top">
+          <button type="button" onClick={() => navigate('/courses')} className="btn btn-light">
+            キャンセル
+          </button>
+          <button type="submit" disabled={loading} className="btn btn-primary d-flex align-items-center gap-2">
+            <Save size={18} />
+            {loading ? '保存中...' : (isEditing ? '更新を保存' : 'コースを作成')}
           </button>
         </div>
       </form>
