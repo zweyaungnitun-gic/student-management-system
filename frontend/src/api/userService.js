@@ -2,7 +2,8 @@ import client from './client';
 
 export const userService = {
   getAll: async (search = '') => {
-    const response = await client.get(`/users/?search=${search}`);
+    const params = search ? { search } : {};
+    const response = await client.get('/users', { params });
     return response.data;
   },
 
@@ -12,17 +13,17 @@ export const userService = {
   },
 
   create: async (data) => {
-    const response = await client.post('/users/', data);
+    const response = await client.post('/users/add', data);
     return response.data;
   },
 
   update: async (id, data) => {
-    const response = await client.put(`/users/${id}`, data);
+    const response = await client.put(`/users/edit/${id}`, data);
     return response.data;
   },
 
   delete: async (id) => {
-    const response = await client.delete(`/users/${id}`);
+    const response = await client.delete(`/users/delete/${id}`);
     return response.data;
   }
 };

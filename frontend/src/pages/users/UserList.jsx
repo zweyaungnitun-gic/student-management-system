@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Plus, Pencil, Trash2 } from 'lucide-react';
 import { userService } from '../../api/userService';
 import toast from 'react-hot-toast';
 
@@ -7,16 +8,18 @@ const UserList = () => {
   const navigate = useNavigate();
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [search, setSearch] = useState('');
+  const [searchInput, setSearchInput] = useState('');
 
   const fetchUsers = async () => {
     try {
       setLoading(true);
-      const data = await userService.getAll();
-      setUsers(data);
+      const response = await userService.getAll(search);
+      setUsers(response || []);
     } catch (error) {
       console.error('Error fetching users:', error);
-      toast.error('ユーザー一覧の取得に失敗しました');
+      toast.error('Failed to load users');
+      setUsers([]);
     } finally {
       setLoading(false);
     }
@@ -24,139 +27,190 @@ const UserList = () => {
 
   useEffect(() => {
     fetchUsers();
-  }, []);
+  }, [search]);
 
-  const handleDelete = async (e, id, name) => {
-    e.stopPropagation();
-    if (window.confirm(`${name}を削除してもよろしいですか？`)) {
+  const handleSearch = (e) => {
+    e.preventDefault();
+    setSearch(searchInput);
+  };
+
+  const handleClear = () => {
+    setSearchInput('');
+    setSearch('');
+  };
+
+  const handleDelete = async (userId) => {
+    if (window.confirm('Are you sure you want to delete this user?')) {
       try {
-        await userService.delete(id);
-        toast.success('削除しました');
+        await userService.delete(userId);
+        toast.success('User deleted successfully');
         fetchUsers();
       } catch (error) {
-        toast.error('削除に失敗しました');
+        console.error('Error deleting user:', error);
+        toast.error(error.response?.data?.detail || 'Delete failed');
       }
     }
   };
 
-  const filteredUsers = users.filter(u => 
-    u.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    u.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    u.user_id.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const formatDate = (dateString) => {
+    if (!dateString) return '-';
+    try {
+      const date = new Date(dateString);
+      if (isNaN(date.getTime())) return '-';
+      return date.toLocaleString();
+    } catch (e) {
+      return '-';
+    }
+  };
+
+  const getRoleBadge = (role) => {
+    const roleMap = {
+      'ADMIN': { class: 'bg-danger', text: 'Admin' },
+      'SUPER_ADMIN': { class: 'bg-warning', text: 'Super Admin' },
+      'GUEST': { class: 'bg-success', text: 'Guest' }
+    };
+    const r = roleMap[role] || { class: 'bg-secondary', text: role || '-' };
+    return <span className={`badge ${r.class} rounded-pill px-3`}>{r.text}</span>;
+  };
+
+  if (loading && users.length === 0) {
+    return (
+      <div className="d-flex justify-content-center align-items-center" style={{ height: '400px' }}>
+        <div className="spinner-border text-primary" role="status">
+          <span className="visually-hidden">Loading...</span>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="fade-in">
+    <div>
       <div className="page-header mb-4">
         <div className="d-flex align-items-center gap-3">
-          <h1 className="mb-0" style={{ color: '#0a58a0', fontWeight: 600, fontSize: '1.8rem' }}>
-            ユーザー一覧
-          </h1>
+          <div>
+            <h1 className="mb-0" style={{ color: '#0a58a0', fontWeight: 600, fontSize: '1.8rem' }}>
+              User Management
+            </h1>
+          </div>
         </div>
       </div>
 
-      <div className="card shadow-sm border-0" style={{ borderRadius: '12px', overflow: 'hidden' }}>
-        <div className="card-body p-0">
-          <div className="p-3 border-bottom bg-white">
-            <div className="d-flex justify-content-between align-items-center flex-wrap gap-3">
-              <div className="d-flex gap-2">
-                <div className="input-group" style={{ maxWidth: '400px' }}>
-                  <span className="input-group-text bg-white border-end-0">
-                    <i className="bi bi-search text-muted"></i>
-                  </span>
-                  <input 
-                    type="text" 
-                    className="form-control border-start-0" 
-                    placeholder="ユーザー名、メールで検索..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                  />
-                </div>
-                <button className="btn btn-primary px-4 d-flex align-items-center gap-2" style={{ backgroundColor: '#0b5ed7', border: 'none' }}>
-                  <i className="bi bi-search"></i>
-                  <span>検索</span>
-                </button>
+      {/* Search and Add User Section */}
+      <div className="card mb-4 shadow-sm">
+        <div className="card-body">
+          <div className="d-flex justify-content-between align-items-center">
+            <form onSubmit={handleSearch} className="d-flex gap-2">
+              <div className="input-group" style={{ maxWidth: '400px' }}>
+                <span className="input-group-text bg-white border-end-0">
+                  <i className="bi bi-search text-muted"></i>
+                </span>
+                <input
+                  type="text"
+                  className="form-control border-start-0"
+                  value={searchInput}
+                  onChange={(e) => setSearchInput(e.target.value)}
+                  placeholder="Search by name or email..."
+                />
               </div>
-              
-              <button className="btn btn-success px-4 d-flex align-items-center gap-2" 
+              <button type="submit" className="btn btn-primary d-flex align-items-center gap-2">
+                <i className="bi bi-search"></i>
+                <span>Search</span>
+              </button>
+              <button 
+                type="button" 
+                onClick={handleClear} 
+                className="btn btn-outline-secondary d-flex align-items-center gap-2"
+              >
+                <i className="bi bi-arrow-repeat"></i>
+                <span>Refresh</span>
+              </button>
+            </form>
+            
+            <div>
+              <button
+                className="btn btn-success d-flex align-items-center gap-2"
                 onClick={() => navigate('/users/new')}
-                style={{ backgroundColor: '#198754', border: 'none' }}>
-                <i className="bi bi-person-plus-fill"></i>
-                <span>ユーザー追加</span>
+              >
+                <Plus size={16} />
+                <span>Add User</span>
               </button>
             </div>
           </div>
+        </div>
+      </div>
 
-          <div className="table-responsive">
-            <table className="table table-hover align-middle mb-0">
-              <thead className="bg-primary text-white" style={{ backgroundColor: '#0b5ed7 !important' }}>
-                <tr>
-                  <th className="text-center py-3" style={{ width: '60px', background: '#0b5ed7', color: 'white' }}>ID</th>
-                  <th className="text-center py-3" style={{ background: '#0b5ed7', color: 'white' }}>ユーザーID</th>
-                  <th className="py-3" style={{ background: '#0b5ed7', color: 'white' }}>名前</th>
-                  <th className="py-3" style={{ background: '#0b5ed7', color: 'white' }}>学校名</th>
-                  <th className="py-3" style={{ background: '#0b5ed7', color: 'white' }}>メール</th>
-                  <th className="text-center py-3" style={{ background: '#0b5ed7', color: 'white' }}>ロール</th>
-                  <th className="text-center py-3" style={{ background: '#0b5ed7', color: 'white' }}>作成日</th>
-                  <th className="text-center py-3" style={{ background: '#0b5ed7', color: 'white' }}>操作</th>
-                </tr>
-              </thead>
-              <tbody>
-                {loading ? (
+      {/* Users Table */}
+      {users.length === 0 ? (
+        <div className="card shadow-sm">
+          <div className="card-body text-center text-muted py-5">
+            <i className="bi bi-inbox fs-1 d-block mb-3"></i>
+            <span>No users registered.</span>
+            <div className="mt-3">
+              <button
+                className="btn btn-primary"
+                onClick={() => navigate('/users/new')}
+              >
+                <Plus size={16} className="me-2" />
+                Add Your First User
+              </button>
+            </div>
+          </div>
+        </div>
+      ) : (
+        <div className="card shadow-sm">
+          <div className="card-body p-0">
+            <div className="table-responsive">
+              <table className="table table-hover align-middle mb-0">
+                <thead className="bg-primary text-white">
                   <tr>
-                    <td colSpan="8" className="text-center py-5">
-                      <div className="spinner-border text-primary" role="status"></div>
-                    </td>
+                    <th className="text-center" style={{ minWidth: '60px' }}>ID</th>
+                    <th className="text-center" style={{ minWidth: '120px' }}>User ID</th>
+                    <th style={{ minWidth: '150px' }}>Name</th>
+                    <th style={{ minWidth: '200px' }}>Email</th>
+                    <th className="text-center" style={{ minWidth: '100px' }}>Role</th>
+                    <th className="text-center" style={{ minWidth: '140px' }}>Created Date</th>
+                    <th className="text-center" style={{ minWidth: '120px' }}>Actions</th>
                   </tr>
-                ) : filteredUsers.length === 0 ? (
-                  <tr>
-                    <td colSpan="8" className="text-center py-5 text-muted">ユーザーが登録されていません。</td>
-                  </tr>
-                ) : (
-                  filteredUsers.map(u => (
-                    <tr key={u.id} style={{ cursor: 'pointer' }} onClick={() => navigate(`/users/${u.id}/edit`)}>
-                      <td className="text-center">{u.id}</td>
+                </thead>
+                <tbody>
+                  {users.map(user => (
+                    <tr key={user.id}>
+                      <td className="text-center">{user.id}</td>
                       <td className="text-center">
-                        <span className="badge bg-primary bg-opacity-10 text-primary px-3 py-2 rounded-pill fw-medium">
-                          {u.user_id}
+                        <span className="badge bg-primary bg-opacity-10 text-primary px-3 py-2 rounded-pill">
+                          {user.user_id || user.userId}
                         </span>
                       </td>
-                      <td className="fw-medium">{u.username}</td>
-                      <td>{u.school_name || '-'}</td>
-                      <td>{u.email}</td>
-                      <td className="text-center">
-                        <span className={`badge px-3 py-2 rounded-pill fw-medium ${
-                          u.role === 'ADMIN' ? 'bg-danger bg-opacity-10 text-danger' : 'bg-success bg-opacity-10 text-success'
-                        }`}>
-                          {u.role === 'ADMIN' ? '管理者' : 'ゲスト'}
-                        </span>
-                      </td>
-                      <td className="text-center small text-muted">
-                        {u.created_at ? new Date(u.created_at).toLocaleDateString() : '-'}
-                      </td>
+                      <td>{user.username}</td>
+                      <td>{user.email}</td>
+                      <td className="text-center">{getRoleBadge(user.role)}</td>
+                      <td className="text-center">{formatDate(user.created_at || user.createdAt)}</td>
                       <td className="text-center">
                         <div className="d-flex gap-3 justify-content-center">
-                          <button className="border-0 bg-transparent text-primary p-0" title="編集"
-                            onClick={(e) => { e.stopPropagation(); navigate(`/users/${u.id}/edit`); }}>
-                            <i className="bi bi-pencil-square" style={{ fontSize: '1.2rem' }}></i>
+                          <button
+                            className="action-icon-link text-primary"
+                            onClick={() => navigate(`/users/${user.id}/edit`)}
+                            title="Edit"
+                          >
+                            <Pencil size={18} />
                           </button>
-                          <button className="border-0 bg-transparent text-danger p-0" title="削除"
-                            onClick={(e) => handleDelete(e, u.id, u.username)}>
-                            <i className="bi bi-trash-fill" style={{ fontSize: '1.2rem' }}></i>
+                          <button
+                            className="action-icon-link text-danger"
+                            onClick={() => handleDelete(user.id)}
+                            title="Delete"
+                          >
+                            <Trash2 size={18} />
                           </button>
                         </div>
                       </td>
                     </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
-          </div>
-          <div className="p-3 border-top d-flex justify-content-center">
-            {/* Pagination Placeholder */}
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };

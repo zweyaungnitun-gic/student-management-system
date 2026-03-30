@@ -1,8 +1,8 @@
 import client from './client';
 
 export const courseService = {
-  getAll: async (search = '', activeOnly = false) => {
-    const response = await client.get(`/courses/?search=${search}&active_only=${activeOnly}`);
+  getAll: async (params = {}) => {
+    const response = await client.get('/courses', { params });
     return response.data;
   },
 
@@ -12,17 +12,27 @@ export const courseService = {
   },
 
   create: async (data) => {
-    const response = await client.post('/courses/', data);
+    const response = await client.post('/courses/add', data);
     return response.data;
   },
 
   update: async (id, data) => {
-    const response = await client.put(`/courses/${id}`, data);
+    const response = await client.put(`/courses/edit/${id}`, data);
     return response.data;
   },
 
   delete: async (id) => {
-    const response = await client.delete(`/courses/${id}`);
+    const response = await client.delete(`/courses/delete/${id}`);
+    return response.data;
+  },
+
+  activate: async (id) => {
+    const response = await client.post(`/courses/activate/${id}`);
+    return response.data;
+  },
+
+  deactivate: async (id) => {
+    const response = await client.post(`/courses/deactivate/${id}`);
     return response.data;
   },
 
@@ -36,8 +46,20 @@ export const courseService = {
     return response.data;
   },
 
-  getAverageScore: async (id) => {
-    const response = await client.get(`/courses/${id}/average-score`);
+  getStatistics: async (id) => {
+    const response = await client.get(`/courses/${id}/statistics`);
+    return response.data;
+  },
+
+  exportStudents: async (id) => {
+    const response = await client.get(`/courses/export/${id}`, {
+      responseType: 'blob'
+    });
+    return response.data;
+  },
+
+  getByTeacher: async (teacherId) => {
+    const response = await client.get(`/courses/teacher/${teacherId}`);
     return response.data;
   }
 };

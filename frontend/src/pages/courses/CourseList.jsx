@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import { Plus, Pencil, Trash2, Info, PlayCircle, PauseCircle, FileText } from 'lucide-react';
 import { courseService } from '../../api/courseService';
 import toast from 'react-hot-toast';
 
@@ -7,17 +8,27 @@ const CourseList = () => {
   const navigate = useNavigate();
   const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [search, setSearch] = useState('');
+  const [searchInput, setSearchInput] = useState('');
   const [activeOnly, setActiveOnly] = useState(false);
 
   const fetchCourses = async () => {
     try {
       setLoading(true);
-      const data = await courseService.getAll();
-      setCourses(data);
+      const params = {};
+      if (search && search.trim() !== '') {
+        params.search = search.trim();
+      }
+      if (activeOnly) {
+        params.active_only = true;
+      }
+      
+      const response = await courseService.getAll(params);
+      setCourses(response || []);
     } catch (error) {
       console.error('Error fetching courses:', error);
-      toast.error('コース一覧の取得に失敗しました');
+      toast.error('Failed to load courses');
+      setCourses([]);
     } finally {
       setLoading(false);
     }
@@ -25,90 +36,162 @@ const CourseList = () => {
 
   useEffect(() => {
     fetchCourses();
-  }, []);
+  }, [search, activeOnly]);
 
-  const handleDelete = async (e, id) => {
-    e.stopPropagation();
-    if (window.confirm('このコースを削除してもよろしいですか？')) {
+  const handleSearch = (e) => {
+    e.preventDefault();
+    setSearch(searchInput);
+  };
+
+  const handleClear = () => {
+    setSearchInput('');
+    setSearch('');
+  };
+
+  const handleActiveOnlyChange = (e) => {
+    setActiveOnly(e.target.checked);
+  };
+
+  const handleToggleActive = async (courseId, isActive) => {
+    try {
+      if (isActive) {
+        await courseService.deactivate(courseId);
+        toast.success('Course deactivated');
+      } else {
+        await courseService.activate(courseId);
+        toast.success('Course activated');
+      }
+      fetchCourses();
+    } catch (error) {
+      console.error('Error toggling course status:', error);
+      toast.error(error.response?.data?.detail || 'Operation failed');
+    }
+  };
+
+  const handleDelete = async (courseId) => {
+    if (window.confirm('Are you sure you want to delete this course?')) {
       try {
-        await courseService.delete(id);
-        toast.success('削除しました');
+        const response = await courseService.delete(courseId);
+        toast.success(response?.message || 'Course deleted successfully');
         fetchCourses();
       } catch (error) {
-        toast.error('削除に失敗しました');
+        console.error('Error deleting course:', error);
+        toast.error(error.response?.data?.detail || 'Delete failed');
       }
     }
   };
 
-  const filteredCourses = courses.filter(c => {
-    const matchesSearch = c.course_name.toLowerCase().includes(searchTerm.toLowerCase()) || 
-                         c.course_code.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesActive = activeOnly ? c.is_active : true;
-    return matchesSearch && matchesActive;
-  });
+  const handleExport = async (courseId, courseCode) => {
+    try {
+      const blob = await courseService.exportStudents(courseId);
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `${courseCode}_students.csv`);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.URL.revokeObjectURL(url);
+      toast.success('Export started');
+    } catch (error) {
+      console.error('Error exporting course:', error);
+      toast.error('Export failed');
+    }
+  };
+
+  const formatDate = (dateString) => {
+    if (!dateString) return '-';
+    try {
+      const date = new Date(dateString);
+      if (isNaN(date.getTime())) return '-';
+      return date.toLocaleString();
+    } catch (e) {
+      return '-';
+    }
+  };
+
+  if (loading && courses.length === 0) {
+    return (
+      <div className="d-flex justify-content-center align-items-center" style={{ height: '400px' }}>
+        <div className="spinner-border text-primary" role="status">
+          <span className="visually-hidden">Loading...</span>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="fade-in">
+    <div>
       <div className="page-header mb-4">
         <div className="d-flex align-items-center gap-3">
-          <h1 className="mb-0" style={{ color: '#0a58a0', fontWeight: 600, fontSize: '1.8rem' }}>
-            コース管理
-          </h1>
+          <div>
+            <h1 className="mb-0" style={{ color: '#0a58a0', fontWeight: 600, fontSize: '1.8rem' }}>
+              Course Management
+            </h1>
+          </div>
         </div>
       </div>
 
-      {/* Search and Filters */}
-      <div className="card mb-4 shadow-sm border-0" style={{ borderRadius: '12px' }}>
-        <div className="card-body p-4">
+      {/* Search and Filter Bar */}
+      <div className="card mb-4 shadow-sm">
+        <div className="card-body">
           <div className="row g-3 align-items-center">
             <div className="col-md-8">
-              <div className="d-flex gap-2">
-                <div className="flex-grow-1">
-                  <div className="input-group">
-                    <span className="input-group-text bg-white">
+              <form onSubmit={handleSearch} className="row g-3">
+                <div className="col-12">
+                  <div className="d-flex gap-2">
+                    <div className="flex-grow-1">
+                      <div className="input-group">
+                        <span className="input-group-text bg-white">
+                          <i className="bi bi-search"></i>
+                        </span>
+                        <input
+                          type="text"
+                          className="form-control"
+                          value={searchInput}
+                          onChange={(e) => setSearchInput(e.target.value)}
+                          placeholder="Search by course name or code..."
+                        />
+                      </div>
+                    </div>
+                    <button type="submit" className="btn btn-primary d-flex align-items-center gap-2">
                       <i className="bi bi-search"></i>
-                    </span>
-                    <input 
-                      type="text" 
-                      className="form-control" 
-                      placeholder="コース名またはコードで検索..."
-                      value={searchTerm}
-                      onChange={(e) => setSearchTerm(e.target.value)}
-                    />
+                      <span>Search</span>
+                    </button>
+                    <button 
+                      type="button" 
+                      onClick={handleClear} 
+                      className="btn btn-outline-secondary d-flex align-items-center gap-2"
+                    >
+                      <i className="bi bi-arrow-repeat"></i>
+                      <span>Refresh</span>
+                    </button>
                   </div>
                 </div>
-                <button className="btn btn-primary px-4 d-flex align-items-center gap-2" style={{ backgroundColor: '#0b5ed7', border: 'none' }}>
-                  <i className="bi bi-search"></i>
-                  <span>検索</span>
-                </button>
-                <button className="btn btn-outline-secondary px-4 d-flex align-items-center gap-2" onClick={() => { setSearchTerm(''); setActiveOnly(false); }}>
-                  <i className="bi bi-arrow-repeat"></i>
-                  <span>リフレッシュ</span>
-                </button>
-              </div>
-              <div className="mt-3">
-                <div className="form-check">
-                  <input 
-                    type="checkbox" 
-                    className="form-check-input" 
-                    checked={activeOnly}
-                    onChange={(e) => setActiveOnly(e.target.checked)}
-                    id="activeOnly"
-                  />
-                  <label className="form-check-label small fw-medium text-muted" htmlFor="activeOnly">
-                    アクティブのみ表示
-                  </label>
+                <div className="col-12">
+                  <div className="form-check">
+                    <input
+                      type="checkbox"
+                      className="form-check-input"
+                      id="activeOnly"
+                      checked={activeOnly}
+                      onChange={handleActiveOnlyChange}
+                    />
+                    <label className="form-check-label" htmlFor="activeOnly">
+                      Show Active Only
+                    </label>
+                  </div>
                 </div>
-              </div>
+              </form>
             </div>
-            
             <div className="col-md-4">
-              <div className="d-flex justify-content-md-end">
-                <button className="btn btn-success px-4 py-2 d-flex align-items-center gap-2" 
+              <div className="d-flex gap-2 justify-content-md-end">
+                <button
+                  className="btn btn-success d-flex align-items-center gap-2"
                   onClick={() => navigate('/courses/new')}
-                  style={{ backgroundColor: '#198754', border: 'none' }}>
-                  <i className="bi bi-plus-circle"></i>
-                  <span>新規追加</span>
+                >
+                  <Plus size={16} />
+                  <span>Add Course</span>
                 </button>
               </div>
             </div>
@@ -116,83 +199,125 @@ const CourseList = () => {
         </div>
       </div>
 
-      <div className="card shadow-sm border-0" style={{ borderRadius: '12px', overflow: 'hidden' }}>
-        <div className="card-body p-0">
-          <div className="table-responsive">
-            <table className="table table-hover align-middle mb-0">
-              <thead className="bg-primary text-white">
-                <tr>
-                  <th className="text-center py-3" style={{ width: '60px', background: '#0b5ed7', color: 'white' }}>ID</th>
-                  <th className="text-center py-3" style={{ background: '#0b5ed7', color: 'white' }}>コースコード</th>
-                  <th className="py-3" style={{ background: '#0b5ed7', color: 'white' }}>コース名</th>
-                  <th className="text-center py-3" style={{ background: '#0b5ed7', color: 'white' }}>単位数</th>
-                  <th className="py-3" style={{ background: '#0b5ed7', color: 'white' }}>担当教師</th>
-                  <th className="text-center py-3" style={{ background: '#0b5ed7', color: 'white' }}>ステータス</th>
-                  <th className="text-center py-3" style={{ background: '#0b5ed7', color: 'white' }}>登録日</th>
-                  <th className="text-center py-3" style={{ background: '#0b5ed7', color: 'white' }}>操作</th>
-                </tr>
-              </thead>
-              <tbody>
-                {loading ? (
+      {/* Courses Table */}
+      {courses.length === 0 ? (
+        <div className="card shadow-sm">
+          <div className="card-body text-center text-muted py-5">
+            <i className="bi bi-inbox fs-1 d-block mb-3"></i>
+            <span>No courses registered.</span>
+            <div className="mt-3">
+              <button
+                className="btn btn-primary"
+                onClick={() => navigate('/courses/new')}
+              >
+                <Plus size={16} className="me-2" />
+                Add Your First Course
+              </button>
+            </div>
+          </div>
+        </div>
+      ) : (
+        <div className="card shadow-sm">
+          <div className="card-body p-0">
+            <div className="table-responsive">
+              <table className="table table-hover align-middle mb-0">
+                <thead className="bg-primary text-white">
                   <tr>
-                    <td colSpan="8" className="text-center py-5">
-                      <div className="spinner-border text-primary" role="status"></div>
-                    </td>
+                    <th className="text-center" style={{ minWidth: '60px' }}>ID</th>
+                    <th className="text-center" style={{ minWidth: '120px' }}>Course Code</th>
+                    <th style={{ minWidth: '180px' }}>Course Name</th>
+                    <th className="text-center" style={{ minWidth: '80px' }}>Credits</th>
+                    <th style={{ minWidth: '150px' }}>Teacher</th>
+                    <th className="text-center" style={{ minWidth: '100px' }}>Status</th>
+                    <th className="text-center" style={{ minWidth: '140px' }}>Registered Date</th>
+                    <th className="text-center" style={{ minWidth: '200px' }}>Actions</th>
                   </tr>
-                ) : filteredCourses.length === 0 ? (
-                  <tr>
-                    <td colSpan="8" className="text-center py-5 text-muted">コースが登録されていません。</td>
-                  </tr>
-                ) : (
-                  filteredCourses.map(c => (
-                    <tr key={c.id} style={{ cursor: 'pointer' }} onClick={() => navigate(`/courses/${c.id}`)}>
-                      <td className="text-center">{c.id}</td>
+                </thead>
+                <tbody>
+                  {courses.map(course => (
+                    <tr key={course.course_id || course.courseId}>
+                      <td className="text-center">{course.course_id || course.courseId}</td>
                       <td className="text-center">
-                        <span className="badge bg-secondary bg-opacity-10 text-secondary px-3 py-2 rounded-pill fw-medium">
-                          {c.course_code}
+                        <span className="badge bg-secondary bg-opacity-10 text-secondary px-3 py-2 rounded-pill">
+                          {course.course_code || course.courseCode}
                         </span>
                       </td>
-                      <td className="fw-medium">{c.course_name}</td>
-                      <td className="text-center">{c.credits}</td>
-                      <td>{c.teacher_name || <span className="text-muted fst-italic">未割当</span>}</td>
+                      <td>{course.course_name || course.courseName}</td>
                       <td className="text-center">
-                        <span className={`badge px-3 py-2 rounded-pill fw-medium ${
-                          c.is_active ? 'bg-success text-white' : 'bg-danger text-white'
-                        }`}>
-                          {c.is_active ? 'アクティブ' : '非アクティブ'}
+                        <span className="badge bg-info bg-opacity-10 text-info px-3 py-2 rounded-pill">
+                          {course.credit_hours || course.creditHours} credits
+                        </span>
+                       </td>
+                      <td>
+                        {course.teacher_name || course.teacherName ? (
+                          <span>{course.teacher_name || course.teacherName}</span>
+                        ) : (
+                          <span className="text-muted fst-italic">Unassigned</span>
+                        )}
+                      </td>
+                      <td className="text-center">
+                        <span className={`badge rounded-pill px-3 ${course.is_active ? 'bg-success' : 'bg-danger'}`}>
+                          {course.is_active ? 'Active' : 'Inactive'}
                         </span>
                       </td>
-                      <td className="text-center small text-muted">
-                        {c.created_at ? new Date(c.created_at).toLocaleDateString() : '-'}
-                      </td>
+                      <td className="text-center">{formatDate(course.created_at || course.createdAt)}</td>
                       <td className="text-center">
                         <div className="d-flex gap-3 justify-content-center">
-                          <button className="border-0 bg-transparent text-info p-0" title="詳細"
-                            onClick={(e) => { e.stopPropagation(); navigate(`/courses/${c.id}`); }}>
-                            <i className="bi bi-info-circle" style={{ fontSize: '1.2rem' }}></i>
+                          <button
+                            className="action-icon-link text-info"
+                            onClick={() => navigate(`/courses/${course.course_id || course.courseId}`)}
+                            title="Details"
+                          >
+                            <Info size={18} />
                           </button>
-                          <button className="border-0 bg-transparent text-primary p-0" title="編集"
-                            onClick={(e) => { e.stopPropagation(); navigate(`/courses/${c.id}/edit`); }}>
-                            <i className="bi bi-pencil-square" style={{ fontSize: '1.2rem' }}></i>
+                          <button
+                            className="action-icon-link text-primary"
+                            onClick={() => navigate(`/courses/${course.course_id || course.courseId}/edit`)}
+                            title="Edit"
+                          >
+                            <Pencil size={18} />
                           </button>
-                          <Link to={`/enrollments/new?courseId=${c.id}`} className="text-decoration-none text-success" 
-                            title="受講生徒を登録" onClick={(e) => e.stopPropagation()}>
-                            <i className="bi bi-person-plus-fill" style={{ fontSize: '1.2rem' }}></i>
-                          </Link>
-                          <button className="border-0 bg-transparent text-danger p-0" title="削除"
-                            onClick={(e) => handleDelete(e, c.id)}>
-                            <i className="bi bi-trash-fill" style={{ fontSize: '1.2rem' }}></i>
+                          <button
+                            className="action-icon-link text-success"
+                            onClick={() => handleExport(course.course_id || course.courseId, course.course_code || course.courseCode)}
+                            title="Export Students"
+                          >
+                            <FileText size={18} />
+                          </button>
+                          {course.is_active ? (
+                            <button
+                              className="action-icon-link text-warning"
+                              onClick={() => handleToggleActive(course.course_id || course.courseId, true)}
+                              title="Deactivate"
+                            >
+                              <PauseCircle size={18} />
+                            </button>
+                          ) : (
+                            <button
+                              className="action-icon-link text-success"
+                              onClick={() => handleToggleActive(course.course_id || course.courseId, false)}
+                              title="Activate"
+                            >
+                              <PlayCircle size={18} />
+                            </button>
+                          )}
+                          <button
+                            className="action-icon-link text-danger"
+                            onClick={() => handleDelete(course.course_id || course.courseId)}
+                            title="Delete"
+                          >
+                            <Trash2 size={18} />
                           </button>
                         </div>
                       </td>
                     </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };

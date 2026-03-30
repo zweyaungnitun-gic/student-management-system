@@ -1,11 +1,9 @@
-// frontend/src/pages/teachers/TeacherForm.jsx
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ChevronLeft, Save, X } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
-import client from '../../api/client';
+import { teacherService } from '../../api/teacherService';
 
 const TeacherForm = () => {
   const navigate = useNavigate();
@@ -14,7 +12,7 @@ const TeacherForm = () => {
   const [loading, setLoading] = useState(false);
   const [fetchLoading, setFetchLoading] = useState(isEditing);
   
-  const { register, handleSubmit, formState: { errors }, setValue, reset } = useForm({
+  const { register, handleSubmit, formState: { errors }, setValue } = useForm({
     defaultValues: {
       name: '',
       email: '',
@@ -30,8 +28,8 @@ const TeacherForm = () => {
 
   const fetchTeacher = async () => {
     try {
-      const response = await client.get(`/teachers/${id}`);
-      const teacher = response.data;
+      const response = await teacherService.getById(id);
+      const teacher = response;
       setValue('name', teacher.name || '');
       setValue('email', teacher.email || '');
       setValue('department', teacher.department || '');
@@ -48,10 +46,10 @@ const TeacherForm = () => {
     setLoading(true);
     try {
       if (isEditing) {
-        await client.put(`/teachers/edit/${id}`, data);
+        await teacherService.update(id, data);
         toast.success('Teacher information updated');
       } else {
-        await client.post('/teachers/add', data);
+        await teacherService.create(data);
         toast.success('Teacher added successfully');
       }
       navigate('/teachers');
@@ -102,23 +100,6 @@ const TeacherForm = () => {
         <div className="card" style={{ borderRadius: '10px', boxShadow: '0 2px 10px rgba(0,0,0,0.1)', maxWidth: '900px', width: '100%' }}>
           <div className="card-body" style={{ padding: '1.5rem 2rem' }}>
             <form onSubmit={handleSubmit(onSubmit)}>
-              {/* User ID (display only for edit) */}
-              {isEditing && (
-                <div className="row mb-3 align-items-center">
-                  <label className="col-sm-3 col-form-label fw-semibold">
-                    Teacher ID
-                  </label>
-                  <div className="col-sm-9">
-                    <input
-                      type="text"
-                      className="form-control bg-light"
-                      value={id}
-                      readOnly
-                    />
-                  </div>
-                </div>
-              )}
-
               {/* Name */}
               <div className="row mb-3 align-items-center">
                 <label className="col-sm-3 col-form-label fw-semibold">
@@ -128,11 +109,7 @@ const TeacherForm = () => {
                   <input
                     type="text"
                     className={`form-control ${errors.name ? 'is-invalid' : ''}`}
-                    {...register('name', { 
-                      required: 'Name is required',
-                      maxLength: { value: 100, message: 'Max 100 characters' }
-                    })}
-                    placeholder="Enter teacher's full name"
+                    {...register('name', { required: 'Name is required' })}
                   />
                   {errors.name && (
                     <div className="invalid-feedback">{errors.name.message}</div>
@@ -156,7 +133,6 @@ const TeacherForm = () => {
                         message: 'Enter a valid email address'
                       }
                     })}
-                    placeholder="email@example.com"
                   />
                   {errors.email && (
                     <div className="invalid-feedback">{errors.email.message}</div>
@@ -177,9 +153,6 @@ const TeacherForm = () => {
                     placeholder="e.g., Computer Science, Business Administration"
                   />
                   <small className="text-muted">Optional</small>
-                  {errors.department && (
-                    <div className="invalid-feedback">{errors.department.message}</div>
-                  )}
                 </div>
               </div>
 
@@ -188,8 +161,8 @@ const TeacherForm = () => {
                 <i className="bi bi-info-circle-fill fs-4 me-3"></i>
                 <div>
                   <strong>Notes:</strong><br />
-                  • Email address must be unique in the system<br />
-                  • Teacher code will be automatically generated (e.g., TCH001)<br />
+                  • Teacher ID will be auto-generated (TCH001, TCH002, etc.)<br />
+                  • Email addresses must be unique in the system<br />
                   • Deactivated teachers cannot be assigned to new courses
                 </div>
               </div>

@@ -2,7 +2,8 @@ import client from './client';
 
 export const teacherService = {
   getAll: async (search = '') => {
-    const response = await client.get(`/teachers/?search=${search}`);
+    const params = search ? { search } : {};
+    const response = await client.get('/teachers', { params });
     return response.data;
   },
 
@@ -12,22 +13,27 @@ export const teacherService = {
   },
 
   create: async (data) => {
-    const response = await client.post('/teachers/', data);
+    const response = await client.post('/teachers/add', data);
     return response.data;
   },
 
   update: async (id, data) => {
-    const response = await client.put(`/teachers/${id}`, data);
+    const response = await client.put(`/teachers/edit/${id}`, data);
+    return response.data;
+  },
+
+  delete: async (id) => {
+    const response = await client.delete(`/teachers/delete/${id}`);
     return response.data;
   },
 
   activate: async (id) => {
-    const response = await client.patch(`/teachers/${id}/activate`);
+    const response = await client.post(`/teachers/activate/${id}`);
     return response.data;
   },
 
   deactivate: async (id) => {
-    const response = await client.patch(`/teachers/${id}/deactivate`);
+    const response = await client.post(`/teachers/deactivate/${id}`);
     return response.data;
   }
 };

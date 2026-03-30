@@ -1,12 +1,10 @@
-// src/App.jsx
-
 import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import Layout from './components/Layout';
-import { AuthProvider } from './contexts/AuthContext';
 
 // Pages
+import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 
 import StudentList from './pages/students/StudentList';
@@ -19,7 +17,7 @@ import TeacherDetails from './pages/teachers/TeacherDetails';
 
 import CourseList from './pages/courses/CourseList';
 import CourseForm from './pages/courses/CourseForm';
-import CourseDetails from './pages/courses/CourseDetails';  // Make sure this file exists
+import CourseDetails from './pages/courses/CourseDetails';
 
 import EnrollmentList from './pages/enrollments/EnrollmentList';
 import EnrollmentForm from './pages/enrollments/EnrollmentForm';
@@ -33,7 +31,11 @@ import ResultForm from './pages/results/ResultForm';
 import RegistrationList from './pages/registrations/RegistrationList';
 import RegistrationDetail from './pages/registrations/RegistrationDetail';
 
-import ReportList from './pages/reports/ReportList';
+// Report Pages
+import ReportDashboard from './pages/reports/ReportDashboard';
+import GradeSummary from './pages/reports/GradeSummary';
+import ReportCard from './pages/reports/ReportCard';
+import ClassRankings from './pages/reports/ClassRankings';
 
 import UserList from './pages/users/UserList';
 import UserForm from './pages/users/UserForm';
@@ -42,102 +44,107 @@ import './index.css';
 
 function App() {
   return (
-    <AuthProvider>
-      <BrowserRouter>
-        <Toaster
-          position="top-right"
-          toastOptions={{
-            style: {
-              background: 'var(--bg-surface)',
-              color: 'var(--text-primary)',
-              border: '1px solid var(--border-subtle)',
-            },
-          }}
-        />
-        <Routes>
-          {/* Redirect root and login to dashboard */}
-          <Route path="/" element={<Navigate to="/dashboard" replace />} />
-          <Route path="/login" element={<Navigate to="/dashboard" replace />} />
+    <BrowserRouter>
+      <Toaster
+        position="top-right"
+        toastOptions={{
+          style: {
+            background: 'var(--bg-surface)',
+            color: 'var(--text-primary)',
+            border: '1px solid var(--border-subtle)',
+          },
+        }}
+      />
+      <Routes>
+        {/* Login page */}
+        <Route path="/login" element={<Login />} />
 
-          {/* Main app - no authentication required */}
-          <Route element={<Layout />}>
-            <Route path="dashboard" element={<Dashboard />} />
+        {/* Main app */}
+        <Route path="/" element={<Layout />}>
+          <Route index element={<Navigate to="/dashboard" replace />} />
+          <Route path="dashboard" element={<Dashboard />} />
 
-            {/* Students */}
-            <Route path="students">
-              <Route index element={<StudentList />} />
-              <Route path="new" element={<StudentForm />} />
-              <Route path=":id" element={<StudentDetail />} />
-              <Route path=":id/edit" element={<StudentForm />} />
-            </Route>
-
-            {/* Teachers */}
-            <Route path="teachers">
-              <Route index element={<TeacherList />} />
-              <Route path="new" element={<TeacherForm />} />
-              <Route path=":id" element={<TeacherDetails />} />
-              <Route path=":id/edit" element={<TeacherForm />} />
-            </Route>
-
-            {/* Courses */}
-            <Route path="courses">
-              <Route index element={<CourseList />} />
-              <Route path="new" element={<CourseForm />} />
-              <Route path=":id" element={<CourseDetails />} />
-              <Route path=":id/edit" element={<CourseForm />} />
-            </Route>
-
-            {/* Enrollments */}
-            <Route path="enrollments">
-              <Route index element={<EnrollmentList />} />
-              <Route path="new" element={<EnrollmentForm />} />
-              <Route path=":id" element={<EnrollmentForm />} />
-            </Route>
-
-            {/* Tests */}
-            <Route path="tests">
-              <Route index element={<TestList />} />
-              <Route path="new" element={<TestForm />} />
-              <Route path=":id" element={<TestForm />} />
-            </Route>
-
-            {/* Results */}
-            <Route path="results">
-              <Route index element={<ResultList />} />
-              <Route path="new" element={<ResultForm />} />
-              <Route path=":id" element={<ResultForm />} />
-            </Route>
-
-            {/* Registrations */}
-            <Route path="registrations">
-              <Route index element={<RegistrationList />} />
-              <Route path=":id" element={<RegistrationDetail />} />
-            </Route>
-
-            {/* Reports */}
-            <Route path="reports" element={<ReportList />} />
-
-            {/* Users */}
-            <Route path="users">
-              <Route index element={<UserList />} />
-              <Route path="new" element={<UserForm />} />
-              <Route path=":id/edit" element={<UserForm />} />
-            </Route>
+          {/* Students */}
+          <Route path="students">
+            <Route index element={<StudentList />} />
+            <Route path="new" element={<StudentForm />} />
+            <Route path=":id" element={<StudentDetail />} />
+            <Route path=":id/edit" element={<StudentForm />} />
           </Route>
 
-          {/* 404 Page */}
-          <Route
-            path="*"
-            element={
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh', flexDirection: 'column', gap: '1rem', color: 'var(--text-primary)' }}>
-                <h1 style={{ fontSize: '4rem', margin: 0 }}>404</h1>
-                <p style={{ color: 'var(--text-secondary)' }}>Page not found</p>
-              </div>
-            }
-          />
-        </Routes>
-      </BrowserRouter>
-    </AuthProvider>
+          {/* Teachers */}
+          <Route path="teachers">
+            <Route index element={<TeacherList />} />
+            <Route path="new" element={<TeacherForm />} />
+            <Route path=":id" element={<TeacherDetails />} />
+            <Route path=":id/edit" element={<TeacherForm />} />
+          </Route>
+
+          {/* Courses */}
+          <Route path="courses">
+            <Route index element={<CourseList />} />
+            <Route path="new" element={<CourseForm />} />
+            <Route path=":id" element={<CourseDetails />} />
+            <Route path=":id/edit" element={<CourseForm />} />
+          </Route>
+
+          {/* Enrollments */}
+          <Route path="enrollments">
+            <Route index element={<EnrollmentList />} />
+            <Route path="new" element={<EnrollmentForm />} />
+            <Route path=":id" element={<EnrollmentForm />} />
+          </Route>
+
+          {/* Tests */}
+          <Route path="tests">
+            <Route index element={<TestList />} />
+            <Route path="new" element={<TestForm />} />
+            <Route path=":id" element={<TestForm />} />
+            <Route path=":id/edit" element={<TestForm />} />
+          </Route>
+
+          {/* Results */}
+          <Route path="results">
+            <Route index element={<ResultList />} />
+            <Route path="new" element={<ResultForm />} />
+            <Route path=":id" element={<ResultForm />} />
+            <Route path=":id/edit" element={<ResultForm />} />
+          </Route>
+
+          {/* Registrations */}
+          <Route path="registrations">
+            <Route index element={<RegistrationList />} />
+            <Route path=":id" element={<RegistrationDetail />} />
+          </Route>
+
+          {/* Reports */}
+          <Route path="reports">
+            <Route index element={<ReportDashboard />} />
+            <Route path="student/:studentId" element={<GradeSummary />} />
+            <Route path="report-card/:studentId" element={<ReportCard />} />
+            <Route path="rankings" element={<ClassRankings />} />
+          </Route>
+
+          {/* Users */}
+          <Route path="users">
+            <Route index element={<UserList />} />
+            <Route path="new" element={<UserForm />} />
+            <Route path=":id/edit" element={<UserForm />} />
+          </Route>
+        </Route>
+
+        {/* 404 Page */}
+        <Route
+          path="*"
+          element={
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh', flexDirection: 'column', gap: '1rem', color: 'var(--text-primary)' }}>
+              <h1 style={{ fontSize: '4rem', margin: 0 }}>404</h1>
+              <p style={{ color: 'var(--text-secondary)' }}>Page not found</p>
+            </div>
+          }
+        />
+      </Routes>
+    </BrowserRouter>
   );
 }
 

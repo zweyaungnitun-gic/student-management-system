@@ -1,10 +1,9 @@
-// frontend/src/pages/teachers/TeacherDetails.jsx
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { ChevronLeft, Edit, BookOpen, CheckCircle, Award, Info, Pencil, PlayCircle, PauseCircle, Trash2 } from 'lucide-react';
+import { ChevronLeft, Edit, BookOpen, CheckCircle, Award } from 'lucide-react';
 import toast from 'react-hot-toast';
-import client from '../../api/client';
+import { teacherService } from '../../api/teacherService';
+import { courseService } from '../../api/courseService';
 
 const TeacherDetails = () => {
   const navigate = useNavigate();
@@ -20,13 +19,13 @@ const TeacherDetails = () => {
   const fetchTeacherDetails = async () => {
     try {
       setLoading(true);
-      const response = await client.get(`/teachers/${id}`);
-      setTeacher(response.data);
+      const teacherResponse = await teacherService.getById(id);
+      setTeacher(teacherResponse);
       
       // Fetch courses for this teacher
       try {
-        const coursesResponse = await client.get(`/courses/teacher/${id}`);
-        setCourses(coursesResponse.data || []);
+        const coursesResponse = await courseService.getByTeacher(id);
+        setCourses(coursesResponse || []);
       } catch (err) {
         console.error('Error fetching courses:', err);
         setCourses([]);
@@ -37,35 +36,6 @@ const TeacherDetails = () => {
       navigate('/teachers');
     } finally {
       setLoading(false);
-    }
-  };
-
-  const handleToggleActive = async () => {
-    if (!teacher) return;
-    try {
-      const endpoint = teacher.is_active 
-        ? `/teachers/deactivate/${teacher.teacher_id || teacher.teacherId}`
-        : `/teachers/activate/${teacher.teacher_id || teacher.teacherId}`;
-      await client.post(endpoint);
-      toast.success(teacher.is_active ? 'Teacher deactivated' : 'Teacher activated');
-      fetchTeacherDetails();
-    } catch (error) {
-      console.error('Error toggling teacher status:', error);
-      toast.error(error.response?.data?.detail || 'Operation failed');
-    }
-  };
-
-  const handleDelete = async () => {
-    if (!teacher) return;
-    if (window.confirm('Are you sure you want to delete this teacher?')) {
-      try {
-        const response = await client.delete(`/teachers/delete/${teacher.teacher_id || teacher.teacherId}`);
-        toast.success(response.data?.message || 'Teacher deleted successfully');
-        navigate('/teachers');
-      } catch (error) {
-        console.error('Error deleting teacher:', error);
-        toast.error(error.response?.data?.detail || 'Delete failed');
-      }
     }
   };
 
@@ -117,25 +87,19 @@ const TeacherDetails = () => {
     );
   }
 
-  const teacherId = teacher.teacher_id || teacher.teacherId;
-  const teacherCode = teacher.teacher_code || teacher.teacherCode;
-  const isActive = teacher.is_active;
   const activeCourses = courses.filter(c => c.is_active).length;
-  const totalCredits = courses.reduce((sum, c) => sum + (c.credit_hours || c.creditHours || 0), 0);
+  const totalCredits = courses.reduce((sum, c) => sum + (c.credit_hours || 0), 0);
 
   return (
     <div>
       {/* Page Header */}
       <div className="page-header mb-4">
         <div className="d-flex align-items-center gap-3">
-          <button className="btn btn-light btn-icon d-lg-none" type="button" data-sidebar-toggle>
-            <i className="bi bi-list fs-4"></i>
-          </button>
           <div>
             <h1 className="mb-0" style={{ color: '#0a58a0', fontWeight: 600, fontSize: '1.8rem' }}>
               Teacher Details
             </h1>
-            <p className="text-muted mb-0">Teacher ID: {teacherCode}</p>
+            <p className="text-muted mb-0">Teacher ID: {teacher.teacher_code || teacher.teacherCode}</p>
           </div>
         </div>
       </div>
@@ -151,34 +115,10 @@ const TeacherDetails = () => {
         </button>
         <button
           className="btn btn-primary d-flex align-items-center gap-2"
-          onClick={() => navigate(`/teachers/${teacherId}/edit`)}
+          onClick={() => navigate(`/teachers/${id}/edit`)}
         >
           <Edit size={18} />
           <span>Edit</span>
-        </button>
-        {isActive ? (
-          <button
-            className="btn btn-warning d-flex align-items-center gap-2"
-            onClick={handleToggleActive}
-          >
-            <PauseCircle size={18} />
-            <span>Deactivate</span>
-          </button>
-        ) : (
-          <button
-            className="btn btn-success d-flex align-items-center gap-2"
-            onClick={handleToggleActive}
-          >
-            <PlayCircle size={18} />
-            <span>Activate</span>
-          </button>
-        )}
-        <button
-          className="btn btn-danger d-flex align-items-center gap-2"
-          onClick={handleDelete}
-        >
-          <Trash2 size={18} />
-          <span>Delete</span>
         </button>
       </div>
 
@@ -199,7 +139,7 @@ const TeacherDetails = () => {
                     <th className="ps-0 text-muted" style={{ width: '120px' }}>Teacher ID</th>
                     <td className="fw-semibold">
                       <span className="badge bg-primary bg-opacity-10 text-primary px-3 py-2 rounded-pill">
-                        {teacherCode}
+                        {teacher.teacher_code || teacher.teacherCode}
                       </span>
                     </td>
                   </tr>
@@ -218,8 +158,8 @@ const TeacherDetails = () => {
                   <tr>
                     <th className="ps-0 text-muted">Status</th>
                     <td>
-                      <span className={`badge rounded-pill px-3 ${isActive ? 'bg-success' : 'bg-danger'}`}>
-                        {isActive ? 'Active' : 'Inactive'}
+                      <span className={`badge rounded-pill px-3 ${teacher.is_active ? 'bg-success' : 'bg-danger'}`}>
+                        {teacher.is_active ? 'Active' : 'Inactive'}
                       </span>
                     </td>
                   </tr>
@@ -270,8 +210,8 @@ const TeacherDetails = () => {
                           </span>
                         </td>
                         <td>
-                          <span className={`badge rounded-pill px-3 ${(course.is_active !== undefined ? course.is_active : true) ? 'bg-success bg-opacity-10 text-success' : 'bg-danger bg-opacity-10 text-danger'}`}>
-                            {(course.is_active !== undefined ? course.is_active : true) ? 'Active' : 'Inactive'}
+                          <span className={`badge rounded-pill px-3 ${course.is_active ? 'bg-success bg-opacity-10 text-success' : 'bg-danger bg-opacity-10 text-danger'}`}>
+                            {course.is_active ? 'Active' : 'Inactive'}
                           </span>
                         </td>
                         <td className="text-center">
@@ -284,7 +224,7 @@ const TeacherDetails = () => {
                           </button>
                           <button
                             className="btn btn-sm btn-outline-info"
-                            onClick={() => navigate(`/tests/course/${course.course_id || course.courseId}`)}
+                            onClick={() => navigate(`/tests?courseId=${course.course_id || course.courseId}`)}
                             title="Tests"
                           >
                             <i className="bi bi-file-text"></i>
