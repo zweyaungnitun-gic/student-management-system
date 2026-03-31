@@ -11,8 +11,7 @@ class UserService:
         if search:
             query = query.filter(
                 (User.username.ilike(f"%{search}%")) | 
-                (User.email.ilike(f"%{search}%")) |
-                (User.full_name.ilike(f"%{search}%"))
+                (User.email.ilike(f"%{search}%"))
             )
         return query.all()
 
@@ -39,8 +38,7 @@ class UserService:
             user_id=UserService.generate_user_id(db),
             username=user_in.username,
             email=user_in.email,
-            full_name=user_in.full_name,
-            hashed_password=get_password_hash(user_in.password),
+            password=get_password_hash(user_in.password),
             role=user_in.role,
             school_name=user_in.school_name
         )
@@ -57,7 +55,7 @@ class UserService:
         
         update_data = user_in.model_dump(exclude_unset=True)
         if "password" in update_data:
-            db_user.hashed_password = get_password_hash(update_data.pop("password"))
+            db_user.password = get_password_hash(update_data.pop("password"))
             
         for key, value in update_data.items():
             setattr(db_user, key, value)

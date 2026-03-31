@@ -15,7 +15,7 @@ class EnrollmentService:
 
     @staticmethod
     def get_enrollment_by_id(db: Session, enrollment_id: int) -> Optional[Enrollment]:
-        return db.query(Enrollment).filter(Enrollment.id == enrollment_id).first()
+        return db.query(Enrollment).filter(Enrollment.enrollment_id == enrollment_id).first()
 
     @staticmethod
     def create_enrollment(db: Session, enrollment_in: EnrollmentCreate) -> Enrollment:
@@ -27,7 +27,7 @@ class EnrollmentService:
 
     @staticmethod
     def update_enrollment_status(db: Session, enrollment_id: int, status: str) -> Optional[Enrollment]:
-        db_enrollment = db.query(Enrollment).filter(Enrollment.id == enrollment_id).first()
+        db_enrollment = db.query(Enrollment).filter(Enrollment.enrollment_id == enrollment_id).first()
         if not db_enrollment:
             return None
         
@@ -38,7 +38,7 @@ class EnrollmentService:
 
     @staticmethod
     def delete_enrollment(db: Session, enrollment_id: int) -> bool:
-        db_enrollment = db.query(Enrollment).filter(Enrollment.id == enrollment_id).first()
+        db_enrollment = db.query(Enrollment).filter(Enrollment.enrollment_id == enrollment_id).first()
         if not db_enrollment:
             return False
         

@@ -5,14 +5,30 @@ from app.models.teacher import Teacher
 from app.models.course import Course
 from app.models.user import User
 from app.models.student_registration import StudentRegistration
+from app.models.user import Role
 
 class DashboardService:
     @staticmethod
-    def get_dashboard_data(db: Session) -> Dict[str, Any]:
-        total_students = db.query(Student).count()
-        total_teachers = db.query(Teacher).count()
-        total_courses = db.query(Course).count()
-        total_users = db.query(User).count()
+    def get_dashboard_data(db: Session, current_user: User) -> Dict[str, Any]:
+        role_value = current_user.role.value if hasattr(current_user.role, "value") else current_user.role
+
+        students_q = db.query(Student)
+        teachers_q = db.query(Teacher)
+        courses_q = db.query(Course)
+        users_q = db.query(User)
+
+        # Tenant scoping: ADMIN sees only their tenant-owned data.
+        if role_value == Role.ADMIN.value:
+            students_q = students_q.filter(Student.created_by == current_user.id)
+            teachers_q = teachers_q.filter(Teacher.owner_admin_id == current_user.id)
+            courses_q = courses_q.filter(Course.owner_admin_id == current_user.id)
+            users_q = users_q.filter(User.id == current_user.id)
+        # SUPER_ADMIN sees all tenants.
+
+        total_students = students_q.count()
+        total_teachers = teachers_q.count()
+        total_courses = courses_q.count()
+        total_users = users_q.count()
         
         pending_registrations = db.query(StudentRegistration).filter(StudentRegistration.registration_status == "PENDING").count()
         
@@ -20,9 +36,9 @@ class DashboardService:
             StudentRegistration.registration_status == "ACCEPTED"
         ).order_by(StudentRegistration.submitted_at.desc()).limit(5).all()
         
-        recent_students = db.query(Student).order_by(Student.created_at.desc()).limit(5).all()
+        recent_students = students_q.order_by(Student.created_at.desc()).limit(5).all()
         
-        active_courses = db.query(Course).filter(Course.is_active == True).limit(5).all()
+        active_courses = courses_q.filter(Course.is_active == True).limit(5).all()
 
         # FastAPI can serialize basic python types, but not SQLAlchemy model instances directly.
         # Convert ORM rows into plain dicts/strings for a stable JSON response.

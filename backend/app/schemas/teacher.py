@@ -18,9 +18,20 @@ class TeacherUpdate(BaseModel):
     is_active: Optional[bool] = None
 
 class TeacherResponse(TeacherBase):
-    id: int
+    teacher_id: int
     teacher_code: Optional[str] = None
     created_at: datetime
 
     class Config:
         from_attributes = True
+
+
+class TeacherLoginCreate(BaseModel):
+    username: str = Field(..., max_length=25)
+    password: str = Field(..., min_length=6)
+
+
+class TeacherLoginResponse(BaseModel):
+    user_id: int
+    username: str
+    email: EmailStr

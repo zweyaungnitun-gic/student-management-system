@@ -13,7 +13,7 @@ class TestService:
 
     @staticmethod
     def get_test_by_id(db: Session, test_id: int) -> Optional[Test]:
-        return db.query(Test).filter(Test.id == test_id).first()
+        return db.query(Test).filter(Test.test_id == test_id).first()
 
     @staticmethod
     def create_test(db: Session, test_in: TestCreate) -> Test:
@@ -25,7 +25,7 @@ class TestService:
 
     @staticmethod
     def update_test(db: Session, test_id: int, test_in: TestUpdate) -> Optional[Test]:
-        db_test = db.query(Test).filter(Test.id == test_id).first()
+        db_test = db.query(Test).filter(Test.test_id == test_id).first()
         if not db_test:
             return None
         
@@ -39,7 +39,7 @@ class TestService:
 
     @staticmethod
     def delete_test(db: Session, test_id: int) -> bool:
-        db_test = db.query(Test).filter(Test.id == test_id).first()
+        db_test = db.query(Test).filter(Test.test_id == test_id).first()
         if not db_test:
             return False
         

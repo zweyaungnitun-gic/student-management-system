@@ -8,9 +8,12 @@ from sqlalchemy import or_
 from app.database import SessionLocal
 from app.models.student import RegistrationStatus, Student
 from app.models.user import User, Role
+from app.models.teacher import Teacher
+from app.models.course import Course
 from app.core.security import get_password_hash
 from app.services.student_service import StudentService
 from app.services.user_service import UserService
+from app.services.teacher_service import TeacherService
 
 logger = logging.getLogger(__name__)
 
@@ -115,6 +118,102 @@ def init_sample_students_for_admin(
     return students_to_add
 
 
+def ensure_teacher(
+    db: Session,
+    *,
+    owner_admin_id: int,
+    teacher_code: str,
+    name: str,
+    email: str,
+    department: str | None = None,
+    is_active: bool = True,
+) -> Teacher:
+    existing = db.query(Teacher).filter(or_(Teacher.teacher_code == teacher_code, Teacher.email == email)).first()
+    if existing:
+        changed = False
+        if existing.owner_admin_id != owner_admin_id:
+            existing.owner_admin_id = owner_admin_id
+            changed = True
+        if existing.name != name:
+            existing.name = name
+            changed = True
+        if existing.department != department:
+            existing.department = department
+            changed = True
+        if existing.is_active != is_active:
+            existing.is_active = is_active
+            changed = True
+        if changed:
+            db.commit()
+            db.refresh(existing)
+        return existing
+
+    teacher = Teacher(
+        owner_admin_id=owner_admin_id,
+        teacher_code=teacher_code,
+        name=name,
+        email=email,
+        department=department,
+        is_active=is_active,
+    )
+    db.add(teacher)
+    db.commit()
+    db.refresh(teacher)
+    return teacher
+
+
+def ensure_course(
+    db: Session,
+    *,
+    owner_admin_id: int,
+    course_code: str,
+    course_name: str,
+    credit_hours: int,
+    teacher_id: int | None = None,
+    description: str | None = None,
+    is_active: bool = True,
+) -> Course:
+    existing = db.query(Course).filter(Course.course_code == course_code).first()
+    if existing:
+        changed = False
+        if existing.owner_admin_id != owner_admin_id:
+            existing.owner_admin_id = owner_admin_id
+            changed = True
+        if existing.course_name != course_name:
+            existing.course_name = course_name
+            changed = True
+        if existing.credit_hours != credit_hours:
+            existing.credit_hours = credit_hours
+            changed = True
+        if existing.teacher_id != teacher_id:
+            existing.teacher_id = teacher_id
+            changed = True
+        if existing.description != description:
+            existing.description = description
+            changed = True
+        if existing.is_active != is_active:
+            existing.is_active = is_active
+            changed = True
+        if changed:
+            db.commit()
+            db.refresh(existing)
+        return existing
+
+    course = Course(
+        owner_admin_id=owner_admin_id,
+        course_code=course_code,
+        course_name=course_name,
+        credit_hours=credit_hours,
+        teacher_id=teacher_id,
+        description=description,
+        is_active=is_active,
+    )
+    db.add(course)
+    db.commit()
+    db.refresh(course)
+    return course
+
+
 def main() -> None:
     logging.basicConfig(level=logging.INFO)
     db = SessionLocal()
@@ -135,6 +234,37 @@ def main() -> None:
             password=os.getenv("ADMIN_PASSWORD", "admin123"),
             role=Role.ADMIN,
             school_name=os.getenv("DEFAULT_SCHOOL_NAME"),
+        )
+
+        # Sample teacher + teacher login (for role-based testing)
+        teacher = ensure_teacher(
+            db,
+            owner_admin_id=int(admin.id),
+            teacher_code=os.getenv("TEACHER_CODE", "TCH001"),
+            name=os.getenv("TEACHER_NAME", "Sample Teacher"),
+            email=os.getenv("TEACHER_EMAIL", "teacher1@example.com"),
+            department=os.getenv("TEACHER_DEPARTMENT", "General"),
+        )
+        try:
+            TeacherService.create_teacher_login(
+                db,
+                teacher_id=int(teacher.teacher_id),
+                username=os.getenv("TEACHER_USERNAME", "teacher1"),
+                password=os.getenv("TEACHER_PASSWORD", "teacher123"),
+            )
+        except Exception as e:
+            logger.info("Teacher login not created: %s", e)
+
+        # Sample course owned by admin and assigned to teacher
+        ensure_course(
+            db,
+            owner_admin_id=int(admin.id),
+            course_code=os.getenv("COURSE_CODE", "CSE001"),
+            course_name=os.getenv("COURSE_NAME", "Sample Course"),
+            credit_hours=int(os.getenv("COURSE_CREDIT_HOURS", "3")),
+            teacher_id=int(teacher.teacher_id),
+            description=os.getenv("COURSE_DESCRIPTION", "Seeded course for multi-tenant testing"),
+            is_active=True,
         )
 
         # Seed students created by the DB primary-key of the ADMIN user.

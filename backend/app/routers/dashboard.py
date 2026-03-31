@@ -3,13 +3,13 @@ from sqlalchemy.orm import Session
 from typing import Any, Dict
 from app.database import get_db
 from app.services.dashboard_service import DashboardService
-from app.dependencies import get_current_active_admin
+from app.dependencies import get_current_admin_or_super_admin
 
 router = APIRouter(prefix="/dashboard", tags=["dashboard"])
 
 @router.get("/", response_model=Dict[str, Any])
 def get_dashboard(
     db: Session = Depends(get_db),
-    current_user = Depends(get_current_active_admin)
+    current_user = Depends(get_current_admin_or_super_admin)
 ):
-    return DashboardService.get_dashboard_data(db)
+    return DashboardService.get_dashboard_data(db, current_user=current_user)

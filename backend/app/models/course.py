@@ -12,9 +12,11 @@ class Course(Base):
     description = Column(String(500))
     credit_hours = Column(Integer)
     teacher_id = Column(BigInteger, ForeignKey("teachers.teacher_id"))
+    owner_admin_id = Column(BigInteger, ForeignKey("users.id"), index=True, nullable=True)
     is_active = Column(Boolean, default=True)
     created_at = Column(DateTime(timezone=True), default=func.now())
 
     teacher = relationship("Teacher", back_populates="courses")
+    owner_admin = relationship("User")
     enrollments = relationship("Enrollment", back_populates="course")
     tests = relationship("Test", back_populates="course")

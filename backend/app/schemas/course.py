@@ -22,7 +22,7 @@ class CourseUpdate(BaseModel):
     is_active: Optional[bool] = None
 
 class CourseResponse(CourseBase):
-    id: int
+    course_id: int
     teacher_name: Optional[str] = None
     created_at: datetime
 

@@ -9,12 +9,22 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const { t } = useTranslation();
 
+  const fetchMe = async () => {
+    const response = await client.get('/auth/me');
+    return response.data;
+  };
+
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (token) {
-      // Typically we'd call /me here, but for now just mock based on token
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setUser({ username: 'Admin User' });
+      fetchMe()
+        .then((me) => setUser(me))
+        .catch(() => {
+          localStorage.removeItem('token');
+          setUser(null);
+        })
+        .finally(() => setLoading(false));
+      return;
     }
     setLoading(false);
   }, []);
@@ -32,7 +42,8 @@ export const AuthProvider = ({ children }) => {
       const { access_token } = response.data;
       localStorage.setItem('token', access_token);
       
-      setUser({ username });
+      const me = await fetchMe();
+      setUser(me);
       toast.success(t('auth.login.success'));
       return true;
     // eslint-disable-next-line no-unused-vars

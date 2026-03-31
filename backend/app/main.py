@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.core.config import settings
 from app.routers import auth
+from app.runtime_migrations import apply_runtime_migrations
 
 app = FastAPI(
     title=settings.app_name,
@@ -38,6 +39,12 @@ app.include_router(results.router, prefix="/api")
 app.include_router(registrations.router, prefix="/api")
 app.include_router(dashboard.router, prefix="/api")
 app.include_router(users.router, prefix="/api")
+
+
+@app.on_event("startup")
+def run_startup_migrations() -> None:
+    apply_runtime_migrations()
+
 
 @app.get("/api/health")
 def health_check():

@@ -4,7 +4,7 @@ from typing import List, Optional
 from app.database import get_db
 from app.schemas.user import UserCreate, UserUpdate, UserResponse
 from app.services.user_service import UserService
-from app.dependencies import get_current_active_admin
+from app.dependencies import get_current_super_admin
 
 router = APIRouter(prefix="/users", tags=["users"])
 
@@ -12,7 +12,7 @@ router = APIRouter(prefix="/users", tags=["users"])
 def get_users(
     search: Optional[str] = None,
     db: Session = Depends(get_db),
-    current_user = Depends(get_current_active_admin)
+    current_user = Depends(get_current_super_admin)
 ):
     return UserService.get_all_users(db, search)
 
@@ -20,7 +20,7 @@ def get_users(
 def get_user(
     user_id: int, 
     db: Session = Depends(get_db),
-    current_user = Depends(get_current_active_admin)
+    current_user = Depends(get_current_super_admin)
 ):
     user = UserService.get_user_by_id(db, user_id)
     if not user:
@@ -31,7 +31,7 @@ def get_user(
 def create_user(
     user_in: UserCreate, 
     db: Session = Depends(get_db),
-    current_user = Depends(get_current_active_admin)
+    current_user = Depends(get_current_super_admin)
 ):
     if UserService.get_user_by_username(db, user_in.username):
         raise HTTPException(status_code=400, detail="Username already exists")
@@ -44,7 +44,7 @@ def update_user(
     user_id: int, 
     user_in: UserUpdate, 
     db: Session = Depends(get_db),
-    current_user = Depends(get_current_active_admin)
+    current_user = Depends(get_current_super_admin)
 ):
     user = UserService.update_user(db, user_id, user_in)
     if not user:
@@ -55,7 +55,7 @@ def update_user(
 def delete_user(
     user_id: int, 
     db: Session = Depends(get_db),
-    current_user = Depends(get_current_active_admin)
+    current_user = Depends(get_current_super_admin)
 ):
     if not UserService.delete_user(db, user_id):
         raise HTTPException(status_code=404, detail="User not found")

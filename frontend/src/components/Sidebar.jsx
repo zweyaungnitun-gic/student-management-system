@@ -22,6 +22,8 @@ const Sidebar = () => {
   const [managementOpen, setManagementOpen] = useState(true);
   const [academicOpen, setAcademicOpen] = useState(false);
   const currentLang = i18n.resolvedLanguage || i18n.language;
+  const role = user?.role;
+  const isSuperAdmin = role === 'SUPER_ADMIN';
 
   return (
     <aside className="dashboard-sidebar glass-panel sidebar-scrollable">
@@ -45,7 +47,15 @@ const Sidebar = () => {
             <p className="mb-0 fw-semibold small text-truncate" style={{ maxWidth: '150px' }}>
               {user?.username || 'Admin'}
             </p>
-            <p className="mb-0 small text-muted">{t('auth.roles.administrator')}</p>
+            <p className="mb-0 small text-muted">
+              {role === 'SUPER_ADMIN'
+                ? 'Super Admin'
+                : role === 'ADMIN'
+                  ? 'Admin'
+                  : role === 'TEACHER'
+                    ? 'Teacher'
+                    : 'User'}
+            </p>
           </div>
         </div>
       </div>
@@ -127,7 +137,9 @@ const Sidebar = () => {
         </div>
 
         <p className="sidebar-label mt-3">{t('sidebar.system')}</p>
-        <LinkItem to="/users" icon="bi-person-badge" label={t('nav.user.management')} />
+        {isSuperAdmin && (
+          <LinkItem to="/users" icon="bi-person-badge" label={t('nav.user.management')} />
+        )}
 
         <button
           className="sidebar-link text-danger fw-semibold mt-auto"

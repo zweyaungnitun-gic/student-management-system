@@ -23,7 +23,7 @@ class TestUpdate(BaseModel):
     duration_minutes: Optional[int] = Field(None, ge=1)
 
 class TestResponse(TestBase):
-    id: int
+    test_id: int
     course_name: Optional[str] = None
     course_code: Optional[str] = None
     created_at: datetime
