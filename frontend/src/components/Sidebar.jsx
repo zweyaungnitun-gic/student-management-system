@@ -138,7 +138,10 @@ const Sidebar = () => {
 
         <p className="sidebar-label mt-3">{t('sidebar.system')}</p>
         {isSuperAdmin && (
-          <LinkItem to="/users" icon="bi-person-badge" label={t('nav.user.management')} />
+          <>
+            <LinkItem to="/super-admin" icon="bi-shield-lock" label={t('nav.superAdmin.dashboard')} />
+            <LinkItem to="/users" icon="bi-person-badge" label={t('nav.user.management')} />
+          </>
         )}
 
         <button

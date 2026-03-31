@@ -40,6 +40,8 @@ import ClassRankings from './pages/reports/ClassRankings';
 
 import UserList from './pages/users/UserList';
 import UserForm from './pages/users/UserForm';
+import SuperAdminDashboard from './pages/superadmin/SuperAdminDashboard';
+import TenantAdminDetail from './pages/superadmin/TenantAdminDetail';
 
 import './index.css';
 import { useTranslation } from 'react-i18next';
@@ -135,6 +137,12 @@ function App() {
             <Route index element={<UserList />} />
             <Route path="new" element={<UserForm />} />
             <Route path=":id/edit" element={<UserForm />} />
+          </Route>
+
+          {/* Super Admin Routes */}
+          <Route path="super-admin">
+            <Route index element={<SuperAdminDashboard />} />
+            <Route path="tenants/:id" element={<TenantAdminDetail />} />
           </Route>
           </Route>
 

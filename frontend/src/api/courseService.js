@@ -12,17 +12,17 @@ export const courseService = {
   },
 
   create: async (data) => {
-    const response = await client.post('/courses/add', data);
+    const response = await client.post('/courses', data);
     return response.data;
   },
 
   update: async (id, data) => {
-    const response = await client.put(`/courses/edit/${id}`, data);
+    const response = await client.put(`/courses/${id}`, data);
     return response.data;
   },
 
   delete: async (id) => {
-    const response = await client.delete(`/courses/delete/${id}`);
+    const response = await client.delete(`/courses/${id}`);
     return response.data;
   },
 

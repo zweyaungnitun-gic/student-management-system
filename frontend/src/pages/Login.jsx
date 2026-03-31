@@ -24,12 +24,12 @@ const Login = () => {
 
   return (
     <div className="login-page container">
-      <div className="text-center pt-5 mb-4">
+      <div className="text-center logo mb-4" style={{ marginTop: '20px' }}>
         <i className="bi bi-mortarboard-fill" style={{ fontSize: '3rem', color: '#34A9FF' }}></i>
       </div>
 
-      <div className="login-card mx-auto">
-        <h3 className="login-title text-center">{t('auth.login.message')}</h3>
+      <div className="login-card mx-auto" style={{ maxWidth: '600px', padding: '40px 30px', background: '#ffffff', border: '1px solid #E9EEF5', borderRadius: '12px', boxShadow: '0 0 20px rgba(0,0,0,0.02)' }}>
+        <h3 className="login-title text-center" style={{ color: '#34A9FF', fontWeight: 600, marginBottom: '25px' }}>{t('auth.login.message')}</h3>
 
         <form onSubmit={handleSubmit}>
           <div className="mb-3">
@@ -84,7 +84,7 @@ const Login = () => {
         </form>
       </div>
 
-      <div className="footer-text text-center mt-4" style={{ fontSize: '13px', color: '#999' }}>
+      <div className="footer-text text-center" style={{ fontSize: '13px', color: '#999', marginTop: '25px' }}>
         © 2025 Global Innovation Consulting Inc. All Rights Reserved.
       </div>
     </div>

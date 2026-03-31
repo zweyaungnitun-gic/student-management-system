@@ -175,6 +175,7 @@ const UserForm = () => {
                     {...register('role', { required: 'Role is required' })}
                   >
                     <option value="ADMIN">Admin</option>
+                    <option value="SUPER_ADMIN">Super Admin</option>
                     <option value="GUEST">Guest</option>
                   </select>
                   {errors.role && (

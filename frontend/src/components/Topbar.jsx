@@ -21,6 +21,7 @@ const Topbar = ({ title, subtitle, showAddButton, addButtonLabel, onAddClick }) 
     if (path.includes('/reports')) return { title: t('topbar.reports.title'), subtitle: t('topbar.reports.subtitle') };
     if (path.includes('/enrollments')) return { title: t('topbar.enrollments.title'), subtitle: t('topbar.enrollments.subtitle') };
     if (path.includes('/users')) return { title: t('topbar.users.title'), subtitle: t('topbar.users.subtitle') };
+    if (path.includes('/super-admin')) return { title: t('superAdmin.dashboard.title'), subtitle: t('superAdmin.dashboard.subtitle') };
     
     return defaultInfo;
   };
