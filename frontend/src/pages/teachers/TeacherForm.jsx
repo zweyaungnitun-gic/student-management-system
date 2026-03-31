@@ -221,14 +221,22 @@ const TeacherForm = () => {
             <div className="form-actions-left">
               <button
                 type="button"
+                className="btn-back"
+                onClick={() => window.history.back()}
+              >
+                <ChevronLeft size={18} />
+                <span>Back</span>
+              </button>
+            </div>
+            <div className="form-actions-right">
+              <button
+                type="button"
                 className="btn-cancel"
                 onClick={() => navigate('/teachers')}
               >
                 <X size={18} />
                 <span>Cancel</span>
               </button>
-            </div>
-            <div className="form-actions-right">
               <button
                 type="submit"
                 className="btn-submit"
@@ -492,10 +500,36 @@ const TeacherForm = () => {
 
         .form-actions {
           display: flex;
-          justify-content: flex-end;
+          justify-content: space-between;
+          align-items: center;
           gap: 1rem;
           padding-top: 1rem;
           border-top: 1px solid #eef2ff;
+          margin-top: 1rem;
+        }
+
+        .form-actions-left,
+        .form-actions-right {
+          display: flex;
+          gap: 0.75rem;
+        }
+
+        .btn-back {
+          padding: 0.75rem 1.5rem;
+          background: white;
+          border: 1px solid #e2e8f0;
+          border-radius: 12px;
+          display: inline-flex;
+          align-items: center;
+          gap: 0.5rem;
+          cursor: pointer;
+          font-weight: 500;
+          transition: all 0.2s;
+        }
+
+        .btn-back:hover {
+          background: #f8fafc;
+          border-color: #94a3b8;
         }
 
         .btn-cancel {
@@ -509,11 +543,12 @@ const TeacherForm = () => {
           cursor: pointer;
           font-weight: 500;
           transition: all 0.2s;
+          color: #dc2626;
         }
 
         .btn-cancel:hover {
-          background: #f8fafc;
-          border-color: #cbd5e1;
+          background: #fef2f2;
+          border-color: #dc2626;
         }
 
         .btn-submit {
@@ -534,31 +569,18 @@ const TeacherForm = () => {
           background: #0a58a0;
         }
 
-        .btn-submit:disabled {
-          opacity: 0.6;
-          cursor: not-allowed;
-        }
-
         @media (max-width: 640px) {
-          .teacher-form-module {
-            padding: 1rem;
-          }
-          
-          .form-card {
-            padding: 1.5rem;
-          }
-          
-          .form-row {
-            grid-template-columns: 1fr;
-            gap: 1rem;
-          }
-          
           .form-actions {
-            flex-direction: column-reverse;
+            flex-direction: column;
           }
           
-          .btn-cancel, .btn-submit {
+          .form-actions-left,
+          .form-actions-right {
             width: 100%;
+          }
+          
+          .btn-back, .btn-cancel, .btn-submit {
+            flex: 1;
             justify-content: center;
           }
         }
