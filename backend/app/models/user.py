@@ -1,9 +1,10 @@
-from sqlalchemy import Column, Integer, String, Enum as SQLEnum, DateTime, BigInteger
+from sqlalchemy import Column, Integer, String, Enum as SQLEnum, DateTime, BigInteger, Boolean
 from app.database import Base
 from sqlalchemy.sql import func
 import enum
 
 class Role(str, enum.Enum):
+    SUPER_ADMIN = "SUPER_ADMIN"
     ADMIN = "ADMIN"
     GUEST = "GUEST"
 

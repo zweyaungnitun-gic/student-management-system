@@ -1,41 +1,56 @@
-// src/contexts/AuthContext.jsx
-
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import client from '../api/client';
-
-const AuthContext = createContext(null);
+import toast from 'react-hot-toast';
+import { AuthContext } from './AuthContextBase';
+import { useTranslation } from 'react-i18next';
 
 export const AuthProvider = ({ children }) => {
-  // Always set a mock admin user
-  const [user, setUser] = useState({
-    id: 1,
-    username: 'Admin',
-    email: 'admin@example.com',
-    role: 'ADMIN'
-  });
-  const [loading, setLoading] = useState(false);
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const { t } = useTranslation();
 
-  const login = async (email, password) => {
-    // Always return true - bypass login
-    console.log('Login bypassed - using mock user');
-    return true;
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      // Typically we'd call /me here, but for now just mock based on token
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setUser({ username: 'Admin User' });
+    }
+    setLoading(false);
+  }, []);
+
+  const login = async (username, password) => {
+    try {
+      const formData = new URLSearchParams();
+      formData.append('username', username);
+      formData.append('password', password);
+
+      const response = await client.post('/auth/login', formData, {
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+      });
+      
+      const { access_token } = response.data;
+      localStorage.setItem('token', access_token);
+      
+      setUser({ username });
+      toast.success(t('auth.login.success'));
+      return true;
+    // eslint-disable-next-line no-unused-vars
+    } catch (error) {
+      toast.error(t('auth.login.error'));
+      return false;
+    }
   };
 
   const logout = () => {
-    // Just clear state, no actual logout
-    setUser({
-      id: 1,
-      username: 'Admin',
-      email: 'admin@example.com',
-      role: 'ADMIN'
-    });
+    localStorage.removeItem('token');
+    setUser(null);
+    toast.success(t('auth.logout.success'));
   };
 
   return (
     <AuthContext.Provider value={{ user, login, logout, loading }}>
-      {children}
+      {!loading && children}
     </AuthContext.Provider>
   );
 };
-
-export const useAuth = () => useContext(AuthContext);

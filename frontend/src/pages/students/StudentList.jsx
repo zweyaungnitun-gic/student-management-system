@@ -1,42 +1,44 @@
-import React, { useState, useEffect } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { studentService } from '../../api/studentService';
+import { useTranslation } from 'react-i18next';
 
 const StudentList = () => {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [students, setStudents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectAll, setSelectAll] = useState(false);
   const [selectedIds, setSelectedIds] = useState([]);
 
-  const fetchStudents = async () => {
+  const fetchStudents = useCallback(async () => {
     try {
       setLoading(true);
       const data = await studentService.getAll();
       setStudents(data);
-    } catch (error) {
-      toast.error('生徒データの取得に失敗しました');
-      console.error(error);
+    } catch (err) {
+      toast.error(t('students.list.toast.fetchFailed'));
+      console.error(err);
     } finally {
       setLoading(false);
     }
-  };
+  }, [t]);
 
   useEffect(() => {
     fetchStudents();
-  }, []);
+  }, [fetchStudents]);
 
   const handleDelete = async (e, id, name) => {
     e.stopPropagation();
-    if (window.confirm(`本当に ${name} を削除しますか？`)) {
+    if (window.confirm(t('students.list.confirmDelete', { name }))) {
       try {
         await studentService.delete(id);
-        toast.success(`${name} を削除しました`);
+        toast.success(t('students.list.toast.deleted', { name }));
         fetchStudents();
-      } catch (error) {
-        toast.error(`削除に失敗しました`);
+      } catch {
+        toast.error(t('students.list.toast.deleteFailed'));
       }
     }
   };
@@ -74,15 +76,15 @@ const StudentList = () => {
         <div className="d-flex align-items-center gap-3">
           <div>
             <h1 className="mb-0" style={{ color: '#0a58a0', fontWeight: 600, fontSize: '1.8rem' }}>
-              生徒情報一覧画面
+              {t('students.list.title')}
             </h1>
           </div>
           <div className="ms-auto d-flex gap-2">
             <button className="btn btn-primary btn-sm px-3" onClick={() => navigate('/students/new')}>
-              <i className="bi bi-person-plus-fill me-2"></i>生徒追加
+              <i className="bi bi-person-plus-fill me-2"></i>{t('students.list.actions.addStudent')}
             </button>
             <button className="btn btn-outline-primary btn-sm px-3" onClick={() => navigate('/teachers')}>
-              <i className="bi bi-people-fill me-2"></i>教師管理
+              <i className="bi bi-people-fill me-2"></i>{t('students.list.actions.teacherManagement')}
             </button>
           </div>
         </div>
@@ -102,15 +104,15 @@ const StudentList = () => {
                         checked={selectAll}
                         onChange={handleSelectAll}
                       />
-                      <span className="small fw-bold">全て選択</span>
+                      <span className="small fw-bold">{t('students.list.filters.selectAll')}</span>
                     </div>
                     
                     <div className="filter-control-group">
-                      <span className="small fw-bold">名前で検索</span>
+                      <span className="small fw-bold">{t('students.list.filters.searchByName')}</span>
                       <input 
                         type="text" 
                         className="form-control form-control-sm" 
-                        placeholder="名前を入力..."
+                        placeholder={t('students.list.filters.searchPlaceholder')}
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                         style={{ width: '180px' }}
@@ -119,22 +121,22 @@ const StudentList = () => {
 
                     <div className="ms-auto">
                       <button className="btn btn-primary btn-sm px-3" style={{ background: '#0b5ed7' }}>
-                        <i className="bi bi-download me-2"></i>ダウンロード
+                        <i className="bi bi-download me-2"></i>{t('common.download')}
                       </button>
                     </div>
                   </div>
                 </th>
               </tr>
               <tr>
-                <th style={{ width: '80px' }}>生徒ID</th>
-                <th>名前</th>
-                <th style={{ width: '80px' }}>性別</th>
-                <th>電話番号</th>
-                <th>希望職種</th>
-                <th style={{ width: '100px' }}>ステータス</th>
-                <th>支払予定日</th>
-                <th>支払実績日</th>
-                <th style={{ width: '130px' }}>動作機能</th>
+                <th style={{ width: '80px' }}>{t('students.list.table.studentId')}</th>
+                <th>{t('students.list.table.name')}</th>
+                <th style={{ width: '80px' }}>{t('students.list.table.gender')}</th>
+                <th>{t('students.list.table.phone')}</th>
+                <th>{t('students.list.table.desiredJob')}</th>
+                <th style={{ width: '100px' }}>{t('students.list.table.status')}</th>
+                <th>{t('students.list.table.scheduledPaymentDate')}</th>
+                <th>{t('students.list.table.actualPaymentDate')}</th>
+                <th style={{ width: '130px' }}>{t('students.list.table.actions')}</th>
               </tr>
             </thead>
             <tbody>
@@ -146,7 +148,7 @@ const StudentList = () => {
                 </tr>
               ) : filteredStudents.length === 0 ? (
                 <tr>
-                  <td colSpan="9" className="text-center py-5 text-muted">生徒情報がありません。</td>
+                  <td colSpan="9" className="text-center py-5 text-muted">{t('students.list.empty')}</td>
                 </tr>
               ) : (
                 filteredStudents.map(s => (
@@ -163,28 +165,28 @@ const StudentList = () => {
                       </div>
                     </td>
                     <td>{s.student_name}</td>
-                    <td>{s.gender || '—'}</td>
-                    <td>{s.phone_number || '—'}</td>
-                    <td>{s.desired_job_type || '—'}</td>
+                    <td>{s.gender || t('common.placeholderDash')}</td>
+                    <td>{s.phone_number || t('common.placeholderDash')}</td>
+                    <td>{s.desired_job_type || t('common.placeholderDash')}</td>
                     <td>
                       <span className={`badge rounded-pill ${s.registration_status === 'ACCEPTED' ? 'bg-success-subtle text-success' : 'bg-warning-subtle text-warning'}`}>
-                        {s.registration_status === 'ACCEPTED' ? '在校' : s.registration_status}
+                        {s.registration_status === 'ACCEPTED' ? t('students.status.acceptedLabel') : s.registration_status}
                       </span>
                     </td>
-                    <td>{s.schedule_payment_date ? new Date(s.schedule_payment_date).toLocaleDateString() : '—'}</td>
-                    <td>{s.actual_payment_date ? new Date(s.actual_payment_date).toLocaleDateString() : '—'}</td>
+                    <td>{s.schedule_payment_date ? new Date(s.schedule_payment_date).toLocaleDateString() : t('common.placeholderDash')}</td>
+                    <td>{s.actual_payment_date ? new Date(s.actual_payment_date).toLocaleDateString() : t('common.placeholderDash')}</td>
                     <td className="action-cell">
                       <div className="d-flex justify-content-center gap-3">
-                        <button className="border-0 bg-transparent text-info p-0" title="詳細" onClick={(e) => { e.stopPropagation(); navigate(`/students/${s.id}`); }}>
+                        <button className="border-0 bg-transparent text-info p-0" title={t('common.details')} onClick={(e) => { e.stopPropagation(); navigate(`/students/${s.id}`); }}>
                           <i className="bi bi-info-circle"></i>
                         </button>
-                        <button className="border-0 bg-transparent text-primary p-0" title="編集" onClick={(e) => { e.stopPropagation(); navigate(`/students/${s.id}/edit`); }}>
+                        <button className="border-0 bg-transparent text-primary p-0" title={t('common.edit')} onClick={(e) => { e.stopPropagation(); navigate(`/students/${s.id}/edit`); }}>
                           <i className="bi bi-pencil-square"></i>
                         </button>
-                        <button className="border-0 bg-transparent text-success p-0" title="成績" onClick={(e) => { e.stopPropagation(); navigate(`/results?studentId=${s.id}`); }}>
+                        <button className="border-0 bg-transparent text-success p-0" title={t('students.list.actions.results')} onClick={(e) => { e.stopPropagation(); navigate(`/results?studentId=${s.id}`); }}>
                           <i className="bi bi-bar-chart-fill"></i>
                         </button>
-                        <button className="border-0 bg-transparent text-danger p-0" title="削除" onClick={(e) => handleDelete(e, s.id, s.student_name)}>
+                        <button className="border-0 bg-transparent text-danger p-0" title={t('common.delete')} onClick={(e) => handleDelete(e, s.id, s.student_name)}>
                           <i className="bi bi-trash-fill"></i>
                         </button>
                       </div>

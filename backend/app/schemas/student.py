@@ -40,7 +40,6 @@ class StudentBase(BaseModel):
     national_id: str
     date_of_birth: Optional[date] = None
     gender: Optional[str] = None
-    email: Optional[str] = None
     phone_number: Optional[str] = None
     current_living_address: Optional[str] = None
     home_town_address: Optional[str] = None

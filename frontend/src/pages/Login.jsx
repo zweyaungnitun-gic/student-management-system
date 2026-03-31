@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from '../contexts/useAuth';
+import { useTranslation } from 'react-i18next';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -9,6 +10,7 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const { login, user } = useAuth();
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   if (user) return <Navigate to="/dashboard" replace />;
 
@@ -27,18 +29,18 @@ const Login = () => {
       </div>
 
       <div className="login-card mx-auto">
-        <h3 className="login-title text-center">Log in to your account.</h3>
+        <h3 className="login-title text-center">{t('auth.login.message')}</h3>
 
         <form onSubmit={handleSubmit}>
           <div className="mb-3">
             <label className="form-label fw-500">
-              Email Address <span className="text-danger">*</span>
+              {t('auth.email.address')} <span className="text-danger">*</span>
             </label>
             <input
               type="email"
               required
               className="form-control"
-              placeholder="Enter your email"
+              placeholder={t('auth.enter.email')}
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               style={{ height: '48px', borderColor: '#E0E6F0' }}
@@ -47,14 +49,14 @@ const Login = () => {
 
           <div className="mb-3">
             <label className="form-label fw-500">
-              Password <span className="text-danger">*</span>
+              {t('auth.password')} <span className="text-danger">*</span>
             </label>
             <div className="position-relative">
               <input
                 type={showPwd ? 'text' : 'password'}
                 required
                 className="form-control pe-5"
-                placeholder="Enter your password"
+                placeholder={t('auth.enter.password')}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 style={{ height: '48px', borderColor: '#E0E6F0' }}
@@ -76,8 +78,8 @@ const Login = () => {
             style={{ height: '48px', fontSize: '16px', backgroundColor: '#34A9FF', borderColor: '#34A9FF' }}
           >
             {loading ? (
-              <><span className="spinner-border spinner-border-sm me-2"></span>Signing in...</>
-            ) : 'Log in'}
+              <><span className="spinner-border spinner-border-sm me-2"></span>{t('ui.signingIn')}</>
+            ) : t('auth.login')}
           </button>
         </form>
       </div>

@@ -6,7 +6,7 @@ import re
 class RegistrationBase(BaseModel):
     english_name: str = Field(..., max_length=100)
     katakana_name: str = Field(..., max_length=100)
-    dob: date
+    date_of_birth: date
     gender: str = Field(..., pattern="^(男性|女性)$")
     current_address: str = Field(..., max_length=200)
     hometown_address: str = Field(..., max_length=200)
@@ -19,18 +19,18 @@ class RegistrationBase(BaseModel):
     desired_occupation: Optional[str] = None
     japan_travel_experience: bool = False
     coe_application_experience: bool = False
-    status: str = Field("pending", max_length=20)
+    registration_status: str = Field("PENDING", max_length=20)
 
 class RegistrationCreate(RegistrationBase):
     pass
 
 class RegistrationUpdate(BaseModel):
-    status: Optional[str] = Field(None, max_length=20)
+    registration_status: Optional[str] = Field(None, max_length=20)
     other_memo: Optional[str] = None
 
 class RegistrationResponse(RegistrationBase):
     id: int
-    created_at: date
+    submitted_at: date
 
     class Config:
         from_attributes = True

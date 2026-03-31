@@ -1,21 +1,32 @@
 import React, { useState, useEffect } from 'react';
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from '../contexts/useAuth';
 import { Link } from 'react-router-dom';
 import { dashboardService } from '../api/dashboardService';
 import toast from 'react-hot-toast';
+import { useTranslation } from 'react-i18next';
 
 const Dashboard = () => {
   const { user } = useAuth();
+  const username = user?.username;
+  const { t } = useTranslation();
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchDashboardData = async () => {
+    // Only fetch once a user is present (Layout redirects if missing).
+    if (!username) return;
+
+    const controller = new AbortController();
+    const fetch = async () => {
       try {
         setLoading(true);
-        const data = await dashboardService.getStats();
+        const data = await dashboardService.getStats({ signal: controller.signal });
         setStats(data);
       } catch (error) {
+        if (error?.name === 'CanceledError') return;
+        if (error?.code === 'ERR_CANCELED') return;
+        if (error?.response?.status === 401) return;
+
         console.error('Error fetching dashboard stats:', error);
         toast.error('ダッシュボードデータの取得に失敗しました');
       } finally {
@@ -23,8 +34,9 @@ const Dashboard = () => {
       }
     };
 
-    fetchDashboardData();
-  }, []);
+    fetch();
+    return () => controller.abort();
+  }, [username]);
 
   if (loading) {
     return (
@@ -54,7 +66,7 @@ const Dashboard = () => {
                   <i className="bi bi-shield-check"></i> Secure
                 </span>
               </div>
-              <h1 className="display-5 fw-bold mb-1 text-white">生徒情報管理システム</h1>
+              <h1 className="display-5 fw-bold mb-1 text-white">{t('app.systemName')}</h1>
               <p className="lead mb-0 text-white text-opacity-75">
                 最新の状況とタスクを一目で確認し、スムーズに運用できます。
               </p>
@@ -71,8 +83,8 @@ const Dashboard = () => {
       {/* Main Grid */}
       <main>
         <div className="d-flex justify-content-between align-items-center mb-4">
-          <h5 className="section-title mb-0 text-muted fw-bold">Overview Statistics</h5>
-          <span className="badge bg-light text-muted border px-3 py-2 rounded-pill">System Status: Active</span>
+          <h5 className="section-title mb-0 text-muted fw-bold">{t('dashboard.overviewStatistics')}</h5>
+          <span className="badge bg-light text-muted border px-3 py-2 rounded-pill">{t('dashboard.systemStatusActive')}</span>
         </div>
 
         <div className="row g-4 mb-5">
@@ -146,8 +158,8 @@ const Dashboard = () => {
           <div className="col-lg-8">
             <div className="glass-panel p-4 h-100">
               <div className="d-flex justify-content-between align-items-center mb-4 border-bottom pb-3">
-                <h5 className="mb-0 fw-bold">最近登録された生徒 (Recent Students)</h5>
-                <Link to="/students" className="btn btn-sm btn-outline-primary rounded-pill px-3">View All</Link>
+                <h5 className="mb-0 fw-bold">{t('dashboard.recentStudents')}</h5>
+                <Link to="/students" className="btn btn-sm btn-outline-primary rounded-pill px-3">{t('dashboard.viewAll')}</Link>
               </div>
               <div className="table-responsive">
                 <table className="table table-hover align-middle mb-0">
@@ -173,7 +185,7 @@ const Dashboard = () => {
                       ))
                     ) : (
                       <tr>
-                        <td colSpan="3" className="text-center py-4 text-muted">生徒がいません</td>
+                        <td colSpan="3" className="text-center py-4 text-muted">{t('dashboard.noStudents')}</td>
                       </tr>
                     )}
                   </tbody>
@@ -185,22 +197,22 @@ const Dashboard = () => {
           {/* Quick Actions / Side Column */}
           <div className="col-lg-4">
             <div className="glass-panel p-4 mb-4">
-              <h5 className="mb-3 fw-bold border-bottom pb-2">Quick Actions</h5>
+              <h5 className="mb-3 fw-bold border-bottom pb-2">{t('dashboard.quickActions')}</h5>
               <div className="d-flex flex-column gap-2">
                 <Link to="/students/new" className="sidebar-link border rounded-3 p-3 bg-white">
                   <i className="bi bi-person-plus text-primary fs-5"></i>
-                  <span className="fw-semibold">新規生徒登録</span>
+                  <span className="fw-semibold">{t('dashboard.quickAction.newStudent')}</span>
                 </Link>
                 <Link to="/registrations" className="sidebar-link border rounded-3 p-3 bg-white position-relative">
                   <i className="bi bi-inbox text-primary fs-5"></i>
-                  <span className="fw-semibold">登録申請管理</span>
+                  <span className="fw-semibold">{t('dashboard.quickAction.registrations')}</span>
                   {stats?.pending_registrations > 0 && (
                     <span className="badge rounded-pill bg-danger ms-auto">{stats.pending_registrations}</span>
                   )}
                 </Link>
                 <Link to="/teachers/new" className="sidebar-link border rounded-3 p-3 bg-white">
                   <i className="bi bi-person-workspace text-success fs-5"></i>
-                  <span className="fw-semibold">新規教師追加</span>
+                  <span className="fw-semibold">{t('dashboard.quickAction.newTeacher')}</span>
                 </Link>
               </div>
             </div>

@@ -29,13 +29,20 @@ class UserService:
         return db.query(User).filter(User.username == username).first()
 
     @staticmethod
+    def generate_user_id(db: Session) -> str:
+        count = db.query(User).count() + 1
+        return f"USR{count:03d}"
+
+    @staticmethod
     def create_user(db: Session, user_in: UserCreate) -> User:
         db_user = User(
+            user_id=UserService.generate_user_id(db),
             username=user_in.username,
             email=user_in.email,
             full_name=user_in.full_name,
             hashed_password=get_password_hash(user_in.password),
-            role=user_in.role
+            role=user_in.role,
+            school_name=user_in.school_name
         )
         db.add(db_user)
         db.commit()

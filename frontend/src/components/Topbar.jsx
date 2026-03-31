@@ -1,21 +1,26 @@
 import React from 'react';
 import { useLocation } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 const Topbar = ({ title, subtitle, showAddButton, addButtonLabel, onAddClick }) => {
   const location = useLocation();
+  const { t, i18n } = useTranslation();
+  const currentLang = i18n.resolvedLanguage || i18n.language;
   
   // Custom title mapping based on route if not provided
   const getPageInfo = () => {
-    const defaultInfo = { title: 'Admin Dashboard', subtitle: 'Welcome back' };
+    const defaultInfo = { title: t('topbar.default.title'), subtitle: t('topbar.default.subtitle') };
     const path = location.pathname;
     
-    if (path.includes('/registrations')) return { title: 'Registrations', subtitle: 'Review and process incoming student registration applications.' };
-    if (path.includes('/students')) return { title: 'Student Management', subtitle: 'Manage academic and personal student records.' };
-    if (path.includes('/teachers')) return { title: 'Teacher Management', subtitle: 'Manage faculty and staff records.' };
-    if (path.includes('/courses')) return { title: 'Course Management', subtitle: 'Manage academic courses and curriculum.' };
-    if (path.includes('/tests')) return { title: 'Test Management', subtitle: 'Manage academic tests and examinations.' };
-    if (path.includes('/results')) return { title: 'Test Results', subtitle: 'View and manage student test performance.' };
-    if (path.includes('/users')) return { title: 'User Management', subtitle: 'Manage admin and guest system accounts.' };
+    if (path.includes('/registrations')) return { title: t('topbar.registrations.title'), subtitle: t('topbar.registrations.subtitle') };
+    if (path.includes('/students')) return { title: t('topbar.students.title'), subtitle: t('topbar.students.subtitle') };
+    if (path.includes('/teachers')) return { title: t('topbar.teachers.title'), subtitle: t('topbar.teachers.subtitle') };
+    if (path.includes('/courses')) return { title: t('topbar.courses.title'), subtitle: t('topbar.courses.subtitle') };
+    if (path.includes('/tests')) return { title: t('topbar.tests.title'), subtitle: t('topbar.tests.subtitle') };
+    if (path.includes('/results')) return { title: t('topbar.results.title'), subtitle: t('topbar.results.subtitle') };
+    if (path.includes('/reports')) return { title: t('topbar.reports.title'), subtitle: t('topbar.reports.subtitle') };
+    if (path.includes('/enrollments')) return { title: t('topbar.enrollments.title'), subtitle: t('topbar.enrollments.subtitle') };
+    if (path.includes('/users')) return { title: t('topbar.users.title'), subtitle: t('topbar.users.subtitle') };
     
     return defaultInfo;
   };
@@ -42,7 +47,7 @@ const Topbar = ({ title, subtitle, showAddButton, addButtonLabel, onAddClick }) 
         <div className="topbar-search d-none d-md-flex align-items-center">
           <i className="bi bi-search text-muted"></i>
           <input type="search" className="form-control border-0 bg-transparent shadow-none p-0 ps-2"
-            placeholder="Search dashboard..." />
+            placeholder={`${t('app.search')}...`} />
         </div>
 
         {/* Language Selector Dropdown */}
@@ -50,17 +55,31 @@ const Topbar = ({ title, subtitle, showAddButton, addButtonLabel, onAddClick }) 
           <button className="btn btn-outline-secondary btn-sm dropdown-toggle d-flex align-items-center gap-2 px-3" type="button"
             id="topbarLanguageDropdown" data-bs-toggle="dropdown" aria-expanded="false" style={{ borderRadius: '999px' }}>
             <i className="bi bi-globe"></i>
-            <span>Language</span>
+            <span>{t('app.language')}</span>
           </button>
           <ul className="dropdown-menu dropdown-menu-end shadow-sm border-0" aria-labelledby="topbarLanguageDropdown" style={{ borderRadius: '12px' }}>
             <li>
-              <button className="dropdown-item d-flex align-items-center gap-2 active">
-                <span>🇺🇸</span> English
+              <button
+                className={`dropdown-item d-flex align-items-center gap-2${currentLang === 'en' ? ' active' : ''}`}
+                type="button"
+                onClick={() => {
+                  i18n.changeLanguage('en');
+                  localStorage.setItem('lang', 'en');
+                }}
+              >
+                <span>{t('nav.language.english')}</span>
               </button>
             </li>
             <li>
-              <button className="dropdown-item d-flex align-items-center gap-2">
-                <span>🇯🇵</span> 日本語
+              <button
+                className={`dropdown-item d-flex align-items-center gap-2${currentLang === 'ja' ? ' active' : ''}`}
+                type="button"
+                onClick={() => {
+                  i18n.changeLanguage('ja');
+                  localStorage.setItem('lang', 'ja');
+                }}
+              >
+                <span>{t('nav.language.japanese')}</span>
               </button>
             </li>
           </ul>
@@ -69,7 +88,7 @@ const Topbar = ({ title, subtitle, showAddButton, addButtonLabel, onAddClick }) 
         {showAddButton && (
           <button className="btn btn-primary d-flex align-items-center gap-2 px-3" onClick={onAddClick} style={{ borderRadius: '999px' }}>
             <i className="bi bi-plus-lg"></i>
-            <span className="fw-semibold">{addButtonLabel || 'Add New'}</span>
+            <span className="fw-semibold">{addButtonLabel || t('common.addNew')}</span>
           </button>
         )}
       </div>

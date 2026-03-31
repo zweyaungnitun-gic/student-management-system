@@ -2,6 +2,7 @@ import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import Layout from './components/Layout';
+import { AuthProvider } from './contexts/AuthContext';
 
 // Pages
 import Login from './pages/Login';
@@ -41,28 +42,32 @@ import UserList from './pages/users/UserList';
 import UserForm from './pages/users/UserForm';
 
 import './index.css';
+import { useTranslation } from 'react-i18next';
 
 function App() {
-  return (
-    <BrowserRouter>
-      <Toaster
-        position="top-right"
-        toastOptions={{
-          style: {
-            background: 'var(--bg-surface)',
-            color: 'var(--text-primary)',
-            border: '1px solid var(--border-subtle)',
-          },
-        }}
-      />
-      <Routes>
-        {/* Login page */}
-        <Route path="/login" element={<Login />} />
+  const { t } = useTranslation();
 
-        {/* Main app */}
-        <Route path="/" element={<Layout />}>
-          <Route index element={<Navigate to="/dashboard" replace />} />
-          <Route path="dashboard" element={<Dashboard />} />
+  return (
+    <AuthProvider>
+      <BrowserRouter>
+        <Toaster
+          position="top-right"
+          toastOptions={{
+            style: {
+              background: 'var(--bg-surface)',
+              color: 'var(--text-primary)',
+              border: '1px solid var(--border-subtle)',
+            },
+          }}
+        />
+        <Routes>
+          {/* Login page */}
+          <Route path="/login" element={<Login />} />
+
+          {/* Main app */}
+          <Route path="/" element={<Layout />}>
+            <Route index element={<Navigate to="/dashboard" replace />} />
+            <Route path="dashboard" element={<Dashboard />} />
 
           {/* Students */}
           <Route path="students">
@@ -131,20 +136,21 @@ function App() {
             <Route path="new" element={<UserForm />} />
             <Route path=":id/edit" element={<UserForm />} />
           </Route>
-        </Route>
+          </Route>
 
-        {/* 404 Page */}
-        <Route
-          path="*"
-          element={
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh', flexDirection: 'column', gap: '1rem', color: 'var(--text-primary)' }}>
-              <h1 style={{ fontSize: '4rem', margin: 0 }}>404</h1>
-              <p style={{ color: 'var(--text-secondary)' }}>Page not found</p>
-            </div>
-          }
-        />
-      </Routes>
-    </BrowserRouter>
+          {/* 404 Page */}
+          <Route
+            path="*"
+            element={
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh', flexDirection: 'column', gap: '1rem', color: 'var(--text-primary)' }}>
+                <h1 style={{ fontSize: '4rem', margin: 0 }}>404</h1>
+                <p style={{ color: 'var(--text-secondary)' }}>{t('errors.pageNotFound')}</p>
+              </div>
+            }
+          />
+        </Routes>
+      </BrowserRouter>
+    </AuthProvider>
   );
 }
 

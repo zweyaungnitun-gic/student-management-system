@@ -26,7 +26,7 @@ class RegistrationService:
         db_reg = StudentRegistration(
             **reg_in.model_dump(),
             registration_code=RegistrationService.generate_registration_code(db),
-            status="pending",
+            registration_status="PENDING",
             submitted_at=date.today()
         )
         db.add(db_reg)
@@ -38,7 +38,7 @@ class RegistrationService:
     def get_registrations(db: Session, status: Optional[str] = None, search: Optional[str] = None) -> List[StudentRegistration]:
         query = db.query(StudentRegistration)
         if status:
-            query = query.filter(StudentRegistration.status == status)
+            query = query.filter(StudentRegistration.registration_status == status)
         if search:
             query = query.filter(StudentRegistration.english_name.ilike(f"%{search}%"))
         return query.order_by(StudentRegistration.submitted_at.desc()).all()
@@ -65,7 +65,7 @@ class RegistrationService:
     def accept_registration(db: Session, reg_id: int, decided_by: int) -> Optional[StudentRegistration]:
         from app.services.student_service import StudentService
         db_reg = db.query(StudentRegistration).filter(StudentRegistration.id == reg_id).first()
-        if not db_reg or db_reg.status != "pending":
+        if not db_reg or db_reg.registration_status != "PENDING":
             return None
         
         # 1. Create Student
@@ -80,7 +80,7 @@ class RegistrationService:
             religion=db_reg.religion,
             current_living_address=db_reg.current_address,
             home_town_address=db_reg.hometown_address,
-            date_of_birth=db_reg.dob,
+            date_of_birth=db_reg.date_of_birth,
             enrolled_date=date.today(),
             created_by=decided_by,
             created_at=date.today()
@@ -108,7 +108,7 @@ class RegistrationService:
         db.add(db_additional)
         
         # 3. Update Registration status
-        db_reg.status = "accepted"
+        db_reg.registration_status = "ACCEPTED"
         db_reg.decided_at = date.today()
         db_reg.decided_by = decided_by
         db_reg.accepted_student_id = db_student.student_id # The STU-XXX code
@@ -120,10 +120,10 @@ class RegistrationService:
     @staticmethod
     def reject_registration(db: Session, reg_id: int, decided_by: int) -> Optional[StudentRegistration]:
         db_reg = db.query(StudentRegistration).filter(StudentRegistration.id == reg_id).first()
-        if not db_reg or db_reg.status != "pending":
+        if not db_reg or db_reg.registration_status != "PENDING":
             return None
         
-        db_reg.status = "rejected"
+        db_reg.registration_status = "REJECTED"
         db_reg.decided_at = date.today()
         db_reg.decided_by = decided_by
         
@@ -133,4 +133,4 @@ class RegistrationService:
 
     @staticmethod
     def count_by_status(db: Session, status: str) -> int:
-        return db.query(StudentRegistration).filter(StudentRegistration.status == status).count()
+        return db.query(StudentRegistration).filter(StudentRegistration.registration_status == status).count()
