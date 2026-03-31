@@ -3,7 +3,7 @@ import { NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/useAuth';
 import { useTranslation } from 'react-i18next';
 
-const LinkItem = ({ to, icon, label, badge }) => (
+const LinkItem = ({ to, icon, label }) => (
   <NavLink
     to={to}
     className={({ isActive }) => `sidebar-link${isActive ? ' active' : ''}`}
@@ -11,7 +11,6 @@ const LinkItem = ({ to, icon, label, badge }) => (
   >
     <i className={`bi ${icon}`}></i>
     <span>{label}</span>
-    {badge && <span className="sidebar-pill">{badge}</span>}
   </NavLink>
 );
 
@@ -62,28 +61,25 @@ const Sidebar = () => {
 
       {/* Language Selector */}
       <div className="language-selector-sidebar mt-2">
-        <div className="d-flex gap-1 justify-content-center">
-          <div
-            className={`lang-pill${currentLang === 'en' ? ' active' : ''}`}
-            style={{ cursor: 'pointer' }}
+        <div className="language-switch-wrapper">
+          <button
+            className={`lang-switch ${currentLang === 'en' ? 'active' : ''}`}
             onClick={() => {
               i18n.changeLanguage('en');
               localStorage.setItem('lang', 'en');
             }}
           >
-            <i className="bi bi-globe2 me-1"></i> {t('nav.language.english')}
-          </div>
-          <span className="lang-divider text-secondary px-1">|</span>
-          <div
-            className={`lang-pill${currentLang === 'ja' ? ' active' : ''}`}
-            style={{ cursor: 'pointer' }}
+            EN
+          </button>
+          <button
+            className={`lang-switch ${currentLang === 'ja' ? 'active' : ''}`}
             onClick={() => {
               i18n.changeLanguage('ja');
               localStorage.setItem('lang', 'ja');
             }}
           >
-            <i className="bi bi-globe2 me-1"></i> {t('nav.language.japanese')}
-          </div>
+            JP
+          </button>
         </div>
       </div>
 
@@ -91,7 +87,7 @@ const Sidebar = () => {
       <nav className="sidebar-nav mt-3">
         <p className="sidebar-label">{t('nav.home')}</p>
         <LinkItem to="/dashboard" icon="bi-speedometer2" label={t('nav.dashboard')} />
-        <LinkItem to="/registrations" icon="bi-inbox" label={t('nav.registrations')} badge="New" />
+        <LinkItem to="/registrations" icon="bi-inbox" label={t('nav.registrations')} />
 
         <p className="sidebar-label mt-3">{t('nav.master.management')}</p>
 
@@ -101,10 +97,10 @@ const Sidebar = () => {
             className="sidebar-link w-100 d-flex align-items-center"
             onClick={() => setManagementOpen(!managementOpen)}
           >
-            <i className="bi bi-hdd-stack"></i>
-            <span>{t('nav.master.management')}</span>
+            <i className="bi bi-database"></i>
+            <span style={{ flex: 1, textAlign: 'left' }}>{t('nav.master.management')}</span>
             <i className="bi bi-chevron-down ms-auto small transition-icon"
-               style={{ transform: managementOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.3s ease' }}></i>
+              style={{ transform: managementOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.3s ease' }}></i>
           </button>
           {managementOpen && (
             <div className="ms-3 ps-2 border-start border-light border-opacity-10 mt-1 d-flex flex-column gap-1">
@@ -123,9 +119,9 @@ const Sidebar = () => {
             onClick={() => setAcademicOpen(!academicOpen)}
           >
             <i className="bi bi-mortarboard"></i>
-            <span>{t('nav.academic.management')}</span>
+            <span style={{ flex: 1, textAlign: 'left' }}>{t('nav.academic.management')}</span>
             <i className="bi bi-chevron-down ms-auto small transition-icon"
-               style={{ transform: academicOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.3s ease' }}></i>
+              style={{ transform: academicOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.3s ease' }}></i>
           </button>
           {academicOpen && (
             <div className="ms-3 ps-2 border-start border-light border-opacity-10 mt-1 d-flex flex-column gap-1">
@@ -153,6 +149,49 @@ const Sidebar = () => {
           <span>{t('nav.logout')}</span>
         </button>
       </nav>
+      <style>{`
+        .language-switch-wrapper {
+          display: flex;
+          background: #f1f5f9;
+          border-radius: 12px;
+          padding: 0.25rem;
+        }
+        
+        .lang-switch {
+          flex: 1;
+          padding: 0.5rem 0.75rem;
+          background: transparent;
+          border: none;
+          border-radius: 8px;
+          font-size: 0.75rem;
+          font-weight: 600;
+          cursor: pointer;
+          transition: all 0.2s;
+          color: #64748b;
+        }
+        
+        .lang-switch.active {
+          background: white;
+          color: #0f6cbd;
+          box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        
+        .lang-switch:hover:not(.active) {
+          color: #334155;
+        }
+
+        .sidebar-link.active {
+          position: relative;
+        }
+
+        .sidebar-active-indicator {
+          width: 6px;
+          height: 6px;
+          background: white;
+          border-radius: 50%;
+          margin-left: auto;
+        }
+      `}</style>
     </aside>
   );
 };
