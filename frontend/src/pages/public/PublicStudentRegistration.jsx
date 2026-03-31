@@ -29,7 +29,6 @@ const PublicStudentRegistration = () => {
   const [linkValid, setLinkValid] = useState(false);
   const [linkInfo, setLinkInfo] = useState(null);
   const [submitting, setSubmitting] = useState(false);
-  const [submitted, setSubmitted] = useState(false);
   
   const { register, handleSubmit, watch, setValue, formState: { errors }, trigger } = useForm({
     mode: 'onBlur',
@@ -126,8 +125,15 @@ const PublicStudentRegistration = () => {
       };
 
       await registrationLinkService.submitRegistration(payload);
-      setSubmitted(true);
       toast.success('Registration submitted successfully!');
+      
+      // Navigate to success page with registration details
+      navigate('/register/success', {
+        state: {
+          registrationCode: `REG-${Date.now().toString(36).toUpperCase().slice(-8)}`,
+          email: data.email
+        }
+      });
     } catch (error) {
       toast.error(error.response?.data?.detail || 'Failed to submit registration');
     } finally {
@@ -157,24 +163,6 @@ const PublicStudentRegistration = () => {
             <h3 className="fw-bold mb-2">Invalid Registration Link</h3>
             <p className="text-muted mb-4">
               This registration link is invalid, expired, or has been deactivated. Please contact your administrator for a valid link.
-            </p>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  if (submitted) {
-    return (
-      <div className="min-vh-100 d-flex align-items-center justify-content-center bg-light">
-        <div className="card shadow-lg border-0" style={{ maxWidth: '500px', borderRadius: '16px' }}>
-          <div className="card-body p-5 text-center">
-            <div className="rounded-circle bg-success bg-opacity-10 d-flex align-items-center justify-content-center mx-auto mb-4" style={{ width: '80px', height: '80px' }}>
-              <CheckCircle size={40} className="text-success" />
-            </div>
-            <h3 className="fw-bold mb-2">Registration Submitted!</h3>
-            <p className="text-muted mb-4">
-              Thank you for your registration. We will review your application and contact you soon.
             </p>
           </div>
         </div>

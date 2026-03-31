@@ -1,13 +1,16 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from typing import List, Optional
-from datetime import datetime
+from datetime import datetime, date
 import secrets
 import os
+import uuid
 
 from app.database import get_db
 from app.models.registration_link import RegistrationLink, SelfRegistration
 from app.models.user import User, Role
+from app.models.student_registration import StudentRegistration
+from app.models.student import RegistrationStatus
 from app.schemas.registration_link import (
     RegistrationLinkCreate, RegistrationLinkResponse, RegistrationLinkUpdate,
     SelfRegistrationCreate, SelfRegistrationResponse, SelfRegistrationUpdate,
@@ -276,6 +279,39 @@ def submit_self_registration(
     )
     
     db.add(db_registration)
+    
+    # Also create entry in registration_list table
+    registration_code = f"REG-{uuid.uuid4().hex[:8].upper()}"
+    
+    db_list_registration = StudentRegistration(
+        registration_code=registration_code,
+        registration_status=RegistrationStatus.PENDING,
+        submitted_at=date.today(),
+        english_name=page1.student_name,
+        katakana_name=page2.name_in_japanese,
+        date_of_birth=page1.date_of_birth,
+        gender=page1.gender,
+        current_address=page1.current_living_address,
+        hometown_address=page1.home_town_address,
+        phone_number=page1.phone_number,
+        guardian_phone_number=page1.parent_phone or page1.emergency_contact_phone,
+        father_name=page1.parent_name,
+        passport_number=page2.passport_number,
+        national_id_number=page1.national_id,
+        jlpt_level=page2.current_japan_level or page2.passed_highest_jlpt_level,
+        desired_occupation=page2.desired_job_type,
+        other_occupation=page2.other_desired_job_type,
+        japan_travel_experience=page2.japan_travel_experience,
+        coe_application_experience=page2.coe_application_experience,
+        religion=page1.religion,
+        smoking=page2.is_smoking,
+        alcohol=page2.is_alcohol_drink,
+        tattoo=page2.have_tatto,
+        want_dorm=page2.hostel_preference,
+        other_memo=page2.memo_notes
+    )
+    
+    db.add(db_list_registration)
     
     # Increment link use count
     link.use_count += 1
