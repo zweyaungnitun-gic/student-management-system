@@ -68,8 +68,7 @@
   "auth.login.success": "Login successful!",
   "auth.logout.success": "Logged Out Successfully",
 
-  "ui.signingIn": "Signing in..."
-  ,
+  "ui.signingIn": "Signing in...",
   "auth.roles.administrator": "Administrator",
 
   "common.addNew": "Add New",
@@ -174,6 +173,7 @@
   "students.list.toast.deleted": "{{name}} deleted",
   "students.list.toast.deleteFailed": "Delete failed",
   "students.list.confirmDelete": "Delete {{name}}?",
+  
   "dashboard.overviewStatistics": "Overview Statistics",
   "dashboard.systemStatusActive": "System Status: Active",
   "dashboard.recentStudents": "Recently Enrolled Students",
