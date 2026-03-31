@@ -35,23 +35,23 @@ const Topbar = ({ title, subtitle, showAddButton, addButtonLabel, onAddClick }) 
         <button className="btn btn-light btn-icon d-lg-none" type="button" aria-label="Toggle sidebar">
           <i className="bi bi-list fs-4"></i>
         </button>
-        <div>
+        {/* <div>
           <p className="text-uppercase text-muted small fw-semibold mb-1">
             {currentSubtitle}
           </p>
           <h4 className="mb-0 fw-bold">{currentTitle}</h4>
-        </div>
+        </div> */}
       </div>
 
       <div className="topbar-actions d-flex align-items-center gap-2">
-        <div className="topbar-search d-none d-md-flex align-items-center">
+        {/* <div className="topbar-search d-none d-md-flex align-items-center">
           <i className="bi bi-search text-muted"></i>
           <input type="search" className="form-control border-0 bg-transparent shadow-none p-0 ps-2"
             placeholder={`${t('app.search')}...`} />
-        </div>
+        </div> */}
 
         {/* Language Selector Dropdown */}
-        <div className="dropdown">
+        {/* <div className="dropdown">
           <button className="btn btn-outline-secondary btn-sm dropdown-toggle d-flex align-items-center gap-2 px-3" type="button"
             id="topbarLanguageDropdown" data-bs-toggle="dropdown" aria-expanded="false" style={{ borderRadius: '999px' }}>
             <i className="bi bi-globe"></i>
@@ -83,7 +83,7 @@ const Topbar = ({ title, subtitle, showAddButton, addButtonLabel, onAddClick }) 
               </button>
             </li>
           </ul>
-        </div>
+        </div> */}
 
         {showAddButton && (
           <button className="btn btn-primary d-flex align-items-center gap-2 px-3" onClick={onAddClick} style={{ borderRadius: '999px' }}>
