@@ -12,6 +12,7 @@ const Topbar = ({ title, subtitle, showAddButton, addButtonLabel, onAddClick }) 
     const defaultInfo = { title: t('topbar.default.title'), subtitle: t('topbar.default.subtitle') };
     const path = location.pathname;
     
+    if (path.includes('/registrations/links')) return { title: 'Registration Links', subtitle: 'Create and manage student registration links' };
     if (path.includes('/registrations')) return { title: t('topbar.registrations.title'), subtitle: t('topbar.registrations.subtitle') };
     if (path.includes('/students')) return { title: t('topbar.students.title'), subtitle: t('topbar.students.subtitle') };
     if (path.includes('/teachers')) return { title: t('topbar.teachers.title'), subtitle: t('topbar.teachers.subtitle') };

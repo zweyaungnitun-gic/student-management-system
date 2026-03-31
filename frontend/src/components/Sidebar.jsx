@@ -109,6 +109,7 @@ const Sidebar = () => {
           {managementOpen && (
             <div className="ms-3 ps-2 border-start border-light border-opacity-10 mt-1 d-flex flex-column gap-1">
               <LinkItem to="/students" icon="bi-people" label={t('nav.student.management')} />
+              <LinkItem to="/registrations/links" icon="bi-link-45deg" label={t('nav.registrationLinks') || 'Registration Links'} />
               <LinkItem to="/teachers" icon="bi-person-workspace" label={t('nav.teacher.management')} />
               <LinkItem to="/courses" icon="bi-book" label={t('nav.course.management')} />
             </div>

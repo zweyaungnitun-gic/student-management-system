@@ -31,6 +31,8 @@ import ResultForm from './pages/results/ResultForm';
 
 import RegistrationList from './pages/registrations/RegistrationList';
 import RegistrationDetail from './pages/registrations/RegistrationDetail';
+import RegistrationLinkManager from './pages/students/RegistrationLinkManager';
+import PublicStudentRegistration from './pages/public/PublicStudentRegistration';
 
 // Report Pages
 import ReportDashboard from './pages/reports/ReportDashboard';
@@ -63,6 +65,9 @@ function App() {
           }}
         />
         <Routes>
+          {/* Public Registration Route - No Auth Required */}
+          <Route path="/register/:token" element={<PublicStudentRegistration />} />
+
           {/* Login page */}
           <Route path="/login" element={<Login />} />
 
@@ -122,7 +127,10 @@ function App() {
           <Route path="registrations">
             <Route index element={<RegistrationList />} />
             <Route path=":id" element={<RegistrationDetail />} />
+            <Route path="links" element={<RegistrationLinkManager />} />
           </Route>
+
+          {/* Public Registration Route - REMOVED from here */}
 
           {/* Reports */}
           <Route path="reports">

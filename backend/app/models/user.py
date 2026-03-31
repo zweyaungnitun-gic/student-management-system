@@ -1,4 +1,5 @@
 from sqlalchemy import Column, Integer, String, Enum as SQLEnum, DateTime, BigInteger, Boolean
+from sqlalchemy.orm import relationship
 from app.database import Base
 from sqlalchemy.sql import func
 import enum
@@ -20,3 +21,6 @@ class User(Base):
     role = Column(SQLEnum(Role, name="role_enum"), nullable=False, default=Role.GUEST)
     school_name = Column(String(100))
     created_at = Column(DateTime(timezone=True), default=func.now(), nullable=False)
+
+    # Relationships
+    registration_links = relationship("RegistrationLink", back_populates="admin")
