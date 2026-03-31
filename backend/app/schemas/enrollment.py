@@ -16,7 +16,7 @@ class EnrollmentUpdate(BaseModel):
     semester: Optional[str] = Field(None, max_length=50)
 
 class EnrollmentResponse(EnrollmentBase):
-    id: int
+    enrollment_id: int
     student_name: Optional[str] = None
     course_code: Optional[str] = None
     course_name: Optional[str] = None

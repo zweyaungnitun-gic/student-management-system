@@ -10,24 +10,30 @@ from app.schemas.course import CourseCreate, CourseUpdate
 
 class CourseService:
     @staticmethod
-    def get_all_courses(db: Session) -> List[Course]:
-        return db.query(Course).all()
+    def get_all_courses(db: Session, owner_admin_id: Optional[int] = None) -> List[Course]:
+        query = db.query(Course)
+        if owner_admin_id is not None:
+            query = query.filter(Course.owner_admin_id == owner_admin_id)
+        return query.all()
 
     @staticmethod
-    def get_active_courses(db: Session) -> List[Course]:
-        return db.query(Course).filter(Course.is_active == True).all()
+    def get_active_courses(db: Session, owner_admin_id: Optional[int] = None) -> List[Course]:
+        query = db.query(Course).filter(Course.is_active == True)
+        if owner_admin_id is not None:
+            query = query.filter(Course.owner_admin_id == owner_admin_id)
+        return query.all()
 
     @staticmethod
     def get_course_by_id(db: Session, course_id: int) -> Optional[Course]:
-        return db.query(Course).filter(Course.id == course_id).first()
+        return db.query(Course).filter(Course.course_id == course_id).first()
 
     @staticmethod
     def get_course_by_code(db: Session, course_code: str) -> Optional[Course]:
         return db.query(Course).filter(Course.course_code == course_code).first()
 
     @staticmethod
-    def create_course(db: Session, course_in: CourseCreate) -> Course:
-        db_course = Course(**course_in.model_dump())
+    def create_course(db: Session, course_in: CourseCreate, owner_admin_id: Optional[int] = None) -> Course:
+        db_course = Course(**course_in.model_dump(), owner_admin_id=owner_admin_id)
         db.add(db_course)
         db.commit()
         db.refresh(db_course)
@@ -35,7 +41,7 @@ class CourseService:
 
     @staticmethod
     def update_course(db: Session, course_id: int, course_in: CourseUpdate) -> Optional[Course]:
-        db_course = db.query(Course).filter(Course.id == course_id).first()
+        db_course = db.query(Course).filter(Course.course_id == course_id).first()
         if not db_course:
             return None
         
@@ -49,7 +55,7 @@ class CourseService:
 
     @staticmethod
     def delete_course(db: Session, course_id: int) -> bool:
-        db_course = db.query(Course).filter(Course.id == course_id).first()
+        db_course = db.query(Course).filter(Course.course_id == course_id).first()
         if not db_course:
             return False
         

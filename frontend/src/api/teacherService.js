@@ -13,7 +13,7 @@ export const teacherService = {
   },
 
   create: async (data) => {
-    const response = await client.post('/teachers/add', data);
+    const response = await client.post('/teachers', data);
     return response.data;
   },
 

@@ -7,6 +7,7 @@ from app.core import security
 from app.core.config import settings
 from app.models.user import User
 from app.schemas.token import Token
+from app.dependencies import get_current_user
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 
@@ -31,3 +32,17 @@ def login(db: Session = Depends(get_db), form_data: OAuth2PasswordRequestForm = 
     
     # In a real app we might set this in httpOnly cookies, but for now returning it
     return {"access_token": access_token, "token_type": "bearer"}
+
+
+@router.get("/me")
+def me(current_user: User = Depends(get_current_user)):
+    role_value = current_user.role.value if hasattr(current_user.role, "value") else current_user.role
+    return {
+        "id": current_user.id,
+        "user_id": current_user.user_id,
+        "username": current_user.username,
+        "email": current_user.email,
+        "role": role_value,
+        "school_name": current_user.school_name,
+        "created_at": current_user.created_at.isoformat() if getattr(current_user, "created_at", None) else None,
+    }

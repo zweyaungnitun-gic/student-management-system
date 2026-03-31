@@ -67,6 +67,7 @@ const UserList = () => {
     const roleMap = {
       'ADMIN': { class: 'bg-danger', text: 'Admin' },
       'SUPER_ADMIN': { class: 'bg-warning', text: 'Super Admin' },
+      'TEACHER': { class: 'bg-info', text: 'Teacher' },
       'GUEST': { class: 'bg-success', text: 'Guest' }
     };
     const r = roleMap[role] || { class: 'bg-secondary', text: role || '-' };
