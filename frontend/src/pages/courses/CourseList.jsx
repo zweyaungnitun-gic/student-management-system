@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Plus, Pencil, Trash2, Info, PlayCircle, PauseCircle, BookOpen, Users, Award, Search, X, Filter, ChevronLeft, ChevronRight, Download, MoreVertical } from 'lucide-react';
+import { Plus, Pencil, Trash2, Eye, PlayCircle, PauseCircle, Download, ChevronLeft, ChevronRight, BookOpen, Search, X, Users, Award } from 'lucide-react';
 import { courseService } from '../../api/courseService';
 import toast from 'react-hot-toast';
 
@@ -8,19 +8,19 @@ const CourseList = () => {
   const navigate = useNavigate();
   const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [search, setSearch] = useState('');
-  const [searchInput, setSearchInput] = useState('');
-  const [showFilters, setShowFilters] = useState(false);
-  const [filterStatus, setFilterStatus] = useState('all');
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectAll, setSelectAll] = useState(false);
+  const [selectedIds, setSelectedIds] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 12;
+  const [filterStatus, setFilterStatus] = useState('all'); // all, active, inactive
+  const itemsPerPage = 10;
 
   const fetchCourses = async () => {
     try {
       setLoading(true);
       const params = {};
-      if (search && search.trim() !== '') {
-        params.search = search.trim();
+      if (searchTerm && searchTerm.trim() !== '') {
+        params.search = searchTerm.trim();
       }
       if (filterStatus === 'active') {
         params.active_only = true;
@@ -49,16 +49,10 @@ const CourseList = () => {
 
   useEffect(() => {
     fetchCourses();
-  }, [search, filterStatus]);
+  }, [searchTerm, filterStatus]);
 
-  const handleSearch = (e) => {
-    e.preventDefault();
-    setSearch(searchInput);
-  };
-
-  const handleClear = () => {
-    setSearchInput('');
-    setSearch('');
+  const handleViewDetails = (courseId) => {
+    navigate(`/courses/${courseId}`);  
   };
 
   const handleToggleActive = async (courseId, isActive) => {
@@ -77,12 +71,15 @@ const CourseList = () => {
     }
   };
 
-  const handleDelete = async (courseId, courseName) => {
+  const handleDelete = async (e, courseId, courseName) => {
+    e.stopPropagation();
     if (window.confirm(`Are you sure you want to delete "${courseName}"? This action cannot be undone.`)) {
       try {
         await courseService.delete(courseId);
         toast.success(`Course "${courseName}" deleted successfully`);
         fetchCourses();
+        setSelectedIds([]);
+        setSelectAll(false);
       } catch (error) {
         console.error('Error deleting course:', error);
         toast.error(error.response?.data?.detail || 'Delete failed');
@@ -90,53 +87,198 @@ const CourseList = () => {
     }
   };
 
-  const handleExport = async (courseId, courseCode) => {
-    try {
-      const blob = await courseService.exportStudents(courseId);
-      const url = window.URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = url;
-      link.setAttribute('download', `${courseCode}_students.csv`);
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
-      window.URL.revokeObjectURL(url);
-      toast.success('Export started');
-    } catch (error) {
-      console.error('Error exporting course:', error);
-      toast.error('Export failed');
+  const handleSelectAll = (e) => {
+    const checked = e.target.checked;
+    setSelectAll(checked);
+    if (checked) {
+      setSelectedIds(filteredCourses.map(c => c.course_id || c.courseId));
+    } else {
+      setSelectedIds([]);
     }
   };
 
+  const handleSelectRow = (e, id) => {
+    e.stopPropagation();
+    if (selectedIds.includes(id)) {
+      const newSelected = selectedIds.filter(i => i !== id);
+      setSelectedIds(newSelected);
+      setSelectAll(newSelected.length === filteredCourses.length && filteredCourses.length > 0);
+    } else {
+      const newSelected = [...selectedIds, id];
+      setSelectedIds(newSelected);
+      setSelectAll(newSelected.length === filteredCourses.length);
+    }
+  };
+
+  const handleBulkDelete = async () => {
+    if (selectedIds.length === 0) {
+      toast.error('No courses selected');
+      return;
+    }
+    
+    if (window.confirm(`Are you sure you want to delete ${selectedIds.length} selected course(s)?`)) {
+      try {
+        let successCount = 0;
+        let failCount = 0;
+        
+        for (const id of selectedIds) {
+          try {
+            await courseService.delete(id);
+            successCount++;
+          } catch {
+            failCount++;
+          }
+        }
+        
+        if (successCount > 0) {
+          toast.success(`${successCount} course(s) deleted successfully`);
+        }
+        if (failCount > 0) {
+          toast.error(`${failCount} course(s) failed to delete`);
+        }
+        
+        fetchCourses();
+        setSelectedIds([]);
+        setSelectAll(false);
+      } catch (error) {
+        toast.error('Bulk delete failed');
+      }
+    }
+  };
+
+  const handleBulkStatusUpdate = async (activate) => {
+    if (selectedIds.length === 0) {
+      toast.error('No courses selected');
+      return;
+    }
+    
+    const action = activate ? 'activate' : 'deactivate';
+    if (window.confirm(`Are you sure you want to ${action} ${selectedIds.length} selected course(s)?`)) {
+      try {
+        let successCount = 0;
+        let failCount = 0;
+        
+        for (const id of selectedIds) {
+          try {
+            if (activate) {
+              await courseService.activate(id);
+            } else {
+              await courseService.deactivate(id);
+            }
+            successCount++;
+          } catch {
+            failCount++;
+          }
+        }
+        
+        if (successCount > 0) {
+          toast.success(`${successCount} course(s) ${action}d successfully`);
+        }
+        if (failCount > 0) {
+          toast.error(`${failCount} course(s) failed to ${action}`);
+        }
+        
+        fetchCourses();
+        setSelectedIds([]);
+        setSelectAll(false);
+      } catch (error) {
+        toast.error(`Bulk ${action} failed`);
+      }
+    }
+  };
+
+  const handleDownloadCSV = () => {
+    try {
+      const headers = [
+        'Course ID',
+        'Course Code',
+        'Course Name',
+        'Credit Hours',
+        'Teacher',
+        'Status',
+        'Created Date'
+      ];
+
+      const selectedCourses = courses.filter(c => selectedIds.includes(c.course_id || c.courseId));
+      const coursesToExport = selectedIds.length > 0 ? selectedCourses : courses;
+      
+      if (coursesToExport.length === 0) {
+        toast.error('No courses to export');
+        return;
+      }
+
+      const csvRows = [];
+      csvRows.push(headers.join(','));
+
+      for (const course of coursesToExport) {
+        const row = [
+          `"${course.course_id || course.courseId || ''}"`,
+          `"${course.course_code || course.courseCode || ''}"`,
+          `"${(course.course_name || course.courseName || '').replace(/"/g, '""')}"`,
+          `"${course.credit_hours || course.creditHours || ''}"`,
+          `"${course.teacher_name || course.teacherName || 'Unassigned'}"`,
+          `"${course.is_active ? 'Active' : 'Inactive'}"`,
+          `"${course.created_at || course.createdAt || ''}"`
+        ];
+        csvRows.push(row.join(','));
+      }
+
+      const blob = new Blob([csvRows.join('\n')], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
+      const url = URL.createObjectURL(blob);
+      link.href = url;
+      link.setAttribute('download', `courses_${new Date().toISOString().split('T')[0]}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+      
+      toast.success(`Exported ${coursesToExport.length} course(s)`);
+    } catch (error) {
+      console.error('Export error:', error);
+      toast.error('Failed to export courses');
+    }
+  };
+
+  const filteredCourses = courses.filter(c => 
+    (c.course_name || c.courseName)?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    (c.course_code || c.courseCode)?.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   // Pagination
-  const totalPages = Math.ceil(courses.length / itemsPerPage);
+  const totalPages = Math.ceil(filteredCourses.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
-  const paginatedCourses = courses.slice(startIndex, startIndex + itemsPerPage);
+  const paginatedCourses = filteredCourses.slice(startIndex, startIndex + itemsPerPage);
 
   const getStatusBadge = (isActive) => {
     if (isActive) {
-      return (
-        <span className="badge-status active">
-          <span className="status-dot"></span>
-          Active
-        </span>
-      );
+      return <span className="status-badge success"><span className="status-dot"></span>Active</span>;
     }
-    return (
-      <span className="badge-status inactive">
-        <span className="status-dot"></span>
-        Inactive
-      </span>
-    );
+    return <span className="status-badge danger"><span className="status-dot"></span>Inactive</span>;
   };
 
-  const getRandomColor = (id) => {
-    const colors = [
-      '#667eea', '#f093fb', '#4facfe', '#43e97b', '#fa709a', '#30cfd0',
-      '#a8edea', '#fed6e3', '#c471ed', '#12c2e9', '#f64f59', '#c471ed'
-    ];
-    return colors[id % colors.length];
+  const formatDate = (dateString) => {
+    if (!dateString) return '-';
+    try {
+      const date = new Date(dateString);
+      if (isNaN(date.getTime())) return '-';
+      return date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+    } catch {
+      return '-';
+    }
   };
+
+  const getInitials = (name) => {
+    return name
+      .split(' ')
+      .map(word => word[0])
+      .join('')
+      .toUpperCase()
+      .slice(0, 2);
+  };
+
+  const activeCourses = courses.filter(c => c.is_active).length;
+  const totalCredits = courses.reduce((sum, c) => sum + (c.credit_hours || c.creditHours || 0), 0);
 
   if (loading && courses.length === 0) {
     return (
@@ -150,7 +292,7 @@ const CourseList = () => {
   }
 
   return (
-    <div className="course-module">
+    <div className="course-list-module">
       {/* Header Section */}
       <div className="module-header">
         <div className="header-content">
@@ -164,10 +306,10 @@ const CourseList = () => {
         </div>
       </div>
 
-      {/* Stats Cards */}
+      {/* Stats Row */}
       <div className="stats-row">
         <div className="stat-card">
-          <div className="stat-icon bg-primary-light">
+          <div className="stat-icon blue">
             <BookOpen size={24} />
           </div>
           <div className="stat-info">
@@ -176,105 +318,109 @@ const CourseList = () => {
           </div>
         </div>
         <div className="stat-card">
-          <div className="stat-icon bg-success-light">
+          <div className="stat-icon green">
             <PlayCircle size={24} />
           </div>
           <div className="stat-info">
-            <h3>{courses.filter(c => c.is_active).length}</h3>
+            <h3>{activeCourses}</h3>
             <p>Active Courses</p>
           </div>
         </div>
         <div className="stat-card">
-          <div className="stat-icon bg-warning-light">
+          <div className="stat-icon orange">
             <PauseCircle size={24} />
           </div>
           <div className="stat-info">
-            <h3>{courses.filter(c => !c.is_active).length}</h3>
+            <h3>{courses.length - activeCourses}</h3>
             <p>Inactive Courses</p>
           </div>
         </div>
         <div className="stat-card">
-          <div className="stat-icon bg-info-light">
+          <div className="stat-icon purple">
             <Award size={24} />
           </div>
           <div className="stat-info">
-            <h3>{courses.reduce((sum, c) => sum + (c.credit_hours || 0), 0)}</h3>
+            <h3>{totalCredits}</h3>
             <p>Total Credits</p>
           </div>
         </div>
+        {selectedIds.length > 0 && (
+          <div className="stat-card selected">
+            <div className="stat-icon purple">
+              <span>{selectedIds.length}</span>
+            </div>
+            <div className="stat-info">
+              <h3>Selected</h3>
+              <p>{selectedIds.length} course(s)</p>
+            </div>
+          </div>
+        )}
       </div>
 
-      {/* Search and Filter Bar */}
-      <div className="search-filter-bar">
-        <form onSubmit={handleSearch} className="search-form">
-          <div className="search-input-wrapper">
-            <Search size={20} className="search-icon" />
-            <input
-              type="text"
-              className="search-input"
-              value={searchInput}
-              onChange={(e) => setSearchInput(e.target.value)}
-              placeholder="Search by course name or code..."
-            />
-            {searchInput && (
-              <button type="button" className="clear-search" onClick={handleClear}>
-                <X size={16} />
+      {/* Search and Action Bar */}
+      <div className="action-bar">
+        <div className="search-wrapper">
+          <Search size={18} className="search-icon" />
+          <input
+            type="text"
+            className="search-input"
+            placeholder="Search by course name or code..."
+            value={searchTerm}
+            onChange={(e) => {
+              setSearchTerm(e.target.value);
+              setCurrentPage(1);
+            }}
+          />
+          {searchTerm && (
+            <button className="clear-search" onClick={() => setSearchTerm('')}>
+              <X size={16} />
+            </button>
+          )}
+        </div>
+        <div className="action-buttons">
+          {/* Status Filter Dropdown */}
+          <select
+            className="filter-select"
+            value={filterStatus}
+            onChange={(e) => setFilterStatus(e.target.value)}
+          >
+            <option value="all">All Courses</option>
+            <option value="active">Active Only</option>
+            <option value="inactive">Inactive Only</option>
+          </select>
+          
+          {selectedIds.length > 0 && (
+            <>
+              <button className="btn-bulk-active" onClick={() => handleBulkStatusUpdate(true)}>
+                <PlayCircle size={16} />
+                <span>Activate ({selectedIds.length})</span>
               </button>
-            )}
-          </div>
-          <button type="submit" className="btn-search">
-            Search
+              <button className="btn-bulk-inactive" onClick={() => handleBulkStatusUpdate(false)}>
+                <PauseCircle size={16} />
+                <span>Deactivate ({selectedIds.length})</span>
+              </button>
+              <button className="btn-bulk-delete" onClick={handleBulkDelete}>
+                <Trash2 size={16} />
+                <span>Delete ({selectedIds.length})</span>
+              </button>
+              <button className="btn-download" onClick={handleDownloadCSV}>
+                <Download size={16} />
+                <span>Download Selected</span>
+              </button>
+            </>
+          )}
+          <button className="btn-download-all" onClick={() => handleDownloadCSV()}>
+            <Download size={16} />
+            <span>Download All</span>
           </button>
-        </form>
-
-        <div className="filter-actions">
-          <button 
-            className={`btn-filter ${showFilters ? 'active' : ''}`}
-            onClick={() => setShowFilters(!showFilters)}
-          >
-            <Filter size={18} />
-            <span>Filters</span>
-          </button>
-          <button
-            className="btn-add"
-            onClick={() => navigate('/courses/new')}
-          >
-            <Plus size={18} />
+          <button className="btn-add" onClick={() => navigate('/courses/new')}>
+            <Plus size={16} />
             <span>Add Course</span>
           </button>
         </div>
       </div>
 
-      {/* Filter Panel */}
-      {showFilters && (
-        <div className="filter-panel">
-          <div className="filter-group">
-            <label>Status</label>
-            <div className="filter-buttons">
-              <button 
-                className={`filter-chip ${filterStatus === 'all' ? 'active' : ''}`}
-                onClick={() => setFilterStatus('all')}
-              >
-                All
-              </button>
-              <button 
-                className={`filter-chip ${filterStatus === 'active' ? 'active' : ''}`}
-                onClick={() => setFilterStatus('active')}
-              >
-                Active Only
-              </button>
-              <button 
-                className={`filter-chip ${filterStatus === 'inactive' ? 'active' : ''}`}
-                onClick={() => setFilterStatus('inactive')}
-              >
-                Inactive Only
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Courses Grid */}
+      {/* Courses Table */}
       {paginatedCourses.length === 0 ? (
         <div className="empty-state">
           <div className="empty-icon">📚</div>
@@ -287,90 +433,126 @@ const CourseList = () => {
         </div>
       ) : (
         <>
-          <div className="courses-grid">
-            {paginatedCourses.map(course => (
-              <div key={course.course_id || course.courseId} className="course-card">
-                <div className="card-header">
-                  <div className="course-icon" style={{ background: getRandomColor(course.course_id || course.courseId) }}>
-                    {(course.course_name || course.courseName || 'C').charAt(0).toUpperCase()}
-                  </div>
-                  <div className="header-info">
-                    <h3 className="course-name">{course.course_name || course.courseName}</h3>
-                    <span className="course-code">{course.course_code || course.courseCode}</span>
-                  </div>
-                  <div className="header-actions">
-                    <div className="dropdown">
-                      <button className="dropdown-trigger">
-                        <MoreVertical size={18} />
-                      </button>
-                      <div className="dropdown-menu">
-                        <button onClick={() => navigate(`/courses/${course.course_id || course.courseId}`)}>
-                          <Info size={16} />
-                          View Details
-                        </button>
-                        <button onClick={() => navigate(`/courses/${course.course_id || course.courseId}/edit`)}>
-                          <Pencil size={16} />
-                          Edit
-                        </button>
-                        <button onClick={() => handleExport(course.course_id || course.courseId, course.course_code || course.courseCode)}>
-                          <Download size={16} />
-                          Export Students
-                        </button>
-                        {course.is_active ? (
-                          <button onClick={() => handleToggleActive(course.course_id || course.courseId, true)}>
-                            <PauseCircle size={16} />
-                            Deactivate
-                          </button>
+          <div className="table-container">
+            <table className="courses-table">
+              <thead>
+                <tr>
+                  <th className="checkbox-col">
+                    <input
+                      type="checkbox"
+                      checked={selectAll && filteredCourses.length > 0}
+                      onChange={handleSelectAll}
+                    />
+                  </th>
+                  <th>Course ID</th>
+                  <th>Course Code</th>
+                  <th>Course Name</th>
+                  <th>Credits</th>
+                  <th>Teacher</th>
+                  <th className="text-center">Status</th>
+                  <th className="text-center">Created Date</th>
+                  <th className="actions-col">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {paginatedCourses.map(course => {
+                  const courseId = course.course_id || course.courseId;
+                  const courseCode = course.course_code || course.courseCode;
+                  const courseName = course.course_name || course.courseName;
+                  const creditHours = course.credit_hours || course.creditHours;
+                  const teacherName = course.teacher_name || course.teacherName;
+                  const isActive = course.is_active;
+                  
+                  return (
+                    <tr key={courseId}>
+                      <td className="checkbox-col">
+                        <input
+                          type="checkbox"
+                          checked={selectedIds.includes(courseId)}
+                          onChange={(e) => handleSelectRow(e, courseId)}
+                        />
+                      </td>
+                      <td className="course-id-cell">
+                        <span className="course-id-badge">
+                          {courseId}
+                        </span>
+                      </td>
+                      <td className="course-code-cell">
+                        <span className="course-code-badge">
+                          {courseCode}
+                        </span>
+                      </td>
+                      <td className="course-name-cell">
+                        <div className="course-name-info">
+                          <div className="course-avatar">
+                            {getInitials(courseName)}
+                          </div>
+                          <span>{courseName}</span>
+                        </div>
+                      </td>
+                      <td className="text-center">
+                        <span className="credit-badge">
+                          {creditHours || '-'}
+                        </span>
+                      </td>
+                      <td>
+                        {teacherName ? (
+                          <span className="teacher-name">{teacherName}</span>
                         ) : (
-                          <button onClick={() => handleToggleActive(course.course_id || course.courseId, false)}>
-                            <PlayCircle size={16} />
-                            Activate
-                          </button>
+                          <span className="teacher-unassigned">Unassigned</span>
                         )}
-                        <button className="danger" onClick={() => handleDelete(course.course_id || course.courseId, course.course_name || course.courseName)}>
-                          <Trash2 size={16} />
-                          Delete
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                
-                <div className="card-body">
-                  {course.description && (
-                    <p className="course-description">{course.description}</p>
-                  )}
-                  <div className="course-meta">
-                    <div className="meta-item">
-                      <Award size={14} />
-                      <span>{course.credit_hours || course.creditHours} Credits</span>
-                    </div>
-                    {course.teacher_name || course.teacherName ? (
-                      <div className="meta-item">
-                        <Users size={14} />
-                        <span>{course.teacher_name || course.teacherName}</span>
-                      </div>
-                    ) : (
-                      <div className="meta-item unassigned">
-                        <Users size={14} />
-                        <span>Unassigned</span>
-                      </div>
-                    )}
-                  </div>
-                </div>
-                
-                <div className="card-footer">
-                  {getStatusBadge(course.is_active)}
-                  <button 
-                    className="btn-details"
-                    onClick={() => navigate(`/courses/${course.course_id || course.courseId}`)}
-                  >
-                    View Details
-                    <ChevronRight size={16} />
-                  </button>
-                </div>
-              </div>
-            ))}
+                      </td>
+                      <td className="text-center">
+                        {getStatusBadge(isActive)}
+                      </td>
+                      <td className="text-center">{formatDate(course.created_at || course.createdAt)}</td>
+                      <td className="actions-col">
+                        <div className="action-icons">
+                          <button
+                            className="icon-btn view"
+                            onClick={() => handleViewDetails(courseId)}  
+                            title="View Details"
+                          >
+                            <Eye size={16} />
+                          </button>
+                          <button
+                            className="icon-btn edit"
+                            onClick={() => navigate(`/courses/${courseId}/edit`)}
+                            title="Edit"
+                          >
+                            <Pencil size={16} />
+                          </button>
+                          {isActive ? (
+                            <button
+                              className="icon-btn deactivate"
+                              onClick={() => handleToggleActive(courseId, true)}
+                              title="Deactivate"
+                            >
+                              <PauseCircle size={16} />
+                            </button>
+                          ) : (
+                            <button
+                              className="icon-btn activate"
+                              onClick={() => handleToggleActive(courseId, false)}
+                              title="Activate"
+                            >
+                              <PlayCircle size={16} />
+                            </button>
+                          )}
+                          <button
+                            className="icon-btn delete"
+                            onClick={(e) => handleDelete(e, courseId, courseName)}
+                            title="Delete"
+                          >
+                            <Trash2 size={16} />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
           </div>
 
           {/* Pagination */}
@@ -383,28 +565,8 @@ const CourseList = () => {
               >
                 <ChevronLeft size={18} />
               </button>
-              <div className="page-numbers">
-                {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
-                  let pageNum;
-                  if (totalPages <= 5) {
-                    pageNum = i + 1;
-                  } else if (currentPage <= 3) {
-                    pageNum = i + 1;
-                  } else if (currentPage >= totalPages - 2) {
-                    pageNum = totalPages - 4 + i;
-                  } else {
-                    pageNum = currentPage - 2 + i;
-                  }
-                  return (
-                    <button
-                      key={pageNum}
-                      className={`page-num ${currentPage === pageNum ? 'active' : ''}`}
-                      onClick={() => setCurrentPage(pageNum)}
-                    >
-                      {pageNum}
-                    </button>
-                  );
-                })}
+              <div className="page-info">
+                Page {currentPage} of {totalPages}
               </div>
               <button
                 className="page-btn"
@@ -415,17 +577,25 @@ const CourseList = () => {
               </button>
             </div>
           )}
+          
+          <div className="table-footer">
+            <span className="showing-info">
+              Showing {startIndex + 1} to {Math.min(startIndex + itemsPerPage, filteredCourses.length)} of {filteredCourses.length} courses
+            </span>
+            <span className="selected-info">
+              {selectedIds.length} course(s) selected
+            </span>
+          </div>
         </>
       )}
 
       <style>{`
-        .course-module {
+        .course-list-module {
           padding: 1.5rem;
           max-width: 1400px;
           margin: 0 auto;
         }
 
-        /* Header */
         .module-header {
           background: linear-gradient(135deg, #0f6cbd 0%, #1e88e5 100%);
           border-radius: 24px;
@@ -463,28 +633,28 @@ const CourseList = () => {
           font-size: 0.9rem;
         }
 
-        /* Stats Row */
         .stats-row {
-          display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+          display: flex;
           gap: 1rem;
           margin-bottom: 2rem;
+          flex-wrap: wrap;
         }
 
         .stat-card {
           background: white;
           border-radius: 20px;
-          padding: 1.25rem;
+          padding: 1rem 1.5rem;
           display: flex;
           align-items: center;
           gap: 1rem;
           box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-          transition: transform 0.2s, box-shadow 0.2s;
+          flex: 1;
+          min-width: 150px;
         }
 
-        .stat-card:hover {
-          transform: translateY(-2px);
-          box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+        .stat-card.selected {
+          background: #e3f2fd;
+          border: 1px solid #0f6cbd;
         }
 
         .stat-icon {
@@ -494,12 +664,14 @@ const CourseList = () => {
           display: flex;
           align-items: center;
           justify-content: center;
+          font-size: 1.2rem;
+          font-weight: 700;
         }
 
-        .bg-primary-light { background: #e3f2fd; color: #1976d2; }
-        .bg-success-light { background: #e8f5e9; color: #2e7d32; }
-        .bg-warning-light { background: #fff3e0; color: #ed6c02; }
-        .bg-info-light { background: #e0f7fa; color: #0097a7; }
+        .stat-icon.blue { background: #e3f2fd; color: #1976d2; }
+        .stat-icon.green { background: #e8f5e9; color: #2e7d32; }
+        .stat-icon.orange { background: #fff3e0; color: #ed6c02; }
+        .stat-icon.purple { background: #f3e5f5; color: #7b1fa2; }
 
         .stat-info h3 {
           font-size: 1.5rem;
@@ -514,8 +686,7 @@ const CourseList = () => {
           color: #64748b;
         }
 
-        /* Search and Filter */
-        .search-filter-bar {
+        .action-bar {
           display: flex;
           justify-content: space-between;
           align-items: center;
@@ -524,15 +695,9 @@ const CourseList = () => {
           flex-wrap: wrap;
         }
 
-        .search-form {
-          display: flex;
-          gap: 0.75rem;
+        .search-wrapper {
           flex: 1;
-          max-width: 500px;
-        }
-
-        .search-input-wrapper {
-          flex: 1;
+          max-width: 350px;
           position: relative;
         }
 
@@ -568,297 +733,210 @@ const CourseList = () => {
           border: none;
           cursor: pointer;
           color: #94a3b8;
-          padding: 0;
-          display: flex;
         }
 
-        .btn-search {
-          padding: 0.75rem 1.5rem;
-          background: #0f6cbd;
-          color: white;
-          border: none;
-          border-radius: 12px;
-          font-weight: 500;
-          cursor: pointer;
-          transition: background 0.2s;
-        }
-
-        .btn-search:hover {
-          background: #0a58a0;
-        }
-
-        .filter-actions {
+        .action-buttons {
           display: flex;
           gap: 0.75rem;
+          flex-wrap: wrap;
+          align-items: center;
         }
 
-        .btn-filter {
-          padding: 0.75rem 1.25rem;
-          background: white;
+        .filter-select {
+          padding: 0.6rem 2rem 0.6rem 1rem;
           border: 1px solid #e2e8f0;
-          border-radius: 12px;
-          display: flex;
+          border-radius: 10px;
+          font-size: 0.85rem;
+          background: white;
+          cursor: pointer;
+          appearance: none;
+          background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+          background-repeat: no-repeat;
+          background-position: right 0.75rem center;
+        }
+
+        .btn-add, .btn-download, .btn-download-all, .btn-bulk-delete, .btn-bulk-active, .btn-bulk-inactive {
+          display: inline-flex;
           align-items: center;
           gap: 0.5rem;
+          padding: 0.6rem 1.2rem;
+          border-radius: 10px;
+          font-size: 0.85rem;
+          font-weight: 500;
           cursor: pointer;
           transition: all 0.2s;
-        }
-
-        .btn-filter.active {
-          background: #0f6cbd;
-          color: white;
-          border-color: #0f6cbd;
+          border: none;
         }
 
         .btn-add {
-          padding: 0.75rem 1.5rem;
           background: #10b981;
           color: white;
-          border: none;
-          border-radius: 12px;
-          display: flex;
-          align-items: center;
-          gap: 0.5rem;
-          font-weight: 500;
-          cursor: pointer;
-          transition: background 0.2s;
         }
 
         .btn-add:hover {
           background: #059669;
+          transform: translateY(-1px);
+          box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
         }
 
-        /* Filter Panel */
-        .filter-panel {
+        .btn-download, .btn-download-all {
           background: white;
-          border-radius: 16px;
-          padding: 1.25rem;
-          margin-bottom: 1.5rem;
-          border: 1px solid #e2e8f0;
+          border: 1px solid #0f6cbd;
+          color: #0f6cbd;
         }
 
-        .filter-group {
-          display: flex;
-          align-items: center;
-          gap: 1rem;
-          flex-wrap: wrap;
+        .btn-download:hover, .btn-download-all:hover {
+          background: #e3f2fd;
         }
 
-        .filter-group label {
-          font-weight: 500;
-          color: #334155;
-        }
-
-        .filter-buttons {
-          display: flex;
-          gap: 0.5rem;
-        }
-
-        .filter-chip {
-          padding: 0.5rem 1rem;
-          background: #f1f5f9;
-          border: none;
-          border-radius: 20px;
-          cursor: pointer;
-          transition: all 0.2s;
-          font-size: 0.85rem;
-        }
-
-        .filter-chip.active {
-          background: #0f6cbd;
+        .btn-bulk-active {
+          background: #10b981;
           color: white;
         }
 
-        /* Courses Grid */
-        .courses-grid {
-          display: grid;
-          grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
-          gap: 1.5rem;
-          margin-bottom: 2rem;
+        .btn-bulk-active:hover {
+          background: #059669;
         }
 
-        .course-card {
+        .btn-bulk-inactive {
+          background: #f59e0b;
+          color: white;
+        }
+
+        .btn-bulk-inactive:hover {
+          background: #d97706;
+        }
+
+        .btn-bulk-delete {
+          background: #dc2626;
+          color: white;
+        }
+
+        .btn-bulk-delete:hover {
+          background: #b91c1c;
+        }
+
+        .table-container {
           background: white;
           border-radius: 20px;
-          overflow: hidden;
-          transition: all 0.3s;
+          overflow-x: auto;
           box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
           border: 1px solid #eef2ff;
         }
 
-        .course-card:hover {
-          transform: translateY(-4px);
-          box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+        .courses-table {
+          width: 100%;
+          border-collapse: collapse;
         }
 
-        .card-header {
-          padding: 1.25rem;
-          background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+        .courses-table th {
+          text-align: left;
+          padding: 1rem;
+          background: #f8fafc;
+          font-weight: 600;
+          color: #334155;
+          border-bottom: 1px solid #e2e8f0;
+          font-size: 0.85rem;
+        }
+
+        .courses-table td {
+          padding: 1rem;
+          border-bottom: 1px solid #f1f5f9;
+          color: #475569;
+        }
+
+        .courses-table tr:hover {
+          background: #f8fafc;
+        }
+
+        .checkbox-col {
+          width: 40px;
+          text-align: center;
+        }
+
+        .checkbox-col input {
+          width: 18px;
+          height: 18px;
+          cursor: pointer;
+        }
+
+        .course-id-cell .course-id-badge {
+          display: inline-block;
+          padding: 0.25rem 0.5rem;
+          background: #f1f5f9;
+          border-radius: 6px;
+          font-size: 0.75rem;
+          font-family: monospace;
+          color: #475569;
+        }
+
+        .course-code-cell .course-code-badge {
+          display: inline-block;
+          padding: 0.25rem 0.75rem;
+          background: #e3f2fd;
+          border-radius: 20px;
+          font-size: 0.75rem;
+          font-family: monospace;
+          color: #1976d2;
+          font-weight: 500;
+        }
+
+        .course-name-info {
           display: flex;
           align-items: center;
-          gap: 1rem;
-          position: relative;
+          gap: 0.75rem;
         }
 
-        .course-icon {
-          width: 56px;
-          height: 56px;
-          border-radius: 18px;
+        .course-avatar {
+          width: 32px;
+          height: 32px;
+          background: linear-gradient(135deg, #0f6cbd 0%, #1e88e5 100%);
+          border-radius: 10px;
           display: flex;
           align-items: center;
           justify-content: center;
           color: white;
-          font-weight: 700;
-          font-size: 1.5rem;
-        }
-
-        .header-info {
-          flex: 1;
-        }
-
-        .course-name {
-          font-size: 1rem;
           font-weight: 600;
-          margin: 0 0 0.25rem 0;
-          color: #0f172a;
-        }
-
-        .course-code {
-          font-size: 0.7rem;
-          color: #64748b;
-          background: #e2e8f0;
-          padding: 0.2rem 0.5rem;
-          border-radius: 20px;
-          display: inline-block;
-        }
-
-        .header-actions {
-          position: relative;
-        }
-
-        .dropdown-trigger {
-          padding: 0.5rem;
-          background: white;
-          border: none;
-          border-radius: 8px;
-          cursor: pointer;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          transition: background 0.2s;
-        }
-
-        .dropdown-trigger:hover {
-          background: #e2e8f0;
-        }
-
-        .dropdown-menu {
-          position: absolute;
-          top: 100%;
-          right: 0;
-          background: white;
-          border-radius: 12px;
-          box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-          min-width: 180px;
-          z-index: 10;
-          opacity: 0;
-          visibility: hidden;
-          transform: translateY(-8px);
-          transition: all 0.2s;
-        }
-
-        .header-actions:hover .dropdown-menu {
-          opacity: 1;
-          visibility: visible;
-          transform: translateY(0);
-        }
-
-        .dropdown-menu button {
-          width: 100%;
-          padding: 0.75rem 1rem;
-          text-align: left;
-          border: none;
-          background: none;
-          display: flex;
-          align-items: center;
-          gap: 0.75rem;
-          cursor: pointer;
-          font-size: 0.85rem;
-          transition: background 0.2s;
-        }
-
-        .dropdown-menu button:hover {
-          background: #f1f5f9;
-        }
-
-        .dropdown-menu button.danger {
-          color: #dc2626;
-        }
-
-        .dropdown-menu button.danger:hover {
-          background: #fef2f2;
-        }
-
-        .card-body {
-          padding: 1.25rem;
-          border-bottom: 1px solid #f1f5f9;
-        }
-
-        .course-description {
-          font-size: 0.85rem;
-          color: #475569;
-          margin: 0 0 1rem 0;
-          line-height: 1.4;
-          display: -webkit-box;
-          -webkit-line-clamp: 2;
-          -webkit-box-orient: vertical;
-          overflow: hidden;
-        }
-
-        .course-meta {
-          display: flex;
-          gap: 1rem;
-          flex-wrap: wrap;
-        }
-
-        .meta-item {
-          display: flex;
-          align-items: center;
-          gap: 0.5rem;
           font-size: 0.75rem;
-          color: #64748b;
-          padding: 0.25rem 0.5rem;
-          background: #f8fafc;
-          border-radius: 8px;
         }
 
-        .meta-item.unassigned {
+        .credit-badge {
+          display: inline-block;
+          padding: 0.25rem 0.75rem;
+          background: #f1f5f9;
+          border-radius: 20px;
+          font-size: 0.75rem;
+          font-weight: 500;
+          color: #475569;
+        }
+
+        .teacher-name {
+          font-size: 0.85rem;
+          color: #334155;
+        }
+
+        .teacher-unassigned {
+          font-size: 0.75rem;
           color: #f59e0b;
+          font-style: italic;
         }
 
-        .card-footer {
-          padding: 1rem 1.25rem;
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-        }
-
-        .badge-status {
+        .status-badge {
           display: inline-flex;
           align-items: center;
           gap: 0.5rem;
-          padding: 0.3rem 0.8rem;
+          padding: 0.25rem 0.75rem;
           border-radius: 20px;
           font-size: 0.75rem;
           font-weight: 500;
         }
 
-        .badge-status.active {
+        .status-badge.success {
           background: #e8f5e9;
           color: #2e7d32;
         }
 
-        .badge-status.inactive {
+        .status-badge.danger {
           background: #ffebee;
           color: #c62828;
         }
@@ -870,24 +948,89 @@ const CourseList = () => {
           background: currentColor;
         }
 
-        .btn-details {
+        .actions-col {
+          width: 140px;
+          text-align: center;
+        }
+
+        .action-icons {
           display: flex;
-          align-items: center;
           gap: 0.5rem;
-          padding: 0.5rem 1rem;
+          justify-content: center;
+        }
+
+        .icon-btn {
+          padding: 0.5rem;
           background: none;
           border: none;
-          color: #0f6cbd;
-          font-weight: 500;
           cursor: pointer;
-          transition: gap 0.2s;
+          border-radius: 8px;
+          transition: all 0.2s;
         }
 
-        .btn-details:hover {
-          gap: 0.75rem;
+        .icon-btn.view { color: #0f6cbd; }
+        .icon-btn.view:hover { background: #e3f2fd; }
+        .icon-btn.edit { color: #f59e0b; }
+        .icon-btn.edit:hover { background: #fef3c7; }
+        .icon-btn.activate { color: #10b981; }
+        .icon-btn.activate:hover { background: #d1fae5; }
+        .icon-btn.deactivate { color: #f59e0b; }
+        .icon-btn.deactivate:hover { background: #fef3c7; }
+        .icon-btn.delete { color: #dc2626; }
+        .icon-btn.delete:hover { background: #fee2e2; }
+
+        .text-center {
+          text-align: center;
         }
 
-        /* Empty State */
+        .pagination {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          gap: 1rem;
+          margin-top: 1.5rem;
+        }
+
+        .page-btn {
+          padding: 0.5rem 1rem;
+          border: 1px solid #e2e8f0;
+          background: white;
+          border-radius: 10px;
+          cursor: pointer;
+          transition: all 0.2s;
+        }
+
+        .page-btn:disabled {
+          opacity: 0.5;
+          cursor: not-allowed;
+        }
+
+        .page-btn:not(:disabled):hover {
+          background: #f1f5f9;
+          border-color: #0f6cbd;
+        }
+
+        .page-info {
+          font-size: 0.85rem;
+          color: #64748b;
+        }
+
+        .table-footer {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-top: 1rem;
+          padding: 0.5rem 0;
+          font-size: 0.8rem;
+          color: #64748b;
+        }
+
+        .showing-info, .selected-info {
+          background: #f8fafc;
+          padding: 0.25rem 0.75rem;
+          border-radius: 20px;
+        }
+
         .empty-state {
           text-align: center;
           padding: 4rem 2rem;
@@ -929,62 +1072,6 @@ const CourseList = () => {
           background: #0a58a0;
         }
 
-        /* Pagination */
-        .pagination {
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          gap: 0.5rem;
-          margin-top: 2rem;
-        }
-
-        .page-btn {
-          padding: 0.5rem;
-          border: 1px solid #e2e8f0;
-          background: white;
-          border-radius: 8px;
-          cursor: pointer;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          transition: all 0.2s;
-        }
-
-        .page-btn:disabled {
-          opacity: 0.5;
-          cursor: not-allowed;
-        }
-
-        .page-btn:not(:disabled):hover {
-          background: #f1f5f9;
-          border-color: #0f6cbd;
-        }
-
-        .page-numbers {
-          display: flex;
-          gap: 0.25rem;
-        }
-
-        .page-num {
-          padding: 0.5rem 0.75rem;
-          border: 1px solid #e2e8f0;
-          background: white;
-          border-radius: 8px;
-          cursor: pointer;
-          transition: all 0.2s;
-        }
-
-        .page-num.active {
-          background: #0f6cbd;
-          color: white;
-          border-color: #0f6cbd;
-        }
-
-        .page-num:hover:not(.active) {
-          background: #f1f5f9;
-        }
-
-        /* Loading */
         .loading-container {
           display: flex;
           justify-content: center;
@@ -1011,7 +1098,7 @@ const CourseList = () => {
         }
 
         @media (max-width: 768px) {
-          .course-module {
+          .course-list-module {
             padding: 1rem;
           }
           
@@ -1024,16 +1111,29 @@ const CourseList = () => {
             text-align: center;
           }
           
-          .courses-grid {
-            grid-template-columns: 1fr;
-          }
-          
-          .search-filter-bar {
+          .action-bar {
             flex-direction: column;
           }
           
-          .search-form {
+          .search-wrapper {
             max-width: 100%;
+          }
+          
+          .action-buttons {
+            width: 100%;
+            justify-content: stretch;
+          }
+          
+          .action-buttons button,
+          .action-buttons select {
+            flex: 1;
+            justify-content: center;
+          }
+          
+          .table-footer {
+            flex-direction: column;
+            gap: 0.5rem;
+            text-align: center;
           }
         }
       `}</style>

@@ -36,6 +36,7 @@ def apply_runtime_migrations() -> None:
         # Teacher ownership + login mapping columns
         "ALTER TABLE IF EXISTS teachers ADD COLUMN IF NOT EXISTS owner_admin_id BIGINT;",
         "ALTER TABLE IF EXISTS teachers ADD COLUMN IF NOT EXISTS user_id BIGINT;",
+        "ALTER TABLE IF EXISTS common_students ADD COLUMN IF NOT EXISTS email VARCHAR;",
         "CREATE INDEX IF NOT EXISTS ix_teachers_owner_admin_id ON teachers(owner_admin_id);",
         "CREATE UNIQUE INDEX IF NOT EXISTS ix_teachers_user_id ON teachers(user_id);",
         # Course tenant ownership

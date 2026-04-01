@@ -17,6 +17,7 @@ class Student(Base):
     id = Column(BigInteger, primary_key=True, index=True)
     student_id = Column(String, unique=True, nullable=False)
     student_name = Column(String, nullable=False)
+    email = Column(String, nullable=True)
     date_of_birth = Column(Date)
     gender = Column(String)
     current_living_address = Column(String)

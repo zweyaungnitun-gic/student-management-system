@@ -18,22 +18,22 @@ export const teacherService = {
   },
 
   update: async (id, data) => {
-    const response = await client.put(`/teachers/edit/${id}`, data);
+    const response = await client.put(`/teachers/${id}`, data);
     return response.data;
   },
 
   delete: async (id) => {
-    const response = await client.delete(`/teachers/delete/${id}`);
+    const response = await client.delete(`/teachers/${id}`);
     return response.data;
   },
 
   activate: async (id) => {
-    const response = await client.post(`/teachers/activate/${id}`);
+    const response = await client.patch(`/teachers/${id}/activate`);
     return response.data;
   },
 
   deactivate: async (id) => {
-    const response = await client.post(`/teachers/deactivate/${id}`);
+    const response = await client.patch(`/teachers/${id}/deactivate`);
     return response.data;
   }
 };

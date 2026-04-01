@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException, status
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 from typing import List, Optional
 from app.database import get_db
 from app.schemas.course import CourseCreate, CourseUpdate, CourseResponse
@@ -10,6 +10,8 @@ from app.dependencies import get_current_staff
 from app.models.user import Role
 from app.models.teacher import Teacher
 from app.models.course import Course
+from app.models.enrollment import Enrollment 
+from app.models.student import Student
 
 router = APIRouter(prefix="/courses", tags=["courses"])
 
@@ -100,7 +102,13 @@ def get_course_enrollments(
     db: Session = Depends(get_db),
     current_user = Depends(get_current_staff)
 ):
-    return CourseService.get_enrollments_by_course(db, course_id)
+    # Use joinedload to fetch student data in the same query
+    enrollments = db.query(Enrollment).options(
+        joinedload(Enrollment.student),
+        joinedload(Enrollment.course)
+    ).filter(Enrollment.course_id == course_id).all()
+    
+    return enrollments
 
 @router.get("/{course_id}/tests", response_model=List[TestResponse])
 def get_course_tests(

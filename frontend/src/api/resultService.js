@@ -32,17 +32,17 @@ export const resultService = {
   },
 
   create: async (data) => {
-    const response = await client.post('/results/add', data);
+    const response = await client.post('/results', data);
     return response.data;
   },
 
   update: async (id, data) => {
-    const response = await client.put(`/results/edit/${id}`, data);
+    const response = await client.put(`/results/${id}`, data);
     return response.data;
   },
 
   delete: async (id) => {
-    const response = await client.delete(`/results/delete/${id}`);
+    const response = await client.delete(`/results/${id}`);
     return response.data;
   },
 

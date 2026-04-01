@@ -27,12 +27,12 @@ export const courseService = {
   },
 
   activate: async (id) => {
-    const response = await client.post(`/courses/activate/${id}`);
+    const response = await client.patch(`/courses/${id}`, { is_active: true });
     return response.data;
   },
 
   deactivate: async (id) => {
-    const response = await client.post(`/courses/deactivate/${id}`);
+    const response = await client.patch(`/courses/${id}`, { is_active: false });
     return response.data;
   },
 
@@ -47,19 +47,18 @@ export const courseService = {
   },
 
   getStatistics: async (id) => {
-    const response = await client.get(`/courses/${id}/statistics`);
+    // This endpoint exists in backend: /courses/{id}/average-score
+    const response = await client.get(`/courses/${id}/average-score`);
     return response.data;
   },
 
   exportStudents: async (id) => {
-    const response = await client.get(`/courses/export/${id}`, {
-      responseType: 'blob'
-    });
-    return response.data;
+    console.warn('Export functionality not implemented yet');
+    return Promise.reject('Not implemented');
   },
 
   getByTeacher: async (teacherId) => {
-    const response = await client.get(`/courses/teacher/${teacherId}`);
+    const response = await client.get('/courses', { params: { teacher_id: teacherId } });
     return response.data;
   }
 };

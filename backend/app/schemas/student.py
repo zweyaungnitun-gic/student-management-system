@@ -38,11 +38,13 @@ class AdditionalStudentInfoBase(BaseModel):
 class StudentBase(BaseModel):
     student_name: str
     national_id: str
+    email: Optional[str] = None
     date_of_birth: Optional[date] = None
     gender: Optional[str] = None
     phone_number: Optional[str] = None
     current_living_address: Optional[str] = None
     home_town_address: Optional[str] = None
+    religion: Optional[str] = None
     additional_info: Optional[AdditionalStudentInfoBase] = None
 
 class StudentCreate(StudentBase):

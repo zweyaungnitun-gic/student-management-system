@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Plus, Pencil, Trash2, Info, PlayCircle, PauseCircle, Mail, Phone, Building2, Calendar, Search, X, Filter, ChevronLeft, ChevronRight, User, MoreVertical } from 'lucide-react';
+import { Plus, Pencil, Trash2, Eye, PlayCircle, PauseCircle, Download, ChevronLeft, ChevronRight, Users, Search, X } from 'lucide-react';
 import { teacherService } from '../../api/teacherService';
 import toast from 'react-hot-toast';
 
@@ -8,27 +8,17 @@ const TeacherList = () => {
   const navigate = useNavigate();
   const [teachers, setTeachers] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [search, setSearch] = useState('');
-  const [searchInput, setSearchInput] = useState('');
-  const [showFilters, setShowFilters] = useState(false);
-  const [filterStatus, setFilterStatus] = useState('all');
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectAll, setSelectAll] = useState(false);
+  const [selectedIds, setSelectedIds] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 12;
+  const itemsPerPage = 10;
 
   const fetchTeachers = async () => {
     try {
       setLoading(true);
-      const response = await teacherService.getAll(search);
-      let data = response || [];
-      
-      // Apply status filter
-      if (filterStatus !== 'all') {
-        data = data.filter(teacher => 
-          filterStatus === 'active' ? teacher.is_active : !teacher.is_active
-        );
-      }
-      
-      setTeachers(data);
+      const response = await teacherService.getAll();
+      setTeachers(response || []);
       setCurrentPage(1);
     } catch (error) {
       console.error('Error fetching teachers:', error);
@@ -41,26 +31,20 @@ const TeacherList = () => {
 
   useEffect(() => {
     fetchTeachers();
-  }, [search, filterStatus]);
+  }, []);
 
-  const handleSearch = (e) => {
-    e.preventDefault();
-    setSearch(searchInput);
-  };
-
-  const handleClear = () => {
-    setSearchInput('');
-    setSearch('');
+  const handleViewDetails = (teacherId) => {
+    navigate(`/teachers/${teacherId}`);
   };
 
   const handleToggleActive = async (teacherId, isActive) => {
     try {
       if (isActive) {
         await teacherService.deactivate(teacherId);
-        toast.success('Teacher deactivated');
+        toast.success('Teacher deactivated successfully');
       } else {
         await teacherService.activate(teacherId);
-        toast.success('Teacher activated');
+        toast.success('Teacher activated successfully');
       }
       fetchTeachers();
     } catch (error) {
@@ -69,12 +53,15 @@ const TeacherList = () => {
     }
   };
 
-  const handleDelete = async (teacherId, teacherName) => {
+  const handleDelete = async (e, teacherId, teacherName) => {
+    e.stopPropagation();
     if (window.confirm(`Are you sure you want to delete "${teacherName}"? This action cannot be undone.`)) {
       try {
         await teacherService.delete(teacherId);
         toast.success(`Teacher "${teacherName}" deleted successfully`);
         fetchTeachers();
+        setSelectedIds([]);
+        setSelectAll(false);
       } catch (error) {
         console.error('Error deleting teacher:', error);
         toast.error(error.response?.data?.detail || 'Delete failed');
@@ -82,26 +69,184 @@ const TeacherList = () => {
     }
   };
 
+  const handleSelectAll = (e) => {
+    const checked = e.target.checked;
+    setSelectAll(checked);
+    if (checked) {
+      setSelectedIds(filteredTeachers.map(t => t.teacher_id || t.teacherId));
+    } else {
+      setSelectedIds([]);
+    }
+  };
+
+  const handleSelectRow = (e, id) => {
+    e.stopPropagation();
+    if (selectedIds.includes(id)) {
+      const newSelected = selectedIds.filter(i => i !== id);
+      setSelectedIds(newSelected);
+      setSelectAll(newSelected.length === filteredTeachers.length && filteredTeachers.length > 0);
+    } else {
+      const newSelected = [...selectedIds, id];
+      setSelectedIds(newSelected);
+      setSelectAll(newSelected.length === filteredTeachers.length);
+    }
+  };
+
+  const handleBulkDelete = async () => {
+    if (selectedIds.length === 0) {
+      toast.error('No teachers selected');
+      return;
+    }
+    
+    if (window.confirm(`Are you sure you want to delete ${selectedIds.length} selected teacher(s)?`)) {
+      try {
+        let successCount = 0;
+        let failCount = 0;
+        
+        for (const id of selectedIds) {
+          try {
+            await teacherService.delete(id);
+            successCount++;
+          } catch {
+            failCount++;
+          }
+        }
+        
+        if (successCount > 0) {
+          toast.success(`${successCount} teacher(s) deleted successfully`);
+        }
+        if (failCount > 0) {
+          toast.error(`${failCount} teacher(s) failed to delete`);
+        }
+        
+        fetchTeachers();
+        setSelectedIds([]);
+        setSelectAll(false);
+      } catch (error) {
+        toast.error('Bulk delete failed');
+      }
+    }
+  };
+
+  const handleBulkStatusUpdate = async (activate) => {
+    if (selectedIds.length === 0) {
+      toast.error('No teachers selected');
+      return;
+    }
+    
+    const action = activate ? 'activate' : 'deactivate';
+    if (window.confirm(`Are you sure you want to ${action} ${selectedIds.length} selected teacher(s)?`)) {
+      try {
+        let successCount = 0;
+        let failCount = 0;
+        
+        for (const id of selectedIds) {
+          try {
+            if (activate) {
+              await teacherService.activate(id);
+            } else {
+              await teacherService.deactivate(id);
+            }
+            successCount++;
+          } catch {
+            failCount++;
+          }
+        }
+        
+        if (successCount > 0) {
+          toast.success(`${successCount} teacher(s) ${action}d successfully`);
+        }
+        if (failCount > 0) {
+          toast.error(`${failCount} teacher(s) failed to ${action}`);
+        }
+        
+        fetchTeachers();
+        setSelectedIds([]);
+        setSelectAll(false);
+      } catch (error) {
+        toast.error(`Bulk ${action} failed`);
+      }
+    }
+  };
+
+  const handleDownloadCSV = () => {
+    try {
+      const headers = [
+        'Teacher ID',
+        'Name',
+        'Email',
+        'Department',
+        'Status',
+        'Created Date'
+      ];
+
+      const selectedTeachers = teachers.filter(t => selectedIds.includes(t.teacher_id || t.teacherId));
+      const teachersToExport = selectedIds.length > 0 ? selectedTeachers : teachers;
+      
+      if (teachersToExport.length === 0) {
+        toast.error('No teachers to export');
+        return;
+      }
+
+      const csvRows = [];
+      csvRows.push(headers.join(','));
+
+      for (const teacher of teachersToExport) {
+        const row = [
+          `"${teacher.teacher_code || teacher.teacherCode || ''}"`,
+          `"${teacher.name || ''}"`,
+          `"${teacher.email || ''}"`,
+          `"${teacher.department || ''}"`,
+          `"${teacher.is_active ? 'Active' : 'Inactive'}"`,
+          `"${teacher.created_at || teacher.createdAt || ''}"`
+        ];
+        csvRows.push(row.join(','));
+      }
+
+      const blob = new Blob([csvRows.join('\n')], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
+      const url = URL.createObjectURL(blob);
+      link.href = url;
+      link.setAttribute('download', `teachers_${new Date().toISOString().split('T')[0]}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+      
+      toast.success(`Exported ${teachersToExport.length} teacher(s)`);
+    } catch (error) {
+      console.error('Export error:', error);
+      toast.error('Failed to export teachers');
+    }
+  };
+
+  const filteredTeachers = teachers.filter(t => 
+    t.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    t.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    (t.teacher_code || t.teacherCode)?.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   // Pagination
-  const totalPages = Math.ceil(teachers.length / itemsPerPage);
+  const totalPages = Math.ceil(filteredTeachers.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
-  const paginatedTeachers = teachers.slice(startIndex, startIndex + itemsPerPage);
+  const paginatedTeachers = filteredTeachers.slice(startIndex, startIndex + itemsPerPage);
 
   const getStatusBadge = (isActive) => {
     if (isActive) {
-      return (
-        <span className="badge-status active">
-          <span className="status-dot"></span>
-          Active
-        </span>
-      );
+      return <span className="status-badge success"><span className="status-dot"></span>Active</span>;
     }
-    return (
-      <span className="badge-status inactive">
-        <span className="status-dot"></span>
-        Inactive
-      </span>
-    );
+    return <span className="status-badge danger"><span className="status-dot"></span>Inactive</span>;
+  };
+
+  const formatDate = (dateString) => {
+    if (!dateString) return '-';
+    try {
+      const date = new Date(dateString);
+      if (isNaN(date.getTime())) return '-';
+      return date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+    } catch {
+      return '-';
+    }
   };
 
   const getInitials = (name) => {
@@ -111,18 +256,6 @@ const TeacherList = () => {
       .join('')
       .toUpperCase()
       .slice(0, 2);
-  };
-
-  const getRandomGradient = (id) => {
-    const gradients = [
-      'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-      'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
-      'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
-      'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)',
-      'linear-gradient(135deg, #fa709a 0%, #fee140 100%)',
-      'linear-gradient(135deg, #30cfd0 0%, #330867 100%)',
-    ];
-    return gradients[id % gradients.length];
   };
 
   if (loading && teachers.length === 0) {
@@ -137,12 +270,12 @@ const TeacherList = () => {
   }
 
   return (
-    <div className="teacher-module">
-      {/* Header Section */}
+    <div className="teacher-list-module">
+      {/* Header */}
       <div className="module-header">
         <div className="header-content">
           <div className="header-icon">
-            <User size={32} />
+            <Users size={32} />
           </div>
           <div className="header-text">
             <h1 className="header-title">Teacher Management</h1>
@@ -151,11 +284,11 @@ const TeacherList = () => {
         </div>
       </div>
 
-      {/* Stats Cards */}
+      {/* Stats Row */}
       <div className="stats-row">
         <div className="stat-card">
-          <div className="stat-icon bg-primary-light">
-            <User size={24} />
+          <div className="stat-icon blue">
+            <Users size={24} />
           </div>
           <div className="stat-info">
             <h3>{teachers.length}</h3>
@@ -163,7 +296,7 @@ const TeacherList = () => {
           </div>
         </div>
         <div className="stat-card">
-          <div className="stat-icon bg-success-light">
+          <div className="stat-icon green">
             <PlayCircle size={24} />
           </div>
           <div className="stat-info">
@@ -172,7 +305,7 @@ const TeacherList = () => {
           </div>
         </div>
         <div className="stat-card">
-          <div className="stat-icon bg-warning-light">
+          <div className="stat-icon orange">
             <PauseCircle size={24} />
           </div>
           <div className="stat-info">
@@ -180,84 +313,77 @@ const TeacherList = () => {
             <p>Inactive Teachers</p>
           </div>
         </div>
+        {selectedIds.length > 0 && (
+          <div className="stat-card selected">
+            <div className="stat-icon purple">
+              <span>{selectedIds.length}</span>
+            </div>
+            <div className="stat-info">
+              <h3>Selected</h3>
+              <p>{selectedIds.length} teacher(s)</p>
+            </div>
+          </div>
+        )}
       </div>
 
-      {/* Search and Filter Bar */}
-      <div className="search-filter-bar">
-        <form onSubmit={handleSearch} className="search-form">
-          <div className="search-input-wrapper">
-            <Search size={20} className="search-icon" />
-            <input
-              type="text"
-              className="search-input"
-              value={searchInput}
-              onChange={(e) => setSearchInput(e.target.value)}
-              placeholder="Search by name, email, or ID..."
-            />
-            {searchInput && (
-              <button type="button" className="clear-search" onClick={handleClear}>
-                <X size={16} />
+      {/* Search and Action Bar */}
+      <div className="action-bar">
+        <div className="search-wrapper">
+          <Search size={18} className="search-icon" />
+          <input
+            type="text"
+            className="search-input"
+            placeholder="Search by name, email, or ID..."
+            value={searchTerm}
+            onChange={(e) => {
+              setSearchTerm(e.target.value);
+              setCurrentPage(1);
+            }}
+          />
+          {searchTerm && (
+            <button className="clear-search" onClick={() => setSearchTerm('')}>
+              <X size={16} />
+            </button>
+          )}
+        </div>
+        <div className="action-buttons">
+          {selectedIds.length > 0 && (
+            <>
+              <button className="btn-bulk-active" onClick={() => handleBulkStatusUpdate(true)}>
+                <PlayCircle size={16} />
+                <span>Activate ({selectedIds.length})</span>
               </button>
-            )}
-          </div>
-          <button type="submit" className="btn-search">
-            Search
+              <button className="btn-bulk-inactive" onClick={() => handleBulkStatusUpdate(false)}>
+                <PauseCircle size={16} />
+                <span>Deactivate ({selectedIds.length})</span>
+              </button>
+              <button className="btn-bulk-delete" onClick={handleBulkDelete}>
+                <Trash2 size={16} />
+                <span>Delete ({selectedIds.length})</span>
+              </button>
+              <button className="btn-download" onClick={handleDownloadCSV}>
+                <Download size={16} />
+                <span>Download Selected</span>
+              </button>
+            </>
+          )}
+          <button className="btn-download-all" onClick={() => handleDownloadCSV()}>
+            <Download size={16} />
+            <span>Download All</span>
           </button>
-        </form>
-
-        <div className="filter-actions">
-          <button 
-            className={`btn-filter ${showFilters ? 'active' : ''}`}
-            onClick={() => setShowFilters(!showFilters)}
-          >
-            <Filter size={18} />
-            <span>Filters</span>
-          </button>
-          <button
-            className="btn-add"
-            onClick={() => navigate('/teachers/new')}
-          >
-            <Plus size={18} />
+          <button className="btn-add" onClick={() => navigate('/teachers/new')}>
+            <Plus size={16} />
             <span>Add Teacher</span>
           </button>
         </div>
       </div>
 
-      {/* Filter Panel */}
-      {showFilters && (
-        <div className="filter-panel">
-          <div className="filter-group">
-            <label>Status</label>
-            <div className="filter-buttons">
-              <button 
-                className={`filter-chip ${filterStatus === 'all' ? 'active' : ''}`}
-                onClick={() => setFilterStatus('all')}
-              >
-                All
-              </button>
-              <button 
-                className={`filter-chip ${filterStatus === 'active' ? 'active' : ''}`}
-                onClick={() => setFilterStatus('active')}
-              >
-                Active Only
-              </button>
-              <button 
-                className={`filter-chip ${filterStatus === 'inactive' ? 'active' : ''}`}
-                onClick={() => setFilterStatus('inactive')}
-              >
-                Inactive Only
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Teachers Grid */}
+      {/* Teachers Table */}
       {paginatedTeachers.length === 0 ? (
         <div className="empty-state">
           <div className="empty-icon">👩‍🏫</div>
           <h3>No teachers found</h3>
-          <p>Try adjusting your search or filters, or add a new teacher.</p>
+          <p>Try adjusting your search or add a new teacher.</p>
           <button className="btn-add-primary" onClick={() => navigate('/teachers/new')}>
             <Plus size={18} />
             <span>Add Your First Teacher</span>
@@ -265,80 +391,108 @@ const TeacherList = () => {
         </div>
       ) : (
         <>
-          <div className="teachers-grid">
-            {paginatedTeachers.map(teacher => (
-              <div key={teacher.teacher_id || teacher.teacherId} className="teacher-card">
-                <div className="card-header">
-                  <div className="avatar" style={{ background: getRandomGradient(teacher.teacher_id || teacher.teacherId) }}>
-                    {getInitials(teacher.name)}
-                  </div>
-                  <div className="header-info">
-                    <h3 className="teacher-name">{teacher.name}</h3>
-                    <span className="teacher-code">{teacher.teacher_code || teacher.teacherCode}</span>
-                  </div>
-                  <div className="header-actions">
-                    <div className="dropdown">
-                      <button className="dropdown-trigger">
-                        <MoreVertical size={18} />
-                      </button>
-                      <div className="dropdown-menu">
-                        <button onClick={() => navigate(`/teachers/${teacher.teacher_id || teacher.teacherId}`)}>
-                          <Info size={16} />
-                          View Details
-                        </button>
-                        <button onClick={() => navigate(`/teachers/${teacher.teacher_id || teacher.teacherId}/edit`)}>
-                          <Pencil size={16} />
-                          Edit
-                        </button>
-                        {teacher.is_active ? (
-                          <button onClick={() => handleToggleActive(teacher.teacher_id || teacher.teacherId, true)}>
-                            <PauseCircle size={16} />
-                            Deactivate
-                          </button>
-                        ) : (
-                          <button onClick={() => handleToggleActive(teacher.teacher_id || teacher.teacherId, false)}>
-                            <PlayCircle size={16} />
-                            Activate
-                          </button>
-                        )}
-                        <button className="danger" onClick={() => handleDelete(teacher.teacher_id || teacher.teacherId, teacher.name)}>
-                          <Trash2 size={16} />
-                          Delete
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                
-                <div className="card-body">
-                  <div className="info-row">
-                    <Mail size={16} />
-                    <a href={`mailto:${teacher.email}`} className="email-link">{teacher.email}</a>
-                  </div>
-                  {teacher.department && (
-                    <div className="info-row">
-                      <Building2 size={16} />
-                      <span>{teacher.department}</span>
-                    </div>
-                  )}
-                  <div className="info-row">
-                    <Calendar size={16} />
-                    <span>Joined {formatDate(teacher.created_at || teacher.createdAt)}</span>
-                  </div>
-                </div>
-                
-                <div className="card-footer">
-                  {getStatusBadge(teacher.is_active)}
-                  <button 
-                    className="btn-details"
-                    onClick={() => navigate(`/teachers/${teacher.teacher_id || teacher.teacherId}`)}
-                  >
-                    View Profile
-                    <ChevronRight size={16} />
-                  </button>
-                </div>
-              </div>
-            ))}
+          <div className="table-container">
+            <table className="teachers-table">
+              <thead>
+                <tr>
+                  <th className="checkbox-col">
+                    <input
+                      type="checkbox"
+                      checked={selectAll && filteredTeachers.length > 0}
+                      onChange={handleSelectAll}
+                    />
+                  </th>
+                  <th>Teacher ID</th>
+                  <th>Name</th>
+                  <th>Email</th>
+                  <th>Department</th>
+                  <th className="text-center">Status</th>
+                  <th className="text-center">Joined Date</th>
+                  <th className="actions-col">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {paginatedTeachers.map(teacher => {
+                  const teacherId = teacher.teacher_id || teacher.teacherId;
+                  return (
+                    <tr key={teacherId}>
+                      <td className="checkbox-col">
+                        <input
+                          type="checkbox"
+                          checked={selectedIds.includes(teacherId)}
+                          onChange={(e) => handleSelectRow(e, teacherId)}
+                        />
+                       </td>
+                      <td className="teacher-id-cell">
+                        <span className="teacher-code-badge">
+                          {teacher.teacher_code || teacher.teacherCode}
+                        </span>
+                       </td>
+                      <td className="teacher-name-cell">
+                        <div className="teacher-name-info">
+                          <div className="teacher-avatar">
+                            {getInitials(teacher.name)}
+                          </div>
+                          <span>{teacher.name}</span>
+                        </div>
+                       </td>
+                      <td className="teacher-email-cell">
+                        <a href={`mailto:${teacher.email}`} className="email-link">
+                          {teacher.email}
+                        </a>
+                       </td>
+                      <td>{teacher.department || '-'}</td>
+                      <td className="text-center">
+                        {getStatusBadge(teacher.is_active)}
+                       </td>
+                      <td className="text-center">{formatDate(teacher.created_at || teacher.createdAt)}</td>
+<td className="text-center">
+  <div className="action-buttons">
+    <button
+      className="action-icon-btn view"
+      onClick={() => handleViewDetails(teacher.teacher_id || teacher.teacherId)}
+      title="View Details"
+    >
+      <Eye size={16} />
+    </button>
+    <button
+      className="action-icon-btn edit"
+      onClick={() => navigate(`/teachers/${teacher.teacher_id || teacher.teacherId}/edit`)}
+      title="Edit"
+    >
+      <Pencil size={16} />
+    </button>
+    {teacher.is_active ? (
+      <button
+        className="action-icon-btn deactivate"
+        onClick={() => handleToggleActive(teacher.teacher_id || teacher.teacherId, true)}
+        title="Deactivate"
+      >
+        <PauseCircle size={16} />
+      </button>
+    ) : (
+      <button
+        className="action-icon-btn activate"
+        onClick={() => handleToggleActive(teacher.teacher_id || teacher.teacherId, false)}
+        title="Activate"
+      >
+        <PlayCircle size={16} />
+      </button>
+    )}
+    <button
+      className="action-icon-btn delete"
+      onClick={() => handleDelete(teacher.teacher_id || teacher.teacherId, teacher.name)}
+      title="Delete"
+    >
+      <Trash2 size={16} />
+    </button>
+  </div>
+</td>
+                     </tr>
+                  );
+                })}
+              </tbody>
+            </table>
           </div>
 
           {/* Pagination */}
@@ -351,28 +505,8 @@ const TeacherList = () => {
               >
                 <ChevronLeft size={18} />
               </button>
-              <div className="page-numbers">
-                {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
-                  let pageNum;
-                  if (totalPages <= 5) {
-                    pageNum = i + 1;
-                  } else if (currentPage <= 3) {
-                    pageNum = i + 1;
-                  } else if (currentPage >= totalPages - 2) {
-                    pageNum = totalPages - 4 + i;
-                  } else {
-                    pageNum = currentPage - 2 + i;
-                  }
-                  return (
-                    <button
-                      key={pageNum}
-                      className={`page-num ${currentPage === pageNum ? 'active' : ''}`}
-                      onClick={() => setCurrentPage(pageNum)}
-                    >
-                      {pageNum}
-                    </button>
-                  );
-                })}
+              <div className="page-info">
+                Page {currentPage} of {totalPages}
               </div>
               <button
                 className="page-btn"
@@ -383,17 +517,25 @@ const TeacherList = () => {
               </button>
             </div>
           )}
+          
+          <div className="table-footer">
+            <span className="showing-info">
+              Showing {startIndex + 1} to {Math.min(startIndex + itemsPerPage, filteredTeachers.length)} of {filteredTeachers.length} teachers
+            </span>
+            <span className="selected-info">
+              {selectedIds.length} teacher(s) selected
+            </span>
+          </div>
         </>
       )}
 
       <style>{`
-        .teacher-module {
+        .teacher-list-module {
           padding: 1.5rem;
           max-width: 1400px;
           margin: 0 auto;
         }
 
-        /* Header */
         .module-header {
           background: linear-gradient(135deg, #0f6cbd 0%, #1e88e5 100%);
           border-radius: 24px;
@@ -431,28 +573,28 @@ const TeacherList = () => {
           font-size: 0.9rem;
         }
 
-        /* Stats Row */
         .stats-row {
-          display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+          display: flex;
           gap: 1rem;
           margin-bottom: 2rem;
+          flex-wrap: wrap;
         }
 
         .stat-card {
           background: white;
           border-radius: 20px;
-          padding: 1.25rem;
+          padding: 1rem 1.5rem;
           display: flex;
           align-items: center;
           gap: 1rem;
           box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-          transition: transform 0.2s, box-shadow 0.2s;
+          flex: 1;
+          min-width: 150px;
         }
 
-        .stat-card:hover {
-          transform: translateY(-2px);
-          box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+        .stat-card.selected {
+          background: #e3f2fd;
+          border: 1px solid #0f6cbd;
         }
 
         .stat-icon {
@@ -462,11 +604,14 @@ const TeacherList = () => {
           display: flex;
           align-items: center;
           justify-content: center;
+          font-size: 1.2rem;
+          font-weight: 700;
         }
 
-        .bg-primary-light { background: #e3f2fd; color: #1976d2; }
-        .bg-success-light { background: #e8f5e9; color: #2e7d32; }
-        .bg-warning-light { background: #fff3e0; color: #ed6c02; }
+        .stat-icon.blue { background: #e3f2fd; color: #1976d2; }
+        .stat-icon.green { background: #e8f5e9; color: #2e7d32; }
+        .stat-icon.orange { background: #fff3e0; color: #ed6c02; }
+        .stat-icon.purple { background: #f3e5f5; color: #7b1fa2; }
 
         .stat-info h3 {
           font-size: 1.5rem;
@@ -481,8 +626,7 @@ const TeacherList = () => {
           color: #64748b;
         }
 
-        /* Search and Filter */
-        .search-filter-bar {
+        .action-bar {
           display: flex;
           justify-content: space-between;
           align-items: center;
@@ -491,15 +635,9 @@ const TeacherList = () => {
           flex-wrap: wrap;
         }
 
-        .search-form {
-          display: flex;
-          gap: 0.75rem;
+        .search-wrapper {
           flex: 1;
-          max-width: 500px;
-        }
-
-        .search-input-wrapper {
-          flex: 1;
+          max-width: 350px;
           position: relative;
         }
 
@@ -535,289 +673,177 @@ const TeacherList = () => {
           border: none;
           cursor: pointer;
           color: #94a3b8;
-          padding: 0;
-          display: flex;
         }
 
-        .btn-search {
-          padding: 0.75rem 1.5rem;
-          background: #0f6cbd;
-          color: white;
+        .action-buttons {
+          display: flex;
+          gap: 0.85rem; 
+          justify-content: center;
+        }
+
+        .action-icon-btn {
+          background: transparent !important;
           border: none;
-          border-radius: 12px;
-          font-weight: 500;
+          padding: 0;
           cursor: pointer;
-          transition: background 0.2s;
-        }
-
-        .btn-search:hover {
-          background: #0a58a0;
-        }
-
-        .filter-actions {
+          transition: transform 0.2s ease, opacity 0.2s ease;
           display: flex;
-          gap: 0.75rem;
+          align-items: center;
+          justify-content: center;
         }
 
-        .btn-filter {
-          padding: 0.75rem 1.25rem;
-          background: white;
-          border: 1px solid #e2e8f0;
+        .action-icon-btn:hover {
+          transform: scale(1.2); 
+          opacity: 0.8;
+        }
+
+        .action-icon-btn.view { color: #0f6cbd; }
+        .action-icon-btn.edit { color: #f59e0b; }
+        .action-icon-btn.deactivate { color: #f59e0b; }
+        .action-icon-btn.activate { color: #10b981; }
+        .action-icon-btn.delete { color: #dc2626; }
+
+        .btn-download-all, .btn-add {
+          padding: 0.6rem 1.2rem;
           border-radius: 12px;
-          display: flex;
+          font-size: 0.9rem;
+          font-weight: 600;
+          display: inline-flex;
           align-items: center;
           gap: 0.5rem;
           cursor: pointer;
-          transition: all 0.2s;
+          transition: all 0.2s ease;
         }
 
-        .btn-filter.active {
-          background: #0f6cbd;
-          color: white;
+        .btn-download-all {
+          background: white;
+          color: #475569;
+          border: 1px solid #e2e8f0;
+        }
+
+        .btn-download-all:hover {
+          background: #f8fafc;
           border-color: #0f6cbd;
+          color: #0f6cbd;
+          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
         }
 
         .btn-add {
-          padding: 0.75rem 1.5rem;
-          background: #10b981;
+          background: #0f6cbd;
           color: white;
-          border: none;
-          border-radius: 12px;
-          display: flex;
-          align-items: center;
-          gap: 0.5rem;
-          font-weight: 500;
-          cursor: pointer;
-          transition: background 0.2s;
+          border: 1px solid #0f6cbd;
         }
 
         .btn-add:hover {
-          background: #059669;
+          background: #0d5ca3;
+          border-color: #0d5ca3;
+          box-shadow: 0 4px 12px rgba(15, 108, 189, 0.2);
+          transform: translateY(-1px);
         }
 
-        /* Filter Panel */
-        .filter-panel {
-          background: white;
-          border-radius: 16px;
-          padding: 1.25rem;
-          margin-bottom: 1.5rem;
-          border: 1px solid #e2e8f0;
+        .btn-add:active {
+          transform: translateY(0);
         }
 
-        .filter-group {
-          display: flex;
-          align-items: center;
-          gap: 1rem;
-          flex-wrap: wrap;
-        }
-
-        .filter-group label {
-          font-weight: 500;
-          color: #334155;
-        }
-
-        .filter-buttons {
-          display: flex;
-          gap: 0.5rem;
-        }
-
-        .filter-chip {
-          padding: 0.5rem 1rem;
-          background: #f1f5f9;
-          border: none;
-          border-radius: 20px;
-          cursor: pointer;
-          transition: all 0.2s;
-          font-size: 0.85rem;
-        }
-
-        .filter-chip.active {
-          background: #0f6cbd;
-          color: white;
-        }
-
-        /* Teachers Grid */
-        .teachers-grid {
-          display: grid;
-          grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-          gap: 1.5rem;
-          margin-bottom: 2rem;
-        }
-
-        .teacher-card {
+        .table-container {
           background: white;
           border-radius: 20px;
-          overflow: hidden;
-          transition: all 0.3s;
+          overflow-x: auto;
           box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
           border: 1px solid #eef2ff;
         }
 
-        .teacher-card:hover {
-          transform: translateY(-4px);
-          box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+        .teachers-table {
+          width: 100%;
+          border-collapse: collapse;
         }
 
-        .card-header {
-          padding: 1.25rem;
-          background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+        .teachers-table th {
+          text-align: left;
+          padding: 1rem;
+          background: #f8fafc;
+          font-weight: 600;
+          color: #334155;
+          border-bottom: 1px solid #e2e8f0;
+          font-size: 0.85rem;
+        }
+
+        .teachers-table td {
+          padding: 1rem;
+          border-bottom: 1px solid #f1f5f9;
+          color: #475569;
+        }
+
+        .teachers-table tr:hover {
+          background: #f8fafc;
+        }
+
+        .checkbox-col {
+          width: 40px;
+          text-align: center;
+        }
+
+        .checkbox-col input {
+          width: 18px;
+          height: 18px;
+          cursor: pointer;
+        }
+
+        .teacher-id-cell .teacher-code-badge {
+          display: inline-block;
+          padding: 0.25rem 0.75rem;
+          background: #f1f5f9;
+          border-radius: 20px;
+          font-size: 0.75rem;
+          font-family: monospace;
+          color: #475569;
+        }
+
+        .teacher-name-info {
           display: flex;
           align-items: center;
-          gap: 1rem;
-          position: relative;
+          gap: 0.75rem;
         }
 
-        .avatar {
-          width: 56px;
-          height: 56px;
-          border-radius: 18px;
+        .teacher-avatar {
+          width: 32px;
+          height: 32px;
+          background: linear-gradient(135deg, #0f6cbd 0%, #1e88e5 100%);
+          border-radius: 10px;
           display: flex;
           align-items: center;
           justify-content: center;
           color: white;
-          font-weight: 700;
-          font-size: 1.2rem;
-        }
-
-        .header-info {
-          flex: 1;
-        }
-
-        .teacher-name {
-          font-size: 1.1rem;
           font-weight: 600;
-          margin: 0 0 0.25rem 0;
-          color: #0f172a;
-        }
-
-        .teacher-code {
           font-size: 0.75rem;
-          color: #64748b;
-          background: #e2e8f0;
-          padding: 0.2rem 0.5rem;
-          border-radius: 20px;
         }
 
-        .header-actions {
-          position: relative;
-        }
-
-        .dropdown-trigger {
-          padding: 0.5rem;
-          background: white;
-          border: none;
-          border-radius: 8px;
-          cursor: pointer;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          transition: background 0.2s;
-        }
-
-        .dropdown-trigger:hover {
-          background: #e2e8f0;
-        }
-
-        .dropdown-menu {
-          position: absolute;
-          top: 100%;
-          right: 0;
-          background: white;
-          border-radius: 12px;
-          box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-          min-width: 160px;
-          z-index: 10;
-          opacity: 0;
-          visibility: hidden;
-          transform: translateY(-8px);
-          transition: all 0.2s;
-        }
-
-        .header-actions:hover .dropdown-menu {
-          opacity: 1;
-          visibility: visible;
-          transform: translateY(0);
-        }
-
-        .dropdown-menu button {
-          width: 100%;
-          padding: 0.75rem 1rem;
-          text-align: left;
-          border: none;
-          background: none;
-          display: flex;
-          align-items: center;
-          gap: 0.75rem;
-          cursor: pointer;
-          font-size: 0.85rem;
-          transition: background 0.2s;
-        }
-
-        .dropdown-menu button:hover {
-          background: #f1f5f9;
-        }
-
-        .dropdown-menu button.danger {
-          color: #dc2626;
-        }
-
-        .dropdown-menu button.danger:hover {
-          background: #fef2f2;
-        }
-
-        .card-body {
-          padding: 1.25rem;
-          border-bottom: 1px solid #f1f5f9;
-        }
-
-        .info-row {
-          display: flex;
-          align-items: center;
-          gap: 0.75rem;
-          padding: 0.5rem 0;
-          color: #475569;
-          font-size: 0.85rem;
-        }
-
-        .info-row svg {
-          color: #94a3b8;
-          flex-shrink: 0;
-        }
-
-        .email-link {
+        .teacher-email-cell .email-link {
           color: #0f6cbd;
           text-decoration: none;
-          transition: color 0.2s;
+          font-size: 0.85rem;
         }
 
-        .email-link:hover {
-          color: #0a58a0;
+        .teacher-email-cell .email-link:hover {
           text-decoration: underline;
         }
 
-        .card-footer {
-          padding: 1rem 1.25rem;
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-        }
-
-        .badge-status {
+        .status-badge {
           display: inline-flex;
           align-items: center;
           gap: 0.5rem;
-          padding: 0.3rem 0.8rem;
+          padding: 0.25rem 0.75rem;
           border-radius: 20px;
           font-size: 0.75rem;
           font-weight: 500;
         }
 
-        .badge-status.active {
+        .status-badge.success {
           background: #e8f5e9;
           color: #2e7d32;
         }
 
-        .badge-status.inactive {
+        .status-badge.danger {
           background: #ffebee;
           color: #c62828;
         }
@@ -829,24 +855,89 @@ const TeacherList = () => {
           background: currentColor;
         }
 
-        .btn-details {
+        .actions-col {
+          width: 160px;
+          text-align: center;
+        }
+
+        .action-icons {
           display: flex;
-          align-items: center;
           gap: 0.5rem;
-          padding: 0.5rem 1rem;
+          justify-content: center;
+        }
+
+        .icon-btn {
+          padding: 0.5rem;
           background: none;
           border: none;
-          color: #0f6cbd;
-          font-weight: 500;
           cursor: pointer;
-          transition: gap 0.2s;
+          border-radius: 8px;
+          transition: all 0.2s;
         }
 
-        .btn-details:hover {
-          gap: 0.75rem;
+        .icon-btn.view { color: #0f6cbd; }
+        .icon-btn.view:hover { background: #e3f2fd; }
+        .icon-btn.edit { color: #f59e0b; }
+        .icon-btn.edit:hover { background: #fef3c7; }
+        .icon-btn.activate { color: #10b981; }
+        .icon-btn.activate:hover { background: #d1fae5; }
+        .icon-btn.deactivate { color: #f59e0b; }
+        .icon-btn.deactivate:hover { background: #fef3c7; }
+        .icon-btn.delete { color: #dc2626; }
+        .icon-btn.delete:hover { background: #fee2e2; }
+
+        .text-center {
+          text-align: center;
         }
 
-        /* Empty State */
+        .pagination {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          gap: 1rem;
+          margin-top: 1.5rem;
+        }
+
+        .page-btn {
+          padding: 0.5rem 1rem;
+          border: 1px solid #e2e8f0;
+          background: white;
+          border-radius: 10px;
+          cursor: pointer;
+          transition: all 0.2s;
+        }
+
+        .page-btn:disabled {
+          opacity: 0.5;
+          cursor: not-allowed;
+        }
+
+        .page-btn:not(:disabled):hover {
+          background: #f1f5f9;
+          border-color: #0f6cbd;
+        }
+
+        .page-info {
+          font-size: 0.85rem;
+          color: #64748b;
+        }
+
+        .table-footer {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-top: 1rem;
+          padding: 0.5rem 0;
+          font-size: 0.8rem;
+          color: #64748b;
+        }
+
+        .showing-info, .selected-info {
+          background: #f8fafc;
+          padding: 0.25rem 0.75rem;
+          border-radius: 20px;
+        }
+
         .empty-state {
           text-align: center;
           padding: 4rem 2rem;
@@ -881,69 +972,8 @@ const TeacherList = () => {
           gap: 0.5rem;
           font-weight: 500;
           cursor: pointer;
-          transition: background 0.2s;
         }
 
-        .btn-add-primary:hover {
-          background: #0a58a0;
-        }
-
-        /* Pagination */
-        .pagination {
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          gap: 0.5rem;
-          margin-top: 2rem;
-        }
-
-        .page-btn {
-          padding: 0.5rem;
-          border: 1px solid #e2e8f0;
-          background: white;
-          border-radius: 8px;
-          cursor: pointer;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          transition: all 0.2s;
-        }
-
-        .page-btn:disabled {
-          opacity: 0.5;
-          cursor: not-allowed;
-        }
-
-        .page-btn:not(:disabled):hover {
-          background: #f1f5f9;
-          border-color: #0f6cbd;
-        }
-
-        .page-numbers {
-          display: flex;
-          gap: 0.25rem;
-        }
-
-        .page-num {
-          padding: 0.5rem 0.75rem;
-          border: 1px solid #e2e8f0;
-          background: white;
-          border-radius: 8px;
-          cursor: pointer;
-          transition: all 0.2s;
-        }
-
-        .page-num.active {
-          background: #0f6cbd;
-          color: white;
-          border-color: #0f6cbd;
-        }
-
-        .page-num:hover:not(.active) {
-          background: #f1f5f9;
-        }
-
-        /* Loading */
         .loading-container {
           display: flex;
           justify-content: center;
@@ -970,7 +1000,7 @@ const TeacherList = () => {
         }
 
         @media (max-width: 768px) {
-          .teacher-module {
+          .teacher-list-module {
             padding: 1rem;
           }
           
@@ -983,32 +1013,33 @@ const TeacherList = () => {
             text-align: center;
           }
           
-          .teachers-grid {
-            grid-template-columns: 1fr;
-          }
-          
-          .search-filter-bar {
+          .action-bar {
             flex-direction: column;
           }
           
-          .search-form {
+          .search-wrapper {
             max-width: 100%;
+          }
+          
+          .action-buttons {
+            width: 100%;
+            justify-content: stretch;
+          }
+          
+          .action-buttons button {
+            flex: 1;
+            justify-content: center;
+          }
+          
+          .table-footer {
+            flex-direction: column;
+            gap: 0.5rem;
+            text-align: center;
           }
         }
       `}</style>
     </div>
   );
-};
-
-const formatDate = (dateString) => {
-  if (!dateString) return '-';
-  try {
-    const date = new Date(dateString);
-    if (isNaN(date.getTime())) return '-';
-    return date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
-  } catch (e) {
-    return '-';
-  }
 };
 
 export default TeacherList;

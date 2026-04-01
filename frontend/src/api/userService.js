@@ -13,17 +13,17 @@ export const userService = {
   },
 
   create: async (data) => {
-    const response = await client.post('/users/add', data);
+    const response = await client.post('/users', data);
     return response.data;
   },
 
   update: async (id, data) => {
-    const response = await client.put(`/users/edit/${id}`, data);
+    const response = await client.put(`/users/${id}`, data);
     return response.data;
   },
 
   delete: async (id) => {
-    const response = await client.delete(`/users/delete/${id}`);
+    const response = await client.delete(`/users/${id}`);
     return response.data;
   }
 };

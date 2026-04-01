@@ -1,6 +1,9 @@
 from sqlalchemy.orm import Session
 from sqlalchemy import func
 from typing import List, Optional
+from sqlalchemy.orm import Session, joinedload
+
+from app.models.student import Student
 from app.models.course import Course
 from app.models.teacher import Teacher
 from app.models.enrollment import Enrollment
@@ -83,9 +86,13 @@ class CourseService:
     def get_courses_by_teacher(db: Session, teacher_id: int) -> List[Course]:
         return db.query(Course).filter(Course.teacher_id == teacher_id).all()
 
-    @staticmethod
+     @staticmethod
     def get_enrollments_by_course(db: Session, course_id: int) -> List[Enrollment]:
-        return db.query(Enrollment).filter(Enrollment.course_id == course_id).all()
+        # Use joinedload to load student and course relationships
+        return db.query(Enrollment).options(
+            joinedload(Enrollment.student),
+            joinedload(Enrollment.course)
+        ).filter(Enrollment.course_id == course_id).all()
 
     @staticmethod
     def get_tests_by_course(db: Session, course_id: int) -> List[Test]:

@@ -12,6 +12,11 @@ export const enrollmentService = {
     return response.data;
   },
 
+  getByStudent: async (studentId) => {
+    const response = await client.get('/enrollments/', { params: { student_id: studentId } });
+    return response.data;
+  },
+
   getById: async (id) => {
     const response = await client.get(`/enrollments/${id}`);
     return response.data;

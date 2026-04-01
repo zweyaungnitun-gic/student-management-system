@@ -12,22 +12,22 @@ export const testService = {
   },
 
   create: async (data) => {
-    const response = await client.post('/tests/add', data);
+    const response = await client.post('/tests', data);
     return response.data;
   },
 
   update: async (id, data) => {
-    const response = await client.put(`/tests/edit/${id}`, data);
+    const response = await client.put(`/tests/${id}`, data);
     return response.data;
   },
 
   delete: async (id) => {
-    const response = await client.delete(`/tests/delete/${id}`);
+    const response = await client.delete(`/tests/${id}`);
     return response.data;
   },
 
   getByCourse: async (courseId) => {
-    const response = await client.get(`/tests/course/${courseId}`);
+    const response = await client.get('/tests', { params: { course_id: courseId } });
     return response.data;
   },
 

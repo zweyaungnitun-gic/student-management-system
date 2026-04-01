@@ -1,6 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
-import { ChevronLeft, Edit, BookOpen, Users, Award, FileText, Calendar, User, Building2, Activity, ExternalLink, Clock, CheckCircle, XCircle, Download, ArrowLeft } from 'lucide-react';
+import { 
+  ChevronLeft, Edit, BookOpen, Users, Award, FileText, Calendar, 
+  User, Building2, Activity, ExternalLink, Clock, CheckCircle, 
+  XCircle, Download, ArrowLeft, Plus, Info  
+} from 'lucide-react';
 import toast from 'react-hot-toast';
 import { courseService } from '../../api/courseService';
 
@@ -281,65 +285,76 @@ const CourseDetails = () => {
       <div className="tab-content">
         {activeTab === 'enrollments' && (
           <div className="enrollments-section">
-            {enrollments.length === 0 ? (
-              <div className="empty-state">
-                <div className="empty-icon">👥</div>
-                <h3>No Students Enrolled</h3>
-                <p>This course doesn't have any enrolled students yet.</p>
-                <Link to="/enrollments/new" className="btn-outline">
-                  <Users size={18} />
-                  <span>Add Enrollment</span>
-                </Link>
-              </div>
-            ) : (
-              <div className="students-table-container">
-                <table className="data-table">
-                  <thead>
-                    <tr>
-                      <th>Student ID</th>
-                      <th>Student Name</th>
-                      <th>Status</th>
-                      <th>Enrollment Date</th>
-                      <th>Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {enrollments.map(enrollment => (
+          {enrollments.length === 0 ? (
+            <div className="empty-state">
+              <div className="empty-icon">👥</div>
+              <h3>No Students Enrolled</h3>
+              <p>This course doesn't have any enrolled students yet.</p>
+              <Link to="/enrollments/new" className="btn-outline">
+                <Users size={18} />
+                <span>Add Enrollment</span>
+              </Link>
+            </div>
+          ) : (
+            <div className="students-table-container">
+              <table className="data-table">
+                <thead>
+                  <tr>
+                    <th>Student ID</th>
+                    <th>Student Name</th>
+                    <th>Status</th>
+                    <th>Enrollment Date</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {enrollments.map(enrollment => {
+                    // Debug log to see what data is coming
+                    console.log('Enrollment data:', enrollment);
+                    
+                    return (
                       <tr key={enrollment.enrollment_id || enrollment.enrollmentId}>
                         <td>
                           <span className="student-id">
-                            {enrollment.student_id || enrollment.studentId}
+                            {enrollment.student_id || enrollment.studentId || enrollment.student?.student_id || '-'}
                           </span>
                         </td>
                         <td className="student-name">
-                          {enrollment.student_name || enrollment.studentName}
+                          {enrollment.student_name || enrollment.studentName || enrollment.student?.student_name || 'No name'}
                         </td>
                         <td>{getStatusBadge(enrollment.status)}</td>
-                        <td>{formatDate(enrollment.enrollment_date || enrollment.enrollmentRequestDate)}</td>
+                        <td>
+                          {formatDate(enrollment.enrollment_date || 
+                                    enrollment.enrollmentRequestDate || 
+                                    enrollment.enrollment_request_date)}
+                        </td>
                         <td>
                           <div className="action-buttons">
                             <button
                               className="btn-icon"
-                              onClick={() => navigate(`/students/${enrollment.student_id || enrollment.studentId}`)}
+                              onClick={() => navigate(`/students/${enrollment.student_id || enrollment.studentId || enrollment.student?.id}`)}
                               title="View Student"
+                              disabled={!enrollment.student_id && !enrollment.studentId && !enrollment.student?.id}
                             >
                               <User size={16} />
                             </button>
                             <button
                               className="btn-icon"
-                              onClick={() => navigate(`/results/student/${enrollment.student_id || enrollment.studentId}`)}
+                              onClick={() => navigate(`/results/student/${enrollment.student_id || enrollment.studentId || enrollment.student?.id}`)}
                               title="View Results"
+                              disabled={!enrollment.student_id && !enrollment.studentId && !enrollment.student?.id}
                             >
                               <Award size={16} />
                             </button>
                           </div>
                         </td>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            )}
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          )}
           </div>
         )}
 

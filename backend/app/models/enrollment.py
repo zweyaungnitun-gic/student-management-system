@@ -1,5 +1,5 @@
 from sqlalchemy import Column, String, BigInteger, DateTime, ForeignKey
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, joinedload
 from app.database import Base
 from sqlalchemy.sql import func
 
@@ -10,12 +10,13 @@ class Enrollment(Base):
     student_id = Column(BigInteger, ForeignKey("common_students.id"))
     course_id = Column(BigInteger, ForeignKey("courses.course_id"))
     semester = Column(String)
-    status = Column(String, default="pending") # pending, enrolled, completed, dropped, failed
-    initiated_by = Column(String) # student, admin
+    status = Column(String, default="pending")
+    initiated_by = Column(String)
     enrollment_request_date = Column(DateTime, default=func.now())
     approved_at = Column(DateTime)
     completed_at = Column(DateTime)
 
+    # Relationships with back_populates
     student = relationship("Student", back_populates="enrollments")
     course = relationship("Course", back_populates="enrollments")
     test_results = relationship("TestResult", back_populates="enrollment")
