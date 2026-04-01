@@ -53,8 +53,10 @@ export const courseService = {
   },
 
   exportStudents: async (id) => {
-    console.warn('Export functionality not implemented yet');
-    return Promise.reject('Not implemented');
+    const response = await client.get(`/courses/${id}/export-students`, {
+      responseType: 'blob'
+    });
+    return response.data;
   },
 
   getByTeacher: async (teacherId) => {

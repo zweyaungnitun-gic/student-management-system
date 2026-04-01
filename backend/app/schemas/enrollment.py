@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field, computed_field
+from pydantic import BaseModel, Field
 from typing import Optional
 from datetime import datetime
 
@@ -18,7 +18,7 @@ class EnrollmentUpdate(BaseModel):
 class EnrollmentResponse(EnrollmentBase):
     enrollment_id: int
     student_name: Optional[str] = None
-    student_id_number: Optional[str] = None  
+    student_id_number: Optional[str] = None
     course_code: Optional[str] = None
     course_name: Optional[str] = None
     enrolled_date: Optional[datetime] = None

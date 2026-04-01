@@ -1,9 +1,6 @@
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 from sqlalchemy import func
 from typing import List, Optional
-from sqlalchemy.orm import Session, joinedload
-
-from app.models.student import Student
 from app.models.course import Course
 from app.models.teacher import Teacher
 from app.models.enrollment import Enrollment
@@ -62,12 +59,11 @@ class CourseService:
         if not db_course:
             return False
         
-        # In Spring Boot, it deactivates instead of deleting if there are enrollments
         enrollments = db.query(Enrollment).filter(Enrollment.course_id == course_id).all()
         if enrollments:
             db_course.is_active = False
             db.commit()
-            return True # Successfully "deactivated"
+            return True
             
         db.delete(db_course)
         db.commit()
@@ -86,9 +82,8 @@ class CourseService:
     def get_courses_by_teacher(db: Session, teacher_id: int) -> List[Course]:
         return db.query(Course).filter(Course.teacher_id == teacher_id).all()
 
-     @staticmethod
+    @staticmethod
     def get_enrollments_by_course(db: Session, course_id: int) -> List[Enrollment]:
-        # Use joinedload to load student and course relationships
         return db.query(Enrollment).options(
             joinedload(Enrollment.student),
             joinedload(Enrollment.course)
@@ -100,6 +95,6 @@ class CourseService:
 
     @staticmethod
     def get_average_score(db: Session, course_id: int) -> Optional[float]:
-        # Logic from Spring Boot TestResultRepository
-        result = db.query(func.avg(TestResult.marks_obtained)).join(Test).filter(Test.course_id == course_id).scalar()
-        return result
+        # FIXED: Use 'score_obtained' instead of 'marks_obtained'
+        result = db.query(func.avg(TestResult.score_obtained)).join(Test).filter(Test.course_id == course_id).scalar()
+        return float(result) if result else None

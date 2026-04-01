@@ -66,15 +66,15 @@ const CourseDetails = () => {
       const url = window.URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
-      link.setAttribute('download', `${course?.course_code || course?.courseCode}_students.csv`);
+      link.setAttribute('download', `${course?.course_code || course?.courseCode || 'course'}_students.csv`);
       document.body.appendChild(link);
       link.click();
       link.remove();
       window.URL.revokeObjectURL(url);
-      toast.success('Export started');
+      toast.success('Export started successfully');
     } catch (error) {
       console.error('Error exporting course:', error);
-      toast.error('Export failed');
+      toast.error(error.response?.data?.detail || 'Export failed');
     }
   };
 
